@@ -1,5 +1,15 @@
+"""
+Jinpeng Zhai 翟锦鹏
+2024/07/14
+914962409@qq.com
+factory funcitons to initialize a form-function as used in interior ballistic
+calculation. Note, the precise numerical values for shape function factory
+functions doesn't matter -- they are always immediately factored into relative
+measurements
+"""
+
 from __future__ import annotations
-from typing import Tuple, Callable, Optional, Dict
+from typing import Dict
 from dataclasses import dataclass
 from math import pi
 
