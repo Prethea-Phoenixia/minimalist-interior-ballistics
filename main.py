@@ -23,11 +23,11 @@ _g_cc = 1e3  # kg/m^3
 _cc_g = _g_cc**-1  # m^3/kg
 
 
-def u_1_to_alpha(unitary_burn_rate: float, pressure_exponent: float) -> float:
+def unitary_to_exponent(unitary_burn_rate: float, pressure_exponent: float) -> float:
     """
     convert unitary burn rate (dm^3/s-kgf) to burn rate coefficient (m/s-Pa^n)
     """
-    return unitary_burn_rate * 9.8**-pressure_exponent * 1e-3
+    return unitary_burn_rate * 1e-3 * 9.8**-pressure_exponent
 
 
 @dataclass
@@ -58,36 +58,50 @@ class Load:
             average_Cp += molar_fraction * (adiabatic_index) / (adiabatic_index - 1)
             average_Cv += molar_fraction / (adiabatic_index - 1)
 
-        average_adiabatic_index = average_Cp / average_Cv
-        self.theta = average_adiabatic_index - 1
+        self.average_adiabatic_index = average_Cp / average_Cv
 
         # calculation variables
         self.phi = (
             1 + self.loss_fraction + self.total_charge_mass / (3 * self.shot_mass)
         )
 
-    def populate(self, delta_T=1 * _ms):
+    def populate(self, delta_t=0.1 * _ms):
         Z_c0 = tuple(c.solve_bomb() for c in self.charges)
         print(Z_c0)
         s = State(time=0, travel=0, velocity=0, burnup_fractions=Z_c0)
-        self.dt(s)
+        print(s)
+        for i in range(100):
+            s = self.propagate_rk4_in_time(s, delta_t)
+            print(s)
 
-    def dt(self, state: State):
-        t, l, v = state.time, state.travel, state.velocity
+        print(s)
+
+    def dt(self, state: State) -> Delta:
+        l, v = state.travel, state.velocity
         m = self.shot_mass
-        i_f = 0
-        g_e = 0
+        theta = self.average_adiabatic_index - 1
+        i_f, g_e = 0, 0
         for c, Z_c in zip(self.charges, state.burnup_fractions):
             psi_c = c.psi_c(Z_c)
             i_f += c.incompressible_fraction(psi_c)
             g_e += c.gas_energy(psi_c)
 
         l_psi = self.l_0 * (1 - i_f)
-        P = (g_e - 0.5 * self.theta * self.phi * m * v**2) / (self.S * (l_psi + l))
+        P = (g_e - 0.5 * theta * self.phi * m * v**2) / (self.S * (l_psi + l))
 
-        dl = v
-        dv = self.S * P / (self.phi * m)
-        dZ = tuple(c.dZdt(P) for c in self.charges)
+        return Delta(
+            d_time=0,
+            d_travel=v,
+            d_velocity=self.S * P / (self.phi * m),
+            d_burnup_fractions=tuple(c.dZdt(P) for c in self.charges),
+        )
+
+    def propagate_rk4_in_time(self, state: State, dt: float) -> State:
+        k1 = self.dt(state)
+        k2 = self.dt(state.increment_time(d=0.5 * k1 * dt, dt=0.5 * dt))
+        k3 = self.dt(state.increment_time(d=0.5 * k2 * dt, dt=0.5 * dt))
+        k4 = self.dt(state.increment_time(d=k3 * dt, dt=dt))
+        return state.increment_time(d=(k1 + k2 * 2 + k3 * 2 + k4) * dt / 6, dt=dt)
 
 
 @dataclass
@@ -95,15 +109,49 @@ class State:
     time: float
     travel: float
     velocity: float
-    burnup_fractions: Tuple[float]
+    burnup_fractions: Tuple[float, ...]
+
+    def increment_time(self, d: Delta, dt: float) -> State:
+        return State(
+            time=self.time + dt,
+            travel=self.travel + d.d_travel,
+            velocity=self.velocity + d.d_velocity,
+            burnup_fractions=tuple(
+                Z + dZ for Z, dZ in zip(self.burnup_fractions, d.d_burnup_fractions)
+            ),
+        )
 
 
 @dataclass
-class Gradient:
+class Delta:
     d_time: float
     d_travel: float
     d_velocity: float
-    d_burnup_fractions: Tuple[float]
+    d_burnup_fractions: Tuple[float, ...]
+
+    def __mul__(self, scalar: float) -> Delta:
+        return Delta(
+            d_time=self.d_time * scalar,
+            d_travel=self.d_travel * scalar,
+            d_velocity=self.d_velocity * scalar,
+            d_burnup_fractions=tuple(dZ * scalar for dZ in self.d_burnup_fractions),
+        )
+
+    def __add__(self, other: Delta) -> Delta:
+        return Delta(
+            d_time=self.d_time + other.d_time,
+            d_travel=self.d_travel + other.d_travel,
+            d_velocity=self.d_velocity + other.d_velocity,
+            d_burnup_fractions=tuple(
+                v + w for v, w in zip(self.d_burnup_fractions, other.d_burnup_fractions)
+            ),
+        )
+
+    def __rmul__(self, scalar: float) -> Delta:
+        return self * scalar
+
+    def __truediv__(self, scalar: float) -> Delta:
+        return self * (1 / scalar)
 
 
 @dataclass
@@ -112,7 +160,7 @@ class Charge:
 
     load: Load
     propellant_density: float
-    propellant_force: float  # J/kg
+    propellant_force: float
     burn_rate_coefficient: float
     pressure_exponent: float
     covolume: float
@@ -132,7 +180,9 @@ class Charge:
 
     def dZdt(self, P: float) -> float:
         return (
-            self.burn_rate_coefficient / self.arch_thickness * P**self.pressure_exponent
+            self.burn_rate_coefficient
+            / (0.5 * self.arch_thickness)
+            * P**self.pressure_exponent
         )
 
     def incompressible_fraction(self, psi_c: float) -> float:
@@ -162,24 +212,20 @@ class Charge:
 
 if __name__ == "__main__":
 
-    print(u_1_to_alpha(5.6298e-5, 0.83))
-    zis_3 = Load(
-        caliber=127 * _mm,
-        shot_mass=6.2,
-        chamber_volume=1.484 * _L,
-        loss_fraction=0.03,
+    wb004p = Load(
+        caliber=100 * _mm, shot_mass=15.6, chamber_volume=7.741 * _L, loss_fraction=0.06
     )
-    zis_3.add_charge(
-        propellant_density=1.6 * _g_cc,
-        propellant_force=950e3,
-        pressure_exponent=0.83,
-        covolume=1.0 * _cc_g,
-        burn_rate_coefficient=u_1_to_alpha(5.6298e-5, 0.83),
+    ff = single_perf(arch_width=0.17e-2, length=26e-2)
+    wb004p.add_charge(
+        propellant_density=1600,
+        propellant_force=980000,
+        pressure_exponent=0.75,
+        covolume=1e-3,
+        burn_rate_coefficient=0.18e-2 / (1e6) ** 0.75,
         adiabatic_index=1.2,
         gas_molar_mass=23.55,
-        charge_mass=1.08,
-        arch_thickness=0.5e-02 * _dm,
-        form_function=single_perf(arch_width=0.5e-3, length=0.12),
+        charge_mass=5.6,
+        arch_thickness=0.17e-2,
+        form_function=ff,
     )
-    zis_3.populate()
-    # print(l)
+    wb004p.populate()
