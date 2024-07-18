@@ -8,11 +8,11 @@ list of notations:
 """
 
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Tuple, Optional, List
 from math import pi
 from enum import Enum
-from form_function_factory import FormFunction, single_perf
+from form_function_factory import FormFunction, single_perf, multi_perf
 from dekker import dekker_scalar
 
 _mm = 1e-3  # mm/m
@@ -22,8 +22,13 @@ _ms = 1e-3  # ms/s
 _g_cc = 1e3  # kg/m^3
 _cc_g = _g_cc**-1  # m^3/kg
 
+PEAK_PRESSURE = "peak_pressure"
+BURNOUT = "BURNOUT"
 
-def unitary_to_exponent(unitary_burn_rate: float, pressure_exponent: float) -> float:
+
+def unitary_to_exponent(
+    unitary_burn_rate: float, pressure_exponent: float = 1
+) -> float:
     """
     convert unitary burn rate (dm^3/s-kgf) to burn rate coefficient (m/s-Pa^n)
     """
@@ -42,8 +47,14 @@ class Load:
 
     def __post_init__(self):
         self.charges = []
-        self.S = 0.25 * self.caliber**2 * pi
-        self.l_0 = self.chamber_volume / self.S
+
+    @property
+    def S(self):
+        return 0.25 * self.caliber**2 * pi
+
+    @property
+    def l_0(self):
+        return self.chamber_volume / self.S
 
     def add_charge(self, *args, **kwargs):
         self.charges.append(Charge(load=self, *args, **kwargs))
@@ -65,64 +76,110 @@ class Load:
             1 + self.loss_fraction + self.total_charge_mass / (3 * self.shot_mass)
         )
 
-    def populate(self, delta_t=0.1 * _ms):
+    def to_burnout(self, delta_t=1 * _ms, tol_t=1e-3 * _ms):
         Z_c0 = tuple(c.solve_bomb() for c in self.charges)
-        print(Z_c0)
-        s = State(time=0, travel=0, velocity=0, burnup_fractions=Z_c0)
-        print(s)
-        for i in range(100):
-            s = self.propagate_rk4_in_time(s, delta_t)
-            print(s)
 
-        print(s)
+        s_next = State(load=self, time=0, travel=0, velocity=0, burnup_fractions=Z_c0)
+        states = []
+
+        def burnout(state: State) -> float:
+            return sum(Z - c.Z_k for Z, c in zip(state.burnup_fractions, self.charges))
+
+        while burnout(s_next) < 0:
+            s_now = s_next
+            states.append(s_now)
+            s_next = self.propagate_rk4_in_time(s_now, delta_t)
+
+        def time_burnout(time: float) -> float:
+            return burnout(self.propagate_rk4_in_time(s_now, time - s_now.time))
+
+        burnout_time = dekker_scalar(
+            f=time_burnout, x_0=s_now.time, x_1=s_next.time, tol=tol_t
+        )
+        s_burnout = self.propagate_rk4_in_time(
+            s_now, burnout_time - s_now.time, marker=BURNOUT
+        )
+        states.append(s_burnout)
+
+        print(s_burnout, s_burnout.breech_pressure, s_burnout.shot_pressure)
+        print(states)
+
+        """since maximum pressure point always happens within burnout, may as well
+        find that"""
 
     def dt(self, state: State) -> Delta:
-        l, v = state.travel, state.velocity
         m = self.shot_mass
-        theta = self.average_adiabatic_index - 1
-        i_f, g_e = 0, 0
-        for c, Z_c in zip(self.charges, state.burnup_fractions):
-            psi_c = c.psi_c(Z_c)
-            i_f += c.incompressible_fraction(psi_c)
-            g_e += c.gas_energy(psi_c)
-
-        l_psi = self.l_0 * (1 - i_f)
-        P = (g_e - 0.5 * theta * self.phi * m * v**2) / (self.S * (l_psi + l))
+        P = state.average_pressure
 
         return Delta(
             d_time=0,
-            d_travel=v,
+            d_travel=state.velocity,
             d_velocity=self.S * P / (self.phi * m),
             d_burnup_fractions=tuple(c.dZdt(P) for c in self.charges),
         )
 
-    def propagate_rk4_in_time(self, state: State, dt: float) -> State:
+    def propagate_rk4_in_time(self, state: State, dt: float, marker: str = "") -> State:
         k1 = self.dt(state)
         k2 = self.dt(state.increment_time(d=0.5 * k1 * dt, dt=0.5 * dt))
         k3 = self.dt(state.increment_time(d=0.5 * k2 * dt, dt=0.5 * dt))
         k4 = self.dt(state.increment_time(d=k3 * dt, dt=dt))
-        return state.increment_time(d=(k1 + k2 * 2 + k3 * 2 + k4) * dt / 6, dt=dt)
+        return state.increment_time(
+            d=(k1 + k2 * 2 + k3 * 2 + k4) * dt / 6, dt=dt, marker=marker
+        )
 
 
-@dataclass
+@dataclass(frozen=True)
 class State:
+    load: Load = field(repr=False)
     time: float
     travel: float
     velocity: float
     burnup_fractions: Tuple[float, ...]
+    marker: str = ""
 
-    def increment_time(self, d: Delta, dt: float) -> State:
+    def __getattr__(self, item):
+        return getattr(self.load, item)
+
+    @property
+    def average_pressure(self):
+        i_f, g_e = 0, 0
+        for c, Z_c in zip(self.charges, self.burnup_fractions):
+            psi_c = c.psi_c(min(Z_c, c.Z_k))
+            i_f += c.incompressible_fraction(psi_c)
+            g_e += c.gas_energy(psi_c)
+
+        l, v, m = self.travel, self.velocity, self.shot_mass
+        theta = self.average_adiabatic_index - 1
+        l_psi = self.l_0 * (1 - i_f)
+        P = (g_e - 0.5 * theta * self.phi * m * v**2) / (self.S * (l_psi + l))
+        return P
+
+    @property
+    def shot_pressure(self):
+        return self.average_pressure / (
+            1 + self.total_charge_mass / (3 * (1 + self.loss_fraction) * self.shot_mass)
+        )
+
+    @property
+    def breech_pressure(self):
+        return self.shot_pressure * (
+            1 + self.total_charge_mass / (2 * (1 + self.loss_fraction) * self.shot_mass)
+        )
+
+    def increment_time(self, d: Delta, dt: float, marker: str = "") -> State:
         return State(
+            load=self.load,
             time=self.time + dt,
             travel=self.travel + d.d_travel,
             velocity=self.velocity + d.d_velocity,
             burnup_fractions=tuple(
                 Z + dZ for Z, dZ in zip(self.burnup_fractions, d.d_burnup_fractions)
             ),
+            marker=marker,
         )
 
 
-@dataclass
+@dataclass(frozen=True)
 class Delta:
     d_time: float
     d_travel: float
@@ -154,11 +211,11 @@ class Delta:
         return self * (1 / scalar)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Charge:
     """class that represent individual charge designs"""
 
-    load: Load
+    load: Load = field(repr=False)
     propellant_density: float
     propellant_force: float
     burn_rate_coefficient: float
@@ -171,6 +228,10 @@ class Charge:
     arch_thickness: float
 
     form_function: FormFunction
+
+    @property
+    def Z_k(self):
+        return self.form_function.Z_k
 
     def __getattr__(self, item):
         return getattr(self.load, item)
@@ -201,8 +262,10 @@ class Charge:
         Delta = m / V_c0
         psi_0 = (Delta**-1 - rho_p**-1) / (f / P_0 + alpha - rho_p**-1)
 
-        if P_max := f * Delta / (1 - alpha * Delta) < P_0:
-            raise ValueError("Starting pressure is excessive compared to charge.")
+        if f * Delta / (1 - alpha * Delta) < P_0:
+            raise ValueError(
+                "Charge cannot overcome starting pressure at complete combustion."
+            )
 
         Z_0 = dekker_scalar(
             f=lambda z: self.form_function(z) - psi_0, x_0=0, x_1=1, tol=1e-3
@@ -211,7 +274,6 @@ class Charge:
 
 
 if __name__ == "__main__":
-
     wb004p = Load(
         caliber=100 * _mm, shot_mass=15.6, chamber_volume=7.741 * _L, loss_fraction=0.06
     )
@@ -228,4 +290,6 @@ if __name__ == "__main__":
         arch_thickness=0.17e-2,
         form_function=ff,
     )
-    wb004p.populate()
+    print(wb004p.S)
+    wb004p.to_burnout()
+    # print(unitary_to_exponent(0.18e-2 / (1e6) ** 0.75 * 1e3 * 9.8))
