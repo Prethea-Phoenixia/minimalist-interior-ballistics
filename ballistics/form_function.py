@@ -24,7 +24,7 @@ class FormFunction:
     chi: float
     labda: float
     mu: float
-    Z_k: float = 1
+    Z_k: float = 1.0
     # these values are only used when Z_k >1
     chi_s: float = 0
     labda_s: float = 0

@@ -1,0 +1,1 @@
+python -m pdoc -o docs --docforma numpy ballistics

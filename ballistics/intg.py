@@ -1,19 +1,13 @@
-"""
-Jinpeng Zhai 翟锦鹏
-2024/05/14
-914962409@qq.com
-
-Program to integrate single-variate function a-la early programmable
-calculator, especially the HP-34C.
-参考HP-34C等可编程计算器，实现的对单变元函数进行积分的程序。
-"""
-
-from typing import Callable
+from typing import Callable, Tuple
 
 
-def intg(f: Callable[[float], str], l: float, u: float, tol: float = 1e-3):
+def intg(
+    f: Callable[[float], str], l: float, u: float, tol: float = 1e-3  #: test
+) -> Tuple[float, float]:
     """
-    Integration, a.la the HP-34C. For more info see:
+    Performs numerical integration of a single-variate function, a.la the HP-34C.
+    For more info see:
+
     "Handheld Calculator Evaluates Integrals", William M.Kahan
     Hewlett Packard Journal, August 1980 Volume 31, number 8.
 
@@ -69,13 +63,12 @@ def intg(f: Callable[[float], str], l: float, u: float, tol: float = 1e-3):
     Instead we define a error as abs(x_true - x_ref) / (tolerance + abs(x_ref)) x 100%
     """
 
-    a = (u - l) / 2
-    b = (u + l) / 2
+    a, b = (u - l) / 2, (u + l) / 2
 
     tol = abs(tol)  # ensure positive
 
     k = 1  # iteration counter
-    I = 0  # integral counter
+    I = 0.0  # integral counter
     c = 0  # trend counter, No. of iterations with reducing delta.
 
     while c < 3:
