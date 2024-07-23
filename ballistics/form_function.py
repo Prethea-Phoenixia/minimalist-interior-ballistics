@@ -1,13 +1,3 @@
-"""
-Jinpeng Zhai 翟锦鹏
-2024/07/14
-914962409@qq.com
-factory funcitons to initialize a form-function as used in interior ballistic
-calculation. Note, the precise numerical values for shape function factory
-functions doesn't matter -- they are always immediately factored into relative
-measurements
-"""
-
 from __future__ import annotations
 from typing import Dict
 from dataclasses import dataclass
@@ -21,11 +11,40 @@ ROUNDED_HEXAGON = "rounded hexagon"
 
 @dataclass
 class FormFunction:
+    """form function relates the volumetric burnup-ratio to the linear (depth-wise)
+    burnup ratio, usually denoted psi and Z, respectively.
+
+    Parameters
+    ----------
+    chi, labda, mu : float
+        coefficient of the shpe function before propellant fracture, in the form of
+        a 3rd-order polynomial:
+        ```
+        psi(Z) = chi * Z * (1 + labda * Z + mu * Z**2), Z in [0, 1]
+        ```
+        This is exact for all shapes supported in this module, pre-burnout.
+    chi_s, labda_s : float
+        coefficient of the shape function after propellant fracture, in the form of
+        a 2nd-order polynomial:
+        ```
+        psi(Z) = chi_s * Z * (1 + labda * Z), Z in [1, Z_k]
+        ```
+        This is only approximate, fitted to result in the correct volume and start/end
+        points.
+    Z_k : float
+        denotes the end of combustion point as expressed in linear (depth-wise) burnup
+        ratio. This is always 1.0 except for multiple-perforated grains, where small
+        "slivers" of grain continue to combust after the propellant has "fractured",
+        or the web has been totally consumed. In that case, the slivers' combustion
+        behavior is approximated with simple shapes of equivalent volume, and Z_k is
+        extended accordingly to greater than unity.
+
+    """
+
     chi: float
     labda: float
     mu: float
     Z_k: float = 1.0
-    # these values are only used when Z_k >1
     chi_s: float = 0
     labda_s: float = 0
 

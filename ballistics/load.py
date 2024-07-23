@@ -3,13 +3,13 @@ from dataclasses import dataclass
 from typing import List, Callable, Any, Optional, Dict, Union
 from math import pi
 from bisect import insort
-from functools import wraps
+from functools import wraps, cached_property
 
 from . import START, PEAK_PRESSURE, BURNOUT, MUZZLE, INTERMEDIATE, STEP
 from . import MAX_DT
 
-from .dekker import dekker_scalar
-from .gss import gss_scalar, FIND_MAX
+from .dekker import dekker
+from .gss import gss, FIND_MAX
 from .state import State
 from .delta import Delta
 from .charge import Charge
@@ -25,7 +25,7 @@ def mark_max_pressure(state_generating_func: Callable) -> Callable:
 
     Notes
     -----
-    Implementation wise, conducts a gold-section search using `ballistics.gss.gss_scalar`
+    Implementation wise, conducts a gold-section search using `ballistics.gss.gss`
     in the interval bracketed by the step before and after the step where maximum
     pressure is recorded. By intercepting the accuracy specification passed to the
     generating functions, the peak-pressure point is determined to (at worst) step size
@@ -48,7 +48,7 @@ def mark_max_pressure(state_generating_func: Callable) -> Callable:
                 state=s_pmax, dt=time - s_pmax.time
             ).average_pressure
 
-        time_pmax = gss_scalar(
+        time_pmax = gss(
             f=time_pressure,
             x_0=time_min,
             x_1=time_max,
@@ -79,11 +79,11 @@ class Load:
     def __post_init__(self):
         self.charges = []
 
-    @property
+    @cached_property
     def S(self):
         return 0.25 * self.caliber**2 * pi
 
-    @property
+    @cached_property
     def l_0(self):
         return self.chamber_volume / self.S
 
@@ -134,7 +134,7 @@ class Load:
         the total time of which is used as a better approximate to time-to-burnout,
         divided by `n_intg` as the step size for the next run. This is repeated
         until at least `n_intg` steps were taken. This ensures the final two steps
-        brackets the actual burnout point, from which `ballistics.dekker.dekker_scalar`
+        brackets the actual burnout point, from which `ballistics.dekker.dekker`
         is called to numerically find the burnout point to an accuracy of stepsize times
         `acc`.
         """
@@ -173,9 +173,9 @@ class Load:
         def time_burnout(time: float) -> float:
             return burnout(self.propagate_rk4(state=s_now, dt=time - s_now.time))
 
-        burnout_time = dekker_scalar(
+        burnout_time = dekker(
             f=time_burnout, x_0=s_now.time, x_1=s_next.time, tol=tol_t
-        )
+        )[0]
         s_burnout = self.propagate_rk4(
             state=s_now, dt=burnout_time - s_now.time, marker=BURNOUT
         )
@@ -288,32 +288,26 @@ class Load:
         return dt / dt.d_velocity
 
     def propagate_rk4(
-        self,
-        state: State,
-        dt=...,
-        dl=...,
-        dv=...,
-        marker: str = STEP,
+        self, state: State, dt=..., dl=..., dv=..., marker: str = STEP
     ) -> State:
-
-        i = state.increment
+        s_i = state.increment
 
         if dt != ...:
-            d, dx, d_arg = self.dt, dt, "dt"
+            df, dx, d_arg = self.dt, dt, "dt"
         elif dl != ...:
-            d, dx, d_arg = self.dl, dl, "dl"
+            df, dx, d_arg = self.dl, dl, "dl"
         elif dv != ...:
-            d, dx, d_arg = self.dv, dv, "dv"
+            df, dx, d_arg = self.dv, dv, "dv"
         else:
             raise ValueError("at least one of `dv, dt, dl` must be specified.")
 
         def generate_dargs(value: float) -> Dict[str, float]:
             return {d_arg: value}
 
-        k1 = d(state)
-        k2 = d(i(d=0.5 * k1 * dx, **generate_dargs(0.5 * dx), marker=INTERMEDIATE))
-        k3 = d(i(d=0.5 * k2 * dx, **generate_dargs(0.5 * dx), marker=INTERMEDIATE))
-        k4 = d(i(d=k3 * dx, **generate_dargs(dx), marker=INTERMEDIATE))
-        return i(
+        k1 = df(state)
+        k2 = df(s_i(d=0.5 * k1 * dx, **generate_dargs(0.5 * dx), marker=INTERMEDIATE))
+        k3 = df(s_i(d=0.5 * k2 * dx, **generate_dargs(0.5 * dx), marker=INTERMEDIATE))
+        k4 = df(s_i(d=k3 * dx, **generate_dargs(dx), marker=INTERMEDIATE))
+        return s_i(
             d=(k1 + k2 * 2 + k3 * 2 + k4) * dx / 6, **generate_dargs(dx), marker=marker
         )

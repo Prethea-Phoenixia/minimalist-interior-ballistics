@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 from .form_function import FormFunction
-from .dekker import dekker_scalar
+from .dekker import dekker
 
 if TYPE_CHECKING:
     from .load import Load
@@ -65,7 +65,7 @@ class Charge:
                 "Charge cannot overcome starting pressure at complete combustion."
             )
 
-        Z_0 = dekker_scalar(
-            f=lambda z: self.form_function(z) - psi_0, x_0=0, x_1=1, tol=1e-3
-        )
+        Z_0 = dekker(
+            f=lambda z: self.form_function(z) - psi_0, x_0=0.0, x_1=1.0, tol=1e-3
+        )[0]
         return Z_0

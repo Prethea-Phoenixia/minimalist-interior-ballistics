@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Tuple, Optional, TYPE_CHECKING
-
+from functools import cached_property
 from . import STEP
 from .delta import Delta
 
@@ -12,6 +12,10 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class State:
+    """class representing a particular point in the interior ballistic system
+    of equations.
+    """
+
     load: Load = field(repr=False)
     time: float
     travel: float
@@ -25,15 +29,26 @@ class State:
     def __lt__(self, other: State):
         return self.time < other.time
 
-    @property
+    @cached_property
     def volume_burnup_fractions(self) -> Tuple[float]:
         return tuple(
             c.psi_c(min(Z_c, c.Z_k))
             for c, Z_c in zip(self.charges, self.burnup_fractions)
         )
 
-    @property
+    @cached_property
     def average_pressure(self) -> float:
+        """the length-averaged pressure in the equivalent gun, under the Lagrange
+        gradient of 0-dimensional interior ballistics.
+
+        Notes
+        -----
+        The equivalent gun is a is formed by stretching the chamber volume of the
+        actual gun into a section such that the gun is of uniform cross section
+        throughout. The error of this treatment is usually insignificant for the range
+        of conditions encountered in conventional firearms (although it is of more
+        concern in light-gas guns).
+        """
         i_f, g_e = 0, 0
         for c, Z_c in zip(self.charges, self.burnup_fractions):
             psi_c = c.psi_c(min(Z_c, c.Z_k))
@@ -46,27 +61,25 @@ class State:
         P = (g_e - 0.5 * theta * self.phi * m * v**2) / (self.S * (l_psi + l))
         return P
 
-    @property
+    @cached_property
     def shot_pressure(self) -> float:
+        """the shot-base pressure in the equivalent gun. For more info refer to
+        `average_pressure`.
+        """
         return self.average_pressure / (
             1 + self.total_charge_mass / (3 * (1 + self.loss_fraction) * self.shot_mass)
         )
 
-    @property
+    @cached_property
     def breech_pressure(self) -> float:
+        """the breech face pressure in the equivalent gun. For more info refer to
+        `average_pressure`.
+        """
         return self.shot_pressure * (
             1 + self.total_charge_mass / (2 * (1 + self.loss_fraction) * self.shot_mass)
         )
 
-    def increment(
-        self,
-        d: Delta,
-        marker: str,
-        dt=...,
-        dl=...,
-        dv=...,
-    ) -> State:
-
+    def increment(self, d: Delta, marker: str, dt=..., dl=..., dv=...) -> State:
         if dt != ...:
             dx, d_attr = dt, "time"
         elif dl != ...:

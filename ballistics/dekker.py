@@ -2,12 +2,8 @@ from __future__ import annotations
 from typing import Callable, Tuple
 
 
-def dekker_interval(
-    f: Callable[[float], float],
-    x_0: float,
-    x_1: float,
-    tol: float = 1e-4,
-    max_it: int = 100,
+def dekker(
+    f: Callable[[float], float], x_0: float, x_1: float, tol: float, max_it: int = 33
 ) -> Tuple[float, float]:
     """
     Dekker algorithm for finding the root of a univariate function on a bracketing
@@ -24,7 +20,6 @@ def dekker_interval(
         counterpoint.
     max_it:
         terminating condition, maximum number of interations before calculation is aborted.
-
 
     Returns
     -------
@@ -106,17 +101,10 @@ def dekker_interval(
         )
 
 
-def dekker_scalar(*args, **kwargs) -> float:
-    """
-    Accepts all arguments as `dekker_interval` but returns the best result.
-    """
-    return dekker_interval(*args, **kwargs)[0]
-
-
 if __name__ == "__main__":
 
     def f(x: float) -> float:
 
         return x**2 - 1
 
-    print(dekker_interval(f, 0.5, 1.5))
+    print(dekker(f, 0.5, 1.5, tol=1e-4))

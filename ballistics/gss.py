@@ -5,18 +5,16 @@ from typing import Callable, Tuple
 _invphi = (math.sqrt(5) - 1) / 2  # 1 / phi
 _invphi2 = (3 - math.sqrt(5)) / 2  # 1 / phi^2
 
-print(_invphi**33)
-
 FIND_MIN = "min"
 FIND_MAX = "max"
 
 
-def gss_interval(
+def gss(
     f: Callable[[float], float],
     x_0: float,
     x_1: float,
+    tol: float,
     find: str = FIND_MIN,
-    tol: float = 1e-4,
     max_it: int = 33,
 ) -> Tuple[float, float]:
     """Golden-section search, for the solution of local extremum of a univariate
@@ -86,17 +84,9 @@ def gss_interval(
         return c, b
 
 
-def gss_scalar(*args, **kwargs) -> float:
-    """
-    Accepts all arguments as `gss_interval` but averages the result for a scalar
-    estimate of the extremeum location.
-    """
-    return 0.5 * sum(gss_interval(*args, **kwargs))
-
-
 if __name__ == "__main__":
 
     def f(x):
         return (x - 1) ** 2
 
-    print(gss_interval(f, 0, 2, find="min"))
+    print(gss(f, 0, 2, find="min", tol=1e-4))
