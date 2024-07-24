@@ -67,8 +67,9 @@ def mark_max_pressure(state_generating_func: Callable) -> Callable:
 
 
 @dataclass
-class Load:
-    """class that keeps track of particular load conditions"""
+class Gun:
+    """class that tracks physical properties of the bore (i.e. that are charge-invariant)
+    and manages propellant charge."""
 
     caliber: float
     shot_mass: float
@@ -88,7 +89,7 @@ class Load:
         return self.chamber_volume / self.S
 
     def add_charge(self, *args, **kwargs):
-        self.charges.append(Charge(load=self, *args, **kwargs))
+        self.charges.append(Charge(gun=self, *args, **kwargs))
         self.total_charge_mass = sum(c.charge_mass for c in self.charges)
 
         # calculate the average adiabatic index
@@ -154,10 +155,10 @@ class Load:
                 delta_t = rough_ttb / n_intg
             states = []
             s_next = State(
-                load=self,
-                time=0,
-                travel=0,
-                velocity=0,
+                gun=self,
+                time=0.0,
+                travel=0.0,
+                velocity=0.0,
                 burnup_fractions=Z_c0,
                 marker=START,
             )
@@ -208,7 +209,7 @@ class Load:
         d_travel = (travel - s_burnout.travel) / n_intg
 
         if d_travel < 0:
-            raise ValueError("projectile unable to achieve burnout at specified travel")
+            raise ValueError("travel is breech-ward of burnout point.")
 
         state = s_burnout
         for _ in range(n_intg - 1):
@@ -216,6 +217,45 @@ class Load:
 
         states.append(
             state := self.propagate_rk4(state=state, dl=d_travel, marker=MUZZLE)
+        )
+
+        return states
+
+    def to_velocity(self, velocity: float, n_intg: int, acc: float) -> List[State]:
+        """conducts integration up to the desired velocity using velocity-wise ODE
+        from burnout point to muzzle exit. Calls `.to_burnout` for integration up
+        to the burnout point.
+        Parameters
+        ----------
+        velocity: float
+            the projectile velocity to which the integration is done to. Does not accept
+            a value that results in muzzle exit before burnout.
+        n_intg: int
+            determines the number of steps taken in the length-wise integration,
+            in addition to being passed through to `to_burnout`.
+        acc: float
+            see documentation for `to_burnout`.
+
+        Returns
+        -------
+        list of `ballistics.state.State`
+
+        """
+
+        states = self.to_burnout(n_intg=n_intg, acc=acc)
+        s_burnout = states[-1]
+
+        d_velocity = (velocity - s_burnout.velocity) / n_intg
+
+        if d_velocity < 0:
+            raise ValueError("velocity is lower than at burnout point.")
+
+        state = s_burnout
+        for _ in range(n_intg - 1):
+            states.append(state := self.propagate_rk4(state=state, dv=d_velocity))
+
+        states.append(
+            state := self.propagate_rk4(state=state, dv=d_velocity, marker=MUZZLE)
         )
 
         return states

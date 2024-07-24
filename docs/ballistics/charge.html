@@ -37,7 +37,7 @@
                                 <a class="function" href="#Charge.__init__">Charge</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Charge.load">load</a>
+                                <a class="variable" href="#Charge.gun">gun</a>
                         </li>
                         <li>
                                 <a class="variable" href="#Charge.propellant_density">propellant_density</a>
@@ -118,14 +118,14 @@
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">.dekker</span> <span class="kn">import</span> <span class="n">dekker</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="kn">from</span> <span class="nn">.load</span> <span class="kn">import</span> <span class="n">Load</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="kn">from</span> <span class="nn">.gun</span> <span class="kn">import</span> <span class="n">Gun</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="k">class</span> <span class="nc">Charge</span><span class="p">:</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;class that represent individual charge designs&quot;&quot;&quot;</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">load</span><span class="p">:</span> <span class="n">Load</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">gun</span><span class="p">:</span> <span class="n">Gun</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">propellant_density</span><span class="p">:</span> <span class="nb">float</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">propellant_force</span><span class="p">:</span> <span class="nb">float</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span>
@@ -144,7 +144,7 @@
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span> <span class="nf">psi_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z_c</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z_c</span><span class="p">)</span>
@@ -200,7 +200,7 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="Charge-13"><a href="#Charge-13"><span class="linenos">13</span></a><span class="k">class</span> <span class="nc">Charge</span><span class="p">:</span>
 </span><span id="Charge-14"><a href="#Charge-14"><span class="linenos">14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;class that represent individual charge designs&quot;&quot;&quot;</span>
 </span><span id="Charge-15"><a href="#Charge-15"><span class="linenos">15</span></a>
-</span><span id="Charge-16"><a href="#Charge-16"><span class="linenos">16</span></a>    <span class="n">load</span><span class="p">:</span> <span class="n">Load</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="Charge-16"><a href="#Charge-16"><span class="linenos">16</span></a>    <span class="n">gun</span><span class="p">:</span> <span class="n">Gun</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="Charge-17"><a href="#Charge-17"><span class="linenos">17</span></a>    <span class="n">propellant_density</span><span class="p">:</span> <span class="nb">float</span>
 </span><span id="Charge-18"><a href="#Charge-18"><span class="linenos">18</span></a>    <span class="n">propellant_force</span><span class="p">:</span> <span class="nb">float</span>
 </span><span id="Charge-19"><a href="#Charge-19"><span class="linenos">19</span></a>    <span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span>
@@ -219,7 +219,7 @@
 </span><span id="Charge-32"><a href="#Charge-32"><span class="linenos">32</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
 </span><span id="Charge-33"><a href="#Charge-33"><span class="linenos">33</span></a>
 </span><span id="Charge-34"><a href="#Charge-34"><span class="linenos">34</span></a>    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-</span><span id="Charge-35"><a href="#Charge-35"><span class="linenos">35</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+</span><span id="Charge-35"><a href="#Charge-35"><span class="linenos">35</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
 </span><span id="Charge-36"><a href="#Charge-36"><span class="linenos">36</span></a>
 </span><span id="Charge-37"><a href="#Charge-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">psi_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z_c</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 </span><span id="Charge-38"><a href="#Charge-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z_c</span><span class="p">)</span>
@@ -267,7 +267,7 @@
                             <div id="Charge.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Charge</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">load</span><span class="p">:</span> <span class="n"><a href="load.html#Load">ballistics.load.Load</a></span>,</span><span class="param">	<span class="n">propellant_density</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">propellant_force</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">charge_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">arch_thickness</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">form_function</span><span class="p">:</span> <span class="n"><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></span></span>)</span>
+        <span class="name">Charge</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">gun</span><span class="p">:</span> <span class="n"><a href="gun.html#Gun">ballistics.gun.Gun</a></span>,</span><span class="param">	<span class="n">propellant_density</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">propellant_force</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">charge_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">arch_thickness</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">form_function</span><span class="p">:</span> <span class="n"><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></span></span>)</span>
 
         
     </div>
@@ -276,13 +276,13 @@
     
 
                             </div>
-                            <div id="Charge.load" class="classattr">
+                            <div id="Charge.gun" class="classattr">
                                 <div class="attr variable">
-            <span class="name">load</span><span class="annotation">: <a href="load.html#Load">ballistics.load.Load</a></span>
+            <span class="name">gun</span><span class="annotation">: <a href="gun.html#Gun">ballistics.gun.Gun</a></span>
 
         
     </div>
-    <a class="headerlink" href="#Charge.load"></a>
+    <a class="headerlink" href="#Charge.gun"></a>
     
     
 

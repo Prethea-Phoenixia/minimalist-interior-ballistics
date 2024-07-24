@@ -5,14 +5,14 @@ from .form_function import FormFunction
 from .dekker import dekker
 
 if TYPE_CHECKING:
-    from .load import Load
+    from .gun import Gun
 
 
 @dataclass(frozen=True)
 class Charge:
     """class that represent individual charge designs"""
 
-    load: Load = field(repr=False)
+    gun: Gun = field(repr=False)
     propellant_density: float
     propellant_force: float
     burn_rate_coefficient: float
@@ -31,7 +31,7 @@ class Charge:
         return self.form_function.Z_k
 
     def __getattr__(self, item):
-        return getattr(self.load, item)
+        return getattr(self.gun, item)
 
     def psi_c(self, Z_c: float) -> float:
         return self.form_function(Z_c)

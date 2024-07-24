@@ -1,13 +1,12 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Tuple, Optional, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING
 from functools import cached_property
-from . import STEP
 from .delta import Delta
 
 
 if TYPE_CHECKING:
-    from .load import Load
+    from .gun import Gun
 
 
 @dataclass(frozen=True)
@@ -16,7 +15,7 @@ class State:
     of equations.
     """
 
-    load: Load = field(repr=False)
+    gun: Gun = field(repr=False)
     time: float
     travel: float
     velocity: float
@@ -24,7 +23,7 @@ class State:
     marker: str
 
     def __getattr__(self, item):
-        return getattr(self.load, item)
+        return getattr(self.gun, item)
 
     def __lt__(self, other: State):
         return self.time < other.time
@@ -96,7 +95,7 @@ class State:
         }
 
         return State(
-            load=self.load,
+            gun=self.gun,
             **attrs,
             burnup_fractions=tuple(
                 Z + dZ for Z, dZ in zip(self.burnup_fractions, d.d_burnup_fractions)

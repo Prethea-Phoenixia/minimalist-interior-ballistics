@@ -128,7 +128,7 @@
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">        coefficient of the shape function after propellant fracture, in the form of</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">        a 2nd-order polynomial:</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">        ```</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">        psi(Z) = chi_s * Z * (1 + labda * Z)</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">        psi(Z) = chi_s * Z * (1 + labda * Z), Z in [1, Z_k]</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">        ```</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">        This is only approximate, fitted to result in the correct volume and start/end</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">        points.</span>
@@ -327,7 +327,7 @@
 </span><span id="FormFunction-28"><a href="#FormFunction-28"><span class="linenos">28</span></a><span class="sd">        coefficient of the shape function after propellant fracture, in the form of</span>
 </span><span id="FormFunction-29"><a href="#FormFunction-29"><span class="linenos">29</span></a><span class="sd">        a 2nd-order polynomial:</span>
 </span><span id="FormFunction-30"><a href="#FormFunction-30"><span class="linenos">30</span></a><span class="sd">        ```</span>
-</span><span id="FormFunction-31"><a href="#FormFunction-31"><span class="linenos">31</span></a><span class="sd">        psi(Z) = chi_s * Z * (1 + labda * Z)</span>
+</span><span id="FormFunction-31"><a href="#FormFunction-31"><span class="linenos">31</span></a><span class="sd">        psi(Z) = chi_s * Z * (1 + labda * Z), Z in [1, Z_k]</span>
 </span><span id="FormFunction-32"><a href="#FormFunction-32"><span class="linenos">32</span></a><span class="sd">        ```</span>
 </span><span id="FormFunction-33"><a href="#FormFunction-33"><span class="linenos">33</span></a><span class="sd">        This is only approximate, fitted to result in the correct volume and start/end</span>
 </span><span id="FormFunction-34"><a href="#FormFunction-34"><span class="linenos">34</span></a><span class="sd">        points.</span>
@@ -379,7 +379,7 @@ This is exact for all shapes supported in this module, pre-burnout.</li>
 <li><strong>chi_s, labda_s</strong> (float):
 coefficient of the shape function after propellant fracture, in the form of
 a 2nd-order polynomial:
-<pre><code>psi(Z) = chi_s * Z * (1 + labda * Z)
+<pre><code>psi(Z) = chi_s * Z * (1 + labda * Z), Z in [1, Z_k]
 </code></pre>
 This is only approximate, fitted to result in the correct volume and start/end
 points.</li>
