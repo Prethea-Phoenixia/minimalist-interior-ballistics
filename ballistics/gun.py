@@ -8,8 +8,7 @@ from functools import wraps, cached_property
 from . import START, PEAK_PRESSURE, BURNOUT, MUZZLE, INTERMEDIATE, STEP
 from . import MAX_DT
 
-from .dekker import dekker
-from .gss import gss, FIND_MAX
+from .num import dekker, gss, FIND_MAX
 from .state import State
 from .delta import Delta
 from .charge import Charge
@@ -122,7 +121,8 @@ class Gun:
 
         acc: float
             relative accuracy characteristic points (burnout and peak) will be
-            determined to in relation to actual step size.
+            determined to in relation to actual step size. Also controls the accuracy
+            to which initial burnup is solved to.
 
         Returns
         -------
@@ -139,7 +139,7 @@ class Gun:
         is called to numerically find the burnout point to an accuracy of stepsize times
         `acc`.
         """
-        Z_c0 = tuple(c.solve_bomb() for c in self.charges)
+        Z_c0 = tuple(c.solve_bomb(acc) for c in self.charges)
 
         def burnout(state: State) -> float:
             if sum(Z - c.Z_k for Z, c in zip(state.burnup_fractions, self.charges)) < 0:

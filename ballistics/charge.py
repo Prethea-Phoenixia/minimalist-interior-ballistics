@@ -1,18 +1,17 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
+from .num import dekker
 from .form_function import FormFunction
-from .dekker import dekker
 
 if TYPE_CHECKING:
     from .gun import Gun
 
 
 @dataclass(frozen=True)
-class Charge:
-    """class that represent individual charge designs"""
+class BaseCharge:
+    """class that represent individual charges as standalone designs."""
 
-    gun: Gun = field(repr=False)
     propellant_density: float
     propellant_force: float
     burn_rate_coefficient: float
@@ -30,9 +29,6 @@ class Charge:
     def Z_k(self):
         return self.form_function.Z_k
 
-    def __getattr__(self, item):
-        return getattr(self.gun, item)
-
     def psi_c(self, Z_c: float) -> float:
         return self.form_function(Z_c)
 
@@ -44,15 +40,25 @@ class Charge:
             / self.arch_thickness
         )
 
+    def gas_energy(self, psi_c: float) -> float:
+        return self.propellant_force * self.charge_mass * psi_c
+
+
+@dataclass(frozen=True)
+class Charge(BaseCharge):
+    """class that represent individual charge designs when applied to a gun."""
+
+    gun: Gun = field(repr=False)
+
+    def __getattr__(self, item):
+        return getattr(self.gun, item)
+
     def incompressible_fraction(self, psi_c: float) -> float:
         return ((1 - psi_c) / self.propellant_density + self.covolume * psi_c) * (
             (self.charge_mass / self.chamber_volume)
         )
 
-    def gas_energy(self, psi_c: float) -> float:
-        return self.propellant_force * self.charge_mass * psi_c
-
-    def solve_bomb(self) -> float:
+    def solve_bomb(self, tol: float) -> float:
         V_c0 = self.chamber_volume * (self.charge_mass / self.total_charge_mass)
         P_0 = self.start_pressure
         m, f = self.charge_mass, self.propellant_force
@@ -66,6 +72,6 @@ class Charge:
             )
 
         Z_0 = dekker(
-            f=lambda z: self.form_function(z) - psi_0, x_0=0.0, x_1=1.0, tol=1e-3
+            f=lambda z: self.form_function(z) - psi_0, x_0=0.0, x_1=1.0, tol=tol
         )[0]
         return Z_0
