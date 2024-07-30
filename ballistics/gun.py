@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Callable, Any, Optional, Dict, Union
+from typing import List, Callable, Any, Optional, Dict, Union, Tuple
 from math import pi
 from bisect import insort
 from functools import wraps, cached_property
@@ -9,8 +9,7 @@ from . import START, PEAK_PRESSURE, BURNOUT, MUZZLE, INTERMEDIATE, STEP
 from . import MAX_DT
 
 from .num import dekker, gss, FIND_MAX
-from .state import State
-from .delta import Delta
+from .state import State, Delta
 from .charge import Charge
 
 from tabulate import tabulate
@@ -35,6 +34,8 @@ def mark_max_pressure(state_generating_func: Callable) -> Callable:
     def wrapper(self, *args, acc, **kwargs):
         states = state_generating_func(self, *args, acc=acc, **kwargs)
 
+        total_time = states[-1].time
+
         pressures = [s.average_pressure for s in states]
         j = pressures.index(max(pressures))
         s_pmax = states[j]
@@ -47,12 +48,17 @@ def mark_max_pressure(state_generating_func: Callable) -> Callable:
                 state=s_pmax, dt=time - s_pmax.time
             ).average_pressure
 
-        time_pmax = gss(
-            f=time_pressure,
-            x_0=time_min,
-            x_1=time_max,
-            find=FIND_MAX,
-            tol=acc * (time_max - time_min) / (k - i),
+        time_pmax = (
+            sum(
+                gss(
+                    f=time_pressure,
+                    x_0=time_min,
+                    x_1=time_max,
+                    find=FIND_MAX,
+                    tol=acc * total_time,
+                )
+            )
+            * 0.5
         )
 
         s_pmax = self.propagate_rk4(
@@ -78,6 +84,7 @@ class Gun:
 
     def __post_init__(self):
         self.charges = []
+        self.charge_masses = []
 
     @cached_property
     def S(self):
@@ -87,17 +94,19 @@ class Gun:
     def l_0(self):
         return self.chamber_volume / self.S
 
-    def add_charge(self, *args, **kwargs):
-        self.charges.append(Charge(gun=self, *args, **kwargs))
-        self.total_charge_mass = sum(c.charge_mass for c in self.charges)
-
+    def add_charge(self, charge: Charge, mass: float):
+        self.charges.append(charge)
+        self.charge_masses.append(mass)
+        self.total_charge_mass = sum(self.charge_masses)
         # calculate the average adiabatic index
-        molar_sum = sum(c.charge_mass / c.gas_molar_mass for c in self.charges)
+        molar_sum = sum(
+            m / c.gas_molar_mass for c, m in zip(self.charges, self.charge_masses)
+        )
         average_Cp = 0
         average_Cv = 0
-        for c in self.charges:
+        for c, m in zip(self.charges, self.charge_masses):
             adiabatic_index = c.adiabatic_index
-            molar_fraction = (c.charge_mass / c.gas_molar_mass) / molar_sum
+            molar_fraction = (m / c.gas_molar_mass) / molar_sum
             average_Cp += molar_fraction * (adiabatic_index) / (adiabatic_index - 1)
             average_Cv += molar_fraction / (adiabatic_index - 1)
 
@@ -108,7 +117,43 @@ class Gun:
             1 + self.loss_fraction + self.total_charge_mass / (3 * self.shot_mass)
         )
 
-    # @mark_max_pressure
+    def solve_bomb(self, tol: float) -> Tuple[float, ...]:
+        initial_burnup_fractions = []
+        for c, m in zip(self.charges, self.charge_masses):
+            V_c0 = self.chamber_volume * (m / self.total_charge_mass)
+            P_0 = self.start_pressure
+            f, rho_p, alpha = c.force, c.density, c.covolume
+            Delta = m / V_c0
+            psi_0 = (Delta**-1 - rho_p**-1) / (f / P_0 + alpha - rho_p**-1)
+
+            if f * Delta / (1 - alpha * Delta) < P_0:
+                raise ValueError(
+                    "Charge cannot overcome starting pressure at complete combustion."
+                )
+            initial_burnup_fractions.append(
+                dekker(
+                    f=lambda z: c.form_function(z) - psi_0, x_0=0.0, x_1=1.0, tol=tol
+                )[0]
+            )
+        return tuple(initial_burnup_fractions)
+
+    def gas_energy(self, psi: Tuple[float, ...]) -> float:
+        return sum(
+            c.force * m * psi_c
+            for c, m, psi_c in zip(self.charges, self.charge_masses, psi)
+        )
+
+    def incompressible_fraction(self, psi: Tuple[float, ...]) -> float:
+        i_f = 0
+        for c, m, psi_c in zip(self.charges, self.charge_masses, psi):
+
+            i_f += (1 - psi_c) / c.density + c.covolume * psi_c * (
+                (m / self.chamber_volume)
+            )
+
+        return i_f
+
+    @mark_max_pressure
     def to_burnout(self, n_intg: int, acc: float) -> List[State]:
         """integrates projectile motion up to the propellant burnout point and returns
         a List of State.
@@ -116,13 +161,13 @@ class Gun:
         Parameters
         ----------
         n_intg: int
-            number of integration steps that is to be taken from shot start to charge
-            burnout.
+            minimum number of integration steps that is to be taken from shot start
+            to charge burnout.
 
         acc: float
             relative accuracy characteristic points (burnout and peak) will be
-            determined to in relation to actual step size. Also controls the accuracy
-            to which initial burnup is solved to.
+            determined to in relation to the process's total time. Also controls
+            the accuracy to which initial burnup is solved to.
 
         Returns
         -------
@@ -139,7 +184,7 @@ class Gun:
         is called to numerically find the burnout point to an accuracy of stepsize times
         `acc`.
         """
-        Z_c0 = tuple(c.solve_bomb(acc) for c in self.charges)
+        Z_c0 = self.solve_bomb(tol=acc)
 
         def burnout(state: State) -> float:
             if sum(Z - c.Z_k for Z, c in zip(state.burnup_fractions, self.charges)) < 0:
@@ -163,13 +208,12 @@ class Gun:
                 marker=START,
             )
             while burnout(s_next) < 0:
-                s_now = s_next
-                states.append(s_now)
+                states.append(s_now := s_next)
                 s_next = self.propagate_rk4(state=s_now, dt=delta_t)
 
             rough_ttb = s_next.time
 
-        tol_t = delta_t * acc
+        tol_t = rough_ttb * acc
 
         def time_burnout(time: float) -> float:
             return burnout(self.propagate_rk4(state=s_now, dt=time - s_now.time))

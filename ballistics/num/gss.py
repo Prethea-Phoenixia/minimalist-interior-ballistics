@@ -56,6 +56,8 @@ def gss(
     else:
         raise ValueError(f"{find} should be either '{FIND_MIN}' or '{FIND_MAX}'")
 
+    tol = abs(tol)
+
     a, b = min(x_0, x_1), max(x_0, x_1)
     h = b - a
 

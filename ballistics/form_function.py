@@ -55,12 +55,20 @@ class FormFunction:
             self.labda_s = psi_s / self.chi_s - 1
 
     def __call__(self, Z: float) -> float:
-        if 0 <= Z <= 1:  # pre-fracture, pre "split"
+        if 0 <= Z <= 1:  # pre-fracture
             return self.chi * Z * (1 + self.labda * Z + self.mu * Z**2)
-        elif 1 < Z <= self.Z_k:  # post fracture, after "split"
+        elif 1 < Z <= self.Z_k:  # post fracture
             return self.chi_s * Z * (1 + self.labda_s * Z)
 
         raise ValueError(f"psi(Z) is defined in [0, {self.Z_k}]")
+
+    def sigma(self, Z: float) -> float:
+        if 0 <= Z <= 1:  # pre-fracture
+            return self(Z) / self.chi
+        elif 1 < Z <= self.Z_k:  # post fracture
+            return self(Z) / self.chi_s
+
+        raise ValueError(f"sigma(Z) is defined in [0, {self.Z_k}]")
 
 
 def non_perf(length: float, width: float, height: float) -> FormFunction:

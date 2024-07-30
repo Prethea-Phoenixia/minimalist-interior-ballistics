@@ -2,8 +2,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Tuple, TYPE_CHECKING
 from functools import cached_property
-from .delta import Delta
-
 
 if TYPE_CHECKING:
     from .gun import Gun
@@ -48,17 +46,14 @@ class State:
         of conditions encountered in conventional firearms (although it is of more
         concern in light-gas guns).
         """
-        i_f, g_e = 0, 0
-        for c, Z_c in zip(self.charges, self.burnup_fractions):
-            psi_c = c.psi_c(min(Z_c, c.Z_k))
-            i_f += c.incompressible_fraction(psi_c)
-            g_e += c.gas_energy(psi_c)
-
+        psi = self.volume_burnup_fractions
         l, v, m = self.travel, self.velocity, self.shot_mass
         theta = self.average_adiabatic_index - 1
-        l_psi = self.l_0 * (1 - i_f)
-        P = (g_e - 0.5 * theta * self.phi * m * v**2) / (self.S * (l_psi + l))
-        return P
+        l_psi = self.l_0 * (1 - self.incompressible_fraction(psi))
+
+        return (self.gas_energy(psi) - 0.5 * theta * self.phi * m * v**2) / (
+            self.S * (l_psi + l)
+        )
 
     @cached_property
     def shot_pressure(self) -> float:
@@ -102,3 +97,35 @@ class State:
             ),
             marker=marker,
         )
+
+
+@dataclass(frozen=True)
+class Delta:
+    d_time: float
+    d_travel: float
+    d_velocity: float
+    d_burnup_fractions: Tuple[float, ...]
+
+    def __mul__(self, scalar: float) -> Delta:
+        return Delta(
+            d_time=self.d_time * scalar,
+            d_travel=self.d_travel * scalar,
+            d_velocity=self.d_velocity * scalar,
+            d_burnup_fractions=tuple(dZ * scalar for dZ in self.d_burnup_fractions),
+        )
+
+    def __add__(self, other: Delta) -> Delta:
+        return Delta(
+            d_time=self.d_time + other.d_time,
+            d_travel=self.d_travel + other.d_travel,
+            d_velocity=self.d_velocity + other.d_velocity,
+            d_burnup_fractions=tuple(
+                v + w for v, w in zip(self.d_burnup_fractions, other.d_burnup_fractions)
+            ),
+        )
+
+    def __rmul__(self, scalar: float) -> Delta:
+        return self * scalar
+
+    def __truediv__(self, scalar: float) -> Delta:
+        return self * (1 / scalar)

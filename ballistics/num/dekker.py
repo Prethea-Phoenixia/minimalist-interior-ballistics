@@ -51,6 +51,7 @@ def dekker(
     Fundamental Theorem of Algebra, London: Wiley-Interscience, ISBN 978-0-471-20300-1
 
     """
+    tol = abs(tol)  # ensure non-negative
     fx_0, fx_1 = f(x_0), f(x_1)
 
     if fx_0 * fx_1 >= 0:
@@ -94,11 +95,7 @@ def dekker(
 
     else:
         # the entire loop has been ran without break or return.
-        raise ValueError(
-            "Dekker method called from {} to {}\n".format(x_0, x_1)
-            + "Maximum iteration exceeded at {}/{} iterations,\n".format(i, max_it)
-            + "f({})={}->\nf({})={}".format(b_i, fb_i, b_j, fb_j)
-        )
+        raise ValueError("Maximum iteration exceeded.")
 
 
 if __name__ == "__main__":
