@@ -23,7 +23,7 @@ def mark_max_pressure(state_generating_func: Callable) -> Callable:
 
     Notes
     -----
-    Implementation wise, conducts a gold-section search using `ballistics.gss.gss`
+    Implementation wise, conducts a gold-section search using `ballistics.num.gss`
     in the interval bracketed by the step before and after the step where maximum
     pressure is recorded. By intercepting the accuracy specification passed to the
     generating functions, the peak-pressure point is determined to (at worst) step size
@@ -98,19 +98,6 @@ class Gun:
         self.charges.append(charge)
         self.charge_masses.append(mass)
         self.total_charge_mass = sum(self.charge_masses)
-        # calculate the average adiabatic index
-        molar_sum = sum(
-            m / c.gas_molar_mass for c, m in zip(self.charges, self.charge_masses)
-        )
-        average_Cp = 0
-        average_Cv = 0
-        for c, m in zip(self.charges, self.charge_masses):
-            adiabatic_index = c.adiabatic_index
-            molar_fraction = (m / c.gas_molar_mass) / molar_sum
-            average_Cp += molar_fraction * (adiabatic_index) / (adiabatic_index - 1)
-            average_Cv += molar_fraction / (adiabatic_index - 1)
-
-        self.average_adiabatic_index = average_Cp / average_Cv
 
         # calculation variables
         self.phi = (
@@ -137,18 +124,31 @@ class Gun:
             )
         return tuple(initial_burnup_fractions)
 
-    def gas_energy(self, psi: Tuple[float, ...]) -> float:
-        return sum(
-            c.force * m * psi_c
-            for c, m, psi_c in zip(self.charges, self.charge_masses, psi)
+    def gas_energy(self, psi: Tuple[float, ...], v: float) -> float:
+
+        # calculated the average adiabatic index for the gas mixture.
+        molar_sum = sum(
+            w / c.gas_molar_mass * psi_c
+            for c, w, psi_c in zip(self.charges, self.charge_masses, psi)
         )
+        average_Cp, average_Cv = 0, 0
+        for c, w, psi_c in zip(self.charges, self.charge_masses, psi):
+            adiabatic_index = c.adiabatic_index
+            molar_fraction = (w / c.gas_molar_mass * psi_c) / molar_sum
+            average_Cp += molar_fraction * (adiabatic_index) / (adiabatic_index - 1)
+            average_Cv += molar_fraction / (adiabatic_index - 1)
+
+        theta = average_Cp / average_Cv - 1
+        return sum(
+            c.force * w * psi_c
+            for c, w, psi_c in zip(self.charges, self.charge_masses, psi)
+        ) - (0.5 * theta * self.phi * self.shot_mass * v**2)
 
     def incompressible_fraction(self, psi: Tuple[float, ...]) -> float:
         i_f = 0
-        for c, m, psi_c in zip(self.charges, self.charge_masses, psi):
-
+        for c, w, psi_c in zip(self.charges, self.charge_masses, psi):
             i_f += (1 - psi_c) / c.density + c.covolume * psi_c * (
-                (m / self.chamber_volume)
+                (w / self.chamber_volume)
             )
 
         return i_f
@@ -180,7 +180,7 @@ class Gun:
         the total time of which is used as a better approximate to time-to-burnout,
         divided by `n_intg` as the step size for the next run. This is repeated
         until at least `n_intg` steps were taken. This ensures the final two steps
-        brackets the actual burnout point, from which `ballistics.dekker.dekker`
+        brackets the actual burnout point, from which `ballistics.num.dekker`
         is called to numerically find the burnout point to an accuracy of stepsize times
         `acc`.
         """

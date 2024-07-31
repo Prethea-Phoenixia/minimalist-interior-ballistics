@@ -29,7 +29,7 @@ if __name__ == "__main__":
         arch_thickness=0.17e-2,
         form_function=ff,
     )
-    print(c.I_k())
+    print(c.I_k(n_intg=100, acc=1e-3))
     wb004p.add_charge(charge=c, mass=5.6)
 
     print(wb004p.prettyprint(wb004p.to_burnout(n_intg=4, acc=1e-3)))
@@ -37,4 +37,3 @@ if __name__ == "__main__":
     print(wb004p.prettyprint(wb004p.to_travel(travel=47.43e-1, n_intg=10, acc=1e-3)))
     print()
     print(wb004p.prettyprint(wb004p.to_velocity(velocity=900, n_intg=10, acc=1e-3)))
-    print(unitary_to_exponent(0.18e-2 / (1e6) ** 0.75 * 1e3 * 9.8))

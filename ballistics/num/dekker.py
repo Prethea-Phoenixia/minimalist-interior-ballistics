@@ -46,7 +46,7 @@ def dekker(
 
     References
     ----------
-    [1] Dekker, T. J. (1969), "Finding a zero by means of successive linear
+    - **[1]** Dekker, T. J. (1969), "Finding a zero by means of successive linear
     interpolation", in Dejon, B.; Henrici, P. (eds.), Constructive Aspects of the
     Fundamental Theorem of Algebra, London: Wiley-Interscience, ISBN 978-0-471-20300-1
 

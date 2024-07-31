@@ -73,7 +73,7 @@ def intg(
 
     References
     ----------
-    [1]"Handheld Calculator Evaluates Integrals", William M.Kahan, Hewlett Packard
+    - **[1]** "Handheld Calculator Evaluates Integrals", William M.Kahan, Hewlett Packard
     Journal, August 1980 Volume 31, number 8.
 
     """

@@ -47,13 +47,10 @@ class State:
         concern in light-gas guns).
         """
         psi = self.volume_burnup_fractions
-        l, v, m = self.travel, self.velocity, self.shot_mass
-        theta = self.average_adiabatic_index - 1
+        l, v = self.travel, self.velocity
         l_psi = self.l_0 * (1 - self.incompressible_fraction(psi))
 
-        return (self.gas_energy(psi) - 0.5 * theta * self.phi * m * v**2) / (
-            self.S * (l_psi + l)
-        )
+        return self.gas_energy(psi, v) / (self.S * (l_psi + l))
 
     @cached_property
     def shot_pressure(self) -> float:
