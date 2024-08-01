@@ -1,7 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
-from . import MAX_DT
+from . import MAX_DT, DEFAULT_LOAD_DENSITY
+from . import Significance
 from .num import dekker
 from .form_function import FormFunction
 from functools import wraps, cached_property
@@ -76,35 +77,65 @@ class Charge:
     form_function: FormFunction
 
     @classmethod
-    def from_impulse(
+    def from_areal_impulse(
         cls,
         density: float,
         force: float,
-        impulse: float,
+        areal_impulse: float,
         pressure_exponent: float,
         covolume: float,
         adiabatic_index: float,
-        molar_mass: float,
+        gas_molar_mass: float,
         arch_thickness: float,
         form_function: FormFunction,
         n_intg: int,
         acc: float,
-        load_density: float,
+        load_density: float = DEFAULT_LOAD_DENSITY,
+        to: Significance = Significance.FRACTURE,
     ) -> Charge:
         """
-        define a Charge from total impulse. Calls `Charge.I_k` within
-        `ballistics.num.dekker` to numerically solve the burn-rate coefficient
-        from the supplied geometry, impulse, and preessure exponent.
+        define a Charge using areal impulse. Solves the burn-rate coefficient
+        from the supplied geometry, areal_impulse, and preessure exponent, exploiting
+        the property of:
+        ```
+        dP/dt ∝ u -> I ∝ u
+        ```
 
         Parameters
         ----------
-        impulse: float
-            total-pressure impulse until burnout, I_k, in Newton-second.
+        areal_impulse: float
+            areal_impulse per area until specified point, in kg/m-s.
 
         acc, n_intg, load_density: int, float, float
-            see documentation for `Charge.I_k`.
+            see documentation for `Charge.areal_impulse`.
         """
-        pass
+        c_ubr = cls(
+            density=density,
+            force=force,
+            burn_rate_coefficient=1,
+            pressure_exponent=pressure_exponent,
+            covolume=covolume,
+            adiabatic_index=adiabatic_index,
+            gas_molar_mass=gas_molar_mass,
+            arch_thickness=arch_thickness,
+            form_function=form_function,
+        )  # initialize a charge with unitary burn rate
+
+        I_ubr = c_ubr.areal_impulse(
+            n_intg=n_intg, acc=acc, load_density=load_density, to=to
+        )
+        c = cls(
+            density=density,
+            force=force,
+            burn_rate_coefficient=I_ubr / areal_impulse,
+            pressure_exponent=pressure_exponent,
+            covolume=covolume,
+            adiabatic_index=adiabatic_index,
+            gas_molar_mass=gas_molar_mass,
+            arch_thickness=arch_thickness,
+            form_function=form_function,
+        )
+        return c
 
     @cached_property
     def Z_k(self) -> float:
@@ -121,17 +152,20 @@ class Charge:
             / self.arch_thickness
         )
 
-    def I_k(
+    def areal_impulse(
         self,
         n_intg: int,
         acc: float,
-        load_density: float = 0.2e3,
+        load_density: float = DEFAULT_LOAD_DENSITY,
+        to: Significance = Significance.FRACTURE,
     ) -> float:
-        """calculate the total impulse of this propellant, as defined by
-        ```     t_k
-        I_k =   ∫ P_(t) dt,  _k denotes end of combustion point.
+        """calculate the impulse-per-area of this propellant, as:
+        ```     t
+        I =   ∫ P(t) dt
                 0
         ```
+        until the specified endpoint.
+
         Parameters
         ----------
         n_intg: int
@@ -145,12 +179,24 @@ class Charge:
             default value of 0.2 g/cc (200 kg/m^3) is a common choice of loading
             density for experimentation.
 
+        to: `ballistics.Significance`
+            specifies to whence the p-t curve is integrated.
+
         Returns
         -------
-        I_k: float
-            propellant's total impulse.
+        I: float
+            propellant's impulse-per-area up to the specified point. In unit of
+            kg/m-s
 
         """
+        if to == Significance.BURNOUT:
+            I_to = self.Z_k
+        elif to == Significance.FRACTURE:
+            I_to = 1
+        else:
+            raise ValueError(
+                "`to` must be one of `Significance.BURNOUT` or `Significance.FRACTURE`"
+            )
 
         """integrate backwards in time from burnout point to avoid asymptotic
         point at t = 0, then read-off the time and impulse-values as negatives.
@@ -167,9 +213,10 @@ class Charge:
                 charge=self,
                 load_density=load_density,
                 time=0,
-                burnup_fraction=self.Z_k,
-                impulse=0,
+                burnup_fraction=I_to,
+                areal_impulse=0,
             )
+
             while bs_next.pressure > 0:
                 bs_next = self.propagate_rk4(bs_now := bs_next, delta_t)
                 n += 1
@@ -190,11 +237,11 @@ class Charge:
             bomb_state=bs_now, dt=ignition_time - bs_now.time
         )
 
-        return -bs_ignition.impulse
+        return -bs_ignition.areal_impulse
 
     def dt(self, bomb_state: BombState) -> BombDelta:
         P = bomb_state.pressure
-        return BombDelta(d_time=1, d_burnup_fraction=self.dZdt(P), d_impulse=P)
+        return BombDelta(d_time=1, d_burnup_fraction=self.dZdt(P), d_areal_impulse=P)
 
     def propagate_rk4(self, bomb_state: BombState, dt: float) -> BombState:
         s_i = bomb_state.increment
@@ -214,7 +261,7 @@ class BombState:
 
     time: float
     burnup_fraction: float  # Z
-    impulse: float  # I_k
+    areal_impulse: float
 
     def __getattr__(self, item):
         return getattr(self.charge, item)
@@ -236,7 +283,7 @@ class BombState:
             load_density=self.load_density,
             time=self.time + dt,
             burnup_fraction=self.burnup_fraction + d.d_burnup_fraction,
-            impulse=self.impulse + d.d_impulse,
+            areal_impulse=self.areal_impulse + d.d_areal_impulse,
         )
 
 
@@ -244,20 +291,20 @@ class BombState:
 class BombDelta:
     d_time: float
     d_burnup_fraction: float
-    d_impulse: float
+    d_areal_impulse: float
 
     def __mul__(self, scalar: float) -> BombDelta:
         return BombDelta(
             d_time=self.d_time * scalar,
             d_burnup_fraction=self.d_burnup_fraction * scalar,
-            d_impulse=self.d_impulse * scalar,
+            d_areal_impulse=self.d_areal_impulse * scalar,
         )
 
     def __add__(self, other: BombDelta) -> BombDelta:
         return BombDelta(
             d_time=self.d_time + other.d_time,
             d_burnup_fraction=self.d_burnup_fraction + other.d_burnup_fraction,
-            d_impulse=self.d_impulse + other.d_impulse,
+            d_areal_impulse=self.d_areal_impulse + other.d_areal_impulse,
         )
 
     def __rmul__(self, scalar: float) -> BombDelta:

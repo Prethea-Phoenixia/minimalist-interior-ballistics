@@ -5,7 +5,8 @@ from math import pi
 from bisect import insort
 from functools import wraps, cached_property
 
-from . import START, PEAK_PRESSURE, BURNOUT, MUZZLE, INTERMEDIATE, STEP
+from . import START, INTERMEDIATE, STEP
+from . import Significance
 from . import MAX_DT
 
 from .num import dekker, gss, FIND_MAX
@@ -62,7 +63,7 @@ def mark_max_pressure(state_generating_func: Callable) -> Callable:
         )
 
         s_pmax = self.propagate_rk4(
-            state=s_pmax, dt=time_pmax - s_pmax.time, marker=PEAK_PRESSURE
+            state=s_pmax, dt=time_pmax - s_pmax.time, marker=Significance.PEAK_PRESSURE
         )
         insort(states, s_pmax)
 
@@ -222,7 +223,7 @@ class Gun:
             f=time_burnout, x_0=s_now.time, x_1=s_next.time, tol=tol_t
         )[0]
         s_burnout = self.propagate_rk4(
-            state=s_now, dt=burnout_time - s_now.time, marker=BURNOUT
+            state=s_now, dt=burnout_time - s_now.time, marker=Significance.BURNOUT
         )
         states.append(s_burnout)
         return states
@@ -260,7 +261,9 @@ class Gun:
             states.append(state := self.propagate_rk4(state=state, dl=d_travel))
 
         states.append(
-            state := self.propagate_rk4(state=state, dl=d_travel, marker=MUZZLE)
+            state := self.propagate_rk4(
+                state=state, dl=d_travel, marker=Significance.MUZZLE
+            )
         )
 
         return states
@@ -299,7 +302,9 @@ class Gun:
             states.append(state := self.propagate_rk4(state=state, dv=d_velocity))
 
         states.append(
-            state := self.propagate_rk4(state=state, dv=d_velocity, marker=MUZZLE)
+            state := self.propagate_rk4(
+                state=state, dv=d_velocity, marker=Significance.MUZZLE
+            )
         )
 
         return states
