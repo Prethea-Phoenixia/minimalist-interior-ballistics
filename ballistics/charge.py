@@ -289,6 +289,10 @@ class Charge:
 
 @dataclass(frozen=True)
 class BombState:
+    """
+    class describing the state of a ballistic bomb.
+    """
+
     charge: Charge
     load_density: float
     ignition_pressure: float
@@ -324,9 +328,6 @@ class BombState:
 
 @dataclass(frozen=True)
 class BombDelta:
-    """
-    class describing the state of a ballistic bomb.
-    """
 
     d_time: float
     d_burnup_fraction: float
