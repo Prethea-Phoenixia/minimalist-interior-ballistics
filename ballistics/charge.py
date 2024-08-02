@@ -124,7 +124,7 @@ class Charge:
         I_ubr = c_ubr.areal_impulse(
             n_intg=n_intg, acc=acc, load_density=load_density, to=to
         )
-        c = cls(
+        return cls(
             density=density,
             force=force,
             burn_rate_coefficient=I_ubr / areal_impulse,
@@ -135,7 +135,6 @@ class Charge:
             arch_thickness=arch_thickness,
             form_function=form_function,
         )
-        return c
 
     @cached_property
     def Z_k(self) -> float:
