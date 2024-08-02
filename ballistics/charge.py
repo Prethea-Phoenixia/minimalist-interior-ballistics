@@ -324,6 +324,10 @@ class BombState:
 
 @dataclass(frozen=True)
 class BombDelta:
+    """
+    class describing the state of a ballistic bomb.
+    """
+
     d_time: float
     d_burnup_fraction: float
     d_areal_impulse: float
