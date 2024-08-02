@@ -31,9 +31,7 @@ if __name__ == "__main__":
         n_intg=100,
         acc=1e-3,
     )
-    # print(c.burn_rate_coefficient)
 
-    # input()
     wb004p.add_charge(charge=c, mass=5.6)
 
     print(wb004p.prettyprint(wb004p.to_burnout(n_intg=4, acc=1e-3)))

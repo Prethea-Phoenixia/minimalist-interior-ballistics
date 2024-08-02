@@ -23,6 +23,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.gui-scripts]
+design_gun = "ballistics:design_gun"
+
 [project.urls]
 Homepage = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics"
 Issues = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics/issues"

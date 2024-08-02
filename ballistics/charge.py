@@ -1,8 +1,9 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
-from . import MAX_DT, DEFAULT_LOAD_DENSITY
+from . import MAX_DT, DEFAULT_LOAD_DENSITY, DEFAULT_IGNITION_PRESSURE
 from . import Significance
+from . import _g_0
 from .num import dekker
 from .form_function import FormFunction
 from functools import wraps, cached_property
@@ -57,7 +58,7 @@ class Charge:
     arch_thickness: float
         twice the propellant's "web", or the minimum depth the propellant's burn surface
         must recede to complete combustion.
-        see `ballistics.form_function` for more information.
+        see documentation of `ballistics.form_function` for more information.
 
     References
     ----------
@@ -91,6 +92,7 @@ class Charge:
         n_intg: int,
         acc: float,
         load_density: float = DEFAULT_LOAD_DENSITY,
+        ignition_pressure: float = DEFAULT_IGNITION_PRESSURE,
         to: Significance = Significance.FRACTURE,
     ) -> Charge:
         """
@@ -106,7 +108,7 @@ class Charge:
         areal_impulse: float
             areal_impulse per area until specified point, in kg/m-s.
 
-        acc, n_intg, load_density: int, float, float
+        acc, n_intg, load_density, ignition_pressure, to: int, float, float, float, `ballistics.Significance`
             see documentation for `Charge.areal_impulse`.
         """
         c_ubr = cls(
@@ -122,7 +124,11 @@ class Charge:
         )  # initialize a charge with unitary burn rate
 
         I_ubr = c_ubr.areal_impulse(
-            n_intg=n_intg, acc=acc, load_density=load_density, to=to
+            n_intg=n_intg,
+            acc=acc,
+            load_density=load_density,
+            ignition_pressure=ignition_pressure,
+            to=to,
         )
         return cls(
             density=density,
@@ -156,12 +162,14 @@ class Charge:
         n_intg: int,
         acc: float,
         load_density: float = DEFAULT_LOAD_DENSITY,
+        ignition_pressure: float = DEFAULT_IGNITION_PRESSURE,
         to: Significance = Significance.FRACTURE,
     ) -> float:
         """calculate the impulse-per-area of this propellant, as:
-        ```     t
+        ```
+              t
         I =   ∫ P(t) dt
-                0
+              0
         ```
         until the specified endpoint.
 
@@ -176,10 +184,36 @@ class Charge:
         load_density: float
             the density to which the test bomb is loaded with propellant. The
             default value of 0.2 g/cc (200 kg/m^3) is a common choice of loading
-            density for experimentation.
+            density for characterizing propellant performance.
+
+        ignition_pressure: float
+            the pressure developed by the ignition charge, usually fine-grained
+            black powder, which is taken as having fully burnt and inert during the
+            characterization of propellant. The default value is the typical ignition
+            pressure (of 100 kgf/sqcm) ascribed to by Chinese standardized testing
+            procedures.
 
         to: `ballistics.Significance`
-            specifies to whence the p-t curve is integrated.
+            specifies to whence the p-t curve is integrated. Accepts either
+            `ballistics.Significance.BURNOUT` or `ballistics.Significance.FRACTURE`.
+            This concerns propellants of the multiple-perforated type, for which period
+            testing methodology only considers the combustion up to the fracture point.
+
+        Notes
+        -----
+        In propellant development, the characterization of propellant performance is
+        typically accomplished by a "closed-bomb" test, in which a sturdy pressure vessel
+        is loaded to a certain weight-of-charge-per-volume, known as the "load density",
+        then a small amount of ignition charge is used to initiate its combustion.
+        Propellant performance parameters can then be derived via data reduction of the
+        measured pressure-time curve.
+        The default values reflects Chinese standardized testing methodology as of 1970s
+        and 1980s.
+
+        References
+        ----------
+        - **[1]**第五机械工业部第二〇四研究所，火炸药手册（增订本）第三分册 火炸药分析
+        和测试，第五章第一节（1981.6)
 
         Returns
         -------
@@ -189,9 +223,9 @@ class Charge:
 
         """
         if to == Significance.BURNOUT:
-            I_to = self.Z_k
+            Z_to = self.Z_k
         elif to == Significance.FRACTURE:
-            I_to = 1
+            Z_to = 1
         else:
             raise ValueError(
                 "`to` must be one of `Significance.BURNOUT` or `Significance.FRACTURE`"
@@ -201,22 +235,23 @@ class Charge:
         point at t = 0, then read-off the time and impulse-values as negatives.
         """
         n = 0
-        delta_t = -MAX_DT
+        delta_t = MAX_DT
         rough_ttb = 0.0
         while n < n_intg:
-            if rough_ttb < 0:
+            if rough_ttb > 0:
                 delta_t = rough_ttb / n_intg
             n = 0
 
             bs_next = BombState(
                 charge=self,
                 load_density=load_density,
+                ignition_pressure=ignition_pressure,
                 time=0,
-                burnup_fraction=I_to,
+                burnup_fraction=0,
                 areal_impulse=0,
             )
 
-            while bs_next.pressure > 0:
+            while bs_next.burnup_fraction < Z_to:
                 bs_next = self.propagate_rk4(bs_now := bs_next, delta_t)
                 n += 1
 
@@ -225,18 +260,17 @@ class Charge:
         tol_t = rough_ttb * acc
 
         def time_burnup(time: float) -> float:
-            return self.propagate_rk4(
-                bomb_state=bs_now, dt=time - bs_now.time
-            ).burnup_fraction
+            return (
+                self.propagate_rk4(
+                    bomb_state=bs_now, dt=time - bs_now.time
+                ).burnup_fraction
+                - Z_to
+            )
 
-        ignition_time = dekker(
-            f=time_burnup, x_0=bs_now.time, x_1=bs_next.time, tol=tol_t
-        )[0]
-        bs_ignition = self.propagate_rk4(
-            bomb_state=bs_now, dt=ignition_time - bs_now.time
-        )
+        time_to = dekker(f=time_burnup, x_0=bs_now.time, x_1=bs_next.time, tol=tol_t)[0]
+        bs_to = self.propagate_rk4(bomb_state=bs_now, dt=time_to - bs_now.time)
 
-        return -bs_ignition.areal_impulse
+        return bs_to.areal_impulse
 
     def dt(self, bomb_state: BombState) -> BombDelta:
         P = bomb_state.pressure
@@ -257,6 +291,7 @@ class Charge:
 class BombState:
     charge: Charge
     load_density: float
+    ignition_pressure: float
 
     time: float
     burnup_fraction: float  # Z
@@ -267,19 +302,20 @@ class BombState:
 
     @cached_property
     def volume_burnup_fraction(self) -> float:
-        return self.psi_c(max(self.burnup_fraction, 0))
+        return self.psi_c(min(self.burnup_fraction, self.Z_k))
 
     @cached_property
     def pressure(self) -> float:
         psi = self.volume_burnup_fraction
         return (self.force * psi) / (
             1 / self.load_density - (1 - psi) / self.density - self.covolume * psi
-        )
+        ) + self.ignition_pressure
 
     def increment(self, d: BombDelta, dt: float) -> BombState:
         return BombState(
             charge=self.charge,
             load_density=self.load_density,
+            ignition_pressure=self.ignition_pressure,
             time=self.time + dt,
             burnup_fraction=self.burnup_fraction + d.d_burnup_fraction,
             areal_impulse=self.areal_impulse + d.d_areal_impulse,

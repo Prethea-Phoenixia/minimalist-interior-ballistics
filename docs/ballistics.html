@@ -25,7 +25,7 @@
             <h2>Submodules</h2>
             <ul>
                     <li><a href="ballistics/charge.html">charge</a></li>
-                    <li><a href="ballistics/design.html">design</a></li>
+                    <li><a href="ballistics/design_gun.html">design_gun</a></li>
                     <li><a href="ballistics/form_function.html">form_function</a></li>
                     <li><a href="ballistics/gun.html">gun</a></li>
                     <li><a href="ballistics/num.html">num</a></li>
@@ -66,6 +66,9 @@
             </li>
             <li>
                     <a class="variable" href="#DEFAULT_LOAD_DENSITY">DEFAULT_LOAD_DENSITY</a>
+            </li>
+            <li>
+                    <a class="variable" href="#DEFAULT_IGNITION_PRESSURE">DEFAULT_IGNITION_PRESSURE</a>
             </li>
     </ul>
 
@@ -110,8 +113,10 @@ calculating and solving interior ballistic problems.</p>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="n">START</span> <span class="o">=</span> <span class="s2">&quot;start&quot;</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="n">STEP</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="n">MAX_DT</span> <span class="o">=</span> <span class="mf">10e-3</span>  <span class="c1"># 10ms</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="n">DEFAULT_LOAD_DENSITY</span> <span class="o">=</span> <span class="mf">0.2e3</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="n">_g_0</span> <span class="o">=</span> <span class="mf">9.806</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="n">MAX_DT</span> <span class="o">=</span> <span class="mf">10e-3</span>  <span class="c1"># 10ms</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="n">DEFAULT_LOAD_DENSITY</span> <span class="o">=</span> <span class="mf">0.2e3</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="n">DEFAULT_IGNITION_PRESSURE</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">_g_0</span> <span class="o">/</span> <span class="mf">1e-4</span>
 </span></pre></div>
 
 
@@ -254,6 +259,18 @@ calculating and solving interior ballistic problems.</p>
         
     </div>
     <a class="headerlink" href="#DEFAULT_LOAD_DENSITY"></a>
+    
+    
+
+                </section>
+                <section id="DEFAULT_IGNITION_PRESSURE">
+                    <div class="attr variable">
+            <span class="name">DEFAULT_IGNITION_PRESSURE</span>        =
+<span class="default_value">9805999.999999998</span>
+
+        
+    </div>
+    <a class="headerlink" href="#DEFAULT_IGNITION_PRESSURE"></a>
     
     
 
