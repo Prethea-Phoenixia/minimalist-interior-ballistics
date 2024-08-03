@@ -18,6 +18,7 @@ if __name__ == "__main__":
     )
     ff = single_perf(arch_width=0.17e-2, length=26e-2)
 
+    # @
     c = Charge.from_areal_impulse(
         density=1600,
         force=980000,
