@@ -5,7 +5,6 @@ from math import pi
 from bisect import insort
 from functools import wraps, cached_property
 
-from . import START, INTERMEDIATE, STEP
 from . import Significance
 from . import MAX_DT
 
@@ -82,6 +81,7 @@ class Gun:
     chamber_volume: float
     loss_fraction: float = 0.05
     start_pressure: float = 30e6
+    ignition_presure: float = 10e6
 
     def __post_init__(self):
         self.charges = []
@@ -206,7 +206,7 @@ class Gun:
                 travel=0.0,
                 velocity=0.0,
                 burnup_fractions=Z_c0,
-                marker=START,
+                marker=Significance.START,
             )
             while burnout(s_next) < 0:
                 states.append(s_now := s_next)
@@ -377,26 +377,36 @@ class Gun:
         return dt / dt.d_velocity
 
     def propagate_rk4(
-        self, state: State, dt=..., dl=..., dv=..., marker: str = STEP
+        self,
+        state: State,
+        dt=...,
+        dl=...,
+        dv=...,
+        marker: Significance = Significance.STEP,
     ) -> State:
         s_i = state.increment
 
         if dt != ...:
-            df, dx, d_arg = self.dt, dt, "dt"
+            df, dx = self.dt, dt
         elif dl != ...:
-            df, dx, d_arg = self.dl, dl, "dl"
+            df, dx = self.dl, dl
         elif dv != ...:
-            df, dx, d_arg = self.dv, dv, "dv"
+            df, dx = self.dv, dv
         else:
             raise ValueError("at least one of `dv, dt, dl` must be specified.")
 
-        def generate_dargs(value: float) -> Dict[str, float]:
-            return {d_arg: value}
+        def generate_dargs(value: float):
+            return {
+                "dt": value if dt != ... else ...,
+                "dl": value if dl != ... else ...,
+                "dv": value if dv != ... else ...,
+            }
 
+        intermediate: Dict[str, Significance] = {"marker": Significance.INTERMEDIATE}
         k1 = df(state)
-        k2 = df(s_i(d=0.5 * k1 * dx, **generate_dargs(0.5 * dx), marker=INTERMEDIATE))
-        k3 = df(s_i(d=0.5 * k2 * dx, **generate_dargs(0.5 * dx), marker=INTERMEDIATE))
-        k4 = df(s_i(d=k3 * dx, **generate_dargs(dx), marker=INTERMEDIATE))
+        k2 = df(s_i(d=0.5 * k1 * dx, **{**generate_dargs(0.5 * dx), **intermediate}))
+        k3 = df(s_i(d=0.5 * k2 * dx, **{**generate_dargs(0.5 * dx), **intermediate}))
+        k4 = df(s_i(d=k3 * dx, **{**generate_dargs(dx), **intermediate}))
         return s_i(
             d=(k1 + k2 * 2 + k3 * 2 + k4) * dx / 6, **generate_dargs(dx), marker=marker
         )

@@ -2,6 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Tuple, TYPE_CHECKING
 from functools import cached_property
+from . import Significance
 
 if TYPE_CHECKING:
     from .gun import Gun
@@ -18,7 +19,7 @@ class State:
     travel: float
     velocity: float
     burnup_fractions: Tuple[float, ...]
-    marker: str
+    marker: Significance
 
     def __getattr__(self, item):
         return getattr(self.gun, item)
@@ -70,7 +71,9 @@ class State:
             1 + self.total_charge_mass / (2 * (1 + self.loss_fraction) * self.shot_mass)
         )
 
-    def increment(self, d: Delta, marker: str, dt=..., dl=..., dv=...) -> State:
+    def increment(
+        self, d: Delta, marker: Significance, dt=..., dl=..., dv=...
+    ) -> State:
         if dt != ...:
             dx, d_attr = dt, "time"
         elif dl != ...:

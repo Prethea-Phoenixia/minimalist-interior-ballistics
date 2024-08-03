@@ -11,11 +11,10 @@ class Significance(Enum):
     FRACTURE = "fracture"
     BURNOUT = "burnout"
     MUZZLE = "muzzle"
+    INTERMEDIATE = "x"
+    START = "start"
+    STEP = ""
 
-
-INTERMEDIATE = "x"
-START = "start"
-STEP = ""
 
 _g_0 = 9.806
 MAX_DT = 10e-3  # 10ms
