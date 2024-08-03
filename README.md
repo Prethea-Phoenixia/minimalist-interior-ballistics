@@ -13,6 +13,11 @@ Currently still in feature development phase.
     - open a command prompt or shell instance anywhere and run `python -m pip install minimalist-interior-ballistics --upgrade`  
 This will set the package up to be used from within your Python script. Alternatively, run the included GUI tool by executing `design_gun` from command prompt or shell anywhere.
 
+## Documentation:
+API level documentation is available, via:
+- **[Github Page](https://prethea-phoenixia.github.io/minimalist-interior-ballistics/index.html)**.
+- Clone the repository and open `index.html` in [docs](docs) folder.
+generated with [pdoc](https://pdoc.dev/).
 
 ## Contact the Author:
 Jinpeng Zhai, Email: 914962409@qq.com
