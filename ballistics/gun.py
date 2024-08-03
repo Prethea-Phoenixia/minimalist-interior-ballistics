@@ -81,7 +81,7 @@ class Gun:
     chamber_volume: float
     loss_fraction: float = 0.05
     start_pressure: float = 30e6
-    ignition_presure: float = 10e6
+    ignition_pressure: float = 10e6
 
     def __post_init__(self):
         self.charges = []
@@ -403,6 +403,7 @@ class Gun:
             }
 
         intermediate: Dict[str, Significance] = {"marker": Significance.INTERMEDIATE}
+
         k1 = df(state)
         k2 = df(s_i(d=0.5 * k1 * dx, **{**generate_dargs(0.5 * dx), **intermediate}))
         k3 = df(s_i(d=0.5 * k2 * dx, **{**generate_dargs(0.5 * dx), **intermediate}))
