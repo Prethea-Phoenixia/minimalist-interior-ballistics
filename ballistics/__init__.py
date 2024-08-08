@@ -7,12 +7,13 @@ from enum import Enum
 
 
 class Significance(Enum):
+    IGNITION = "ignition"
+    START = "shot start"
     PEAK_PRESSURE = "max pressure"
     FRACTURE = "fracture"
     BURNOUT = "burnout"
     MUZZLE = "muzzle"
     INTERMEDIATE = "x"
-    START = "start"
     STEP = ""
 
 

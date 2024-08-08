@@ -24,7 +24,7 @@ class Charge:
     force: float
         propellant force, or the work done by a kilogram of propellant gas (as
         ideal gas), when expanding from its isochoric adiabatic flame temperature
-        to absolute zero, in an isentropic manner (see [1]). Unit in J/kg, or (m/s)^2.
+        to absolute zero, in an isentropic manner. Unit in J/kg, or (m/s)^2.
     burn_rate_coefficient, pressure_exponent: float
         the two coefficients of the Saint Robert's (Viellie's) burn rate law:
         ```
@@ -62,7 +62,7 @@ class Charge:
 
     References
     ----------
-    - **[1]** Xu, Fu-ming. (2013). On The Definition of Propellant Force.
+    - **[English]** Xu, Fu-ming. (2013). On The Definition of Propellant Force.
     Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.
 
     """
@@ -212,7 +212,7 @@ class Charge:
 
         References
         ----------
-        - **[1]**第五机械工业部第二〇四研究所，火炸药手册（增订本）第三分册 火炸药分析
+        - **[中文]** 第五机械工业部第二〇四研究所，火炸药手册（增订本）第三分册 火炸药分析
         和测试，第五章第一节（1981.6)
 
         Returns
@@ -234,13 +234,12 @@ class Charge:
         """integrate backwards in time from burnout point to avoid asymptotic
         point at t = 0, then read-off the time and impulse-values as negatives.
         """
-        n = 0
-        delta_t = MAX_DT
-        rough_ttb = 0.0
+        n, delta_t, rough_ttb = 0, MAX_DT, 0.0
+
         while n < n_intg:
             if rough_ttb > 0:
                 delta_t = rough_ttb / n_intg
-            n = 0
+            n = 1
 
             bs_next = BombState(
                 charge=self,
@@ -252,7 +251,8 @@ class Charge:
             )
 
             while bs_next.burnup_fraction < Z_to:
-                bs_next = self.propagate_rk4(bs_now := bs_next, delta_t)
+                bs_now = bs_next
+                bs_next = self.propagate_rk4(bomb_state=bs_now, dt=delta_t)
                 n += 1
 
             rough_ttb = bs_next.time

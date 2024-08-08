@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Dict
 from dataclasses import dataclass
 from math import pi
+from functools import cached_property
 
 CYLINDER = "cylinder"
 ROSETTE = "rosette"
@@ -9,7 +10,7 @@ HEXAGON = "hexagon"
 ROUNDED_HEXAGON = "rounded hexagon"
 
 
-@dataclass
+@dataclass(frozen=True)
 class FormFunction:
     """form function relates the volumetric burnup-ratio to the linear (depth-wise)
     burnup ratio, usually denoted psi and Z, respectively.
@@ -23,14 +24,7 @@ class FormFunction:
         psi(Z) = chi * Z * (1 + labda * Z + mu * Z**2), Z in [0, 1]
         ```
         This is exact for all shapes supported in this module, pre-burnout.
-    chi_s, labda_s : float
-        coefficient of the shape function after propellant fracture, in the form of
-        a 2nd-order polynomial:
-        ```
-        psi(Z) = chi_s * Z * (1 + labda * Z), Z in [1, Z_k]
-        ```
-        This is only approximate, fitted to result in the correct volume and start/end
-        points.
+
     Z_k : float
         denotes the end of combustion point as expressed in linear (depth-wise) burnup
         ratio. This is always 1.0 except for multiple-perforated grains, where small
@@ -39,20 +33,60 @@ class FormFunction:
         behavior is approximated with simple shapes of equivalent volume, and Z_k is
         extended accordingly to greater than unity.
 
+    Attributes
+    ----------
+    psi_s: float
+        the volumetric burnup at the time of propellant fracture.
+    chi_s, labda_s : float
+        coefficient of the shape function after propellant fracture, in the form of
+        a 2nd-order polynomial:
+        ```
+        psi(Z) = chi_s * Z * (1 + labda * Z), Z in [1, Z_k],
+        s.t. psi(1) = psi_s and psi(Z_k) = 1
+        ```
+        This is an approximate fit to result in the correct volume burnup at fracture
+        and burnout points.
+
+    Notes
+    -----
+    Subscripts are kept in-line with those used by M.E.Serebryakov and in common
+    circulation within Soviet-sphere ballistic community, which was the convention
+    in effect for interior balistics works of the 1980s in China. `k` (likely comes from
+    *komplett*, "complete, with everything included" in German) is used to indicate
+    the point of complete combustion, whereas `s` (for various Germanic word meaning
+    "sliver" or "splinter", *schiefer* or *splitter*) denotes values at fracture point.
+
+    References
+    ----------
+    - **[English]** Mekrassoff, V.A., An Abridged Translation of
+    M.E.Serebryakov's "Interior Ballistics", originally published in Moscow, 1949,
+    *Defense Technical Information Center*, AD0059622,
+    [available online](https://apps.dtic.mil/sti/tr/pdf/AD0059622.pdf).
+    - **[中文]** 张小兵，金志明（2014）枪炮内弹道学，北京理工大学出版社，第一章1.3小节
     """
 
     chi: float
     labda: float
     mu: float
     Z_k: float = 1.0
-    chi_s: float = 0
-    labda_s: float = 0
 
-    def __post_init__(self):
+    @cached_property
+    def psi_s(self):
+        return self(1)
+
+    @cached_property
+    def chi_s(self) -> float:
         if self.Z_k > 1:
-            psi_s = self(1)
-            self.chi_s = (1 - psi_s * self.Z_k**2) / (self.Z_k - self.Z_k**2)
-            self.labda_s = psi_s / self.chi_s - 1
+            return (1 - self.psi_s * self.Z_k**2) / (self.Z_k - self.Z_k**2)
+        else:
+            return 0
+
+    @cached_property
+    def labda_s(self) -> float:
+        if self.Z_k > 1:
+            return self.psi_s / self.chi_s - 1
+        else:
+            return 0
 
     def __call__(self, Z: float) -> float:
         if 0 <= Z <= 1:  # pre-fracture

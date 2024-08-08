@@ -20,11 +20,13 @@ class State:
     velocity: float
     burnup_fractions: Tuple[float, ...]
     marker: Significance
+    is_started: bool = True
 
     def __getattr__(self, item):
         return getattr(self.gun, item)
 
     def __lt__(self, other: State):
+        # this enables sorting and bisect operation with array of `ballistics.state.State`.
         return self.time < other.time
 
     @cached_property
@@ -51,7 +53,7 @@ class State:
         l, v = self.travel, self.velocity
         l_psi = self.l_0 * (1 - self.incompressible_fraction(psi))
 
-        return self.gas_energy(psi, v) / (self.S * (l_psi + l))
+        return self.ignition_pressure + self.gas_energy(psi, v) / (self.S * (l_psi + l))
 
     @cached_property
     def shot_pressure(self) -> float:
@@ -96,6 +98,7 @@ class State:
                 Z + dZ for Z, dZ in zip(self.burnup_fractions, d.d_burnup_fractions)
             ),
             marker=marker,
+            is_started=self.is_started,
         )
 
 

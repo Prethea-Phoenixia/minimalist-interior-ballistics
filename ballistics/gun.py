@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Callable, Any, Optional, Dict, Union, Tuple
+from typing import List, Callable, Any, Optional, Dict, Union, Tuple, Iterable
 from math import pi
 from bisect import insort
 from functools import wraps, cached_property
@@ -84,8 +84,7 @@ class Gun:
     ignition_pressure: float = 10e6
 
     def __post_init__(self):
-        self.charges = []
-        self.charge_masses = []
+        self._charges = {}
 
     @cached_property
     def S(self):
@@ -95,9 +94,16 @@ class Gun:
     def l_0(self):
         return self.chamber_volume / self.S
 
+    @property
+    def charge_masses(self) -> Iterable[float]:
+        return self._charges.values()
+
+    @property
+    def charges(self) -> Iterable[Charge]:
+        return self._charges.keys()
+
     def add_charge(self, charge: Charge, mass: float):
-        self.charges.append(charge)
-        self.charge_masses.append(mass)
+        self._charges[charge] = mass
         self.total_charge_mass = sum(self.charge_masses)
 
         # calculation variables
@@ -105,25 +111,50 @@ class Gun:
             1 + self.loss_fraction + self.total_charge_mass / (3 * self.shot_mass)
         )
 
-    def solve_bomb(self, tol: float) -> Tuple[float, ...]:
-        initial_burnup_fractions = []
-        for c, m in zip(self.charges, self.charge_masses):
-            V_c0 = self.chamber_volume * (m / self.total_charge_mass)
-            P_0 = self.start_pressure
-            f, rho_p, alpha = c.force, c.density, c.covolume
-            Delta = m / V_c0
-            psi_0 = (Delta**-1 - rho_p**-1) / (f / P_0 + alpha - rho_p**-1)
+    def to_start(self, n_intg: int, acc: float) -> List[State]:
 
-            if f * Delta / (1 - alpha * Delta) < P_0:
-                raise ValueError(
-                    "Charge cannot overcome starting pressure at complete combustion."
-                )
-            initial_burnup_fractions.append(
-                dekker(
-                    f=lambda z: c.form_function(z) - psi_0, x_0=0.0, x_1=1.0, tol=tol
-                )[0]
+        delta_t, rough_ttb = MAX_DT, 0.0
+        states: List[State] = []
+
+        while len(states) < n_intg:
+            if rough_ttb > 0:
+                delta_t = rough_ttb / n_intg
+
+            s_next = State(
+                gun=self,
+                time=0,
+                travel=0,
+                velocity=0,
+                burnup_fractions=tuple(0 for _ in self.charges),
+                marker=Significance.IGNITION,
+                is_started=False,
             )
-        return tuple(initial_burnup_fractions)
+
+            states = [s_next]
+
+            while s_next.average_pressure < self.start_pressure:
+                states.append(s_now := s_next)
+                s_next = self.propagate_rk4(state=s_now, dt=delta_t)
+
+            rough_ttb = s_next.time
+
+        def state_at_time(
+            time: float, marker: Significance = Significance.INTERMEDIATE
+        ) -> State:
+            return self.propagate_rk4(state=s_now, dt=time - s_now.time, marker=marker)
+
+        start_time = dekker(
+            f=lambda t: state_at_time(t).average_pressure - self.start_pressure,
+            x_0=s_now.time,
+            x_1=s_next.time,
+            tol=rough_ttb * acc,
+        )[0]
+
+        s_start = state_at_time(time=start_time, marker=Significance.IGNITION)
+
+        states.append(s_start)
+
+        return states
 
     def gas_energy(self, psi: Tuple[float, ...], v: float) -> float:
 
@@ -132,7 +163,11 @@ class Gun:
             w / c.gas_molar_mass * psi_c
             for c, w, psi_c in zip(self.charges, self.charge_masses, psi)
         )
-        average_Cp, average_Cv = 0, 0
+
+        if molar_sum == 0.0:
+            return 0
+
+        average_Cp, average_Cv = 0.0, 0.0
         for c, w, psi_c in zip(self.charges, self.charge_masses, psi):
             adiabatic_index = c.adiabatic_index
             molar_fraction = (w / c.gas_molar_mass * psi_c) / molar_sum
@@ -146,7 +181,7 @@ class Gun:
         ) - (0.5 * theta * self.phi * self.shot_mass * v**2)
 
     def incompressible_fraction(self, psi: Tuple[float, ...]) -> float:
-        i_f = 0
+        i_f = 0.0
         for c, w, psi_c in zip(self.charges, self.charge_masses, psi):
             i_f += (1 - psi_c) / c.density + c.covolume * psi_c * (
                 (w / self.chamber_volume)
@@ -185,7 +220,8 @@ class Gun:
         is called to numerically find the burnout point to an accuracy of stepsize times
         `acc`.
         """
-        Z_c0 = self.solve_bomb(tol=acc)
+        pre_start_states = self.to_start(n_intg=n_intg, acc=acc)
+        Z_c0 = pre_start_states[-1].burnup_fractions
 
         def burnout(state: State) -> float:
             if sum(Z - c.Z_k for Z, c in zip(state.burnup_fractions, self.charges)) < 0:
@@ -214,13 +250,11 @@ class Gun:
 
             rough_ttb = s_next.time
 
-        tol_t = rough_ttb * acc
-
         def time_burnout(time: float) -> float:
             return burnout(self.propagate_rk4(state=s_now, dt=time - s_now.time))
 
         burnout_time = dekker(
-            f=time_burnout, x_0=s_now.time, x_1=s_next.time, tol=tol_t
+            f=time_burnout, x_0=s_now.time, x_1=s_next.time, tol=rough_ttb * acc
         )[0]
         s_burnout = self.propagate_rk4(
             state=s_now, dt=burnout_time - s_now.time, marker=Significance.BURNOUT
@@ -310,7 +344,21 @@ class Gun:
         return states
 
     @staticmethod
-    def prettyprint(states: List[State]) -> str:
+    def prettyprint(
+        states: List[State],
+        *args,
+        headers=(
+            "significance",
+            "time\nms",
+            "travel\nm",
+            "velocity\nm/s",
+            "breech\npressure\nMPa",
+            "average\npressure\nMPa",
+            "shot\npressure\nMPa",
+            "volume\nburnup\nfractions",
+        ),
+        **kwargs,
+    ) -> str:
         """
         generates a plain, tabulated view of data for a list of
         `ballistics.state.State` objects.
@@ -323,11 +371,16 @@ class Gun:
         -------
         str
             generated using `tabulate.tabulate()`
+
+        Notes
+        -----
+        see documentation for [tabulate.tabulate](https://pypi.org/project/tabulate/)
+        for information on additional arguments.
         """
         return tabulate(
             [
                 (
-                    state.marker,
+                    state.marker.value,
                     state.time * 1e3,
                     state.travel,
                     state.velocity,
@@ -338,16 +391,8 @@ class Gun:
                 )
                 for state in states
             ],
-            headers=(
-                "significance",
-                "time\nms",
-                "travel\nm",
-                "velocity\nm/s",
-                "breech\npressure\nMPa",
-                "average\npressure\nMPa",
-                "shot\npressure\nMPa",
-                "volume\nburnup\nfractions",
-            ),
+            *args,
+            **{**{"headers": headers}, **kwargs},  # feeds additional arguments
         )
 
     def dt(self, state: State) -> Delta:
@@ -358,8 +403,10 @@ class Gun:
         )
         return Delta(
             d_time=1,
-            d_travel=state.velocity,
-            d_velocity=self.S * P / (self.phi * self.shot_mass),
+            d_travel=state.velocity if state.is_started else 0,
+            d_velocity=(
+                self.S * P / (self.phi * self.shot_mass) if state.is_started else 0
+            ),
             d_burnup_fractions=dZ,
         )
 
