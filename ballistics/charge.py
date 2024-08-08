@@ -1,15 +1,10 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
 from . import MAX_DT, DEFAULT_LOAD_DENSITY, DEFAULT_IGNITION_PRESSURE
 from . import Significance
-from . import _g_0
 from .num import dekker
 from .form_function import FormFunction
-from functools import wraps, cached_property
-
-if TYPE_CHECKING:
-    from .gun import Gun
+from functools import cached_property
 
 
 @dataclass(frozen=True)

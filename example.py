@@ -1,5 +1,5 @@
 from ballistics.gun import Gun
-from ballistics.form_function import single_perf, multi_perf
+from ballistics.form_function import single_perf
 from ballistics.charge import Charge
 
 
