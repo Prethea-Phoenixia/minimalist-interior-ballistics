@@ -3,11 +3,14 @@ from typing import Dict
 from dataclasses import dataclass
 from math import pi
 from functools import cached_property
+from enum import Enum
 
-CYLINDER = "cylinder"
-ROSETTE = "rosette"
-HEXAGON = "hexagon"
-ROUNDED_HEXAGON = "rounded hexagon"
+
+class MultiPerfShape(Enum):
+    CYLINDER = "cylinder"
+    ROSETTE = "rosette"
+    HEXAGON = "hexagon"
+    ROUNDED_HEXAGON = "rounded hexagon"
 
 
 @dataclass(frozen=True)
@@ -47,6 +50,16 @@ class FormFunction:
         This is an approximate fit to result in the correct volume burnup at fracture
         and burnout points.
 
+
+    Methods
+    -------
+    non_perf(length, width, height)
+        classmethod that generates a form function for non-perforated propellant shapes
+    single_perf(arch_width, height)
+        classmethod that generates a form function for single-perforated propellant shapes
+    multi_perf(arch_width, perforation_diameter, height, n_perforations, shape)
+        classmethod that generates a form function for multiple-perforated propellant shapes
+
     Notes
     -----
     Subscripts are kept in-line with those used by M.E.Serebryakov and in common
@@ -55,6 +68,7 @@ class FormFunction:
     *komplett*, "complete, with everything included" in German) is used to indicate
     the point of complete combustion, whereas `s` (for various Germanic word meaning
     "sliver" or "splinter", *schiefer* or *splitter*) denotes values at fracture point.
+
 
     References
     ----------
@@ -104,83 +118,115 @@ class FormFunction:
 
         raise ValueError(f"sigma(Z) is defined in [0, {self.Z_k}]")
 
+    @classmethod
+    def non_perf(cls, length: float, width: float, height: float) -> FormFunction:
+        """
+        shape functions that describes propellant that can be described as either:
+        - **right square-prism**, commonly described as stick, tape or flake.
+        - **right cylinder**, including those that are elliptic.
+        - **sphere**, including those that are oblonged.
 
-def non_perf(length: float, width: float, height: float) -> FormFunction:
-    # sort values in ascending order
-    e_1, b, c = (0.5 * v for v in sorted([length, width, height]))
-    alpha, beta = e_1 / b, e_1 / c
-
-    return FormFunction(
-        chi := 1 + alpha + beta,
-        labda=-(alpha + beta + alpha * beta) / chi,
-        mu=alpha * beta / chi,
-    )
-
-
-def single_perf(length: float, arch_width: float) -> FormFunction:
-    # effectively the case for above where width = +inf
-    e_1, c = (0.5 * v for v in (arch_width, length))
-    beta = e_1 / c
-    return FormFunction(chi=1 + beta, labda=-beta / (1 + beta), mu=0)
+        Parameters
+        ----------
+        length, width, height: float
+            parameters that describes the supplied shape. For each shape, the supplied
+            parameters are interpreted as specifying the below. no particular order is required.
 
 
-def multi_perf(
-    length: float,
-    arch_width: float,
-    perforation_diameter: float,
-    n_perforation: int = 7,
-    shape: str = CYLINDER,
-) -> FormFunction:
+            | shapes                    | parameters interpretation     |
+            | --------------------------| ------------------------------|
+            | right square prism        | length, width & height        |
+            | right (elliptic) cylinder | two axes of the ends & height |
+            | (oblonged) sphere         | three axes of an ellipsoid    |
 
-    d_0 = perforation_diameter
-    e_1, c = 0.5 * arch_width, 0.5 * length
-    beta = e_1 / c
-    n = n_perforation
-    rho_base = e_1 + 0.5 * d_0
+        Notes
+        -----
+        The only real requirement on the shape being described is that it combusts in a
+        self-similar fashion, with the center-of-volume staying constant. The listed
+        shapes *should* cover most shapes that saw adoption as service propellants
+        in the smokeless era.
 
-    # fmt: off
-    perf_dicts: Dict[int, Dict[str, tuple]] = {
-        7: {
-            CYLINDER: (1, 7, 0, 3 * d_0 + 8 * e_1, 0, 0.2956),
-            ROSETTE: (2, 8, 12 * 3**0.5 / pi, d_0 + 4 * e_1, d_0 + 2 * e_1, 0.1547),
-        },
-        14: {ROSETTE: (8 / 3, 47 / 3, 26 * 3**0.5 / pi, d_0 + 4 * e_1, d_0 + 2 * e_1, 0.1547)},
-        19: {
-            ROSETTE: (3, 21, 36 * 3**0.5 / pi, d_0 + 4 * e_1, d_0 + 2 * e_1, 0.1547),
-            CYLINDER: (1, 19, 0, 5 * d_0 + 12 * e_1, 0, 0.3559),
-            HEXAGON: (18 / pi, 19, 18 * (3 * 3**0.5 - 1) / pi, d_0 + 2 * e_1, d_0 + 2 * e_1, 0.1864),
-            ROUNDED_HEXAGON: (3**0.5 + 12 / pi, 19, 3 - 3**0.5 + 12 * (4 * 3**0.5 - 1) / pi, d_0 + 2 * e_1, d_0 + 2 * e_1, 0.1977)
-        },
-    }
-    # fmt: on
+        """
+        # sort values in ascending order
+        e_1, b, c = (0.5 * v for v in sorted([length, width, height]))
+        alpha, beta = e_1 / b, e_1 / c
 
-    try:
-        A, B, C, b, a, rho_ratio = perf_dicts[n_perforation][shape]
-
-    except IndexError:
-        raise ValueError("Supplied perforation and shape information not found.")
-
-    rho = rho_ratio * rho_base
-    Pi = (A * b + B * d_0) / (2 * c)
-    Q = (C * a**2 + A * b**2 - B * d_0**2) / (2 * c) ** 2
-
-    labda = beta * (n - 1 - 2 * Pi) / (Q + 2 * Pi)
-    if labda < 0:
-        raise ValueError(
-            "Short multi-perforated grains will combust regressively, this case is not well modeled.",
+        return cls(
+            chi := 1 + alpha + beta,
+            labda=-(alpha + beta + alpha * beta) / chi,
+            mu=alpha * beta / chi,
         )
 
-    return FormFunction(
-        chi=beta * (Q + 2 * Pi) / Q,
-        labda=labda,
-        mu=beta**2 * (1 - n) / (Q + 2 * Pi),
-        Z_k=(e_1 + rho) / e_1,
-    )
+    @classmethod
+    def single_perf(cls, arch_width: float, height: float) -> FormFunction:
+        # effectively the case for above where width = +inf
+        e_1, c = (0.5 * v for v in (arch_width, height))
+        beta = e_1 / c
+        return cls(chi=1 + beta, labda=-beta / (1 + beta), mu=0)
+
+    @classmethod
+    def multi_perf(
+        cls,
+        arch_width: float,
+        perforation_diameter: float,
+        height: float,
+        n_perforation: int = 7,
+        shape: MultiPerfShape = MultiPerfShape.CYLINDER,
+    ) -> FormFunction:
+
+        d_0 = perforation_diameter
+        e_1, c = 0.5 * arch_width, 0.5 * height
+        beta = e_1 / c
+        n = n_perforation
+        rho_base = e_1 + 0.5 * d_0
+
+        # fmt: off
+        perf_dicts: Dict[int, Dict[MultiPerfShape, tuple]] = {
+            7: {
+                MultiPerfShape.CYLINDER: (1, 7, 0, 3 * d_0 + 8 * e_1, 0, 0.2956),
+                MultiPerfShape.ROSETTE: (2, 8, 12 * 3**0.5 / pi, d_0 + 4 * e_1, d_0 + 2 * e_1, 0.1547),
+            },
+            14: {
+                MultiPerfShape.ROSETTE: (8 / 3, 47 / 3, 26 * 3**0.5 / pi, d_0 + 4 * e_1, d_0 + 2 * e_1, 0.1547)
+            },
+            19: {
+                MultiPerfShape.ROSETTE: (3, 21, 36 * 3**0.5 / pi, d_0 + 4 * e_1, d_0 + 2 * e_1, 0.1547),
+                MultiPerfShape.CYLINDER: (1, 19, 0, 5 * d_0 + 12 * e_1, 0, 0.3559),
+                MultiPerfShape.HEXAGON: (18 / pi, 19, 18 * (3 * 3**0.5 - 1) / pi, d_0 + 2 * e_1, d_0 + 2 * e_1, 0.1864),
+                MultiPerfShape.ROUNDED_HEXAGON: (3**0.5 + 12 / pi, 19, 3 - 3**0.5 + 12 * (4 * 3**0.5 - 1) / pi, d_0 + 2 * e_1, d_0 + 2 * e_1, 0.1977)
+            },
+        }
+        # fmt: on
+
+        try:
+            A, B, C, b, a, rho_ratio = perf_dicts[n_perforation][shape]
+
+        except IndexError:
+            raise ValueError(
+                "Supplied perforation and shape combination not supported."
+            )
+
+        rho = rho_ratio * rho_base
+        Pi = (A * b + B * d_0) / (2 * c)
+        Q = (C * a**2 + A * b**2 - B * d_0**2) / (2 * c) ** 2
+
+        labda = beta * (n - 1 - 2 * Pi) / (Q + 2 * Pi)
+        if labda < 0:
+            raise ValueError(
+                "Short multi-perforated grains will combust regressively, this case is not well modeled.",
+            )
+
+        return cls(
+            chi=beta * (Q + 2 * Pi) / Q,
+            labda=labda,
+            mu=beta**2 * (1 - n) / (Q + 2 * Pi),
+            Z_k=(e_1 + rho) / e_1,
+        )
 
 
 if __name__ == "__main__":
     # print(non_perf(1, 1, 1)(1))
-    f = multi_perf(5.5 * 2, 2, 1)
+    f = FormFunction.multi_perf(5.5 * 2, 2, 1)
     print(f)
     print(1, f(1))
     print(f.Z_k, f(f.Z_k))

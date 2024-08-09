@@ -1,5 +1,5 @@
 from ballistics.gun import Gun
-from ballistics.form_function import single_perf
+from ballistics.form_function import FormFunction
 from ballistics.charge import Charge
 
 
@@ -16,9 +16,8 @@ if __name__ == "__main__":
     wb004p = Gun(
         caliber=100e-3, shot_mass=15.6, chamber_volume=7.985e-3, loss_fraction=0.06
     )
-    ff = single_perf(arch_width=0.17e-2, length=26e-2)
+    ff = FormFunction.single_perf(arch_width=0.17e-2, height=26e-2)
 
-    # @
     c = Charge.from_areal_impulse(
         density=1600,
         force=980000,
