@@ -19,7 +19,7 @@ def dekker(
         convergence criteria, maximum accepted difference between estimate and its
         counterpoint.
     max_it:
-        terminating condition, maximum number of interations before calculation is aborted.
+        terminating condition, maximum number of iterations before calculation is aborted.
 
     Returns
     -------

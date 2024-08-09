@@ -14,8 +14,6 @@ def secant(
     """
     use secant method to solve the zero of a univariate function.
 
-
-
     Parameters
     ----------
     f: Callable[[float], float]
@@ -27,7 +25,7 @@ def secant(
         [-inf, +inf].
     tol: float
         convergence criteria. The algorithm will terminate when the solution for the
-        root does not vary more than abs(tol) in any single iteration.
+        root does not vary more than abs(`tol`) in any single iteration.
     max_it: int
         terminating condition, maximum number of iterations before the calculation
         is aborted.
@@ -38,9 +36,13 @@ def secant(
     ValuError
         if the maximum number of iteration is exceeded.
 
+    Returns
+    -------
+    x_2, x_1: float
+        solution of successive iteration that satisifies |`x_2` - `x_1`| < abs(`tol`).
+
     Notes
     -----
-
     The secant method allows faster convergence on well behaved functions,
     but does not guarantee convergence to a root. it is incumbent upon
     the user to check that the algorithm did not converge to one of the bounds

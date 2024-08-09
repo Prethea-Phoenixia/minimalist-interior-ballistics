@@ -55,6 +55,11 @@ class Charge:
         must recede to complete combustion.
         see documentation of `ballistics.form_function` for more information.
 
+    Attributes
+    ----------
+    Z_k: float
+        cached value from `ballistics.form_function.Z_k`.
+
     References
     ----------
     - **[English]** Xu, Fu-ming. (2013). On The Definition of Propellant Force.

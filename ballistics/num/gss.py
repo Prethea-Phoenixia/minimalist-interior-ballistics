@@ -39,7 +39,7 @@ def gss(
     Returns
     -------
     low_bound, high_bound : float
-        subset interval [low_bound, high_bound] in which the extremum lies.
+        subset interval [`low_bound`, `high_bound`] in which the extremum lies.
 
     Notes
     -----
