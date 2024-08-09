@@ -21,13 +21,12 @@ class FormFunction:
     Parameters
     ----------
     chi, labda, mu : float
-        coefficient of the shpe function before propellant fracture, in the form of
+        coefficient of the shape function before propellant fracture, in the form of
         a 3rd-order polynomial:
         ```
         psi(Z) = chi * Z * (1 + labda * Z + mu * Z**2), Z in [0, 1]
         ```
-        This is exact for all shapes supported in this module, pre-burnout.
-
+        these are considered exact under ideal parallel combustion assumptions.
     Z_k : float
         denotes the end of combustion point as expressed in linear (depth-wise) burnup
         ratio. This is always 1.0 except for multiple-perforated grains, where small
@@ -54,14 +53,18 @@ class FormFunction:
     Methods
     -------
     non_perf(length, width, height)
-        classmethod that generates a form function for non-perforated propellant shapes
+        classmethod that generates a form function for non-perforated propellant shapes.
     single_perf(arch_width, height)
-        classmethod that generates a form function for single-perforated propellant shapes
+        classmethod that generates a form function for single-perforated propellant shapes.
     multi_perf(arch_width, perforation_diameter, height, n_perforations, shape)
-        classmethod that generates a form function for multiple-perforated propellant shapes
+        classmethod that generates a form function for multiple-perforated propellant shapes.
 
     Notes
     -----
+    Form funciton applies not only to propellant geometry described by parameters but
+    also all shapes that are similar. The required parameters are best thought of as
+    characteristic ratios.
+
     Subscripts are kept in-line with those used by M.E.Serebryakov and in common
     circulation within Soviet-sphere ballistic community, which was the convention
     in effect for interior balistics works of the 1980s in China. `k` (likely comes from
@@ -121,16 +124,18 @@ class FormFunction:
     @classmethod
     def non_perf(cls, length: float, width: float, height: float) -> FormFunction:
         """
-        shape functions that describes propellant that can be described as either:
+        form function that describes:
         - **right square-prism**, commonly described as stick, tape or flake.
         - **right cylinder**, including those that are elliptic.
         - **sphere**, including those that are oblonged.
+        shaped propellants.
 
         Parameters
         ----------
         length, width, height: float
             parameters that describes the supplied shape. For each shape, the supplied
-            parameters are interpreted as specifying the below. no particular order is required.
+            parameters are interpreted as specifying the below. no particular order is
+            required.
 
 
             | shapes                    | parameters interpretation     |
@@ -141,10 +146,10 @@ class FormFunction:
 
         Notes
         -----
-        The only real requirement on the shape being described is that it combusts in a
-        self-similar fashion, with the center-of-volume staying constant. The listed
-        shapes *should* cover most shapes that saw adoption as service propellants
-        in the smokeless era.
+        The only real requirement on the shape being described is that it combusts
+        in a self-similar fashion, with the center-of-volume staying constant.
+        The listed shapes *should* cover most shapes that saw adoption as service
+        propellants in the smokeless era.
 
         """
         # sort values in ascending order
@@ -159,6 +164,19 @@ class FormFunction:
 
     @classmethod
     def single_perf(cls, arch_width: float, height: float) -> FormFunction:
+        """
+        form function that describes **right hollow cylinder** shaped propellants,
+        colloquially referred to as tubular grains.
+
+        Parameters
+        ----------
+        arch_width: float
+            the width of the arch, or the distance between the inner and outer
+            surface of the cylinder, also the difference between the radius
+            of the inner and outer surface.
+        height: float
+            the length of the propellant, or the distance between the two ends
+        """
         # effectively the case for above where width = +inf
         e_1, c = (0.5 * v for v in (arch_width, height))
         beta = e_1 / c
@@ -173,6 +191,17 @@ class FormFunction:
         n_perforation: int = 7,
         shape: MultiPerfShape = MultiPerfShape.CYLINDER,
     ) -> FormFunction:
+        """
+        form function that describes multiple perforated propellants of specified shape.
+
+        Parameters
+        ----------
+        arch_width: float
+            the width of the arch, or the distance between/difference between radius
+            the inner and outer surface of the hollow cylinder.
+        height: float
+            the length of the propellant, or the distance between the two ends.
+        """
 
         d_0 = perforation_diameter
         e_1, c = 0.5 * arch_width, 0.5 * height
@@ -225,7 +254,6 @@ class FormFunction:
 
 
 if __name__ == "__main__":
-    # print(non_perf(1, 1, 1)(1))
     f = FormFunction.multi_perf(5.5 * 2, 2, 1)
     print(f)
     print(1, f(1))
