@@ -1,5 +1,5 @@
-from typing import Callable, Tuple
 from math import inf
+from typing import Callable, Tuple
 
 
 def secant(

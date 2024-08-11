@@ -1,10 +1,13 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from . import MAX_DT, DEFAULT_LOAD_DENSITY, DEFAULT_IGNITION_PRESSURE
-from . import Significance
-from .num import dekker
-from .form_function import FormFunction
 from functools import cached_property
+
+from . import (DEFAULT_IGNITION_PRESSURE, DEFAULT_LOAD_DENSITY, MAX_DT,
+               Significance)
+from .bomb_state import BombDelta, BombState
+from .form_function import FormFunction
+from .num import dekker
 
 
 @dataclass(frozen=True)
@@ -285,70 +288,3 @@ class Charge:
         k3 = df(s_i(d=0.5 * k2 * dt, dt=0.5 * dt))
         k4 = df(s_i(d=k3 * dt, dt=dt))
         return s_i(d=(k1 + k2 * 2 + k3 * 2 + k4) * dt / 6, dt=dt)
-
-
-@dataclass(frozen=True)
-class BombState:
-    """
-    class describing the state of a ballistic bomb.
-    """
-
-    charge: Charge
-    load_density: float
-    ignition_pressure: float
-
-    time: float
-    burnup_fraction: float  # Z
-    areal_impulse: float
-
-    def __getattr__(self, item):
-        return getattr(self.charge, item)
-
-    @cached_property
-    def volume_burnup_fraction(self) -> float:
-        return self.psi_c(min(self.burnup_fraction, self.Z_k))
-
-    @cached_property
-    def pressure(self) -> float:
-        psi = self.volume_burnup_fraction
-        return (self.force * psi) / (
-            1 / self.load_density - (1 - psi) / self.density - self.covolume * psi
-        ) + self.ignition_pressure
-
-    def increment(self, d: BombDelta, dt: float) -> BombState:
-        return BombState(
-            charge=self.charge,
-            load_density=self.load_density,
-            ignition_pressure=self.ignition_pressure,
-            time=self.time + dt,
-            burnup_fraction=self.burnup_fraction + d.d_burnup_fraction,
-            areal_impulse=self.areal_impulse + d.d_areal_impulse,
-        )
-
-
-@dataclass(frozen=True)
-class BombDelta:
-
-    d_time: float
-    d_burnup_fraction: float
-    d_areal_impulse: float
-
-    def __mul__(self, scalar: float) -> BombDelta:
-        return BombDelta(
-            d_time=self.d_time * scalar,
-            d_burnup_fraction=self.d_burnup_fraction * scalar,
-            d_areal_impulse=self.d_areal_impulse * scalar,
-        )
-
-    def __add__(self, other: BombDelta) -> BombDelta:
-        return BombDelta(
-            d_time=self.d_time + other.d_time,
-            d_burnup_fraction=self.d_burnup_fraction + other.d_burnup_fraction,
-            d_areal_impulse=self.d_areal_impulse + other.d_areal_impulse,
-        )
-
-    def __rmul__(self, scalar: float) -> BombDelta:
-        return self * scalar
-
-    def __truediv__(self, scalar: float) -> BombDelta:
-        return self * (1 / scalar)

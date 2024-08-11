@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Tuple, TYPE_CHECKING
 from functools import cached_property
+from typing import TYPE_CHECKING, Tuple
+
 from . import Significance
 
 if TYPE_CHECKING:
@@ -53,7 +55,10 @@ class State:
         l, v = self.travel, self.velocity
         l_psi = self.l_0 * (1 - self.incompressible_fraction(psi))
 
-        return self.ignition_pressure + self.gas_energy(psi, v) / (self.S * (l_psi + l))
+        return (
+            self.gas_energy(psi, v)
+            + self.ignition_pressure * (self.chamber_volume - self.total_charge_volume)
+        ) / (self.S * (l_psi + l))
 
     @cached_property
     def shot_pressure(self) -> float:

@@ -1,9 +1,10 @@
 from __future__ import annotations
-from typing import Dict
+
 from dataclasses import dataclass
-from math import pi
-from functools import cached_property
 from enum import Enum
+from functools import cached_property
+from math import pi
+from typing import Dict
 
 
 class MultiPerfShape(Enum):

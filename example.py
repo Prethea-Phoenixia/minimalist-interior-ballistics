@@ -1,6 +1,6 @@
-from ballistics.gun import Gun
-from ballistics.form_function import FormFunction
 from ballistics.charge import Charge
+from ballistics.form_function import FormFunction
+from ballistics.gun import Gun
 
 
 def unitary_to_exponent(
@@ -13,35 +13,9 @@ def unitary_to_exponent(
 
 
 if __name__ == "__main__":
-    wb004p = Gun(
-        caliber=100e-3, shot_mass=15.6, chamber_volume=7.985e-3, loss_fraction=0.06
-    )
-    ff = FormFunction.single_perf(arch_width=0.17e-2, height=26e-2)
 
-    c = Charge.from_areal_impulse(
-        density=1600,
-        force=980000,
-        pressure_exponent=0.75,
-        covolume=1e-3,
-        areal_impulse=1780 * 980,
-        adiabatic_index=1.2,
-        gas_molar_mass=23.55,
-        arch_thickness=0.17e-2,
-        form_function=ff,
-        n_intg=100,
-        acc=1e-3,
+    type_54_76mm = Gun(
+        caliber=76.2e-3, shot_mass=6.2, chamber_volume=1.484e-3, loss_fraction=0.03
     )
 
-    wb004p.add_charge(charge=c, mass=5.6)
-
-    print(wb004p.prettyprint(wb004p.to_burnout(n_intg=4, acc=1e-3)))
-    print()
-    # print(wb004p.prettyprint(wb004p.to_travel(travel=47.43e-1, n_intg=10, acc=1e-3)))
-    # print()
-    print(wb004p.prettyprint(wb004p.to_velocity(velocity=900, n_intg=10, acc=1e-3)))
-
-    """
-    kgf s   9.8 kg m    s           kg
-    ----- = -------- ------- = 980 ----
-     dm^2     s^2    0.01m^2        m s
-    """
+    pass
