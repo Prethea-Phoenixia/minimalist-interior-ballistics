@@ -31,11 +31,11 @@ class Charge:
         P (v-alpha) = RT
         ```
         where:
-        - P: average pressure in Pa
-        - v: specific volume of propellant gas, in m^3/kg
-        - alpha: covolume, in m^3/kg
-        - R: specific gas constant, in J/(kg-K)
-        - T: average temprature in K
+        - P: average pressure in Pa.
+        - v: specific volume of propellant gas, in m^3/kg.
+        - alpha: covolume, in m^3/kg.
+        - R: specific gas constant, in J/(kg-K).
+        - T: average temprature in K.
     adiabatic_index: float
         the (average) heat capacity ratio of the working gas while in-bore.
         At elevated temperatures and with a mix of species, this parameter typically
@@ -73,9 +73,9 @@ class Charge:
     ```
     where:
     - u: linear burn rate, in m/s
-    - a: burn rate coefficient, in m s^-1 Pa^-n
-    - P: average chamber pressure, in Pa
-    - n: pressure exponent, dimensionless.
+    - a: burn rate coefficient, in m/(s-Pa^n).
+      - n: pressure exponent, dimensionless.
+    - P: average chamber pressure, in Pa.
     is used to model the combustion behavior of the propellant.
 
     References
@@ -229,7 +229,7 @@ class Charge:
             minimum number of steps taken from ignition to powder burnout.
 
         acc: float
-            accuracy to which the ignition point is solved
+            accuracy to which the ignition point is solved.
 
         load_density: float
             the density to which the test bomb is loaded with propellant. The

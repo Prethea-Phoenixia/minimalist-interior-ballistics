@@ -141,11 +141,11 @@
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">        P (v-alpha) = RT</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">        ```</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">        where:</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">        - P: average pressure in Pa</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">        - v: specific volume of propellant gas, in m^3/kg</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">        - alpha: covolume, in m^3/kg</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">        - R: specific gas constant, in J/(kg-K)</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">        - T: average temprature in K</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">        - P: average pressure in Pa.</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">        - v: specific volume of propellant gas, in m^3/kg.</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">        - alpha: covolume, in m^3/kg.</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">        - R: specific gas constant, in J/(kg-K).</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">        - T: average temprature in K.</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">    adiabatic_index: float</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">        the (average) heat capacity ratio of the working gas while in-bore.</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">        At elevated temperatures and with a mix of species, this parameter typically</span>
@@ -183,9 +183,9 @@
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    ```</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    where:</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    - u: linear burn rate, in m/s</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    - a: burn rate coefficient, in m s^-1 Pa^-n</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    - P: average chamber pressure, in Pa</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    - n: pressure exponent, dimensionless.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    - a: burn rate coefficient, in m/(s-Pa^n).</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">      - n: pressure exponent, dimensionless.</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    - P: average chamber pressure, in Pa.</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">    is used to model the combustion behavior of the propellant.</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">    References</span>
@@ -339,7 +339,7 @@
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="sd">            minimum number of steps taken from ignition to powder burnout.</span>
 </span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>
 </span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">        acc: float</span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">            accuracy to which the ignition point is solved</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">            accuracy to which the ignition point is solved.</span>
 </span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>
 </span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">        load_density: float</span>
 </span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">            the density to which the test bomb is loaded with propellant. The</span>
@@ -480,11 +480,11 @@
 </span><span id="Charge-32"><a href="#Charge-32"><span class="linenos"> 32</span></a><span class="sd">        P (v-alpha) = RT</span>
 </span><span id="Charge-33"><a href="#Charge-33"><span class="linenos"> 33</span></a><span class="sd">        ```</span>
 </span><span id="Charge-34"><a href="#Charge-34"><span class="linenos"> 34</span></a><span class="sd">        where:</span>
-</span><span id="Charge-35"><a href="#Charge-35"><span class="linenos"> 35</span></a><span class="sd">        - P: average pressure in Pa</span>
-</span><span id="Charge-36"><a href="#Charge-36"><span class="linenos"> 36</span></a><span class="sd">        - v: specific volume of propellant gas, in m^3/kg</span>
-</span><span id="Charge-37"><a href="#Charge-37"><span class="linenos"> 37</span></a><span class="sd">        - alpha: covolume, in m^3/kg</span>
-</span><span id="Charge-38"><a href="#Charge-38"><span class="linenos"> 38</span></a><span class="sd">        - R: specific gas constant, in J/(kg-K)</span>
-</span><span id="Charge-39"><a href="#Charge-39"><span class="linenos"> 39</span></a><span class="sd">        - T: average temprature in K</span>
+</span><span id="Charge-35"><a href="#Charge-35"><span class="linenos"> 35</span></a><span class="sd">        - P: average pressure in Pa.</span>
+</span><span id="Charge-36"><a href="#Charge-36"><span class="linenos"> 36</span></a><span class="sd">        - v: specific volume of propellant gas, in m^3/kg.</span>
+</span><span id="Charge-37"><a href="#Charge-37"><span class="linenos"> 37</span></a><span class="sd">        - alpha: covolume, in m^3/kg.</span>
+</span><span id="Charge-38"><a href="#Charge-38"><span class="linenos"> 38</span></a><span class="sd">        - R: specific gas constant, in J/(kg-K).</span>
+</span><span id="Charge-39"><a href="#Charge-39"><span class="linenos"> 39</span></a><span class="sd">        - T: average temprature in K.</span>
 </span><span id="Charge-40"><a href="#Charge-40"><span class="linenos"> 40</span></a><span class="sd">    adiabatic_index: float</span>
 </span><span id="Charge-41"><a href="#Charge-41"><span class="linenos"> 41</span></a><span class="sd">        the (average) heat capacity ratio of the working gas while in-bore.</span>
 </span><span id="Charge-42"><a href="#Charge-42"><span class="linenos"> 42</span></a><span class="sd">        At elevated temperatures and with a mix of species, this parameter typically</span>
@@ -522,9 +522,9 @@
 </span><span id="Charge-74"><a href="#Charge-74"><span class="linenos"> 74</span></a><span class="sd">    ```</span>
 </span><span id="Charge-75"><a href="#Charge-75"><span class="linenos"> 75</span></a><span class="sd">    where:</span>
 </span><span id="Charge-76"><a href="#Charge-76"><span class="linenos"> 76</span></a><span class="sd">    - u: linear burn rate, in m/s</span>
-</span><span id="Charge-77"><a href="#Charge-77"><span class="linenos"> 77</span></a><span class="sd">    - a: burn rate coefficient, in m s^-1 Pa^-n</span>
-</span><span id="Charge-78"><a href="#Charge-78"><span class="linenos"> 78</span></a><span class="sd">    - P: average chamber pressure, in Pa</span>
-</span><span id="Charge-79"><a href="#Charge-79"><span class="linenos"> 79</span></a><span class="sd">    - n: pressure exponent, dimensionless.</span>
+</span><span id="Charge-77"><a href="#Charge-77"><span class="linenos"> 77</span></a><span class="sd">    - a: burn rate coefficient, in m/(s-Pa^n).</span>
+</span><span id="Charge-78"><a href="#Charge-78"><span class="linenos"> 78</span></a><span class="sd">      - n: pressure exponent, dimensionless.</span>
+</span><span id="Charge-79"><a href="#Charge-79"><span class="linenos"> 79</span></a><span class="sd">    - P: average chamber pressure, in Pa.</span>
 </span><span id="Charge-80"><a href="#Charge-80"><span class="linenos"> 80</span></a><span class="sd">    is used to model the combustion behavior of the propellant.</span>
 </span><span id="Charge-81"><a href="#Charge-81"><span class="linenos"> 81</span></a>
 </span><span id="Charge-82"><a href="#Charge-82"><span class="linenos"> 82</span></a><span class="sd">    References</span>
@@ -678,7 +678,7 @@
 </span><span id="Charge-230"><a href="#Charge-230"><span class="linenos">230</span></a><span class="sd">            minimum number of steps taken from ignition to powder burnout.</span>
 </span><span id="Charge-231"><a href="#Charge-231"><span class="linenos">231</span></a>
 </span><span id="Charge-232"><a href="#Charge-232"><span class="linenos">232</span></a><span class="sd">        acc: float</span>
-</span><span id="Charge-233"><a href="#Charge-233"><span class="linenos">233</span></a><span class="sd">            accuracy to which the ignition point is solved</span>
+</span><span id="Charge-233"><a href="#Charge-233"><span class="linenos">233</span></a><span class="sd">            accuracy to which the ignition point is solved.</span>
 </span><span id="Charge-234"><a href="#Charge-234"><span class="linenos">234</span></a>
 </span><span id="Charge-235"><a href="#Charge-235"><span class="linenos">235</span></a><span class="sd">        load_density: float</span>
 </span><span id="Charge-236"><a href="#Charge-236"><span class="linenos">236</span></a><span class="sd">            the density to which the test bomb is loaded with propellant. The</span>
@@ -810,11 +810,11 @@ the co-volume of a propellant, as used in the Nobel-Abel equation of state:</p>
 <p>where:</p>
 
 <ul>
-<li>P: average pressure in Pa</li>
-<li>v: specific volume of propellant gas, in m^3/kg</li>
-<li>alpha: covolume, in m^3/kg</li>
-<li>R: specific gas constant, in J/(kg-K)</li>
-<li>T: average temprature in K</li>
+<li>P: average pressure in Pa.</li>
+<li>v: specific volume of propellant gas, in m^3/kg.</li>
+<li>alpha: covolume, in m^3/kg.</li>
+<li>R: specific gas constant, in J/(kg-K).</li>
+<li>T: average temprature in K.</li>
 </ul></li>
 <li><strong>adiabatic_index</strong> (float):
 the (average) heat capacity ratio of the working gas while in-bore.
@@ -865,9 +865,11 @@ cached value from <code>ballistics.form_function.Z_k</code>.</li>
 
 <ul>
 <li>u: linear burn rate, in m/s</li>
-<li>a: burn rate coefficient, in m s^-1 Pa^-n</li>
-<li>P: average chamber pressure, in Pa</li>
-<li>n: pressure exponent, dimensionless.
+<li>a: burn rate coefficient, in m/(s-Pa^n).
+<ul>
+<li>n: pressure exponent, dimensionless.</li>
+</ul></li>
+<li>P: average chamber pressure, in Pa.
 is used to model the combustion behavior of the propellant.</li>
 </ul>
 
@@ -1241,7 +1243,7 @@ see documentation for <code><a href="#Charge.areal_impulse">Charge.areal_impulse
 </span><span id="Charge.areal_impulse-230"><a href="#Charge.areal_impulse-230"><span class="linenos">230</span></a><span class="sd">            minimum number of steps taken from ignition to powder burnout.</span>
 </span><span id="Charge.areal_impulse-231"><a href="#Charge.areal_impulse-231"><span class="linenos">231</span></a>
 </span><span id="Charge.areal_impulse-232"><a href="#Charge.areal_impulse-232"><span class="linenos">232</span></a><span class="sd">        acc: float</span>
-</span><span id="Charge.areal_impulse-233"><a href="#Charge.areal_impulse-233"><span class="linenos">233</span></a><span class="sd">            accuracy to which the ignition point is solved</span>
+</span><span id="Charge.areal_impulse-233"><a href="#Charge.areal_impulse-233"><span class="linenos">233</span></a><span class="sd">            accuracy to which the ignition point is solved.</span>
 </span><span id="Charge.areal_impulse-234"><a href="#Charge.areal_impulse-234"><span class="linenos">234</span></a>
 </span><span id="Charge.areal_impulse-235"><a href="#Charge.areal_impulse-235"><span class="linenos">235</span></a><span class="sd">        load_density: float</span>
 </span><span id="Charge.areal_impulse-236"><a href="#Charge.areal_impulse-236"><span class="linenos">236</span></a><span class="sd">            the density to which the test bomb is loaded with propellant. The</span>
@@ -1351,7 +1353,7 @@ I =   ∫ P(t) dt
 <li><strong>n_intg</strong> (int):
 minimum number of steps taken from ignition to powder burnout.</li>
 <li><strong>acc</strong> (float):
-accuracy to which the ignition point is solved</li>
+accuracy to which the ignition point is solved.</li>
 <li><strong>load_density</strong> (float):
 the density to which the test bomb is loaded with propellant. The
 default value of 0.2 g/cc (200 kg/m^3) is a common choice of loading
