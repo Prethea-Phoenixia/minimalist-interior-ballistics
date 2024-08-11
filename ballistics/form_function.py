@@ -189,7 +189,7 @@ class FormFunction:
         arch_width: float,
         perforation_diameter: float,
         height: float,
-        n_perforation: int = 7,
+        n_perforations: int = 7,
         shape: MultiPerfShape = MultiPerfShape.CYLINDER,
     ) -> FormFunction:
         """
@@ -202,12 +202,17 @@ class FormFunction:
             the inner and outer surface of the hollow cylinder.
         height: float
             the length of the propellant, or the distance between the two ends.
+        n_perforations: int
+            the number of perforations.
+        shape: `MultiPerfShape`
+            the shape of the multi-perforated propellant.
+
         """
 
         d_0 = perforation_diameter
         e_1, c = 0.5 * arch_width, 0.5 * height
         beta = e_1 / c
-        n = n_perforation
+        n = n_perforations
         rho_base = e_1 + 0.5 * d_0
 
         # fmt: off

@@ -23,16 +23,8 @@ class Charge:
         propellant force, or the work done by a kilogram of propellant gas (as
         ideal gas), when expanding from its isochoric adiabatic flame temperature
         to absolute zero, in an isentropic manner. Unit in J/kg, or (m/s)^2.
-    burn_rate_coefficient, pressure_exponent: float
-        the two coefficients of the Saint Robert's (Viellie's) burn rate law:
-        ```
-        u = a * P^n
-        ```
-        where:
-        - u: linear burn rate, in m/s
-        - a: burn rate coefficient, in m s^-1 Pa^-n
-        - P: average chamber pressure, in Pa
-        - n: pressure exponent, dimensionless.
+    pressure_exponent: float
+        see the Notes section.
     covolume: float
         the co-volume of a propellant, as used in the Nobel-Abel equation of state:
         ```
@@ -48,6 +40,16 @@ class Charge:
         the (average) heat capacity ratio of the working gas while in-bore.
         At elevated temperatures and with a mix of species, this parameter typically
         clusters around 1.23-1.25.
+    reduced_burnrate: float
+        the burn-rate coefficient is factored against the shortest path to "burn through",
+        or propellant's arch, to produce the `reduced burn rate`, defined as:
+        ```
+        u / e
+        ```
+        where:
+        - u: burn rate coefficient, in m/s-Pa^n.
+          - n: burn rate exponent, dimensionless.
+        - 2e: width/thickness of the propellant arch.
     gas_molar_mass: float
         value used to calculate the average adiabatic index of a gas mixture.
         No particular unit is required, the only requirement being consistency across
@@ -63,6 +65,19 @@ class Charge:
     Z_k: float
         cached value from `ballistics.form_function.Z_k`.
 
+    Notes
+    -----
+    the Saint Robert's (Viellie's) burn rate law:
+    ```
+    u = a * P^n
+    ```
+    where:
+    - u: linear burn rate, in m/s
+    - a: burn rate coefficient, in m s^-1 Pa^-n
+    - P: average chamber pressure, in Pa
+    - n: pressure exponent, dimensionless.
+    is used to model the combustion behavior of the propellant.
+
     References
     ----------
     - **[English]** Xu, Fu-ming. (2013). On The Definition of Propellant Force.
@@ -72,26 +87,60 @@ class Charge:
 
     density: float
     force: float
-    burn_rate_coefficient: float
     pressure_exponent: float
     covolume: float
     adiabatic_index: float
+    reduced_burnrate: float  # u_1 / e_1
     gas_molar_mass: float
-    arch_thickness: float
     form_function: FormFunction
+
+    @classmethod
+    def from_dimension_and_burnrate(
+        cls,
+        density: float,
+        force: float,
+        pressure_exponent: float,
+        covolume: float,
+        adiabatic_index: float,
+        gas_molar_mass: float,
+        form_function: FormFunction,
+        arch_thickness: float,
+        burn_rate_coefficient: float,
+    ) -> Charge:
+        """
+        defines a charge using the measurement of arch thickness in conjunction with
+        burn rate coefficient data.
+
+        Parameters
+        ----------
+        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float
+            see documentation for `Charge`.
+        arch_thickness, burn_rate_coefficient: float
+            see documentation for `Charge`, in particular the Notes section and
+            `Charge.reduced_burnrate`.
+        """
+        return cls(
+            density=density,
+            force=force,
+            pressure_exponent=pressure_exponent,
+            covolume=covolume,
+            adiabatic_index=adiabatic_index,
+            gas_molar_mass=gas_molar_mass,
+            reduced_burnrate=2 * burn_rate_coefficient / arch_thickness,
+            form_function=form_function,
+        )
 
     @classmethod
     def from_areal_impulse(
         cls,
         density: float,
         force: float,
-        areal_impulse: float,
         pressure_exponent: float,
         covolume: float,
         adiabatic_index: float,
         gas_molar_mass: float,
-        arch_thickness: float,
         form_function: FormFunction,
+        areal_impulse: float,
         n_intg: int,
         acc: float,
         load_density: float = DEFAULT_LOAD_DENSITY,
@@ -99,30 +148,34 @@ class Charge:
         to: Significance = Significance.FRACTURE,
     ) -> Charge:
         """
-        define a Charge using areal impulse. Solves the burn-rate coefficient
+        define a Charge using areal impulse. Solves the reduced burn-rate
         from the supplied geometry, areal_impulse, and preessure exponent, exploiting
         the property of:
         ```
-        dP/dt ∝ u -> I ∝ u
+        dP/dt ∝ u/e -> I ∝ u/e
         ```
 
         Parameters
         ----------
+        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float
+            see documentation for `Charge`.
         areal_impulse: float
             areal_impulse per area until specified point, in kg/m-s.
-
-        acc, n_intg, load_density, ignition_pressure, to: int, float, float, float, `ballistics.Significance`
+        n_intg: int
+            see documentation for `Charge.areal_impulse`.
+        acc,  load_density, ignition_pressure, to: float
+            see documentation for `Charge.areal_impulse`.
+        to: `ballistics.Significance`
             see documentation for `Charge.areal_impulse`.
         """
         c_ubr = cls(
             density=density,
             force=force,
-            burn_rate_coefficient=1,
+            reduced_burnrate=1,
             pressure_exponent=pressure_exponent,
             covolume=covolume,
             adiabatic_index=adiabatic_index,
             gas_molar_mass=gas_molar_mass,
-            arch_thickness=arch_thickness,
             form_function=form_function,
         )  # initialize a charge with unitary burn rate
 
@@ -136,12 +189,11 @@ class Charge:
         return cls(
             density=density,
             force=force,
-            burn_rate_coefficient=I_ubr / areal_impulse,
+            reduced_burnrate=I_ubr / areal_impulse,
             pressure_exponent=pressure_exponent,
             covolume=covolume,
             adiabatic_index=adiabatic_index,
             gas_molar_mass=gas_molar_mass,
-            arch_thickness=arch_thickness,
             form_function=form_function,
         )
 
@@ -153,12 +205,7 @@ class Charge:
         return self.form_function(Z_c)
 
     def dZdt(self, P: float) -> float:
-        return (
-            2
-            * self.burn_rate_coefficient
-            * P**self.pressure_exponent
-            / self.arch_thickness
-        )
+        return self.reduced_burnrate * P**self.pressure_exponent
 
     def areal_impulse(
         self,
