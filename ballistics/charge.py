@@ -29,7 +29,8 @@ class Charge:
         the co-volume of a propellant, as used in the Nobel-Abel equation of state:
         ```
         P (v-alpha) = RT
-        ```where:
+        ```
+        where:
         - P: average pressure in Pa.
         - v: specific volume of propellant gas, in m^3/kg.
         - alpha: covolume, in m^3/kg.
@@ -44,7 +45,8 @@ class Charge:
         to produce the `reduced burn rate`, defined as:
         ```
         u / e
-        ```where:
+        ```
+        where:
         - u: burn rate coefficient, in m/s-Pa^n.
           - n: burn rate exponent, dimensionless.
         - 2e: width of the propellant arch.
@@ -65,7 +67,8 @@ class Charge:
     the Saint Robert's (Viellie's) burn rate law:
     ```
     u = a * P^n
-    ```where:
+    ```
+    where:
     - u: linear burn rate, in m/s
     - a: burn rate coefficient, in m/(s-Pa^n).
       - n: pressure exponent, dimensionless.
@@ -218,7 +221,8 @@ class Charge:
               t
         I =   ∫ P(t) dt
               0
-        ```until the specified endpoint.
+        ```
+        until the specified endpoint.
 
         Parameters
         ----------

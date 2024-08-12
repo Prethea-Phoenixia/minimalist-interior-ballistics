@@ -26,7 +26,8 @@ class FormFunction:
         a 3rd-order polynomial:
         ```
         psi(Z) = chi * Z * (1 + labda * Z + mu * Z**2), Z in [0, 1]
-        ```these are considered exact under ideal parallel combustion assumptions.
+        ```
+        these are considered exact under ideal parallel combustion assumptions.
     Z_k : float
         denotes the end of combustion point as expressed in linear (depth-wise) burnup
         ratio. This is always 1.0 except for multiple-perforated grains, where small
@@ -45,7 +46,8 @@ class FormFunction:
         ```
         psi(Z) = chi_s * Z * (1 + labda * Z), Z in [1, Z_k],
         s.t. psi(1) = psi_s and psi(Z_k) = 1
-        ```This is an approximate fit to result in the correct volume burnup at fracture
+        ```
+        this is an approximate fit to result in the correct volume burnup at fracture
         and burnout points.
 
 
