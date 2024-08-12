@@ -115,7 +115,8 @@ class Charge:
         arch_width: float
             twice the propellant's "web", or the minimum depth the propellant's
             burn surface must recede to achieve a "burnthrough".
-            see documentation of `ballistics.form_function` for more information.
+            see documentation of `ballistics.form_function.FormFunction` for more
+            information.
         burn_rate_coefficient: float
             coefficient used in de Saint Robert's burn rate law. See documentation for
             `Charge` for more information.
