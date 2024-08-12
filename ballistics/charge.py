@@ -29,8 +29,7 @@ class Charge:
         the co-volume of a propellant, as used in the Nobel-Abel equation of state:
         ```
         P (v-alpha) = RT
-        ```
-        where:
+        ```where:
         - P: average pressure in Pa.
         - v: specific volume of propellant gas, in m^3/kg.
         - alpha: covolume, in m^3/kg.
@@ -41,24 +40,20 @@ class Charge:
         At elevated temperatures and with a mix of species, this parameter typically
         clusters around 1.23-1.25.
     reduced_burnrate: float
-        the burn-rate coefficient is factored against the shortest path to "burn through",
-        or propellant's arch, to produce the `reduced burn rate`, defined as:
+        the burn-rate coefficient is factored against the propellant's arch,
+        to produce the `reduced burn rate`, defined as:
         ```
         u / e
-        ```
-        where:
+        ```where:
         - u: burn rate coefficient, in m/s-Pa^n.
           - n: burn rate exponent, dimensionless.
-        - 2e: width/thickness of the propellant arch.
+        - 2e: width of the propellant arch.
     gas_molar_mass: float
         value used to calculate the average adiabatic index of a gas mixture.
         No particular unit is required, the only requirement being consistency across
         a set of `Charge` objects added to the same `ballistics.gun.Gun`. For the case
         of a single `Charge`, any value will work.
-    arch_thickness: float
-        twice the propellant's "web", or the minimum depth the propellant's burn surface
-        must recede to complete combustion.
-        see documentation of `ballistics.form_function` for more information.
+
 
     Attributes
     ----------
@@ -70,8 +65,7 @@ class Charge:
     the Saint Robert's (Viellie's) burn rate law:
     ```
     u = a * P^n
-    ```
-    where:
+    ```where:
     - u: linear burn rate, in m/s
     - a: burn rate coefficient, in m/(s-Pa^n).
       - n: pressure exponent, dimensionless.
@@ -104,7 +98,7 @@ class Charge:
         adiabatic_index: float,
         gas_molar_mass: float,
         form_function: FormFunction,
-        arch_thickness: float,
+        arch_width: float,
         burn_rate_coefficient: float,
     ) -> Charge:
         """
@@ -115,9 +109,13 @@ class Charge:
         ----------
         density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float
             see documentation for `Charge`.
-        arch_thickness, burn_rate_coefficient: float
-            see documentation for `Charge`, in particular the Notes section and
-            `Charge.reduced_burnrate`.
+        arch_width: float
+            twice the propellant's "web", or the minimum depth the propellant's
+            burn surface must recede to achieve a "burnthrough".
+            see documentation of `ballistics.form_function` for more information.
+        burn_rate_coefficient: float
+            coefficient used in de Saint Robert's burn rate law. See documentation for
+            `Charge` for more information.
         """
         return cls(
             density=density,
@@ -126,7 +124,7 @@ class Charge:
             covolume=covolume,
             adiabatic_index=adiabatic_index,
             gas_molar_mass=gas_molar_mass,
-            reduced_burnrate=2 * burn_rate_coefficient / arch_thickness,
+            reduced_burnrate=2 * burn_rate_coefficient / arch_width,
             form_function=form_function,
         )
 
@@ -177,7 +175,7 @@ class Charge:
             adiabatic_index=adiabatic_index,
             gas_molar_mass=gas_molar_mass,
             form_function=form_function,
-        )  # initialize a charge with unitary burn rate
+        )  # initialize a charge with unit reduced burn rate
 
         I_ubr = c_ubr.areal_impulse(
             n_intg=n_intg,
@@ -220,8 +218,7 @@ class Charge:
               t
         I =   ∫ P(t) dt
               0
-        ```
-        until the specified endpoint.
+        ```until the specified endpoint.
 
         Parameters
         ----------
