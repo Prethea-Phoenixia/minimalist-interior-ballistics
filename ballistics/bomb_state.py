@@ -27,15 +27,19 @@ class BombState:
 
     @cached_property
     def volume_burnup_fraction(self) -> float:
-        return self.psi_c(min(self.burnup_fraction, self.Z_k))
+        return self.psi_c(max(min(self.burnup_fraction, self.Z_k), 0))
 
     @cached_property
     def pressure(self) -> float:
         psi = self.volume_burnup_fraction
-        return (
-            self.force * psi
-            + (self.load_density - 1 / self.density) * self.ignition_pressure
-        ) / (1 / self.load_density - (1 - psi) / self.density - self.covolume * psi)
+        return max(
+            (
+                self.force * psi
+                + (self.load_density - 1 / self.density) * self.ignition_pressure
+            )
+            / (1 / self.load_density - (1 - psi) / self.density - self.covolume * psi),
+            0,
+        )
 
     def increment(self, d: BombDelta, dt: float) -> BombState:
         return BombState(

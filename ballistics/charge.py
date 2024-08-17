@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
 
-from . import (DEFAULT_IGNITION_PRESSURE, DEFAULT_LOAD_DENSITY, MAX_DT,
-               Significance)
+from . import (DEFAULT_BOMB_IGNITION_PRESSURE, DEFAULT_BOMB_LOAD_DENSITY,
+               MAX_DT, Significance)
 from .bomb_state import BombDelta, BombState
 from .form_function import FormFunction
 from .num import dekker
@@ -145,8 +145,8 @@ class Charge:
         areal_impulse: float,
         n_intg: int,
         acc: float,
-        load_density: float = DEFAULT_LOAD_DENSITY,
-        ignition_pressure: float = DEFAULT_IGNITION_PRESSURE,
+        load_density: float = DEFAULT_BOMB_LOAD_DENSITY,
+        ignition_pressure: float = DEFAULT_BOMB_IGNITION_PRESSURE,
         to: Significance = Significance.FRACTURE,
     ) -> Charge:
         """
@@ -213,8 +213,8 @@ class Charge:
         self,
         n_intg: int,
         acc: float,
-        load_density: float = DEFAULT_LOAD_DENSITY,
-        ignition_pressure: float = DEFAULT_IGNITION_PRESSURE,
+        load_density: float = DEFAULT_BOMB_LOAD_DENSITY,
+        ignition_pressure: float = DEFAULT_BOMB_IGNITION_PRESSURE,
         to: Significance = Significance.FRACTURE,
     ) -> float:
         """calculate the impulse-per-area of this propellant, as:

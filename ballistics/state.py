@@ -34,7 +34,7 @@ class State:
     @cached_property
     def volume_burnup_fractions(self) -> Tuple[float]:
         return tuple(
-            c.psi_c(min(Z_c, c.Z_k))
+            c.psi_c(max(min(Z_c, c.Z_k), 0))
             for c, Z_c in zip(self.charges, self.burnup_fractions)
         )
 
@@ -55,10 +55,15 @@ class State:
         l, v = self.travel, self.velocity
         l_psi = self.l_0 * (1 - self.incompressible_fraction(psi))
 
-        return (
-            self.gas_energy(psi, v)
-            + self.ignition_pressure * (self.chamber_volume - self.total_charge_volume)
-        ) / (self.S * (l_psi + l))
+        return max(
+            (
+                self.gas_energy(psi, v)
+                + self.ignition_pressure
+                * (self.chamber_volume - self.total_charge_volume)
+            )
+            / (self.S * (l_psi + l)),
+            0,
+        )
 
     @cached_property
     def shot_pressure(self) -> float:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from bisect import insort
+from bisect import bisect, insort
 from dataclasses import dataclass
 from functools import cached_property, wraps
 from math import pi
@@ -12,62 +12,6 @@ from . import MAX_DT, Significance
 from .charge import Charge
 from .num import FIND_MAX, dekker, gss
 from .state import Delta, State
-
-
-def mark_max_pressure(state_generating_func: Callable) -> Callable:
-    """
-    decorator that finds the maximum pressure point and insert it into the list of
-    `ballistics.state.State` sorted by time, given a list-of-`ballistics.state.State`
-    generating function.
-
-    Notes
-    -----
-    Implementation wise, conducts a gold-section search using `ballistics.num.gss`
-    in the interval bracketed by the step before and after the step where maximum
-    pressure is recorded. By intercepting the accuracy specification passed to the
-    generating functions, the peak-pressure point is determined to (at worst) step size
-    times `acc`.
-    """
-
-    @wraps(state_generating_func)
-    def wrapper(self, *args, acc, **kwargs):
-        states = state_generating_func(self, *args, acc=acc, **kwargs)
-
-        total_time = states[-1].time
-
-        pressures = [s.average_pressure for s in states]
-        j = pressures.index(max(pressures))
-        s_pmax = states[j]
-
-        i, k = max(j - 1, 0), min(j + 1, len(states) - 1)
-        time_min, time_max = states[i].time, states[k].time
-
-        def time_pressure(time: float) -> float:
-            return self.propagate_rk4(
-                state=s_pmax, dt=time - s_pmax.time
-            ).average_pressure
-
-        time_pmax = (
-            sum(
-                gss(
-                    f=time_pressure,
-                    x_0=time_min,
-                    x_1=time_max,
-                    find=FIND_MAX,
-                    tol=acc * total_time,
-                )
-            )
-            * 0.5
-        )
-
-        s_pmax = self.propagate_rk4(
-            state=s_pmax, dt=time_pmax - s_pmax.time, marker=Significance.PEAK_PRESSURE
-        )
-        insort(states, s_pmax)
-
-        return states
-
-    return wrapper
 
 
 @dataclass
@@ -134,7 +78,6 @@ class Gun:
         self.ignition_pressure = force * delta_ig
 
     def to_start(self, n_intg: int, acc: float) -> List[State]:
-
         delta_t, rough_ttb = MAX_DT, 0.0
         states: List[State] = []
 
@@ -153,10 +96,12 @@ class Gun:
             )
 
             states = [s_next]
-
+            print(states)
+            print(s_next.average_pressure)
             while s_next.average_pressure < self.start_pressure:
                 states.append(s_now := s_next)
                 s_next = self.propagate_rk4(state=s_now, dt=delta_t)
+                print(states)
 
             rough_ttb = s_next.time
 
@@ -175,7 +120,9 @@ class Gun:
         s_start = state_at_time(time=start_time, marker=Significance.IGNITION)
 
         states.append(s_start)
-
+        print("start states")
+        print(states)
+        input()
         return states
 
     def gas_energy(self, psi: Tuple[float, ...], v: float) -> float:
@@ -210,7 +157,6 @@ class Gun:
 
         return i_f
 
-    @mark_max_pressure
     def to_burnout(self, n_intg: int, acc: float) -> List[State]:
         """integrates projectile motion up to the propellant burnout point and returns
         a List of State.
@@ -242,7 +188,7 @@ class Gun:
         `acc`.
         """
         pre_start_states = self.to_start(n_intg=n_intg, acc=acc)
-        Z_c0 = pre_start_states[-1].burnup_fractions
+        Z_c0 = max(pre_start_states).burnup_fractions
 
         def burnout(state: State) -> float:
             if sum(Z - c.Z_k for Z, c in zip(state.burnup_fractions, self.charges)) < 0:
@@ -281,17 +227,17 @@ class Gun:
             state=s_now, dt=burnout_time - s_now.time, marker=Significance.BURNOUT
         )
         states.append(s_burnout)
-        return states
+        return self.mark_max_pressure(states=states, acc=acc)
 
     def to_travel(self, travel: float, n_intg: int, acc: float) -> List[State]:
         """conducts integration up to the desired shot-travel using length-wise ODE
         from burnout point to muzzle exit. Calls `.to_burnout` for integration up
         to the burnout point.
+
         Parameters
         ----------
         travel: float
-            the projectile travel to which the integration is done to. Does not accept
-            a value that results in muzzle exit before burnout.
+            the projectile travel to which the integration is done to.
         n_intg: int
             determines the number of steps taken in the length-wise integration,
             in addition to being passed through to `to_burnout`.
@@ -303,15 +249,14 @@ class Gun:
         list of `ballistics.state.State`.
 
         """
+
         states = self.to_burnout(n_intg=n_intg, acc=acc)
-        s_burnout = states[-1]
+        if max(states).travel > travel:
+            n_intg = 1
+        states = states[: bisect([s.travel for s in states], travel)]
+        state = max(states)
+        d_travel = (travel - state.travel) / n_intg
 
-        d_travel = (travel - s_burnout.travel) / n_intg
-
-        if d_travel < 0:
-            raise ValueError("travel is breech-ward of burnout point.")
-
-        state = s_burnout
         for _ in range(n_intg - 1):
             states.append(state := self.propagate_rk4(state=state, dl=d_travel))
 
@@ -321,7 +266,7 @@ class Gun:
             )
         )
 
-        return states
+        return self.mark_max_pressure(states=states, acc=acc)
 
     def to_velocity(self, velocity: float, n_intg: int, acc: float) -> List[State]:
         """conducts integration up to the desired velocity using velocity-wise ODE
@@ -330,8 +275,7 @@ class Gun:
         Parameters
         ----------
         velocity: float
-            the projectile velocity to which the integration is done to. Does not accept
-            a value that results in muzzle exit before burnout.
+            the projectile velocity to which the integration is done to.
         n_intg: int
             determines the number of steps taken in the length-wise integration,
             in addition to being passed through to `to_burnout`.
@@ -345,14 +289,12 @@ class Gun:
         """
 
         states = self.to_burnout(n_intg=n_intg, acc=acc)
-        s_burnout = states[-1]
+        if max(states).velocity > velocity:
+            n_intg = 1
+        states = states[: bisect([s.velocity for s in states], velocity)]
+        state = max(states)
+        d_velocity = (velocity - state.velocity) / n_intg
 
-        d_velocity = (velocity - s_burnout.velocity) / n_intg
-
-        if d_velocity < 0:
-            raise ValueError("velocity is lower than at burnout point.")
-
-        state = s_burnout
         for _ in range(n_intg - 1):
             states.append(state := self.propagate_rk4(state=state, dv=d_velocity))
 
@@ -362,6 +304,54 @@ class Gun:
             )
         )
 
+        return self.mark_max_pressure(states=states, acc=acc)
+
+    def mark_max_pressure(self, states: List[State], acc: float) -> List[State]:
+        """
+        finds the maximum pressure point and insert it into a list of
+        `ballistics.state.State`, passed in as argument.
+
+        Notes
+        -----
+        Implementation wise, conducts a gold-section search using `ballistics.num.gss`
+        in the interval bracketed by the step before and after the step where maximum
+        pressure is recorded. By intercepting the accuracy specification passed to the
+        generating functions, the peak-pressure point is determined to (at worst) step size
+        times `acc`.
+        """
+        if not any(s.marker == Significance.PEAK_PRESSURE for s in states):
+            total_time = max(states).time - min(states).time
+            pressures = [s.average_pressure for s in states]
+            j = pressures.index(max(pressures))
+            s_pmax = states[j]
+
+            i, k = max(j - 1, 0), min(j + 1, len(states) - 1)
+            time_min, time_max = states[i].time, states[k].time
+
+            def time_pressure(time: float) -> float:
+                return self.propagate_rk4(
+                    state=s_pmax, dt=time - s_pmax.time
+                ).average_pressure
+
+            time_pmax = (
+                sum(
+                    gss(
+                        f=time_pressure,
+                        x_0=time_min,
+                        x_1=time_max,
+                        find=FIND_MAX,
+                        tol=acc * total_time,
+                    )
+                )
+                * 0.5
+            )
+
+            s_pmax = self.propagate_rk4(
+                state=s_pmax,
+                dt=time_pmax - s_pmax.time,
+                marker=Significance.PEAK_PRESSURE,
+            )
+            insort(states, s_pmax)
         return states
 
     @staticmethod
@@ -483,6 +473,8 @@ class Gun:
         k2 = df(s_i(d=0.5 * k1 * dx, **{**generate_dargs(0.5 * dx), **intermediate}))
         k3 = df(s_i(d=0.5 * k2 * dx, **{**generate_dargs(0.5 * dx), **intermediate}))
         k4 = df(s_i(d=k3 * dx, **{**generate_dargs(dx), **intermediate}))
-        return s_i(
+        s_j = s_i(
             d=(k1 + k2 * 2 + k3 * 2 + k4) * dx / 6, **generate_dargs(dx), marker=marker
         )
+        # print(s_j)
+        return s_j
