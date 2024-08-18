@@ -4,7 +4,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, List, Tuple
 
-from . import Significance
+from . import (DEFAULT_GUN_IGNITION_PRESSURE, DEFAULT_GUN_START_PRESSURE,
+               DFEAULT_GUN_LOSS_FRACTION, Significance)
 from .charge import Charge
 from .gun import Gun
 
@@ -30,14 +31,6 @@ class MatchingProblem:
     shot velocity.
     """
 
-    caliber: float
-    shot_mass: float
-    chamber_volume: float
-    travel: float
-    loss_fraction: float
-    start_pressure: float
-    ignition_pressure: float
-
     density: float
     force: float
     pressure_exponent: float
@@ -45,6 +38,14 @@ class MatchingProblem:
     adiabatic_index: float
     gas_molar_mass: float
     form_function: FormFunction
+
+    caliber: float
+    shot_mass: float
+    chamber_volume: float
+    travel: float
+    loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
+    start_pressure: float = DEFAULT_GUN_START_PRESSURE
+    ignition_pressure: float = DEFAULT_GUN_IGNITION_PRESSURE
 
     known_charge_loads: Dict[Charge, float] = field(default_factory=dict)
 
@@ -57,9 +58,7 @@ class MatchingProblem:
         acc: float,
     ) -> Gun:
 
-        def propose(
-            proposed_mass: float, proposed_reduced_burnrate: float
-        ) -> Tuple[Gun, Charge]:
+        def propose(mass: float, reduced_burnrate: float) -> Tuple[Gun, Charge]:
             gun = Gun(
                 caliber=self.caliber,
                 shot_mass=self.shot_mass,
@@ -69,30 +68,32 @@ class MatchingProblem:
                 ignition_pressure=self.ignition_pressure,
             )
 
-            for charge, mass in self.known_charge_loads.items():
-                gun.add_charge(charge=charge, mass=mass)
-
             charge = Charge(
                 density=self.density,
                 force=self.force,
                 pressure_exponent=self.pressure_exponent,
                 covolume=self.covolume,
                 adiabatic_index=self.adiabatic_index,
-                reduced_burnrate=proposed_reduced_burnrate,
+                reduced_burnrate=reduced_burnrate,
                 gas_molar_mass=self.gas_molar_mass,
                 form_function=self.form_function,
             )
-            gun.add_charge(charge=charge, mass=proposed_mass)
+            gun.add_charge(charge=charge, mass=mass)
+
+            for charge, mass in self.known_charge_loads.items():
+                gun.add_charge(charge=charge, mass=mass)
 
             return gun, charge
 
-        def f(proposed_mass: float, proposed_reduced_burnrate: float):
+        def get_pv(mass: float, reduced_burnrate: float):
             gun, _ = propose(
-                proposed_mass=proposed_mass,
-                proposed_reduced_burnrate=proposed_reduced_burnrate,
+                mass=mass,
+                reduced_burnrate=reduced_burnrate,
             )
 
             states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
+
+            print(Gun.prettyprint(states))
 
             p_max, v_muzzle = 0.0, 0.0
             for state in states:
@@ -103,16 +104,5 @@ class MatchingProblem:
 
             return p_max, v_muzzle
 
-        # iteration loop
-
-        mass, reduced_burnrate = 1.0, 1
-
-        for _ in range(5):
-            p_act, v_act = f(mass, reduced_burnrate)
-
-            mass *= (v_act / velocity) ** 1.5
-            reduced_burnrate *= (p_act / pressure) ** 0.45
-            print(mass, reduced_burnrate)
-
-        print(mass, reduced_burnrate)
-        print(f(mass, reduced_burnrate))
+        p, v = get_pv(mass=1, reduced_burnrate=0.00001)
+        print(p / 1e6, v)

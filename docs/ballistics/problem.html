@@ -52,27 +52,6 @@
                                 <a class="function" href="#MatchingProblem.__init__">MatchingProblem</a>
                         </li>
                         <li>
-                                <a class="variable" href="#MatchingProblem.caliber">caliber</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#MatchingProblem.shot_mass">shot_mass</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#MatchingProblem.chamber_volume">chamber_volume</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#MatchingProblem.travel">travel</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#MatchingProblem.loss_fraction">loss_fraction</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#MatchingProblem.start_pressure">start_pressure</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#MatchingProblem.ignition_pressure">ignition_pressure</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#MatchingProblem.density">density</a>
                         </li>
                         <li>
@@ -92,6 +71,27 @@
                         </li>
                         <li>
                                 <a class="variable" href="#MatchingProblem.form_function">form_function</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MatchingProblem.caliber">caliber</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MatchingProblem.shot_mass">shot_mass</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MatchingProblem.chamber_volume">chamber_volume</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MatchingProblem.travel">travel</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MatchingProblem.loss_fraction">loss_fraction</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MatchingProblem.start_pressure">start_pressure</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MatchingProblem.ignition_pressure">ignition_pressure</a>
                         </li>
                         <li>
                                 <a class="variable" href="#MatchingProblem.known_charge_loads">known_charge_loads</a>
@@ -129,118 +129,108 @@
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Significance</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">.charge</span> <span class="kn">import</span> <span class="n">Charge</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">.gun</span> <span class="kn">import</span> <span class="n">Gun</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">State</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="kn">from</span> <span class="nn">.form_function</span> <span class="kn">import</span> <span class="n">FormFunction</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DEFAULT_GUN_IGNITION_PRESSURE</span><span class="p">,</span> <span class="n">DEFAULT_GUN_START_PRESSURE</span><span class="p">,</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>               <span class="n">DFEAULT_GUN_LOSS_FRACTION</span><span class="p">,</span> <span class="n">Significance</span><span class="p">)</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">.charge</span> <span class="kn">import</span> <span class="n">Charge</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">.gun</span> <span class="kn">import</span> <span class="n">Gun</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">State</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="kn">from</span> <span class="nn">.form_function</span> <span class="kn">import</span> <span class="n">FormFunction</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="k">class</span> <span class="nc">Target</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="c1"># BREECH = State.breech_pressure.__name__</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="c1"># AVERAGE = State.average_pressure.__name__</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="c1"># SHOT = State.shot_pressure.__name__</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="n">BREECH</span> <span class="o">=</span> <span class="s2">&quot;breech_pressure&quot;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">AVERAGE</span> <span class="o">=</span> <span class="s2">&quot;average_pressure&quot;</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">SHOT</span> <span class="o">=</span> <span class="s2">&quot;shot_pressure&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="k">class</span> <span class="nc">Target</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="c1"># BREECH = State.breech_pressure.__name__</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="c1"># AVERAGE = State.average_pressure.__name__</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="c1"># SHOT = State.shot_pressure.__name__</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">BREECH</span> <span class="o">=</span> <span class="s2">&quot;breech_pressure&quot;</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">AVERAGE</span> <span class="o">=</span> <span class="s2">&quot;average_pressure&quot;</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">SHOT</span> <span class="o">=</span> <span class="s2">&quot;shot_pressure&quot;</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="k">class</span> <span class="nc">MatchingProblem</span><span class="p">:</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    Given known gun and charge loading parameters, deduce the (additional) charge</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    that is required to *match* the performance, in terms of peak pressure and</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">    shot velocity.</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="n">caliber</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">shot_mass</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">chamber_volume</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="n">travel</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">loss_fraction</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="n">start_pressure</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>    <span class="n">ignition_pressure</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="n">density</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">known_charge_loads</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Charge</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>        <span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>        <span class="n">pressure</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="n">target</span><span class="p">:</span> <span class="n">Target</span><span class="p">,</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>        <span class="n">n_intg</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="n">acc</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>        <span class="k">def</span> <span class="nf">propose</span><span class="p">(</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>            <span class="n">proposed_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">proposed_reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Gun</span><span class="p">,</span> <span class="n">Charge</span><span class="p">]:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>            <span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">(</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>                <span class="n">caliber</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">caliber</span><span class="p">,</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>                <span class="n">shot_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot_mass</span><span class="p">,</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>                <span class="n">chamber_volume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chamber_volume</span><span class="p">,</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>                <span class="n">loss_fraction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_fraction</span><span class="p">,</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>                <span class="n">start_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_pressure</span><span class="p">,</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>                <span class="n">ignition_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignition_pressure</span><span class="p">,</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>            <span class="p">)</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>            <span class="k">for</span> <span class="n">charge</span><span class="p">,</span> <span class="n">mass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_charge_loads</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>                <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>            <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>                <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>                <span class="n">force</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>                <span class="n">pressure_exponent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span><span class="p">,</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>                <span class="n">covolume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covolume</span><span class="p">,</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>                <span class="n">adiabatic_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span><span class="p">,</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>                <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">proposed_reduced_burnrate</span><span class="p">,</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>                <span class="n">gas_molar_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_molar_mass</span><span class="p">,</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>                <span class="n">form_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">,</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>            <span class="p">)</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>            <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">proposed_mass</span><span class="p">)</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>            <span class="k">return</span> <span class="n">gun</span><span class="p">,</span> <span class="n">charge</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">proposed_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">proposed_reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>            <span class="n">gun</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">propose</span><span class="p">(</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>                <span class="n">proposed_mass</span><span class="o">=</span><span class="n">proposed_mass</span><span class="p">,</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>                <span class="n">proposed_reduced_burnrate</span><span class="o">=</span><span class="n">proposed_reduced_burnrate</span><span class="p">,</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>            <span class="p">)</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>            <span class="n">states</span> <span class="o">=</span> <span class="n">gun</span><span class="o">.</span><span class="n">to_travel</span><span class="p">(</span><span class="n">travel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="n">n_intg</span><span class="o">=</span><span class="n">n_intg</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">)</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>            <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">PEAK_PRESSURE</span><span class="p">:</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>                    <span class="n">p_max</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">MUZZLE</span><span class="p">:</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>                    <span class="n">v_muzzle</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>            <span class="k">return</span> <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="c1"># iteration loop</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>            <span class="n">p_act</span><span class="p">,</span> <span class="n">v_act</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">)</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>            <span class="n">mass</span> <span class="o">*=</span> <span class="p">(</span><span class="n">v_act</span> <span class="o">/</span> <span class="n">velocity</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>            <span class="n">reduced_burnrate</span> <span class="o">*=</span> <span class="p">(</span><span class="n">p_act</span> <span class="o">/</span> <span class="n">pressure</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.45</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>            <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">)</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">)</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">))</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="k">class</span> <span class="nc">MatchingProblem</span><span class="p">:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    Given known gun and charge loading parameters, deduce the (additional) charge</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">    that is required to *match* the performance, in terms of peak pressure and</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    shot velocity.</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">density</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>    <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="n">caliber</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">shot_mass</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">chamber_volume</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">travel</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">loss_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DFEAULT_GUN_LOSS_FRACTION</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">start_pressure</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_GUN_START_PRESSURE</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">ignition_pressure</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_GUN_IGNITION_PRESSURE</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="n">known_charge_loads</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Charge</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>        <span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="n">pressure</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>        <span class="n">target</span><span class="p">:</span> <span class="n">Target</span><span class="p">,</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="n">n_intg</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>        <span class="n">acc</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="k">def</span> <span class="nf">propose</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Gun</span><span class="p">,</span> <span class="n">Charge</span><span class="p">]:</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>            <span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">(</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>                <span class="n">caliber</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">caliber</span><span class="p">,</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>                <span class="n">shot_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot_mass</span><span class="p">,</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>                <span class="n">chamber_volume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chamber_volume</span><span class="p">,</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>                <span class="n">loss_fraction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_fraction</span><span class="p">,</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>                <span class="n">start_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_pressure</span><span class="p">,</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>                <span class="n">ignition_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignition_pressure</span><span class="p">,</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>            <span class="p">)</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>            <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>                <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>                <span class="n">force</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>                <span class="n">pressure_exponent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span><span class="p">,</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>                <span class="n">covolume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covolume</span><span class="p">,</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>                <span class="n">adiabatic_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span><span class="p">,</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>                <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>                <span class="n">gas_molar_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_molar_mass</span><span class="p">,</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>                <span class="n">form_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">,</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>            <span class="p">)</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>            <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>            <span class="k">for</span> <span class="n">charge</span><span class="p">,</span> <span class="n">mass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_charge_loads</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>                <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>            <span class="k">return</span> <span class="n">gun</span><span class="p">,</span> <span class="n">charge</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="k">def</span> <span class="nf">get_pv</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>            <span class="n">gun</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">propose</span><span class="p">(</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>                <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">,</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>                <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>            <span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>            <span class="n">states</span> <span class="o">=</span> <span class="n">gun</span><span class="o">.</span><span class="n">to_travel</span><span class="p">(</span><span class="n">travel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="n">n_intg</span><span class="o">=</span><span class="n">n_intg</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">)</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>            <span class="nb">print</span><span class="p">(</span><span class="n">Gun</span><span class="o">.</span><span class="n">prettyprint</span><span class="p">(</span><span class="n">states</span><span class="p">))</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>            <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">PEAK_PRESSURE</span><span class="p">:</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>                    <span class="n">p_max</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">MUZZLE</span><span class="p">:</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>                    <span class="n">v_muzzle</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>            <span class="k">return</span> <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">get_pv</span><span class="p">(</span><span class="n">mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -256,13 +246,13 @@
 
     </div>
     <a class="headerlink" href="#Target"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Target-17"><a href="#Target-17"><span class="linenos">17</span></a><span class="k">class</span> <span class="nc">Target</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Target-18"><a href="#Target-18"><span class="linenos">18</span></a>    <span class="c1"># BREECH = State.breech_pressure.__name__</span>
-</span><span id="Target-19"><a href="#Target-19"><span class="linenos">19</span></a>    <span class="c1"># AVERAGE = State.average_pressure.__name__</span>
-</span><span id="Target-20"><a href="#Target-20"><span class="linenos">20</span></a>    <span class="c1"># SHOT = State.shot_pressure.__name__</span>
-</span><span id="Target-21"><a href="#Target-21"><span class="linenos">21</span></a>    <span class="n">BREECH</span> <span class="o">=</span> <span class="s2">&quot;breech_pressure&quot;</span>
-</span><span id="Target-22"><a href="#Target-22"><span class="linenos">22</span></a>    <span class="n">AVERAGE</span> <span class="o">=</span> <span class="s2">&quot;average_pressure&quot;</span>
-</span><span id="Target-23"><a href="#Target-23"><span class="linenos">23</span></a>    <span class="n">SHOT</span> <span class="o">=</span> <span class="s2">&quot;shot_pressure&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Target-18"><a href="#Target-18"><span class="linenos">18</span></a><span class="k">class</span> <span class="nc">Target</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+</span><span id="Target-19"><a href="#Target-19"><span class="linenos">19</span></a>    <span class="c1"># BREECH = State.breech_pressure.__name__</span>
+</span><span id="Target-20"><a href="#Target-20"><span class="linenos">20</span></a>    <span class="c1"># AVERAGE = State.average_pressure.__name__</span>
+</span><span id="Target-21"><a href="#Target-21"><span class="linenos">21</span></a>    <span class="c1"># SHOT = State.shot_pressure.__name__</span>
+</span><span id="Target-22"><a href="#Target-22"><span class="linenos">22</span></a>    <span class="n">BREECH</span> <span class="o">=</span> <span class="s2">&quot;breech_pressure&quot;</span>
+</span><span id="Target-23"><a href="#Target-23"><span class="linenos">23</span></a>    <span class="n">AVERAGE</span> <span class="o">=</span> <span class="s2">&quot;average_pressure&quot;</span>
+</span><span id="Target-24"><a href="#Target-24"><span class="linenos">24</span></a>    <span class="n">SHOT</span> <span class="o">=</span> <span class="s2">&quot;shot_pressure&quot;</span>
 </span></pre></div>
 
 
@@ -328,99 +318,88 @@
 
     </div>
     <a class="headerlink" href="#MatchingProblem"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MatchingProblem-27"><a href="#MatchingProblem-27"><span class="linenos"> 27</span></a><span class="k">class</span> <span class="nc">MatchingProblem</span><span class="p">:</span>
-</span><span id="MatchingProblem-28"><a href="#MatchingProblem-28"><span class="linenos"> 28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="MatchingProblem-29"><a href="#MatchingProblem-29"><span class="linenos"> 29</span></a><span class="sd">    Given known gun and charge loading parameters, deduce the (additional) charge</span>
-</span><span id="MatchingProblem-30"><a href="#MatchingProblem-30"><span class="linenos"> 30</span></a><span class="sd">    that is required to *match* the performance, in terms of peak pressure and</span>
-</span><span id="MatchingProblem-31"><a href="#MatchingProblem-31"><span class="linenos"> 31</span></a><span class="sd">    shot velocity.</span>
-</span><span id="MatchingProblem-32"><a href="#MatchingProblem-32"><span class="linenos"> 32</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="MatchingProblem-33"><a href="#MatchingProblem-33"><span class="linenos"> 33</span></a>
-</span><span id="MatchingProblem-34"><a href="#MatchingProblem-34"><span class="linenos"> 34</span></a>    <span class="n">caliber</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-35"><a href="#MatchingProblem-35"><span class="linenos"> 35</span></a>    <span class="n">shot_mass</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-36"><a href="#MatchingProblem-36"><span class="linenos"> 36</span></a>    <span class="n">chamber_volume</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-37"><a href="#MatchingProblem-37"><span class="linenos"> 37</span></a>    <span class="n">travel</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-38"><a href="#MatchingProblem-38"><span class="linenos"> 38</span></a>    <span class="n">loss_fraction</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-39"><a href="#MatchingProblem-39"><span class="linenos"> 39</span></a>    <span class="n">start_pressure</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-40"><a href="#MatchingProblem-40"><span class="linenos"> 40</span></a>    <span class="n">ignition_pressure</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-41"><a href="#MatchingProblem-41"><span class="linenos"> 41</span></a>
-</span><span id="MatchingProblem-42"><a href="#MatchingProblem-42"><span class="linenos"> 42</span></a>    <span class="n">density</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-43"><a href="#MatchingProblem-43"><span class="linenos"> 43</span></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-44"><a href="#MatchingProblem-44"><span class="linenos"> 44</span></a>    <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-45"><a href="#MatchingProblem-45"><span class="linenos"> 45</span></a>    <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-46"><a href="#MatchingProblem-46"><span class="linenos"> 46</span></a>    <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-47"><a href="#MatchingProblem-47"><span class="linenos"> 47</span></a>    <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-48"><a href="#MatchingProblem-48"><span class="linenos"> 48</span></a>    <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span>
-</span><span id="MatchingProblem-49"><a href="#MatchingProblem-49"><span class="linenos"> 49</span></a>
-</span><span id="MatchingProblem-50"><a href="#MatchingProblem-50"><span class="linenos"> 50</span></a>    <span class="n">known_charge_loads</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Charge</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="MatchingProblem-51"><a href="#MatchingProblem-51"><span class="linenos"> 51</span></a>
-</span><span id="MatchingProblem-52"><a href="#MatchingProblem-52"><span class="linenos"> 52</span></a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span>
-</span><span id="MatchingProblem-53"><a href="#MatchingProblem-53"><span class="linenos"> 53</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="MatchingProblem-54"><a href="#MatchingProblem-54"><span class="linenos"> 54</span></a>        <span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="MatchingProblem-55"><a href="#MatchingProblem-55"><span class="linenos"> 55</span></a>        <span class="n">pressure</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="MatchingProblem-56"><a href="#MatchingProblem-56"><span class="linenos"> 56</span></a>        <span class="n">target</span><span class="p">:</span> <span class="n">Target</span><span class="p">,</span>
-</span><span id="MatchingProblem-57"><a href="#MatchingProblem-57"><span class="linenos"> 57</span></a>        <span class="n">n_intg</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="MatchingProblem-58"><a href="#MatchingProblem-58"><span class="linenos"> 58</span></a>        <span class="n">acc</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="MatchingProblem-59"><a href="#MatchingProblem-59"><span class="linenos"> 59</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
-</span><span id="MatchingProblem-60"><a href="#MatchingProblem-60"><span class="linenos"> 60</span></a>
-</span><span id="MatchingProblem-61"><a href="#MatchingProblem-61"><span class="linenos"> 61</span></a>        <span class="k">def</span> <span class="nf">propose</span><span class="p">(</span>
-</span><span id="MatchingProblem-62"><a href="#MatchingProblem-62"><span class="linenos"> 62</span></a>            <span class="n">proposed_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">proposed_reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem-63"><a href="#MatchingProblem-63"><span class="linenos"> 63</span></a>        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Gun</span><span class="p">,</span> <span class="n">Charge</span><span class="p">]:</span>
-</span><span id="MatchingProblem-64"><a href="#MatchingProblem-64"><span class="linenos"> 64</span></a>            <span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">(</span>
-</span><span id="MatchingProblem-65"><a href="#MatchingProblem-65"><span class="linenos"> 65</span></a>                <span class="n">caliber</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">caliber</span><span class="p">,</span>
-</span><span id="MatchingProblem-66"><a href="#MatchingProblem-66"><span class="linenos"> 66</span></a>                <span class="n">shot_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot_mass</span><span class="p">,</span>
-</span><span id="MatchingProblem-67"><a href="#MatchingProblem-67"><span class="linenos"> 67</span></a>                <span class="n">chamber_volume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chamber_volume</span><span class="p">,</span>
-</span><span id="MatchingProblem-68"><a href="#MatchingProblem-68"><span class="linenos"> 68</span></a>                <span class="n">loss_fraction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_fraction</span><span class="p">,</span>
-</span><span id="MatchingProblem-69"><a href="#MatchingProblem-69"><span class="linenos"> 69</span></a>                <span class="n">start_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_pressure</span><span class="p">,</span>
-</span><span id="MatchingProblem-70"><a href="#MatchingProblem-70"><span class="linenos"> 70</span></a>                <span class="n">ignition_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignition_pressure</span><span class="p">,</span>
-</span><span id="MatchingProblem-71"><a href="#MatchingProblem-71"><span class="linenos"> 71</span></a>            <span class="p">)</span>
-</span><span id="MatchingProblem-72"><a href="#MatchingProblem-72"><span class="linenos"> 72</span></a>
-</span><span id="MatchingProblem-73"><a href="#MatchingProblem-73"><span class="linenos"> 73</span></a>            <span class="k">for</span> <span class="n">charge</span><span class="p">,</span> <span class="n">mass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_charge_loads</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="MatchingProblem-74"><a href="#MatchingProblem-74"><span class="linenos"> 74</span></a>                <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
-</span><span id="MatchingProblem-75"><a href="#MatchingProblem-75"><span class="linenos"> 75</span></a>
-</span><span id="MatchingProblem-76"><a href="#MatchingProblem-76"><span class="linenos"> 76</span></a>            <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
-</span><span id="MatchingProblem-77"><a href="#MatchingProblem-77"><span class="linenos"> 77</span></a>                <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
-</span><span id="MatchingProblem-78"><a href="#MatchingProblem-78"><span class="linenos"> 78</span></a>                <span class="n">force</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
-</span><span id="MatchingProblem-79"><a href="#MatchingProblem-79"><span class="linenos"> 79</span></a>                <span class="n">pressure_exponent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span><span class="p">,</span>
-</span><span id="MatchingProblem-80"><a href="#MatchingProblem-80"><span class="linenos"> 80</span></a>                <span class="n">covolume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covolume</span><span class="p">,</span>
-</span><span id="MatchingProblem-81"><a href="#MatchingProblem-81"><span class="linenos"> 81</span></a>                <span class="n">adiabatic_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span><span class="p">,</span>
-</span><span id="MatchingProblem-82"><a href="#MatchingProblem-82"><span class="linenos"> 82</span></a>                <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">proposed_reduced_burnrate</span><span class="p">,</span>
-</span><span id="MatchingProblem-83"><a href="#MatchingProblem-83"><span class="linenos"> 83</span></a>                <span class="n">gas_molar_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_molar_mass</span><span class="p">,</span>
-</span><span id="MatchingProblem-84"><a href="#MatchingProblem-84"><span class="linenos"> 84</span></a>                <span class="n">form_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">,</span>
-</span><span id="MatchingProblem-85"><a href="#MatchingProblem-85"><span class="linenos"> 85</span></a>            <span class="p">)</span>
-</span><span id="MatchingProblem-86"><a href="#MatchingProblem-86"><span class="linenos"> 86</span></a>            <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">proposed_mass</span><span class="p">)</span>
-</span><span id="MatchingProblem-87"><a href="#MatchingProblem-87"><span class="linenos"> 87</span></a>
-</span><span id="MatchingProblem-88"><a href="#MatchingProblem-88"><span class="linenos"> 88</span></a>            <span class="k">return</span> <span class="n">gun</span><span class="p">,</span> <span class="n">charge</span>
-</span><span id="MatchingProblem-89"><a href="#MatchingProblem-89"><span class="linenos"> 89</span></a>
-</span><span id="MatchingProblem-90"><a href="#MatchingProblem-90"><span class="linenos"> 90</span></a>        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">proposed_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">proposed_reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-</span><span id="MatchingProblem-91"><a href="#MatchingProblem-91"><span class="linenos"> 91</span></a>            <span class="n">gun</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">propose</span><span class="p">(</span>
-</span><span id="MatchingProblem-92"><a href="#MatchingProblem-92"><span class="linenos"> 92</span></a>                <span class="n">proposed_mass</span><span class="o">=</span><span class="n">proposed_mass</span><span class="p">,</span>
-</span><span id="MatchingProblem-93"><a href="#MatchingProblem-93"><span class="linenos"> 93</span></a>                <span class="n">proposed_reduced_burnrate</span><span class="o">=</span><span class="n">proposed_reduced_burnrate</span><span class="p">,</span>
-</span><span id="MatchingProblem-94"><a href="#MatchingProblem-94"><span class="linenos"> 94</span></a>            <span class="p">)</span>
-</span><span id="MatchingProblem-95"><a href="#MatchingProblem-95"><span class="linenos"> 95</span></a>
-</span><span id="MatchingProblem-96"><a href="#MatchingProblem-96"><span class="linenos"> 96</span></a>            <span class="n">states</span> <span class="o">=</span> <span class="n">gun</span><span class="o">.</span><span class="n">to_travel</span><span class="p">(</span><span class="n">travel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="n">n_intg</span><span class="o">=</span><span class="n">n_intg</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">)</span>
-</span><span id="MatchingProblem-97"><a href="#MatchingProblem-97"><span class="linenos"> 97</span></a>
-</span><span id="MatchingProblem-98"><a href="#MatchingProblem-98"><span class="linenos"> 98</span></a>            <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
-</span><span id="MatchingProblem-99"><a href="#MatchingProblem-99"><span class="linenos"> 99</span></a>            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
-</span><span id="MatchingProblem-100"><a href="#MatchingProblem-100"><span class="linenos">100</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">PEAK_PRESSURE</span><span class="p">:</span>
-</span><span id="MatchingProblem-101"><a href="#MatchingProblem-101"><span class="linenos">101</span></a>                    <span class="n">p_max</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-</span><span id="MatchingProblem-102"><a href="#MatchingProblem-102"><span class="linenos">102</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">MUZZLE</span><span class="p">:</span>
-</span><span id="MatchingProblem-103"><a href="#MatchingProblem-103"><span class="linenos">103</span></a>                    <span class="n">v_muzzle</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span>
-</span><span id="MatchingProblem-104"><a href="#MatchingProblem-104"><span class="linenos">104</span></a>
-</span><span id="MatchingProblem-105"><a href="#MatchingProblem-105"><span class="linenos">105</span></a>            <span class="k">return</span> <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span>
-</span><span id="MatchingProblem-106"><a href="#MatchingProblem-106"><span class="linenos">106</span></a>
-</span><span id="MatchingProblem-107"><a href="#MatchingProblem-107"><span class="linenos">107</span></a>        <span class="c1"># iteration loop</span>
-</span><span id="MatchingProblem-108"><a href="#MatchingProblem-108"><span class="linenos">108</span></a>
-</span><span id="MatchingProblem-109"><a href="#MatchingProblem-109"><span class="linenos">109</span></a>        <span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span>
-</span><span id="MatchingProblem-110"><a href="#MatchingProblem-110"><span class="linenos">110</span></a>
-</span><span id="MatchingProblem-111"><a href="#MatchingProblem-111"><span class="linenos">111</span></a>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-</span><span id="MatchingProblem-112"><a href="#MatchingProblem-112"><span class="linenos">112</span></a>            <span class="n">p_act</span><span class="p">,</span> <span class="n">v_act</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">)</span>
-</span><span id="MatchingProblem-113"><a href="#MatchingProblem-113"><span class="linenos">113</span></a>
-</span><span id="MatchingProblem-114"><a href="#MatchingProblem-114"><span class="linenos">114</span></a>            <span class="n">mass</span> <span class="o">*=</span> <span class="p">(</span><span class="n">v_act</span> <span class="o">/</span> <span class="n">velocity</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span>
-</span><span id="MatchingProblem-115"><a href="#MatchingProblem-115"><span class="linenos">115</span></a>            <span class="n">reduced_burnrate</span> <span class="o">*=</span> <span class="p">(</span><span class="n">p_act</span> <span class="o">/</span> <span class="n">pressure</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.45</span>
-</span><span id="MatchingProblem-116"><a href="#MatchingProblem-116"><span class="linenos">116</span></a>            <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">)</span>
-</span><span id="MatchingProblem-117"><a href="#MatchingProblem-117"><span class="linenos">117</span></a>
-</span><span id="MatchingProblem-118"><a href="#MatchingProblem-118"><span class="linenos">118</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">)</span>
-</span><span id="MatchingProblem-119"><a href="#MatchingProblem-119"><span class="linenos">119</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">))</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MatchingProblem-28"><a href="#MatchingProblem-28"><span class="linenos"> 28</span></a><span class="k">class</span> <span class="nc">MatchingProblem</span><span class="p">:</span>
+</span><span id="MatchingProblem-29"><a href="#MatchingProblem-29"><span class="linenos"> 29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="MatchingProblem-30"><a href="#MatchingProblem-30"><span class="linenos"> 30</span></a><span class="sd">    Given known gun and charge loading parameters, deduce the (additional) charge</span>
+</span><span id="MatchingProblem-31"><a href="#MatchingProblem-31"><span class="linenos"> 31</span></a><span class="sd">    that is required to *match* the performance, in terms of peak pressure and</span>
+</span><span id="MatchingProblem-32"><a href="#MatchingProblem-32"><span class="linenos"> 32</span></a><span class="sd">    shot velocity.</span>
+</span><span id="MatchingProblem-33"><a href="#MatchingProblem-33"><span class="linenos"> 33</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="MatchingProblem-34"><a href="#MatchingProblem-34"><span class="linenos"> 34</span></a>
+</span><span id="MatchingProblem-35"><a href="#MatchingProblem-35"><span class="linenos"> 35</span></a>    <span class="n">density</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-36"><a href="#MatchingProblem-36"><span class="linenos"> 36</span></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-37"><a href="#MatchingProblem-37"><span class="linenos"> 37</span></a>    <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-38"><a href="#MatchingProblem-38"><span class="linenos"> 38</span></a>    <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-39"><a href="#MatchingProblem-39"><span class="linenos"> 39</span></a>    <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-40"><a href="#MatchingProblem-40"><span class="linenos"> 40</span></a>    <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-41"><a href="#MatchingProblem-41"><span class="linenos"> 41</span></a>    <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span>
+</span><span id="MatchingProblem-42"><a href="#MatchingProblem-42"><span class="linenos"> 42</span></a>
+</span><span id="MatchingProblem-43"><a href="#MatchingProblem-43"><span class="linenos"> 43</span></a>    <span class="n">caliber</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-44"><a href="#MatchingProblem-44"><span class="linenos"> 44</span></a>    <span class="n">shot_mass</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-45"><a href="#MatchingProblem-45"><span class="linenos"> 45</span></a>    <span class="n">chamber_volume</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-46"><a href="#MatchingProblem-46"><span class="linenos"> 46</span></a>    <span class="n">travel</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="MatchingProblem-47"><a href="#MatchingProblem-47"><span class="linenos"> 47</span></a>    <span class="n">loss_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DFEAULT_GUN_LOSS_FRACTION</span>
+</span><span id="MatchingProblem-48"><a href="#MatchingProblem-48"><span class="linenos"> 48</span></a>    <span class="n">start_pressure</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_GUN_START_PRESSURE</span>
+</span><span id="MatchingProblem-49"><a href="#MatchingProblem-49"><span class="linenos"> 49</span></a>    <span class="n">ignition_pressure</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_GUN_IGNITION_PRESSURE</span>
+</span><span id="MatchingProblem-50"><a href="#MatchingProblem-50"><span class="linenos"> 50</span></a>
+</span><span id="MatchingProblem-51"><a href="#MatchingProblem-51"><span class="linenos"> 51</span></a>    <span class="n">known_charge_loads</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Charge</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="MatchingProblem-52"><a href="#MatchingProblem-52"><span class="linenos"> 52</span></a>
+</span><span id="MatchingProblem-53"><a href="#MatchingProblem-53"><span class="linenos"> 53</span></a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span>
+</span><span id="MatchingProblem-54"><a href="#MatchingProblem-54"><span class="linenos"> 54</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="MatchingProblem-55"><a href="#MatchingProblem-55"><span class="linenos"> 55</span></a>        <span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="MatchingProblem-56"><a href="#MatchingProblem-56"><span class="linenos"> 56</span></a>        <span class="n">pressure</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="MatchingProblem-57"><a href="#MatchingProblem-57"><span class="linenos"> 57</span></a>        <span class="n">target</span><span class="p">:</span> <span class="n">Target</span><span class="p">,</span>
+</span><span id="MatchingProblem-58"><a href="#MatchingProblem-58"><span class="linenos"> 58</span></a>        <span class="n">n_intg</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="MatchingProblem-59"><a href="#MatchingProblem-59"><span class="linenos"> 59</span></a>        <span class="n">acc</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="MatchingProblem-60"><a href="#MatchingProblem-60"><span class="linenos"> 60</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
+</span><span id="MatchingProblem-61"><a href="#MatchingProblem-61"><span class="linenos"> 61</span></a>
+</span><span id="MatchingProblem-62"><a href="#MatchingProblem-62"><span class="linenos"> 62</span></a>        <span class="k">def</span> <span class="nf">propose</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Gun</span><span class="p">,</span> <span class="n">Charge</span><span class="p">]:</span>
+</span><span id="MatchingProblem-63"><a href="#MatchingProblem-63"><span class="linenos"> 63</span></a>            <span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">(</span>
+</span><span id="MatchingProblem-64"><a href="#MatchingProblem-64"><span class="linenos"> 64</span></a>                <span class="n">caliber</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">caliber</span><span class="p">,</span>
+</span><span id="MatchingProblem-65"><a href="#MatchingProblem-65"><span class="linenos"> 65</span></a>                <span class="n">shot_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot_mass</span><span class="p">,</span>
+</span><span id="MatchingProblem-66"><a href="#MatchingProblem-66"><span class="linenos"> 66</span></a>                <span class="n">chamber_volume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chamber_volume</span><span class="p">,</span>
+</span><span id="MatchingProblem-67"><a href="#MatchingProblem-67"><span class="linenos"> 67</span></a>                <span class="n">loss_fraction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_fraction</span><span class="p">,</span>
+</span><span id="MatchingProblem-68"><a href="#MatchingProblem-68"><span class="linenos"> 68</span></a>                <span class="n">start_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_pressure</span><span class="p">,</span>
+</span><span id="MatchingProblem-69"><a href="#MatchingProblem-69"><span class="linenos"> 69</span></a>                <span class="n">ignition_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignition_pressure</span><span class="p">,</span>
+</span><span id="MatchingProblem-70"><a href="#MatchingProblem-70"><span class="linenos"> 70</span></a>            <span class="p">)</span>
+</span><span id="MatchingProblem-71"><a href="#MatchingProblem-71"><span class="linenos"> 71</span></a>
+</span><span id="MatchingProblem-72"><a href="#MatchingProblem-72"><span class="linenos"> 72</span></a>            <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
+</span><span id="MatchingProblem-73"><a href="#MatchingProblem-73"><span class="linenos"> 73</span></a>                <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
+</span><span id="MatchingProblem-74"><a href="#MatchingProblem-74"><span class="linenos"> 74</span></a>                <span class="n">force</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
+</span><span id="MatchingProblem-75"><a href="#MatchingProblem-75"><span class="linenos"> 75</span></a>                <span class="n">pressure_exponent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span><span class="p">,</span>
+</span><span id="MatchingProblem-76"><a href="#MatchingProblem-76"><span class="linenos"> 76</span></a>                <span class="n">covolume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covolume</span><span class="p">,</span>
+</span><span id="MatchingProblem-77"><a href="#MatchingProblem-77"><span class="linenos"> 77</span></a>                <span class="n">adiabatic_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span><span class="p">,</span>
+</span><span id="MatchingProblem-78"><a href="#MatchingProblem-78"><span class="linenos"> 78</span></a>                <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span>
+</span><span id="MatchingProblem-79"><a href="#MatchingProblem-79"><span class="linenos"> 79</span></a>                <span class="n">gas_molar_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_molar_mass</span><span class="p">,</span>
+</span><span id="MatchingProblem-80"><a href="#MatchingProblem-80"><span class="linenos"> 80</span></a>                <span class="n">form_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">,</span>
+</span><span id="MatchingProblem-81"><a href="#MatchingProblem-81"><span class="linenos"> 81</span></a>            <span class="p">)</span>
+</span><span id="MatchingProblem-82"><a href="#MatchingProblem-82"><span class="linenos"> 82</span></a>            <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="MatchingProblem-83"><a href="#MatchingProblem-83"><span class="linenos"> 83</span></a>
+</span><span id="MatchingProblem-84"><a href="#MatchingProblem-84"><span class="linenos"> 84</span></a>            <span class="k">for</span> <span class="n">charge</span><span class="p">,</span> <span class="n">mass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_charge_loads</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="MatchingProblem-85"><a href="#MatchingProblem-85"><span class="linenos"> 85</span></a>                <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="MatchingProblem-86"><a href="#MatchingProblem-86"><span class="linenos"> 86</span></a>
+</span><span id="MatchingProblem-87"><a href="#MatchingProblem-87"><span class="linenos"> 87</span></a>            <span class="k">return</span> <span class="n">gun</span><span class="p">,</span> <span class="n">charge</span>
+</span><span id="MatchingProblem-88"><a href="#MatchingProblem-88"><span class="linenos"> 88</span></a>
+</span><span id="MatchingProblem-89"><a href="#MatchingProblem-89"><span class="linenos"> 89</span></a>        <span class="k">def</span> <span class="nf">get_pv</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+</span><span id="MatchingProblem-90"><a href="#MatchingProblem-90"><span class="linenos"> 90</span></a>            <span class="n">gun</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">propose</span><span class="p">(</span>
+</span><span id="MatchingProblem-91"><a href="#MatchingProblem-91"><span class="linenos"> 91</span></a>                <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">,</span>
+</span><span id="MatchingProblem-92"><a href="#MatchingProblem-92"><span class="linenos"> 92</span></a>                <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span>
+</span><span id="MatchingProblem-93"><a href="#MatchingProblem-93"><span class="linenos"> 93</span></a>            <span class="p">)</span>
+</span><span id="MatchingProblem-94"><a href="#MatchingProblem-94"><span class="linenos"> 94</span></a>
+</span><span id="MatchingProblem-95"><a href="#MatchingProblem-95"><span class="linenos"> 95</span></a>            <span class="n">states</span> <span class="o">=</span> <span class="n">gun</span><span class="o">.</span><span class="n">to_travel</span><span class="p">(</span><span class="n">travel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="n">n_intg</span><span class="o">=</span><span class="n">n_intg</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">)</span>
+</span><span id="MatchingProblem-96"><a href="#MatchingProblem-96"><span class="linenos"> 96</span></a>
+</span><span id="MatchingProblem-97"><a href="#MatchingProblem-97"><span class="linenos"> 97</span></a>            <span class="nb">print</span><span class="p">(</span><span class="n">Gun</span><span class="o">.</span><span class="n">prettyprint</span><span class="p">(</span><span class="n">states</span><span class="p">))</span>
+</span><span id="MatchingProblem-98"><a href="#MatchingProblem-98"><span class="linenos"> 98</span></a>
+</span><span id="MatchingProblem-99"><a href="#MatchingProblem-99"><span class="linenos"> 99</span></a>            <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+</span><span id="MatchingProblem-100"><a href="#MatchingProblem-100"><span class="linenos">100</span></a>            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+</span><span id="MatchingProblem-101"><a href="#MatchingProblem-101"><span class="linenos">101</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">PEAK_PRESSURE</span><span class="p">:</span>
+</span><span id="MatchingProblem-102"><a href="#MatchingProblem-102"><span class="linenos">102</span></a>                    <span class="n">p_max</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</span><span id="MatchingProblem-103"><a href="#MatchingProblem-103"><span class="linenos">103</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">MUZZLE</span><span class="p">:</span>
+</span><span id="MatchingProblem-104"><a href="#MatchingProblem-104"><span class="linenos">104</span></a>                    <span class="n">v_muzzle</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span>
+</span><span id="MatchingProblem-105"><a href="#MatchingProblem-105"><span class="linenos">105</span></a>
+</span><span id="MatchingProblem-106"><a href="#MatchingProblem-106"><span class="linenos">106</span></a>            <span class="k">return</span> <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span>
+</span><span id="MatchingProblem-107"><a href="#MatchingProblem-107"><span class="linenos">107</span></a>
+</span><span id="MatchingProblem-108"><a href="#MatchingProblem-108"><span class="linenos">108</span></a>        <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">get_pv</span><span class="p">(</span><span class="n">mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)</span>
+</span><span id="MatchingProblem-109"><a href="#MatchingProblem-109"><span class="linenos">109</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -433,88 +412,11 @@ shot velocity.</p>
                             <div id="MatchingProblem.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">MatchingProblem</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">caliber</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">shot_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">chamber_volume</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">travel</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">loss_fraction</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">start_pressure</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">ignition_pressure</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">density</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">force</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">form_function</span><span class="p">:</span> <span class="n"><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></span>,</span><span class="param">	<span class="n">known_charge_loads</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n"><a href="charge.html#Charge">ballistics.charge.Charge</a></span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span></span>)</span>
+        <span class="name">MatchingProblem</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">density</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">force</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">form_function</span><span class="p">:</span> <span class="n"><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></span>,</span><span class="param">	<span class="n">caliber</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">shot_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">chamber_volume</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">travel</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">loss_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span>,</span><span class="param">	<span class="n">start_pressure</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30000000.0</span>,</span><span class="param">	<span class="n">ignition_pressure</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10000000.0</span>,</span><span class="param">	<span class="n">known_charge_loads</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n"><a href="charge.html#Charge">ballistics.charge.Charge</a></span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#MatchingProblem.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="MatchingProblem.caliber" class="classattr">
-                                <div class="attr variable">
-            <span class="name">caliber</span><span class="annotation">: float</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MatchingProblem.caliber"></a>
-    
-    
-
-                            </div>
-                            <div id="MatchingProblem.shot_mass" class="classattr">
-                                <div class="attr variable">
-            <span class="name">shot_mass</span><span class="annotation">: float</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MatchingProblem.shot_mass"></a>
-    
-    
-
-                            </div>
-                            <div id="MatchingProblem.chamber_volume" class="classattr">
-                                <div class="attr variable">
-            <span class="name">chamber_volume</span><span class="annotation">: float</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MatchingProblem.chamber_volume"></a>
-    
-    
-
-                            </div>
-                            <div id="MatchingProblem.travel" class="classattr">
-                                <div class="attr variable">
-            <span class="name">travel</span><span class="annotation">: float</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MatchingProblem.travel"></a>
-    
-    
-
-                            </div>
-                            <div id="MatchingProblem.loss_fraction" class="classattr">
-                                <div class="attr variable">
-            <span class="name">loss_fraction</span><span class="annotation">: float</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MatchingProblem.loss_fraction"></a>
-    
-    
-
-                            </div>
-                            <div id="MatchingProblem.start_pressure" class="classattr">
-                                <div class="attr variable">
-            <span class="name">start_pressure</span><span class="annotation">: float</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MatchingProblem.start_pressure"></a>
-    
-    
-
-                            </div>
-                            <div id="MatchingProblem.ignition_pressure" class="classattr">
-                                <div class="attr variable">
-            <span class="name">ignition_pressure</span><span class="annotation">: float</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MatchingProblem.ignition_pressure"></a>
     
     
 
@@ -596,6 +498,86 @@ shot velocity.</p>
     
 
                             </div>
+                            <div id="MatchingProblem.caliber" class="classattr">
+                                <div class="attr variable">
+            <span class="name">caliber</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MatchingProblem.caliber"></a>
+    
+    
+
+                            </div>
+                            <div id="MatchingProblem.shot_mass" class="classattr">
+                                <div class="attr variable">
+            <span class="name">shot_mass</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MatchingProblem.shot_mass"></a>
+    
+    
+
+                            </div>
+                            <div id="MatchingProblem.chamber_volume" class="classattr">
+                                <div class="attr variable">
+            <span class="name">chamber_volume</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MatchingProblem.chamber_volume"></a>
+    
+    
+
+                            </div>
+                            <div id="MatchingProblem.travel" class="classattr">
+                                <div class="attr variable">
+            <span class="name">travel</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MatchingProblem.travel"></a>
+    
+    
+
+                            </div>
+                            <div id="MatchingProblem.loss_fraction" class="classattr">
+                                <div class="attr variable">
+            <span class="name">loss_fraction</span><span class="annotation">: float</span>        =
+<span class="default_value">0.05</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MatchingProblem.loss_fraction"></a>
+    
+    
+
+                            </div>
+                            <div id="MatchingProblem.start_pressure" class="classattr">
+                                <div class="attr variable">
+            <span class="name">start_pressure</span><span class="annotation">: float</span>        =
+<span class="default_value">30000000.0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MatchingProblem.start_pressure"></a>
+    
+    
+
+                            </div>
+                            <div id="MatchingProblem.ignition_pressure" class="classattr">
+                                <div class="attr variable">
+            <span class="name">ignition_pressure</span><span class="annotation">: float</span>        =
+<span class="default_value">10000000.0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MatchingProblem.ignition_pressure"></a>
+    
+    
+
+                            </div>
                             <div id="MatchingProblem.known_charge_loads" class="classattr">
                                 <div class="attr variable">
             <span class="name">known_charge_loads</span><span class="annotation">: Dict[<a href="charge.html#Charge">ballistics.charge.Charge</a>, float]</span>
@@ -618,74 +600,63 @@ shot velocity.</p>
 
     </div>
     <a class="headerlink" href="#MatchingProblem.solve"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MatchingProblem.solve-52"><a href="#MatchingProblem.solve-52"><span class="linenos"> 52</span></a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span>
-</span><span id="MatchingProblem.solve-53"><a href="#MatchingProblem.solve-53"><span class="linenos"> 53</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-54"><a href="#MatchingProblem.solve-54"><span class="linenos"> 54</span></a>        <span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-55"><a href="#MatchingProblem.solve-55"><span class="linenos"> 55</span></a>        <span class="n">pressure</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-56"><a href="#MatchingProblem.solve-56"><span class="linenos"> 56</span></a>        <span class="n">target</span><span class="p">:</span> <span class="n">Target</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-57"><a href="#MatchingProblem.solve-57"><span class="linenos"> 57</span></a>        <span class="n">n_intg</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-58"><a href="#MatchingProblem.solve-58"><span class="linenos"> 58</span></a>        <span class="n">acc</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-59"><a href="#MatchingProblem.solve-59"><span class="linenos"> 59</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
-</span><span id="MatchingProblem.solve-60"><a href="#MatchingProblem.solve-60"><span class="linenos"> 60</span></a>
-</span><span id="MatchingProblem.solve-61"><a href="#MatchingProblem.solve-61"><span class="linenos"> 61</span></a>        <span class="k">def</span> <span class="nf">propose</span><span class="p">(</span>
-</span><span id="MatchingProblem.solve-62"><a href="#MatchingProblem.solve-62"><span class="linenos"> 62</span></a>            <span class="n">proposed_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">proposed_reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="MatchingProblem.solve-63"><a href="#MatchingProblem.solve-63"><span class="linenos"> 63</span></a>        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Gun</span><span class="p">,</span> <span class="n">Charge</span><span class="p">]:</span>
-</span><span id="MatchingProblem.solve-64"><a href="#MatchingProblem.solve-64"><span class="linenos"> 64</span></a>            <span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">(</span>
-</span><span id="MatchingProblem.solve-65"><a href="#MatchingProblem.solve-65"><span class="linenos"> 65</span></a>                <span class="n">caliber</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">caliber</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-66"><a href="#MatchingProblem.solve-66"><span class="linenos"> 66</span></a>                <span class="n">shot_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot_mass</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-67"><a href="#MatchingProblem.solve-67"><span class="linenos"> 67</span></a>                <span class="n">chamber_volume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chamber_volume</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-68"><a href="#MatchingProblem.solve-68"><span class="linenos"> 68</span></a>                <span class="n">loss_fraction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_fraction</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-69"><a href="#MatchingProblem.solve-69"><span class="linenos"> 69</span></a>                <span class="n">start_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_pressure</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-70"><a href="#MatchingProblem.solve-70"><span class="linenos"> 70</span></a>                <span class="n">ignition_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignition_pressure</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-71"><a href="#MatchingProblem.solve-71"><span class="linenos"> 71</span></a>            <span class="p">)</span>
-</span><span id="MatchingProblem.solve-72"><a href="#MatchingProblem.solve-72"><span class="linenos"> 72</span></a>
-</span><span id="MatchingProblem.solve-73"><a href="#MatchingProblem.solve-73"><span class="linenos"> 73</span></a>            <span class="k">for</span> <span class="n">charge</span><span class="p">,</span> <span class="n">mass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_charge_loads</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="MatchingProblem.solve-74"><a href="#MatchingProblem.solve-74"><span class="linenos"> 74</span></a>                <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
-</span><span id="MatchingProblem.solve-75"><a href="#MatchingProblem.solve-75"><span class="linenos"> 75</span></a>
-</span><span id="MatchingProblem.solve-76"><a href="#MatchingProblem.solve-76"><span class="linenos"> 76</span></a>            <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
-</span><span id="MatchingProblem.solve-77"><a href="#MatchingProblem.solve-77"><span class="linenos"> 77</span></a>                <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-78"><a href="#MatchingProblem.solve-78"><span class="linenos"> 78</span></a>                <span class="n">force</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-79"><a href="#MatchingProblem.solve-79"><span class="linenos"> 79</span></a>                <span class="n">pressure_exponent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-80"><a href="#MatchingProblem.solve-80"><span class="linenos"> 80</span></a>                <span class="n">covolume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covolume</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-81"><a href="#MatchingProblem.solve-81"><span class="linenos"> 81</span></a>                <span class="n">adiabatic_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-82"><a href="#MatchingProblem.solve-82"><span class="linenos"> 82</span></a>                <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">proposed_reduced_burnrate</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-83"><a href="#MatchingProblem.solve-83"><span class="linenos"> 83</span></a>                <span class="n">gas_molar_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_molar_mass</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-84"><a href="#MatchingProblem.solve-84"><span class="linenos"> 84</span></a>                <span class="n">form_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-85"><a href="#MatchingProblem.solve-85"><span class="linenos"> 85</span></a>            <span class="p">)</span>
-</span><span id="MatchingProblem.solve-86"><a href="#MatchingProblem.solve-86"><span class="linenos"> 86</span></a>            <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">proposed_mass</span><span class="p">)</span>
-</span><span id="MatchingProblem.solve-87"><a href="#MatchingProblem.solve-87"><span class="linenos"> 87</span></a>
-</span><span id="MatchingProblem.solve-88"><a href="#MatchingProblem.solve-88"><span class="linenos"> 88</span></a>            <span class="k">return</span> <span class="n">gun</span><span class="p">,</span> <span class="n">charge</span>
-</span><span id="MatchingProblem.solve-89"><a href="#MatchingProblem.solve-89"><span class="linenos"> 89</span></a>
-</span><span id="MatchingProblem.solve-90"><a href="#MatchingProblem.solve-90"><span class="linenos"> 90</span></a>        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">proposed_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">proposed_reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-</span><span id="MatchingProblem.solve-91"><a href="#MatchingProblem.solve-91"><span class="linenos"> 91</span></a>            <span class="n">gun</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">propose</span><span class="p">(</span>
-</span><span id="MatchingProblem.solve-92"><a href="#MatchingProblem.solve-92"><span class="linenos"> 92</span></a>                <span class="n">proposed_mass</span><span class="o">=</span><span class="n">proposed_mass</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-93"><a href="#MatchingProblem.solve-93"><span class="linenos"> 93</span></a>                <span class="n">proposed_reduced_burnrate</span><span class="o">=</span><span class="n">proposed_reduced_burnrate</span><span class="p">,</span>
-</span><span id="MatchingProblem.solve-94"><a href="#MatchingProblem.solve-94"><span class="linenos"> 94</span></a>            <span class="p">)</span>
-</span><span id="MatchingProblem.solve-95"><a href="#MatchingProblem.solve-95"><span class="linenos"> 95</span></a>
-</span><span id="MatchingProblem.solve-96"><a href="#MatchingProblem.solve-96"><span class="linenos"> 96</span></a>            <span class="n">states</span> <span class="o">=</span> <span class="n">gun</span><span class="o">.</span><span class="n">to_travel</span><span class="p">(</span><span class="n">travel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="n">n_intg</span><span class="o">=</span><span class="n">n_intg</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">)</span>
-</span><span id="MatchingProblem.solve-97"><a href="#MatchingProblem.solve-97"><span class="linenos"> 97</span></a>
-</span><span id="MatchingProblem.solve-98"><a href="#MatchingProblem.solve-98"><span class="linenos"> 98</span></a>            <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
-</span><span id="MatchingProblem.solve-99"><a href="#MatchingProblem.solve-99"><span class="linenos"> 99</span></a>            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
-</span><span id="MatchingProblem.solve-100"><a href="#MatchingProblem.solve-100"><span class="linenos">100</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">PEAK_PRESSURE</span><span class="p">:</span>
-</span><span id="MatchingProblem.solve-101"><a href="#MatchingProblem.solve-101"><span class="linenos">101</span></a>                    <span class="n">p_max</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-</span><span id="MatchingProblem.solve-102"><a href="#MatchingProblem.solve-102"><span class="linenos">102</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">MUZZLE</span><span class="p">:</span>
-</span><span id="MatchingProblem.solve-103"><a href="#MatchingProblem.solve-103"><span class="linenos">103</span></a>                    <span class="n">v_muzzle</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span>
-</span><span id="MatchingProblem.solve-104"><a href="#MatchingProblem.solve-104"><span class="linenos">104</span></a>
-</span><span id="MatchingProblem.solve-105"><a href="#MatchingProblem.solve-105"><span class="linenos">105</span></a>            <span class="k">return</span> <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span>
-</span><span id="MatchingProblem.solve-106"><a href="#MatchingProblem.solve-106"><span class="linenos">106</span></a>
-</span><span id="MatchingProblem.solve-107"><a href="#MatchingProblem.solve-107"><span class="linenos">107</span></a>        <span class="c1"># iteration loop</span>
-</span><span id="MatchingProblem.solve-108"><a href="#MatchingProblem.solve-108"><span class="linenos">108</span></a>
-</span><span id="MatchingProblem.solve-109"><a href="#MatchingProblem.solve-109"><span class="linenos">109</span></a>        <span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span>
-</span><span id="MatchingProblem.solve-110"><a href="#MatchingProblem.solve-110"><span class="linenos">110</span></a>
-</span><span id="MatchingProblem.solve-111"><a href="#MatchingProblem.solve-111"><span class="linenos">111</span></a>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-</span><span id="MatchingProblem.solve-112"><a href="#MatchingProblem.solve-112"><span class="linenos">112</span></a>            <span class="n">p_act</span><span class="p">,</span> <span class="n">v_act</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">)</span>
-</span><span id="MatchingProblem.solve-113"><a href="#MatchingProblem.solve-113"><span class="linenos">113</span></a>
-</span><span id="MatchingProblem.solve-114"><a href="#MatchingProblem.solve-114"><span class="linenos">114</span></a>            <span class="n">mass</span> <span class="o">*=</span> <span class="p">(</span><span class="n">v_act</span> <span class="o">/</span> <span class="n">velocity</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span>
-</span><span id="MatchingProblem.solve-115"><a href="#MatchingProblem.solve-115"><span class="linenos">115</span></a>            <span class="n">reduced_burnrate</span> <span class="o">*=</span> <span class="p">(</span><span class="n">p_act</span> <span class="o">/</span> <span class="n">pressure</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.45</span>
-</span><span id="MatchingProblem.solve-116"><a href="#MatchingProblem.solve-116"><span class="linenos">116</span></a>            <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">)</span>
-</span><span id="MatchingProblem.solve-117"><a href="#MatchingProblem.solve-117"><span class="linenos">117</span></a>
-</span><span id="MatchingProblem.solve-118"><a href="#MatchingProblem.solve-118"><span class="linenos">118</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">)</span>
-</span><span id="MatchingProblem.solve-119"><a href="#MatchingProblem.solve-119"><span class="linenos">119</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">))</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MatchingProblem.solve-53"><a href="#MatchingProblem.solve-53"><span class="linenos"> 53</span></a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span>
+</span><span id="MatchingProblem.solve-54"><a href="#MatchingProblem.solve-54"><span class="linenos"> 54</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-55"><a href="#MatchingProblem.solve-55"><span class="linenos"> 55</span></a>        <span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-56"><a href="#MatchingProblem.solve-56"><span class="linenos"> 56</span></a>        <span class="n">pressure</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-57"><a href="#MatchingProblem.solve-57"><span class="linenos"> 57</span></a>        <span class="n">target</span><span class="p">:</span> <span class="n">Target</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-58"><a href="#MatchingProblem.solve-58"><span class="linenos"> 58</span></a>        <span class="n">n_intg</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-59"><a href="#MatchingProblem.solve-59"><span class="linenos"> 59</span></a>        <span class="n">acc</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-60"><a href="#MatchingProblem.solve-60"><span class="linenos"> 60</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
+</span><span id="MatchingProblem.solve-61"><a href="#MatchingProblem.solve-61"><span class="linenos"> 61</span></a>
+</span><span id="MatchingProblem.solve-62"><a href="#MatchingProblem.solve-62"><span class="linenos"> 62</span></a>        <span class="k">def</span> <span class="nf">propose</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Gun</span><span class="p">,</span> <span class="n">Charge</span><span class="p">]:</span>
+</span><span id="MatchingProblem.solve-63"><a href="#MatchingProblem.solve-63"><span class="linenos"> 63</span></a>            <span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">(</span>
+</span><span id="MatchingProblem.solve-64"><a href="#MatchingProblem.solve-64"><span class="linenos"> 64</span></a>                <span class="n">caliber</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">caliber</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-65"><a href="#MatchingProblem.solve-65"><span class="linenos"> 65</span></a>                <span class="n">shot_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot_mass</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-66"><a href="#MatchingProblem.solve-66"><span class="linenos"> 66</span></a>                <span class="n">chamber_volume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chamber_volume</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-67"><a href="#MatchingProblem.solve-67"><span class="linenos"> 67</span></a>                <span class="n">loss_fraction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_fraction</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-68"><a href="#MatchingProblem.solve-68"><span class="linenos"> 68</span></a>                <span class="n">start_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_pressure</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-69"><a href="#MatchingProblem.solve-69"><span class="linenos"> 69</span></a>                <span class="n">ignition_pressure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignition_pressure</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-70"><a href="#MatchingProblem.solve-70"><span class="linenos"> 70</span></a>            <span class="p">)</span>
+</span><span id="MatchingProblem.solve-71"><a href="#MatchingProblem.solve-71"><span class="linenos"> 71</span></a>
+</span><span id="MatchingProblem.solve-72"><a href="#MatchingProblem.solve-72"><span class="linenos"> 72</span></a>            <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
+</span><span id="MatchingProblem.solve-73"><a href="#MatchingProblem.solve-73"><span class="linenos"> 73</span></a>                <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-74"><a href="#MatchingProblem.solve-74"><span class="linenos"> 74</span></a>                <span class="n">force</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-75"><a href="#MatchingProblem.solve-75"><span class="linenos"> 75</span></a>                <span class="n">pressure_exponent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-76"><a href="#MatchingProblem.solve-76"><span class="linenos"> 76</span></a>                <span class="n">covolume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covolume</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-77"><a href="#MatchingProblem.solve-77"><span class="linenos"> 77</span></a>                <span class="n">adiabatic_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-78"><a href="#MatchingProblem.solve-78"><span class="linenos"> 78</span></a>                <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-79"><a href="#MatchingProblem.solve-79"><span class="linenos"> 79</span></a>                <span class="n">gas_molar_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_molar_mass</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-80"><a href="#MatchingProblem.solve-80"><span class="linenos"> 80</span></a>                <span class="n">form_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-81"><a href="#MatchingProblem.solve-81"><span class="linenos"> 81</span></a>            <span class="p">)</span>
+</span><span id="MatchingProblem.solve-82"><a href="#MatchingProblem.solve-82"><span class="linenos"> 82</span></a>            <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="MatchingProblem.solve-83"><a href="#MatchingProblem.solve-83"><span class="linenos"> 83</span></a>
+</span><span id="MatchingProblem.solve-84"><a href="#MatchingProblem.solve-84"><span class="linenos"> 84</span></a>            <span class="k">for</span> <span class="n">charge</span><span class="p">,</span> <span class="n">mass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_charge_loads</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="MatchingProblem.solve-85"><a href="#MatchingProblem.solve-85"><span class="linenos"> 85</span></a>                <span class="n">gun</span><span class="o">.</span><span class="n">add_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="MatchingProblem.solve-86"><a href="#MatchingProblem.solve-86"><span class="linenos"> 86</span></a>
+</span><span id="MatchingProblem.solve-87"><a href="#MatchingProblem.solve-87"><span class="linenos"> 87</span></a>            <span class="k">return</span> <span class="n">gun</span><span class="p">,</span> <span class="n">charge</span>
+</span><span id="MatchingProblem.solve-88"><a href="#MatchingProblem.solve-88"><span class="linenos"> 88</span></a>
+</span><span id="MatchingProblem.solve-89"><a href="#MatchingProblem.solve-89"><span class="linenos"> 89</span></a>        <span class="k">def</span> <span class="nf">get_pv</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+</span><span id="MatchingProblem.solve-90"><a href="#MatchingProblem.solve-90"><span class="linenos"> 90</span></a>            <span class="n">gun</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">propose</span><span class="p">(</span>
+</span><span id="MatchingProblem.solve-91"><a href="#MatchingProblem.solve-91"><span class="linenos"> 91</span></a>                <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-92"><a href="#MatchingProblem.solve-92"><span class="linenos"> 92</span></a>                <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span>
+</span><span id="MatchingProblem.solve-93"><a href="#MatchingProblem.solve-93"><span class="linenos"> 93</span></a>            <span class="p">)</span>
+</span><span id="MatchingProblem.solve-94"><a href="#MatchingProblem.solve-94"><span class="linenos"> 94</span></a>
+</span><span id="MatchingProblem.solve-95"><a href="#MatchingProblem.solve-95"><span class="linenos"> 95</span></a>            <span class="n">states</span> <span class="o">=</span> <span class="n">gun</span><span class="o">.</span><span class="n">to_travel</span><span class="p">(</span><span class="n">travel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="n">n_intg</span><span class="o">=</span><span class="n">n_intg</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">)</span>
+</span><span id="MatchingProblem.solve-96"><a href="#MatchingProblem.solve-96"><span class="linenos"> 96</span></a>
+</span><span id="MatchingProblem.solve-97"><a href="#MatchingProblem.solve-97"><span class="linenos"> 97</span></a>            <span class="nb">print</span><span class="p">(</span><span class="n">Gun</span><span class="o">.</span><span class="n">prettyprint</span><span class="p">(</span><span class="n">states</span><span class="p">))</span>
+</span><span id="MatchingProblem.solve-98"><a href="#MatchingProblem.solve-98"><span class="linenos"> 98</span></a>
+</span><span id="MatchingProblem.solve-99"><a href="#MatchingProblem.solve-99"><span class="linenos"> 99</span></a>            <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+</span><span id="MatchingProblem.solve-100"><a href="#MatchingProblem.solve-100"><span class="linenos">100</span></a>            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+</span><span id="MatchingProblem.solve-101"><a href="#MatchingProblem.solve-101"><span class="linenos">101</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">PEAK_PRESSURE</span><span class="p">:</span>
+</span><span id="MatchingProblem.solve-102"><a href="#MatchingProblem.solve-102"><span class="linenos">102</span></a>                    <span class="n">p_max</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</span><span id="MatchingProblem.solve-103"><a href="#MatchingProblem.solve-103"><span class="linenos">103</span></a>                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">marker</span> <span class="o">==</span> <span class="n">Significance</span><span class="o">.</span><span class="n">MUZZLE</span><span class="p">:</span>
+</span><span id="MatchingProblem.solve-104"><a href="#MatchingProblem.solve-104"><span class="linenos">104</span></a>                    <span class="n">v_muzzle</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span>
+</span><span id="MatchingProblem.solve-105"><a href="#MatchingProblem.solve-105"><span class="linenos">105</span></a>
+</span><span id="MatchingProblem.solve-106"><a href="#MatchingProblem.solve-106"><span class="linenos">106</span></a>            <span class="k">return</span> <span class="n">p_max</span><span class="p">,</span> <span class="n">v_muzzle</span>
+</span><span id="MatchingProblem.solve-107"><a href="#MatchingProblem.solve-107"><span class="linenos">107</span></a>
+</span><span id="MatchingProblem.solve-108"><a href="#MatchingProblem.solve-108"><span class="linenos">108</span></a>        <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">get_pv</span><span class="p">(</span><span class="n">mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)</span>
+</span><span id="MatchingProblem.solve-109"><a href="#MatchingProblem.solve-109"><span class="linenos">109</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 </span></pre></div>
 
 
