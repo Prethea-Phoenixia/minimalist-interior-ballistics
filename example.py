@@ -5,16 +5,6 @@ from ballistics.problem import MatchingProblem, Target
 
 if __name__ == "__main__":
 
-    # charge_9__7 = Charge.from_areal_impulse(
-    #     density=1600,
-    #     force=95000,
-    #     pressure_exponent=0.83,
-    #     covolume=1e-3,
-    #     adiabatic_index=1.2,
-    #     gas_molar_mass=1,
-    #     form_function=,
-    # )
-
     p = MatchingProblem(
         caliber=76.2e-3,
         shot_mass=6.2,
@@ -34,7 +24,14 @@ if __name__ == "__main__":
         ),
     )
 
-    p.solve(velocity=680, pressure=238e6, target=Target.AVERAGE, n_intg=10, acc=1e-3)
+    p.solve(
+        mass=1,
+        velocity=680,
+        pressure=238e6,
+        target=Target.AVERAGE,
+        n_intg=10,
+        acc=1e-3,
+    )
 
 
 """

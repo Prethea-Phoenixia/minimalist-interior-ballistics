@@ -31,6 +31,17 @@ class State:
         # this enables sorting and bisect operation with array of `ballistics.state.State`.
         return self.time < other.time
 
+    @staticmethod
+    def remark(old_state: State, new_significance: Significance) -> State:
+        return State(
+            gun=old_state.gun,
+            time=old_state.time,
+            travel=old_state.travel,
+            velocity=old_state.velocity,
+            burnup_fractions=old_state.burnup_fractions,
+            marker=new_significance,
+        )
+
     @cached_property
     def volume_burnup_fractions(self) -> Tuple[float]:
         return tuple(
