@@ -25,7 +25,7 @@ if __name__ == "__main__":
     )
 
     p.solve(
-        mass=1,
+        mass=1.08,
         velocity=680,
         pressure=238e6,
         target=Target.AVERAGE,

@@ -112,7 +112,7 @@
                                 <a class="function" href="#MatchingProblem.get_base_gun">get_base_gun</a>
                         </li>
                         <li>
-                                <a class="function" href="#MatchingProblem.set_test_charge">set_test_charge</a>
+                                <a class="function" href="#MatchingProblem.get_test_gun">get_test_gun</a>
                         </li>
                         <li>
                                 <a class="function" href="#MatchingProblem.solve">solve</a>
@@ -145,25 +145,25 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DEFAULT_GUN_IGNITION_PRESSURE</span><span class="p">,</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>               <span class="n">DEFAULT_GUN_MAX_GROSS_LOAD_DENSITY</span><span class="p">,</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>               <span class="n">DEFAULT_GUN_MIN_GROSS_LOAD_DENSITY</span><span class="p">,</span> <span class="n">DEFAULT_GUN_START_PRESSURE</span><span class="p">,</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>               <span class="n">DFEAULT_GUN_LOSS_FRACTION</span><span class="p">,</span> <span class="n">Significance</span><span class="p">)</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span> <span class="nn">.charge</span> <span class="kn">import</span> <span class="n">Charge</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span> <span class="nn">.gun</span> <span class="kn">import</span> <span class="n">Gun</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">State</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DEFAULT_GUN_IGNITION_PRESSURE</span><span class="p">,</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>               <span class="n">DEFAULT_GUN_MAX_GROSS_LOAD_DENSITY</span><span class="p">,</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>               <span class="n">DEFAULT_GUN_MIN_GROSS_LOAD_DENSITY</span><span class="p">,</span> <span class="n">DEFAULT_GUN_START_PRESSURE</span><span class="p">,</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>               <span class="n">DFEAULT_GUN_LOSS_FRACTION</span><span class="p">,</span> <span class="n">Significance</span><span class="p">)</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span> <span class="nn">.charge</span> <span class="kn">import</span> <span class="n">Charge</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span> <span class="nn">.gun</span> <span class="kn">import</span> <span class="n">Gun</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">State</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="kn">from</span> <span class="nn">.form_function</span> <span class="kn">import</span> <span class="n">FormFunction</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="k">class</span> <span class="nc">Target</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">BREECH</span> <span class="o">=</span> <span class="n">State</span><span class="o">.</span><span class="n">breech_pressure</span><span class="o">.</span><span class="fm">__get__</span><span class="o">.</span><span class="vm">__name__</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">AVERAGE</span> <span class="o">=</span> <span class="n">State</span><span class="o">.</span><span class="n">average_pressure</span><span class="o">.</span><span class="fm">__get__</span><span class="o">.</span><span class="vm">__name__</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">SHOT</span> <span class="o">=</span> <span class="n">State</span><span class="o">.</span><span class="n">shot_pressure</span><span class="o">.</span><span class="fm">__get__</span><span class="o">.</span><span class="vm">__name__</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">BREECH</span> <span class="o">=</span> <span class="s2">&quot;breech_pressure&quot;</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">AVERAGE</span> <span class="o">=</span> <span class="s2">&quot;average_pressure&quot;</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">SHOT</span> <span class="o">=</span> <span class="s2">&quot;shot_pressure&quot;</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -220,7 +220,7 @@
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>        <span class="k">return</span> <span class="n">gun</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="k">def</span> <span class="nf">set_test_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="k">def</span> <span class="nf">get_test_gun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_gun</span><span class="p">()</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>        <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
 </span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>            <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
@@ -248,13 +248,21 @@
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="k">if</span> <span class="n">mass</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_charge_mass</span> <span class="ow">or</span> <span class="n">mass</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_charge_mass</span><span class="p">:</span>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mass specified violates gross load density constraint.&quot;</span><span class="p">)</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="k">def</span> <span class="nf">add_test_charge</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_test_charge</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="k">def</span> <span class="nf">get_test_gun</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_test_gun</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="n">add_test_charge</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">)</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="n">get_test_gun</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="n">states</span> <span class="o">=</span> <span class="n">gun</span><span class="o">.</span><span class="n">to_burnout</span><span class="p">(</span><span class="n">abort_travel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="n">n_intg</span><span class="o">=</span><span class="n">n_intg</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">)</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">gun</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">states</span><span class="p">))</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="k">if</span> <span class="n">pressure</span> <span class="o">&gt;</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">gun</span><span class="o">.</span><span class="n">get_bomb_state</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;targeted pressure is impossible to achieve&quot;</span><span class="p">)</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="c1"># for i in range(8):</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="c1">#     rbr = 1e-6 * 10**i</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>        <span class="c1">#     gun = add_test_charge(rbr)</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>        <span class="c1">#     print(gun.bomb_pressure / 1e6)</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>        <span class="c1">#     states = gun.to_burnout(abort_travel=self.travel, n_intg=n_intg, acc=acc)</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>        <span class="c1">#     print(rbr)</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>        <span class="c1">#     print(gun.tabulate(states))</span>
 </span></pre></div>
 
 
@@ -271,9 +279,9 @@
     </div>
     <a class="headerlink" href="#Target"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Target-21"><a href="#Target-21"><span class="linenos">21</span></a><span class="k">class</span> <span class="nc">Target</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Target-22"><a href="#Target-22"><span class="linenos">22</span></a>    <span class="n">BREECH</span> <span class="o">=</span> <span class="n">State</span><span class="o">.</span><span class="n">breech_pressure</span><span class="o">.</span><span class="fm">__get__</span><span class="o">.</span><span class="vm">__name__</span>
-</span><span id="Target-23"><a href="#Target-23"><span class="linenos">23</span></a>    <span class="n">AVERAGE</span> <span class="o">=</span> <span class="n">State</span><span class="o">.</span><span class="n">average_pressure</span><span class="o">.</span><span class="fm">__get__</span><span class="o">.</span><span class="vm">__name__</span>
-</span><span id="Target-24"><a href="#Target-24"><span class="linenos">24</span></a>    <span class="n">SHOT</span> <span class="o">=</span> <span class="n">State</span><span class="o">.</span><span class="n">shot_pressure</span><span class="o">.</span><span class="fm">__get__</span><span class="o">.</span><span class="vm">__name__</span>
+</span><span id="Target-22"><a href="#Target-22"><span class="linenos">22</span></a>    <span class="n">BREECH</span> <span class="o">=</span> <span class="s2">&quot;breech_pressure&quot;</span>
+</span><span id="Target-23"><a href="#Target-23"><span class="linenos">23</span></a>    <span class="n">AVERAGE</span> <span class="o">=</span> <span class="s2">&quot;average_pressure&quot;</span>
+</span><span id="Target-24"><a href="#Target-24"><span class="linenos">24</span></a>    <span class="n">SHOT</span> <span class="o">=</span> <span class="s2">&quot;shot_pressure&quot;</span>
 </span></pre></div>
 
 
@@ -284,7 +292,7 @@
                             <div id="Target.BREECH" class="classattr">
                                 <div class="attr variable">
             <span class="name">BREECH</span>        =
-<span class="default_value">&lt;<a href="#Target.BREECH">Target.BREECH</a>: &#39;__get__&#39;&gt;</span>
+<span class="default_value">&lt;<a href="#Target.BREECH">Target.BREECH</a>: &#39;breech_pressure&#39;&gt;</span>
 
         
     </div>
@@ -296,7 +304,7 @@
                             <div id="Target.AVERAGE" class="classattr">
                                 <div class="attr variable">
             <span class="name">AVERAGE</span>        =
-<span class="default_value">&lt;<a href="#Target.BREECH">Target.BREECH</a>: &#39;__get__&#39;&gt;</span>
+<span class="default_value">&lt;<a href="#Target.AVERAGE">Target.AVERAGE</a>: &#39;average_pressure&#39;&gt;</span>
 
         
     </div>
@@ -308,7 +316,7 @@
                             <div id="Target.SHOT" class="classattr">
                                 <div class="attr variable">
             <span class="name">SHOT</span>        =
-<span class="default_value">&lt;<a href="#Target.BREECH">Target.BREECH</a>: &#39;__get__&#39;&gt;</span>
+<span class="default_value">&lt;<a href="#Target.SHOT">Target.SHOT</a>: &#39;shot_pressure&#39;&gt;</span>
 
         
     </div>
@@ -392,7 +400,7 @@
 </span><span id="MatchingProblem-78"><a href="#MatchingProblem-78"><span class="linenos"> 78</span></a>
 </span><span id="MatchingProblem-79"><a href="#MatchingProblem-79"><span class="linenos"> 79</span></a>        <span class="k">return</span> <span class="n">gun</span>
 </span><span id="MatchingProblem-80"><a href="#MatchingProblem-80"><span class="linenos"> 80</span></a>
-</span><span id="MatchingProblem-81"><a href="#MatchingProblem-81"><span class="linenos"> 81</span></a>    <span class="k">def</span> <span class="nf">set_test_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
+</span><span id="MatchingProblem-81"><a href="#MatchingProblem-81"><span class="linenos"> 81</span></a>    <span class="k">def</span> <span class="nf">get_test_gun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
 </span><span id="MatchingProblem-82"><a href="#MatchingProblem-82"><span class="linenos"> 82</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_gun</span><span class="p">()</span>
 </span><span id="MatchingProblem-83"><a href="#MatchingProblem-83"><span class="linenos"> 83</span></a>        <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
 </span><span id="MatchingProblem-84"><a href="#MatchingProblem-84"><span class="linenos"> 84</span></a>            <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
@@ -420,13 +428,21 @@
 </span><span id="MatchingProblem-106"><a href="#MatchingProblem-106"><span class="linenos">106</span></a>        <span class="k">if</span> <span class="n">mass</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_charge_mass</span> <span class="ow">or</span> <span class="n">mass</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_charge_mass</span><span class="p">:</span>
 </span><span id="MatchingProblem-107"><a href="#MatchingProblem-107"><span class="linenos">107</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mass specified violates gross load density constraint.&quot;</span><span class="p">)</span>
 </span><span id="MatchingProblem-108"><a href="#MatchingProblem-108"><span class="linenos">108</span></a>
-</span><span id="MatchingProblem-109"><a href="#MatchingProblem-109"><span class="linenos">109</span></a>        <span class="k">def</span> <span class="nf">add_test_charge</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
-</span><span id="MatchingProblem-110"><a href="#MatchingProblem-110"><span class="linenos">110</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_test_charge</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="MatchingProblem-109"><a href="#MatchingProblem-109"><span class="linenos">109</span></a>        <span class="k">def</span> <span class="nf">get_test_gun</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
+</span><span id="MatchingProblem-110"><a href="#MatchingProblem-110"><span class="linenos">110</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_test_gun</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
 </span><span id="MatchingProblem-111"><a href="#MatchingProblem-111"><span class="linenos">111</span></a>
-</span><span id="MatchingProblem-112"><a href="#MatchingProblem-112"><span class="linenos">112</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="n">add_test_charge</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">)</span>
+</span><span id="MatchingProblem-112"><a href="#MatchingProblem-112"><span class="linenos">112</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="n">get_test_gun</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </span><span id="MatchingProblem-113"><a href="#MatchingProblem-113"><span class="linenos">113</span></a>
-</span><span id="MatchingProblem-114"><a href="#MatchingProblem-114"><span class="linenos">114</span></a>        <span class="n">states</span> <span class="o">=</span> <span class="n">gun</span><span class="o">.</span><span class="n">to_burnout</span><span class="p">(</span><span class="n">abort_travel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="n">n_intg</span><span class="o">=</span><span class="n">n_intg</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">)</span>
-</span><span id="MatchingProblem-115"><a href="#MatchingProblem-115"><span class="linenos">115</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">gun</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">states</span><span class="p">))</span>
+</span><span id="MatchingProblem-114"><a href="#MatchingProblem-114"><span class="linenos">114</span></a>        <span class="k">if</span> <span class="n">pressure</span> <span class="o">&gt;</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">gun</span><span class="o">.</span><span class="n">get_bomb_state</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+</span><span id="MatchingProblem-115"><a href="#MatchingProblem-115"><span class="linenos">115</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;targeted pressure is impossible to achieve&quot;</span><span class="p">)</span>
+</span><span id="MatchingProblem-116"><a href="#MatchingProblem-116"><span class="linenos">116</span></a>
+</span><span id="MatchingProblem-117"><a href="#MatchingProblem-117"><span class="linenos">117</span></a>        <span class="c1"># for i in range(8):</span>
+</span><span id="MatchingProblem-118"><a href="#MatchingProblem-118"><span class="linenos">118</span></a>        <span class="c1">#     rbr = 1e-6 * 10**i</span>
+</span><span id="MatchingProblem-119"><a href="#MatchingProblem-119"><span class="linenos">119</span></a>        <span class="c1">#     gun = add_test_charge(rbr)</span>
+</span><span id="MatchingProblem-120"><a href="#MatchingProblem-120"><span class="linenos">120</span></a>        <span class="c1">#     print(gun.bomb_pressure / 1e6)</span>
+</span><span id="MatchingProblem-121"><a href="#MatchingProblem-121"><span class="linenos">121</span></a>        <span class="c1">#     states = gun.to_burnout(abort_travel=self.travel, n_intg=n_intg, acc=acc)</span>
+</span><span id="MatchingProblem-122"><a href="#MatchingProblem-122"><span class="linenos">122</span></a>        <span class="c1">#     print(rbr)</span>
+</span><span id="MatchingProblem-123"><a href="#MatchingProblem-123"><span class="linenos">123</span></a>        <span class="c1">#     print(gun.tabulate(states))</span>
 </span></pre></div>
 
 
@@ -709,31 +725,31 @@ shot velocity.</p>
     
 
                             </div>
-                            <div id="MatchingProblem.set_test_charge" class="classattr">
-                                        <input id="MatchingProblem.set_test_charge-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="MatchingProblem.get_test_gun" class="classattr">
+                                        <input id="MatchingProblem.get_test_gun-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">set_test_charge</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">mass</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="n"><a href="gun.html#Gun">ballistics.gun.Gun</a></span>:</span></span>
+        <span class="name">get_test_gun</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">mass</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="n"><a href="gun.html#Gun">ballistics.gun.Gun</a></span>:</span></span>
 
-                <label class="view-source-button" for="MatchingProblem.set_test_charge-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="MatchingProblem.get_test_gun-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#MatchingProblem.set_test_charge"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MatchingProblem.set_test_charge-81"><a href="#MatchingProblem.set_test_charge-81"><span class="linenos">81</span></a>    <span class="k">def</span> <span class="nf">set_test_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
-</span><span id="MatchingProblem.set_test_charge-82"><a href="#MatchingProblem.set_test_charge-82"><span class="linenos">82</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_gun</span><span class="p">()</span>
-</span><span id="MatchingProblem.set_test_charge-83"><a href="#MatchingProblem.set_test_charge-83"><span class="linenos">83</span></a>        <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
-</span><span id="MatchingProblem.set_test_charge-84"><a href="#MatchingProblem.set_test_charge-84"><span class="linenos">84</span></a>            <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
-</span><span id="MatchingProblem.set_test_charge-85"><a href="#MatchingProblem.set_test_charge-85"><span class="linenos">85</span></a>            <span class="n">force</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
-</span><span id="MatchingProblem.set_test_charge-86"><a href="#MatchingProblem.set_test_charge-86"><span class="linenos">86</span></a>            <span class="n">pressure_exponent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span><span class="p">,</span>
-</span><span id="MatchingProblem.set_test_charge-87"><a href="#MatchingProblem.set_test_charge-87"><span class="linenos">87</span></a>            <span class="n">covolume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covolume</span><span class="p">,</span>
-</span><span id="MatchingProblem.set_test_charge-88"><a href="#MatchingProblem.set_test_charge-88"><span class="linenos">88</span></a>            <span class="n">adiabatic_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span><span class="p">,</span>
-</span><span id="MatchingProblem.set_test_charge-89"><a href="#MatchingProblem.set_test_charge-89"><span class="linenos">89</span></a>            <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span>
-</span><span id="MatchingProblem.set_test_charge-90"><a href="#MatchingProblem.set_test_charge-90"><span class="linenos">90</span></a>            <span class="n">gas_molar_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_molar_mass</span><span class="p">,</span>
-</span><span id="MatchingProblem.set_test_charge-91"><a href="#MatchingProblem.set_test_charge-91"><span class="linenos">91</span></a>            <span class="n">form_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">,</span>
-</span><span id="MatchingProblem.set_test_charge-92"><a href="#MatchingProblem.set_test_charge-92"><span class="linenos">92</span></a>        <span class="p">)</span>
-</span><span id="MatchingProblem.set_test_charge-93"><a href="#MatchingProblem.set_test_charge-93"><span class="linenos">93</span></a>        <span class="n">gun</span><span class="o">.</span><span class="n">set_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
-</span><span id="MatchingProblem.set_test_charge-94"><a href="#MatchingProblem.set_test_charge-94"><span class="linenos">94</span></a>        <span class="k">return</span> <span class="n">gun</span>
+    <a class="headerlink" href="#MatchingProblem.get_test_gun"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MatchingProblem.get_test_gun-81"><a href="#MatchingProblem.get_test_gun-81"><span class="linenos">81</span></a>    <span class="k">def</span> <span class="nf">get_test_gun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
+</span><span id="MatchingProblem.get_test_gun-82"><a href="#MatchingProblem.get_test_gun-82"><span class="linenos">82</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_gun</span><span class="p">()</span>
+</span><span id="MatchingProblem.get_test_gun-83"><a href="#MatchingProblem.get_test_gun-83"><span class="linenos">83</span></a>        <span class="n">charge</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span>
+</span><span id="MatchingProblem.get_test_gun-84"><a href="#MatchingProblem.get_test_gun-84"><span class="linenos">84</span></a>            <span class="n">density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
+</span><span id="MatchingProblem.get_test_gun-85"><a href="#MatchingProblem.get_test_gun-85"><span class="linenos">85</span></a>            <span class="n">force</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
+</span><span id="MatchingProblem.get_test_gun-86"><a href="#MatchingProblem.get_test_gun-86"><span class="linenos">86</span></a>            <span class="n">pressure_exponent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span><span class="p">,</span>
+</span><span id="MatchingProblem.get_test_gun-87"><a href="#MatchingProblem.get_test_gun-87"><span class="linenos">87</span></a>            <span class="n">covolume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covolume</span><span class="p">,</span>
+</span><span id="MatchingProblem.get_test_gun-88"><a href="#MatchingProblem.get_test_gun-88"><span class="linenos">88</span></a>            <span class="n">adiabatic_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span><span class="p">,</span>
+</span><span id="MatchingProblem.get_test_gun-89"><a href="#MatchingProblem.get_test_gun-89"><span class="linenos">89</span></a>            <span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span>
+</span><span id="MatchingProblem.get_test_gun-90"><a href="#MatchingProblem.get_test_gun-90"><span class="linenos">90</span></a>            <span class="n">gas_molar_mass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_molar_mass</span><span class="p">,</span>
+</span><span id="MatchingProblem.get_test_gun-91"><a href="#MatchingProblem.get_test_gun-91"><span class="linenos">91</span></a>            <span class="n">form_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">,</span>
+</span><span id="MatchingProblem.get_test_gun-92"><a href="#MatchingProblem.get_test_gun-92"><span class="linenos">92</span></a>        <span class="p">)</span>
+</span><span id="MatchingProblem.get_test_gun-93"><a href="#MatchingProblem.get_test_gun-93"><span class="linenos">93</span></a>        <span class="n">gun</span><span class="o">.</span><span class="n">set_charge</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="MatchingProblem.get_test_gun-94"><a href="#MatchingProblem.get_test_gun-94"><span class="linenos">94</span></a>        <span class="k">return</span> <span class="n">gun</span>
 </span></pre></div>
 
 
@@ -764,13 +780,21 @@ shot velocity.</p>
 </span><span id="MatchingProblem.solve-106"><a href="#MatchingProblem.solve-106"><span class="linenos">106</span></a>        <span class="k">if</span> <span class="n">mass</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_charge_mass</span> <span class="ow">or</span> <span class="n">mass</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_charge_mass</span><span class="p">:</span>
 </span><span id="MatchingProblem.solve-107"><a href="#MatchingProblem.solve-107"><span class="linenos">107</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mass specified violates gross load density constraint.&quot;</span><span class="p">)</span>
 </span><span id="MatchingProblem.solve-108"><a href="#MatchingProblem.solve-108"><span class="linenos">108</span></a>
-</span><span id="MatchingProblem.solve-109"><a href="#MatchingProblem.solve-109"><span class="linenos">109</span></a>        <span class="k">def</span> <span class="nf">add_test_charge</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
-</span><span id="MatchingProblem.solve-110"><a href="#MatchingProblem.solve-110"><span class="linenos">110</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_test_charge</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
+</span><span id="MatchingProblem.solve-109"><a href="#MatchingProblem.solve-109"><span class="linenos">109</span></a>        <span class="k">def</span> <span class="nf">get_test_gun</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gun</span><span class="p">:</span>
+</span><span id="MatchingProblem.solve-110"><a href="#MatchingProblem.solve-110"><span class="linenos">110</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_test_gun</span><span class="p">(</span><span class="n">reduced_burnrate</span><span class="o">=</span><span class="n">reduced_burnrate</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span>
 </span><span id="MatchingProblem.solve-111"><a href="#MatchingProblem.solve-111"><span class="linenos">111</span></a>
-</span><span id="MatchingProblem.solve-112"><a href="#MatchingProblem.solve-112"><span class="linenos">112</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="n">add_test_charge</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">)</span>
+</span><span id="MatchingProblem.solve-112"><a href="#MatchingProblem.solve-112"><span class="linenos">112</span></a>        <span class="n">gun</span> <span class="o">=</span> <span class="n">get_test_gun</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </span><span id="MatchingProblem.solve-113"><a href="#MatchingProblem.solve-113"><span class="linenos">113</span></a>
-</span><span id="MatchingProblem.solve-114"><a href="#MatchingProblem.solve-114"><span class="linenos">114</span></a>        <span class="n">states</span> <span class="o">=</span> <span class="n">gun</span><span class="o">.</span><span class="n">to_burnout</span><span class="p">(</span><span class="n">abort_travel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="n">n_intg</span><span class="o">=</span><span class="n">n_intg</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">)</span>
-</span><span id="MatchingProblem.solve-115"><a href="#MatchingProblem.solve-115"><span class="linenos">115</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">gun</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">states</span><span class="p">))</span>
+</span><span id="MatchingProblem.solve-114"><a href="#MatchingProblem.solve-114"><span class="linenos">114</span></a>        <span class="k">if</span> <span class="n">pressure</span> <span class="o">&gt;</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">gun</span><span class="o">.</span><span class="n">get_bomb_state</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+</span><span id="MatchingProblem.solve-115"><a href="#MatchingProblem.solve-115"><span class="linenos">115</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;targeted pressure is impossible to achieve&quot;</span><span class="p">)</span>
+</span><span id="MatchingProblem.solve-116"><a href="#MatchingProblem.solve-116"><span class="linenos">116</span></a>
+</span><span id="MatchingProblem.solve-117"><a href="#MatchingProblem.solve-117"><span class="linenos">117</span></a>        <span class="c1"># for i in range(8):</span>
+</span><span id="MatchingProblem.solve-118"><a href="#MatchingProblem.solve-118"><span class="linenos">118</span></a>        <span class="c1">#     rbr = 1e-6 * 10**i</span>
+</span><span id="MatchingProblem.solve-119"><a href="#MatchingProblem.solve-119"><span class="linenos">119</span></a>        <span class="c1">#     gun = add_test_charge(rbr)</span>
+</span><span id="MatchingProblem.solve-120"><a href="#MatchingProblem.solve-120"><span class="linenos">120</span></a>        <span class="c1">#     print(gun.bomb_pressure / 1e6)</span>
+</span><span id="MatchingProblem.solve-121"><a href="#MatchingProblem.solve-121"><span class="linenos">121</span></a>        <span class="c1">#     states = gun.to_burnout(abort_travel=self.travel, n_intg=n_intg, acc=acc)</span>
+</span><span id="MatchingProblem.solve-122"><a href="#MatchingProblem.solve-122"><span class="linenos">122</span></a>        <span class="c1">#     print(rbr)</span>
+</span><span id="MatchingProblem.solve-123"><a href="#MatchingProblem.solve-123"><span class="linenos">123</span></a>        <span class="c1">#     print(gun.tabulate(states))</span>
 </span></pre></div>
 
 

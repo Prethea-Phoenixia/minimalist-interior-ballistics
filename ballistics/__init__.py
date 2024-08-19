@@ -15,6 +15,7 @@ class Significance(Enum):
     MUZZLE = "muzzle"
     INTERMEDIATE = "x"
     STEP = ""
+    BOMB = "bomb"
 
 
 _g_0 = 9.806

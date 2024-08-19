@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from math import log10
 from typing import TYPE_CHECKING, Dict, List, Tuple
 
 from . import (DEFAULT_GUN_IGNITION_PRESSURE,
@@ -10,17 +11,16 @@ from . import (DEFAULT_GUN_IGNITION_PRESSURE,
                DFEAULT_GUN_LOSS_FRACTION, Significance)
 from .charge import Charge
 from .gun import Gun
-from .state import State
 
 if TYPE_CHECKING:
-
+    from .state import State
     from .form_function import FormFunction
 
 
 class Target(Enum):
-    BREECH = State.breech_pressure.__get__.__name__
-    AVERAGE = State.average_pressure.__get__.__name__
-    SHOT = State.shot_pressure.__get__.__name__
+    BREECH = "breech_pressure"
+    AVERAGE = "average_pressure"
+    SHOT = "shot_pressure"
 
 
 @dataclass(frozen=True)
@@ -77,7 +77,7 @@ class MatchingProblem:
 
         return gun
 
-    def set_test_charge(self, reduced_burnrate: float, mass: float) -> Gun:
+    def get_test_gun(self, reduced_burnrate: float, mass: float) -> Gun:
         gun = self.get_base_gun()
         charge = Charge(
             density=self.density,
@@ -105,10 +105,18 @@ class MatchingProblem:
         if mass < self.min_charge_mass or mass > self.max_charge_mass:
             raise ValueError("mass specified violates gross load density constraint.")
 
-        def add_test_charge(reduced_burnrate: float) -> Gun:
-            return self.set_test_charge(reduced_burnrate=reduced_burnrate, mass=mass)
+        def get_test_gun(reduced_burnrate: float) -> Gun:
+            return self.get_test_gun(reduced_burnrate=reduced_burnrate, mass=mass)
 
-        gun = add_test_charge(1e-4)
+        gun = get_test_gun(1)
 
-        states = gun.to_burnout(abort_travel=self.travel, n_intg=n_intg, acc=acc)
-        print(gun.tabulate(states))
+        if pressure > getattr(gun.get_bomb_state(), target.value):
+            raise ValueError("targeted pressure is impossible to achieve")
+
+        # for i in range(8):
+        #     rbr = 1e-6 * 10**i
+        #     gun = add_test_charge(rbr)
+        #     print(gun.bomb_pressure / 1e6)
+        #     states = gun.to_burnout(abort_travel=self.travel, n_intg=n_intg, acc=acc)
+        #     print(rbr)
+        #     print(gun.tabulate(states))

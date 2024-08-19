@@ -16,7 +16,7 @@ class State:
     of equations.
     """
 
-    gun: Gun = field(repr=False)
+    gun: Gun
     time: float
     travel: float
     velocity: float

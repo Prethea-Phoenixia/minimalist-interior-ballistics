@@ -56,9 +56,23 @@ class Gun:
     def total_charge_volume(self) -> float:
         return sum(m / c.density for c, m in zip(self.charges, self.charge_masses))
 
-    # @property
-    # def free_chamber_volume(self) -> float:
-    #     return self.chamber_volume - self.total_charge_volume
+    def get_bomb_state(self) -> State:
+        """
+        Generate a special state that corresponds to the case where the gun is operated
+        as a ballistic bomb, and where all propellants has fully combusted. This
+        `ballistic.state.State` is uniquely marked by a `ballistic.Significance.BOMB`
+        marker. This state's pressure values represents the maximum possible that can
+        be achieved under this loading condition regardless of powder combustion behavior.
+
+        """
+        return State(
+            gun=self,
+            time=0,
+            travel=0,
+            velocity=0,
+            burnup_fractions=tuple(c.Z_k for c in self.charges),
+            marker=Significance.BOMB,
+        )
 
     def gas_energy(self, psi: Tuple[float, ...], v: float) -> float:
         # calculated the average adiabatic index for the gas mixture.
@@ -186,6 +200,13 @@ class Gun:
         self.ignition_pressure = force * delta_ig
 
     def to_start(self, n_intg: int, acc: float) -> List[State]:
+        # sanity check: maximum possible pressure developed is higher than start:
+        if self.get_bomb_state().average_pressure < self.ignition_pressure:
+            raise ValueError(
+                "projectile cannot be started, the maximum pressure achievable is less\
+ insufficient to overcome starting resistance."
+            )
+
         delta_t, rough_ttb = MAX_DT, 0.0
         states: List[State] = []
 
