@@ -5,12 +5,11 @@ from enum import Enum
 from math import log10
 from typing import TYPE_CHECKING, Dict, List, Tuple
 
-from . import (DEFAULT_GUN_IGNITION_PRESSURE,
-               DEFAULT_GUN_MAX_GROSS_LOAD_DENSITY,
-               DEFAULT_GUN_MIN_GROSS_LOAD_DENSITY, DEFAULT_GUN_START_PRESSURE,
+from . import (DEFAULT_GUN_IGNITION_PRESSURE, DEFAULT_GUN_START_PRESSURE,
                DFEAULT_GUN_LOSS_FRACTION, Significance)
 from .charge import Charge
 from .gun import Gun
+from .num import Find, dekker, gss
 
 if TYPE_CHECKING:
     from .state import State
@@ -49,18 +48,9 @@ class MatchingProblem:
 
     known_charge_loads: Dict[Charge, float] = field(default_factory=dict)
 
-    min_gross_load_density: float = DEFAULT_GUN_MIN_GROSS_LOAD_DENSITY
-    max_gross_load_density: float = DEFAULT_GUN_MAX_GROSS_LOAD_DENSITY
-
-    @property
-    def min_charge_mass(self) -> float:
-        gun = self.get_base_gun()
-        return gun.chamber_volume * self.min_gross_load_density - gun.total_charge_mass
-
-    @property
-    def max_charge_mass(self):
-        gun = self.get_base_gun()
-        return gun.chamber_volume * self.max_gross_load_density - gun.total_charge_mass
+    def __post_init__(self):
+        if self.get_base_gun().bomb_free_fraction < 0:
+            raise ValueError("pre-existing charges for this gun design is overfull")
 
     def get_base_gun(self) -> Gun:
         gun = Gun(
@@ -92,7 +82,83 @@ class MatchingProblem:
         gun.set_charge(charge=charge, mass=mass)
         return gun
 
-    def solve(
+    def get_charge_mass_limits(
+        self, pressure: float, target: Target, acc: float
+    ) -> Tuple[float, float]:
+        """
+        Find the maximum and minimum valid charge mass value for the outlined gun design
+
+        Parameters
+        ----------
+        pressure, target, acc: float, Target, float
+            see `MatchingProblem.solve_reduced_burn_rate` for more information.
+
+        Raises
+        ------
+        ValueError
+            in case existing charge is
+
+        Returns
+        -------
+        lower_limit, upper_limit: float
+
+        Notes
+        -----
+        The bomb-pressure refers to the pressure developed in a gun as its charges
+        have completelly burnt, before the projectile has moved. This corresponds
+        to the case where the reduced burn-rate is infinitesimally high. It has the
+        convenient property that it is the maximum pressure that can be developed with
+        a certain charge loading.
+
+        The lower limit is found by finding the required mass of charge to bring the
+        gun's bomb-pressure to at least the targeted pressure levels.
+
+        The overfull condition refers to where the bomb-pressure of a charge design
+        goes to infinity. This is an artifact of using a constant covolume correction
+        parameter in the Nobel-Abel equation of state, where the growth in density
+        exhausts the incompressibility. Realistically, this is only achieved well past
+        the applicability of the applicability of this assumed EoS, where more accurate
+        EoS for high pressure (such as Virial, etc) should be used.
+
+        In any event, the use of Nobel-Abel EoS requires a cut-off point to be set for
+        charge mass, so that even in case of infinitesimally high reduced burn rate
+        coeffcient, the interior ballistic system of equation is not applied outside
+        of its domain. On first glance, this limitation might seem overly conservative,
+        as there exist solutions at or above the cut-off charge loading, that employs
+        a lower burn-rate coefficient, such that at no point would the incompressibility
+        be exhausted.
+
+        #TODO: write this
+
+        """
+        base_gun = self.get_base_gun()
+
+        def f_ff(mass: float) -> float:
+            test_gun = self.get_test_gun(reduced_burnrate=1, mass=mass)
+            return test_gun.bomb_free_fraction
+
+        chamber_fill_mass = (
+            base_gun.chamber_volume - base_gun.total_charge_volume
+        ) * self.density
+
+        upper_limit = min(
+            dekker(f_ff, 0, chamber_fill_mass, tol=chamber_fill_mass * acc)
+        )
+
+        def f_p(mass: float) -> float:
+            # note this is defined on [0, chamber_fill_mass]
+            test_gun = self.get_test_gun(reduced_burnrate=1, mass=mass)
+            test_gun_bomb_pressure = getattr(test_gun.get_bomb_state(), target.value)
+            return test_gun_bomb_pressure - pressure
+
+        if f_p(0) > 0:
+            lower_limit = 0.0
+        else:
+            lower_limit = max(dekker(f_p, 0, upper_limit, tol=acc * upper_limit))
+
+        return lower_limit, upper_limit
+
+    def solve_reduced_burn_rate(
         self,
         velocity: float,
         mass: float,
@@ -102,21 +168,26 @@ class MatchingProblem:
         acc: float,
     ) -> Gun:
 
-        if mass < self.min_charge_mass or mass > self.max_charge_mass:
-            raise ValueError("mass specified violates gross load density constraint.")
+        min_mass, max_mass = self.get_charge_mass_limits(
+            pressure=pressure, target=target, acc=acc
+        )
+
+        if mass < min_mass:
+            raise ValueError(
+                "specified charge cannot possibly develop the targeted pressure."
+            )
+        elif mass > max_mass:
+            raise ValueError("specified charge is excessive for this chamber design.")
 
         def get_test_gun(reduced_burnrate: float) -> Gun:
             return self.get_test_gun(reduced_burnrate=reduced_burnrate, mass=mass)
 
-        gun = get_test_gun(1)
-
-        if pressure > getattr(gun.get_bomb_state(), target.value):
-            raise ValueError("targeted pressure is impossible to achieve")
-
-        # for i in range(8):
-        #     rbr = 1e-6 * 10**i
-        #     gun = add_test_charge(rbr)
-        #     print(gun.bomb_pressure / 1e6)
-        #     states = gun.to_burnout(abort_travel=self.travel, n_intg=n_intg, acc=acc)
-        #     print(rbr)
-        #     print(gun.tabulate(states))
+        def f(reduced_burnrate: float) -> float:
+            test_gun = get_test_gun(reduced_burnrate=reduced_burnrate)
+            states = test_gun.to_burnout(
+                n_intg=n_intg, acc=acc, abort_travel=self.travel
+            )
+            pp = getattr(
+                states.get_state_by_marker(Significance.PEAK_PRESSURE), target.value
+            )
+            return pp - pressure

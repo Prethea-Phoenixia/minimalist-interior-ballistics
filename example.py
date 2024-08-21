@@ -24,7 +24,7 @@ if __name__ == "__main__":
         ),
     )
 
-    p.solve(
+    p.solve_reduced_burn_rate(
         mass=1.08,
         velocity=680,
         pressure=238e6,

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections import UserList
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Iterable, List, Optional, Sequence, Tuple
 
 from . import Significance
 
@@ -153,3 +154,29 @@ class Delta:
 
     def __truediv__(self, scalar: float) -> Delta:
         return self * (1 / scalar)
+
+
+# this is a limitation of Python 3.8 (or really pre-3.9 style type annotations)
+if TYPE_CHECKING:
+    BaseList = UserList[State]
+else:
+    BaseList = UserList
+
+
+class StateList(BaseList):
+    def __init__(self, seq: Optional[Iterable[State]] = None) -> None:
+        super().__init__(seq)
+
+    def get_state_by_marker(self, significance: Significance) -> State:
+        for s in self.data:
+            if s.marker == significance:
+                return s
+        raise ValueError(
+            f"StateList does not contain State with marker {significance}."
+        )
+
+    def has_state_with_marker(self, significance: Significance) -> bool:
+        for s in self.data:
+            if s.marker == significance:
+                return True
+        return False
