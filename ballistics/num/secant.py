@@ -6,9 +6,9 @@ def secant(
     f: Callable[[float], float],
     x_0: float,
     x_1: float,
+    tol: float,
     x_min: float = -inf,
     x_max: float = inf,
-    tol: float = 1e-16,
     max_it: int = 100,
 ) -> Tuple[float, float]:
     """

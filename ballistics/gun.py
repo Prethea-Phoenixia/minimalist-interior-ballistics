@@ -107,9 +107,8 @@ class Gun:
     def incompressible_fraction(self, psi: Tuple[float, ...]) -> float:
         i_f = 0.0
         for c, w, psi_c in zip(self.charges, self.charge_masses, psi):
-            i_f += (1 - psi_c) / c.density + c.covolume * psi_c * (
-                (w / self.chamber_volume)
-            )
+            delta_c = w / self.chamber_volume
+            i_f += (1 - psi_c) * delta_c / c.density + c.covolume * psi_c * delta_c
 
         return i_f
 
@@ -119,10 +118,7 @@ class Gun:
 
     def dt(self, state: State) -> Delta:
         P = state.average_pressure
-        dZ = tuple(
-            c.dZdt(P) if Z < c.Z_k else 0
-            for Z, c in zip(state.burnup_fractions, self.charges)
-        )
+        dZ = tuple(c.dZdt(P) for Z, c in zip(state.burnup_fractions, self.charges))
         return Delta(
             d_time=1,
             d_travel=state.velocity if state.is_started else 0,
@@ -328,7 +324,8 @@ class Gun:
                 burnup_fractions=Z_c0,
                 marker=Significance.START,
             )
-            while not burnout(s_next) and not abort(s_next):
+
+            while not (burnout(s_next) or abort(s_next)):
                 states.append(s_now := s_next)
                 s_next = self.propagate_rk4(state=s_now, dt=delta_t)
 
@@ -336,14 +333,13 @@ class Gun:
 
         def time_end(time: float) -> float:
             s = self.propagate_rk4(state=s_now, dt=time - s_now.time)
-            return -1 if burnout(s) or abort(s) else 1
+            return -1 if (burnout(s) or abort(s)) else 1
 
         end_time = max(
             dekker(f=time_end, x_0=s_now.time, x_1=s_next.time, tol=rough_ttb * acc)
         )
 
         s_end = self.propagate_rk4(state=s_now, dt=end_time - s_now.time)
-
         if burnout(s_end):
             s_burnout = State.remark(s_end, new_significance=Significance.BURNOUT)
             states.append(s_burnout)
@@ -484,12 +480,18 @@ class Gun:
                 dt=time_pmax - s_j.time,
                 marker=Significance.PEAK_PRESSURE,
             )
+
+            # if s_i.average_pressure > s_pmax.average_pressure:
+            #     s_pmax = State.remark(s_i, Significance.PEAK_PRESSURE)
+            # elif s_j.average_pressure > s_pmax.average_pressure:
+            #     s_pmax = State.remark(s_j, Significance.PEAK_PRESSURE)
+
             insort(states, s_pmax)
         return states
 
     @staticmethod
     def tabulate(
-        states: List[State],
+        states: StateList,
         *args,
         headers=(
             "significance",

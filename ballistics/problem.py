@@ -9,7 +9,7 @@ from . import (DEFAULT_GUN_IGNITION_PRESSURE, DEFAULT_GUN_START_PRESSURE,
                DFEAULT_GUN_LOSS_FRACTION, Significance)
 from .charge import Charge
 from .gun import Gun
-from .num import Find, dekker, gss
+from .num import Find, dekker, gss, secant
 
 if TYPE_CHECKING:
     from .state import State
@@ -172,6 +172,8 @@ class MatchingProblem:
             pressure=pressure, target=target, acc=acc
         )
 
+        print(min_mass, max_mass)
+
         if mass < min_mass:
             raise ValueError(
                 "specified charge cannot possibly develop the targeted pressure."
@@ -190,4 +192,18 @@ class MatchingProblem:
             pp = getattr(
                 states.get_state_by_marker(Significance.PEAK_PRESSURE), target.value
             )
-            return pp - pressure
+            result = pp - pressure
+            print(reduced_burnrate, pp, result)
+            return result
+
+        # solve the burn rate coefficient on (0, +inf)
+        est, est_prime = 10.0, 0.1  # arbitrary initial guesses
+        while abs(est - est_prime) > acc * min(est, est_prime):
+            est, est_prime = secant(
+                f=f, x_0=est, x_1=est_prime, x_min=0, tol=min(est, est_prime) * acc
+            )
+        gun = get_test_gun(reduced_burnrate=est)
+
+        print(Gun.tabulate(gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)))
+
+        return gun
