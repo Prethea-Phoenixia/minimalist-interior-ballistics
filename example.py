@@ -5,7 +5,8 @@ from ballistics.problem import MatchingProblem, Target
 
 if __name__ == "__main__":
     p = MatchingProblem(
-        caliber=77.2e-3,
+        # caliber=77.2e-3,
+        caliber=76.2e-3,
         shot_mass=6.2,
         chamber_volume=1.484e-3,
         travel=2.687,
@@ -28,7 +29,7 @@ if __name__ == "__main__":
 
     g = p.solve_reduced_burn_rate(
         mass=1.08,
-        velocity=680,
+        # velocity=680,
         pressure=268e6,
         target=Target.AVERAGE,
         n_intg=10,

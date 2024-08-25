@@ -12,7 +12,7 @@ from .gun import Gun
 from .num import Find, dekker, gss, secant
 
 if TYPE_CHECKING:
-    from .state import State
+    from .state import State, StateList
     from .form_function import FormFunction
 
 
@@ -113,23 +113,14 @@ class MatchingProblem:
         The lower limit is found by finding the required mass of charge to bring the
         gun's bomb-pressure to at least the targeted pressure levels.
 
-        The overfull condition refers to where the bomb-pressure of a charge design
-        goes to infinity. This is an artifact of using a constant covolume correction
-        parameter in the Nobel-Abel equation of state, where the growth in density
-        exhausts the incompressibility. Realistically, this is only achieved well past
-        the applicability of the applicability of this assumed EoS, where more accurate
-        EoS for high pressure (such as Virial, etc) should be used.
+        The upper limit is found by finding the point at which the bomb-pressure of
+        a charge design goes to infinity. This is an artifact of the limited
+        applicability of the Nobel-Abel equation of state for very high pressures.
 
-        In any event, the use of Nobel-Abel EoS requires a cut-off point to be set for
-        charge mass, so that even in case of infinitesimally high reduced burn rate
-        coeffcient, the interior ballistic system of equation is not applied outside
-        of its domain. On first glance, this limitation might seem overly conservative,
-        as there exist solutions at or above the cut-off charge loading, that employs
-        a lower burn-rate coefficient, such that at no point would the incompressibility
-        be exhausted.
-
-        #TODO: write this
-
+        The reduced-burn rate that corresponds to the limiting charge
+        weights asymptotically approaches `+inf` for the lower limit, and 0 for the
+        upper limit. Care is taken such that the returned limits, being numerically
+        solved, errs on the conservative side.
         """
         base_gun = self.get_base_gun()
 
@@ -160,26 +151,56 @@ class MatchingProblem:
 
     def solve_reduced_burn_rate(
         self,
-        velocity: float,
         mass: float,
         pressure: float,
         target: Target,
         n_intg: int,
         acc: float,
-    ) -> Gun:
+    ) -> float:
+        """
+        solves the reduced burn rate such that the peak pressure developed in bore
+        (at any one of the three `ballistics.problem.Target` locations)
+        matches the desired value.
+
+        Parameters
+        ----------
+        mass: float
+            the mass of the charge.
+        pressure, target: float, `ballistics.problem.Target`
+            the pressure to target, along with its point-of-measurement.
+        n_intg, acc: int, float
+            parameter passed to `ballistics.gun.Gun.to_burnout`. In addition, `acc`
+            specifies the relative accuracy to which the reduced burn-rate is solved to,
+            using an iterative procedure.
+
+        Raises
+        ------
+        ValueError
+            if the specified charge mass is either too low or too high for this
+            gun design.
+
+        Returns
+        -------
+        reduced_burnrate: float
+            the solved reduced burnrate.
+        """
 
         min_mass, max_mass = self.get_charge_mass_limits(
             pressure=pressure, target=target, acc=acc
         )
-
-        print(min_mass, max_mass)
-
+        valid_range_prompt = (
+            f"valid range of charge mass: [{min_mass:.3f}, {max_mass:.3f}]"
+        )
         if mass < min_mass:
             raise ValueError(
-                "specified charge cannot possibly develop the targeted pressure."
+                "specified charge cannot possibly develop the targeted pressure.\n"
+                + valid_range_prompt
             )
         elif mass > max_mass:
-            raise ValueError("specified charge is excessive for this chamber design.")
+            raise ValueError(
+                "specified charge is excessive for this chamber design.\n"
+                + valid_range_prompt
+            )
 
         def get_test_gun(reduced_burnrate: float) -> Gun:
             return self.get_test_gun(reduced_burnrate=reduced_burnrate, mass=mass)
@@ -197,13 +218,31 @@ class MatchingProblem:
             return result
 
         # solve the burn rate coefficient on (0, +inf)
-        est, est_prime = 10.0, 0.1  # arbitrary initial guesses
+
+        """
+        first, find two estimate, est and est' (rendered as est_prime) such that
+        the solution is bracketed
+        """
+        est = est_prime = 1.0
+        f_est = f_est_prime = f(est)
+        while f_est * f_est_prime >= 0:
+            if f_est > 0:  # burnt too fast
+                est, est_prime = est / 10, est  # reduce rbr by 1 oom
+            elif f_est == 0:  # this is *exceedingly* unlikely to happen but still.
+                est, est_prime = est / 10, est * 10
+            else:
+                est, est_prime = est * 10, est
+            f_est, f_est_prime = f(est), f_est
+
+        """
+        then, use `ballistics.num.dekker` to find the exact solution. this is necessary
+        since the accuracy specification is realtive and the order of magnitude of the
+        estimates aren't known a-priori
+        """
         while abs(est - est_prime) > acc * min(est, est_prime):
-            est, est_prime = secant(
-                f=f, x_0=est, x_1=est_prime, x_min=0, tol=min(est, est_prime) * acc
+            est, est_prime = dekker(
+                f=f, x_0=est, x_1=est_prime, tol=min(est, est_prime) * acc
             )
-        gun = get_test_gun(reduced_burnrate=est)
-
-        print(Gun.tabulate(gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)))
-
-        return gun
+        # gun = get_test_gun(reduced_burnrate=est)
+        # gun, gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
+        return est
