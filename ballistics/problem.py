@@ -150,12 +150,7 @@ class MatchingProblem:
         return lower_limit, upper_limit
 
     def solve_reduced_burn_rate(
-        self,
-        mass: float,
-        pressure: float,
-        target: Target,
-        n_intg: int,
-        acc: float,
+        self, mass: float, pressure: float, target: Target, n_intg: int, acc: float
     ) -> float:
         """
         solves the reduced burn rate such that the peak pressure developed in bore
@@ -214,7 +209,6 @@ class MatchingProblem:
                 states.get_state_by_marker(Significance.PEAK_PRESSURE), target.value
             )
             result = pp - pressure
-            print(reduced_burnrate, pp, result)
             return result
 
         # solve the burn rate coefficient on (0, +inf)
