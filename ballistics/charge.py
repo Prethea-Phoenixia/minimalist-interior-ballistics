@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cached_property
+from typing import Optional
 
 from . import (DEFAULT_BOMB_IGNITION_PRESSURE, DEFAULT_BOMB_LOAD_DENSITY,
                MAX_DT, Significance)
@@ -56,7 +57,6 @@ class Charge:
         a set of `Charge` objects added to the same `ballistics.gun.Gun`. For the case
         of a single `Charge`, any value will work.
 
-
     Attributes
     ----------
     Z_k: float
@@ -89,7 +89,7 @@ class Charge:
     adiabatic_index: float
     reduced_burnrate: float  # u_1 / e_1
     gas_molar_mass: float
-    form_function: FormFunction
+    form_function: Optional[FormFunction]
 
     @classmethod
     def from_dimension_and_burnrate(
@@ -201,10 +201,16 @@ class Charge:
 
     @cached_property
     def Z_k(self) -> float:
-        return self.form_function.Z_k
+        if self.form_function:
+            return self.form_function.Z_k
+        else:
+            return 0
 
     def psi_c(self, Z_c: float) -> float:
-        return self.form_function(Z_c)
+        if self.form_function:
+            return self.form_function(Z_c)
+        else:
+            return 1
 
     def dZdt(self, P: float) -> float:
         return self.reduced_burnrate * P**self.pressure_exponent

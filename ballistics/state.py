@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+# class StateList(BaseList):
+import sys
 from collections import UserList
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -66,14 +68,9 @@ class State:
         psi = self.volume_burnup_fractions
         l, v = self.travel, self.velocity
         l_psi = self.l_0 * (1 - self.incompressible_fraction(psi))
-
         return max(
-            (
-                self.gas_energy(psi, v)
-                + self.ignition_pressure
-                * (self.chamber_volume - self.total_charge_volume)
-            )
-            / (self.S * (l_psi + l)),
+            self.gas_energy(psi, v) / (self.S * (l_psi + l)),
+            # self.gas_energy(psi, v) / (self.S * (l_psi + l)),
             0,
         )
 
@@ -156,8 +153,8 @@ class Delta:
         return self * (1 / scalar)
 
 
-# this is a limitation of Python 3.8 (or really pre-3.9 style type annotations)
-if TYPE_CHECKING:
+# this is a limitation of pre- Python 3.9 style type annotations
+if sys.version_info >= (3, 9):
     BaseList = UserList[State]
 else:
     BaseList = UserList

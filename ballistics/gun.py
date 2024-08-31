@@ -8,9 +8,11 @@ from typing import Callable, Dict, Iterable, List, Tuple
 
 from tabulate import tabulate
 
-from . import (DEFAULT_GUN_IGNITION_PRESSURE, DEFAULT_GUN_START_PRESSURE,
-               DFEAULT_GUN_LOSS_FRACTION, MAX_DT, Significance)
+from . import (DEFAULT_GUN_IGNITION_FORCE, DEFAULT_GUN_IGNITION_PRESSURE,
+               DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
+               Significance)
 from .charge import Charge
+from .form_function import FormFunction
 from .num import Find, dekker, gss
 from .state import Delta, State, StateList
 
@@ -27,34 +29,97 @@ class Gun:
     chamber_volume: float
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
-    ignition_pressure: float = DEFAULT_GUN_IGNITION_PRESSURE
 
     def __post_init__(self):
         self._charges = {}
+
+    @cached_property
+    def l_0(self) -> float:
+        return self.chamber_volume / self.S
+
+    @cached_property
+    def total_charge_mass(self) -> float:
+        return sum(self.charge_masses)
+
+    @cached_property
+    def charge_masses(self) -> Tuple[float]:
+        return tuple(self._charges.values())
+
+    @cached_property
+    def charges(self) -> Tuple[Charge]:
+        return tuple(self._charges.keys())
 
     @cached_property
     def S(self) -> float:
         return 0.25 * self.caliber**2 * pi
 
     @cached_property
-    def l_0(self) -> float:
-        return self.chamber_volume / self.S
-
-    @property
-    def charge_masses(self) -> Iterable[float]:
-        return self._charges.values()
-
-    @property
-    def charges(self) -> Iterable[Charge]:
-        return self._charges.keys()
-
-    @property
-    def total_charge_mass(self) -> float:
-        return sum(self.charge_masses)
-
-    @property
     def total_charge_volume(self) -> float:
-        return sum(m / c.density for c, m in zip(self.charges, self.charge_masses))
+        return sum(
+            m / c.density if c.density else 0
+            for c, m in zip(self.charges, self.charge_masses)
+        )
+
+    @cached_property
+    def phi(self) -> float:
+        return 1 + self.loss_fraction + self.total_charge_mass / (3 * self.shot_mass)
+
+    @cached_property
+    def bomb_free_fraction(self) -> float:
+        ff = 1.0
+        for c, w in zip(self.charges, self.charge_masses):
+            ff -= c.covolume * w / self.chamber_volume
+        return ff
+
+    @cached_property
+    def theta(self) -> float:
+        # calculated the average adiabatic index for the gas mixture.
+        molar_sum = sum(
+            w / c.gas_molar_mass if c.gas_molar_mass else 0
+            for c, w in zip(self.charges, self.charge_masses)
+        )
+        if molar_sum == 0:
+            return 0
+        average_Cp, average_Cv = 0.0, 0.0
+        for c, w in zip(self.charges, self.charge_masses):
+            if c.gas_molar_mass:
+                adiabatic_index = c.adiabatic_index
+                molar_fraction = (w / c.gas_molar_mass) / molar_sum
+                average_Cp += molar_fraction * (adiabatic_index) / (adiabatic_index - 1)
+                average_Cv += molar_fraction / (adiabatic_index - 1)
+            else:
+                continue
+
+        return average_Cp / average_Cv - 1
+
+    def _reset_cached_properties(self) -> None:
+        for attr in (
+            "charges",
+            "charge_masses",
+            "total_charge_mass",
+            "total_charge_volume",
+            "phi",
+            "bomb_free_fraction",
+            "theta",
+        ):
+            try:
+                delattr(self, attr)
+
+            except AttributeError:
+                pass
+
+    def set_charge(self, charge: Charge, mass: float) -> None:
+        self._charges[charge] = mass
+        self._reset_cached_properties()
+
+    def pop_charge(self, charge: Charge) -> float:
+        """
+        Remove a `ballistics.charge.Charge` from a gun's load, and return the corresponding
+        mass of the charge.
+        """
+        mass = self._charges.pop(charge, 0.0)
+        self._reset_cached_properties()
+        return mass
 
     def get_bomb_state(self) -> State:
         """
@@ -74,47 +139,22 @@ class Gun:
             marker=Significance.BOMB,
         )
 
-    @property
-    def bomb_free_fraction(self) -> float:
-        ff = 1.0
-        for c, w in zip(self.charges, self.charge_masses):
-            ff -= c.covolume * w / self.chamber_volume
-        return ff
-
     def gas_energy(self, psi: Tuple[float, ...], v: float) -> float:
-        # calculated the average adiabatic index for the gas mixture.
-        molar_sum = sum(
-            w / c.gas_molar_mass * psi_c
-            for c, w, psi_c in zip(self.charges, self.charge_masses, psi)
-        )
-
-        if molar_sum == 0.0:
-            return 0
-
-        average_Cp, average_Cv = 0.0, 0.0
-        for c, w, psi_c in zip(self.charges, self.charge_masses, psi):
-            adiabatic_index = c.adiabatic_index
-            molar_fraction = (w / c.gas_molar_mass * psi_c) / molar_sum
-            average_Cp += molar_fraction * (adiabatic_index) / (adiabatic_index - 1)
-            average_Cv += molar_fraction / (adiabatic_index - 1)
-
-        theta = average_Cp / average_Cv - 1
         return sum(
             c.force * w * psi_c
             for c, w, psi_c in zip(self.charges, self.charge_masses, psi)
-        ) - (0.5 * theta * self.phi * self.shot_mass * v**2)
+        ) - (0.5 * self.theta * self.phi * self.shot_mass * v**2)
 
     def incompressible_fraction(self, psi: Tuple[float, ...]) -> float:
         i_f = 0.0
         for c, w, psi_c in zip(self.charges, self.charge_masses, psi):
-            delta_c = w / self.chamber_volume
-            i_f += (1 - psi_c) * delta_c / c.density + c.covolume * psi_c * delta_c
+            if c.density:
+                delta_c = w / self.chamber_volume
+                i_f += (1 - psi_c) * delta_c / c.density + c.covolume * psi_c * delta_c
+            else:
+                continue
 
         return i_f
-
-    @property
-    def phi(self) -> float:
-        return 1 + self.loss_fraction + self.total_charge_mass / (3 * self.shot_mass)
 
     def dt(self, state: State) -> Delta:
         P = state.average_pressure
@@ -177,38 +217,62 @@ class Gun:
             d=(k1 + k2 * 2 + k3 * 2 + k4) * dx / 6, **generate_dargs(dx), marker=marker
         )
 
-    def set_charge(self, charge: Charge, mass: float):
-        self._charges[charge] = mass
-
-    def pop_charge(self, charge: Charge) -> float:
+    def set_ignition_charge(
+        self,
+        force: float = DEFAULT_GUN_IGNITION_FORCE,
+        ignition_pressure: float = DEFAULT_GUN_IGNITION_PRESSURE,
+    ):
         """
-        Remove a `ballistic.charge.Charge` from a gun's load, and return the corresponding
-        mass of the charge.
-        """
-        return self._charges.pop(charge, 0.0)
-
-    def set_ignition_charge(self, force: float, mass: float):
-        """
-        Calculate the pressure generated by the ignition charge, and set the
-        `gun.ignition_pressure` parameter.
+        Calculate the required ignition charge mass to generate the specified
+        ignition pressure, and set the `gun.ignition_charge` parameter.
 
         Parameters
         ----------
         force: float
-            the propellant force of the ignition charge.
-        mass: float
-            the charge mass of the ignition charge.
+            the propellant force of the ignition charge. Usually in the range of 250-
+            300 kJ/kg.
+        ignition_pressure: float
+            the pressure the ignition charge would develop at burnout.
         """
-        delta_ig = mass / (self.chamber_volume - self.total_charge_volume)
-        self.ignition_pressure = force * delta_ig
+
+        ignition_charge_mass = (ignition_pressure / force) * (
+            self.chamber_volume - self.total_charge_volume
+        )
+        ignition_charge = Charge(
+            density=0,
+            force=force,
+            pressure_exponent=0,
+            covolume=0,
+            adiabatic_index=0,
+            reduced_burnrate=0,
+            gas_molar_mass=0,
+            form_function=None,
+        )
+
+        self.set_charge(charge=ignition_charge, mass=ignition_charge_mass)
 
     def to_start(self, n_intg: int, acc: float) -> StateList:
         # sanity check: maximum possible pressure developed is higher than start:
-        if self.get_bomb_state().average_pressure < self.ignition_pressure:
+        if self.get_bomb_state().average_pressure < self.start_pressure:
             raise ValueError(
                 "projectile cannot be started, the maximum pressure achievable is less\
  insufficient to overcome starting resistance."
             )
+
+        self.set_ignition_charge()
+
+        initial_state = State(
+            gun=self,
+            time=0,
+            travel=0,
+            velocity=0,
+            burnup_fractions=tuple(0 for _ in self.charges),
+            marker=Significance.IGNITION,
+            is_started=False,
+        )
+
+        if initial_state.average_pressure == 0:
+            raise ValueError("no ignition charge has been set.")
 
         delta_t, rough_ttb = MAX_DT, 0.0
         states = StateList()
@@ -217,16 +281,7 @@ class Gun:
             if rough_ttb > 0:
                 delta_t = rough_ttb / n_intg
 
-            s_next = State(
-                gun=self,
-                time=0,
-                travel=0,
-                velocity=0,
-                burnup_fractions=tuple(0 for _ in self.charges),
-                marker=Significance.IGNITION,
-                is_started=False,
-            )
-
+            s_next = initial_state
             states = StateList([s_next])
             while s_next.average_pressure < self.start_pressure:
                 states.append(s_now := s_next)

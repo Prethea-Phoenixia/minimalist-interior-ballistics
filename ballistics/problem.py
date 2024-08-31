@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from math import log10
@@ -14,6 +15,8 @@ from .num import Find, dekker, gss, secant
 if TYPE_CHECKING:
     from .state import State, StateList
     from .form_function import FormFunction
+
+logger = logging.getLogger(__name__)
 
 
 class Target(Enum):
@@ -44,7 +47,6 @@ class MatchingProblem:
     travel: float
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
-    ignition_pressure: float = DEFAULT_GUN_IGNITION_PRESSURE
 
     known_charge_loads: Dict[Charge, float] = field(default_factory=dict)
 
@@ -59,7 +61,6 @@ class MatchingProblem:
             chamber_volume=self.chamber_volume,
             loss_fraction=self.loss_fraction,
             start_pressure=self.start_pressure,
-            ignition_pressure=self.ignition_pressure,
         )
 
         for charge, mass in self.known_charge_loads.items():
@@ -147,6 +148,7 @@ class MatchingProblem:
         else:
             lower_limit = max(dekker(f_p, 0, upper_limit, tol=acc * upper_limit))
 
+        logger.info(f"charge limit solved to be {lower_limit}, {upper_limit}")
         return lower_limit, upper_limit
 
     def solve_reduced_burn_rate(
@@ -202,6 +204,7 @@ class MatchingProblem:
 
         def f(reduced_burnrate: float) -> float:
             test_gun = get_test_gun(reduced_burnrate=reduced_burnrate)
+            print(test_gun)
             states = test_gun.to_burnout(
                 n_intg=n_intg, acc=acc, abort_travel=self.travel
             )
@@ -209,6 +212,7 @@ class MatchingProblem:
                 states.get_state_by_marker(Significance.PEAK_PRESSURE), target.value
             )
             result = pp - pressure
+            logger.info(f"{reduced_burnrate} -> {result}")
             return result
 
         # solve the burn rate coefficient on (0, +inf)
