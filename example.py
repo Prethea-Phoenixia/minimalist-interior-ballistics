@@ -9,8 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-
-    logging.basicConfig(filename="info.log", level=logging.INFO)
+    logging.basicConfig(level=logging.INFO)
     logger.info("Started")
     p = MatchingProblem(
         caliber=76.2e-3,

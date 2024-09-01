@@ -4,9 +4,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from typing import Optional
 
-from . import (DEFAULT_BOMB_IGNITION_PRESSURE, DEFAULT_BOMB_LOAD_DENSITY,
-               MAX_DT, Significance)
-from .bomb_state import BombDelta, BombState
+from . import MAX_DT, Significance
 from .form_function import FormFunction
 from .num import dekker
 
@@ -56,6 +54,9 @@ class Charge:
         No particular unit is required, the only requirement being consistency across
         a set of `Charge` objects added to the same `ballistics.gun.Gun`. For the case
         of a single `Charge`, any value will work.
+    form_function: Optional[`ballistics.form_function.FormFunction`]
+        form function that describes the shape of charge.
+
 
     Attributes
     ----------
@@ -132,73 +133,6 @@ class Charge:
             form_function=form_function,
         )
 
-    @classmethod
-    def from_areal_impulse(
-        cls,
-        density: float,
-        force: float,
-        pressure_exponent: float,
-        covolume: float,
-        adiabatic_index: float,
-        gas_molar_mass: float,
-        form_function: FormFunction,
-        areal_impulse: float,
-        n_intg: int,
-        acc: float,
-        load_density: float = DEFAULT_BOMB_LOAD_DENSITY,
-        ignition_pressure: float = DEFAULT_BOMB_IGNITION_PRESSURE,
-        to: Significance = Significance.FRACTURE,
-    ) -> Charge:
-        """
-        define a Charge using areal impulse. Solves the reduced burn-rate
-        from the supplied geometry, areal_impulse, and preessure exponent, exploiting
-        the property of:
-        ```
-        dP/dt ∝ u/e -> I ∝ u/e
-        ```
-
-        Parameters
-        ----------
-        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float
-            see documentation for `Charge`.
-        areal_impulse: float
-            areal_impulse per area until specified point, in kg/m-s.
-        n_intg: int
-            see documentation for `Charge.areal_impulse`.
-        acc,  load_density, ignition_pressure, to: float
-            see documentation for `Charge.areal_impulse`.
-        to: `ballistics.Significance`
-            see documentation for `Charge.areal_impulse`.
-        """
-        c_ubr = cls(
-            density=density,
-            force=force,
-            reduced_burnrate=1,
-            pressure_exponent=pressure_exponent,
-            covolume=covolume,
-            adiabatic_index=adiabatic_index,
-            gas_molar_mass=gas_molar_mass,
-            form_function=form_function,
-        )  # initialize a charge with unit reduced burn rate
-
-        I_ubr = c_ubr.areal_impulse(
-            n_intg=n_intg,
-            acc=acc,
-            load_density=load_density,
-            ignition_pressure=ignition_pressure,
-            to=to,
-        )
-        return cls(
-            density=density,
-            force=force,
-            reduced_burnrate=I_ubr / areal_impulse,
-            pressure_exponent=pressure_exponent,
-            covolume=covolume,
-            adiabatic_index=adiabatic_index,
-            gas_molar_mass=gas_molar_mass,
-            form_function=form_function,
-        )
-
     @cached_property
     def Z_k(self) -> float:
         if self.form_function:
@@ -213,133 +147,4 @@ class Charge:
             return 1
 
     def dZdt(self, P: float) -> float:
-        return self.reduced_burnrate * P**self.pressure_exponent
-
-    def areal_impulse(
-        self,
-        n_intg: int,
-        acc: float,
-        load_density: float = DEFAULT_BOMB_LOAD_DENSITY,
-        ignition_pressure: float = DEFAULT_BOMB_IGNITION_PRESSURE,
-        to: Significance = Significance.FRACTURE,
-    ) -> float:
-        """calculate the impulse-per-area of this propellant, as:
-        ```
-              t
-        I =   ∫ P(t) dt
-              0
-        ```
-        until the specified endpoint.
-
-        Parameters
-        ----------
-        n_intg: int
-            minimum number of steps taken from ignition to powder burnout.
-
-        acc: float
-            accuracy to which the ignition point is solved.
-
-        load_density: float
-            the density to which the test bomb is loaded with propellant. The
-            default value of 0.2 g/cc (200 kg/m^3) is a common choice of loading
-            density for characterizing propellant performance.
-
-        ignition_pressure: float
-            the pressure developed by the ignition charge, usually fine-grained
-            black powder, which is taken as having fully burnt and inert during the
-            characterization of propellant. The default value is the typical ignition
-            pressure (of 100 kgf/sqcm) ascribed to by Chinese standardized testing
-            procedures.
-
-        to: `ballistics.Significance`
-            specifies to whence the p-t curve is integrated. Accepts either
-            `ballistics.Significance.BURNOUT` or `ballistics.Significance.FRACTURE`.
-            This concerns propellants of the multiple-perforated type, for which period
-            testing methodology only considers the combustion up to the fracture point.
-
-        Notes
-        -----
-        In propellant development, the characterization of propellant performance is
-        typically accomplished by a "closed-bomb" test, in which a sturdy pressure vessel
-        is loaded to a certain weight-of-charge-per-volume, known as the "load density",
-        then a small amount of ignition charge is used to initiate its combustion.
-        Propellant performance parameters can then be derived via data reduction of the
-        measured pressure-time curve.
-        The default values reflects Chinese standardized testing methodology as of 1970s
-        and 1980s.
-
-        References
-        ----------
-        - **[中文]** 第五机械工业部第二〇四研究所，火炸药手册（增订本）第三分册 火炸药分析
-        和测试，第五章第一节（1981.6)
-
-        Returns
-        -------
-        I: float
-            propellant's impulse-per-area up to the specified point. In unit of
-            kg/m-s
-
-        """
-        if to == Significance.BURNOUT:
-            Z_to = self.Z_k
-        elif to == Significance.FRACTURE:
-            Z_to = 1
-        else:
-            raise ValueError(
-                "`to` must be one of `Significance.BURNOUT` or `Significance.FRACTURE`"
-            )
-
-        """integrate backwards in time from burnout point to avoid asymptotic
-        point at t = 0, then read-off the time and impulse-values as negatives.
-        """
-        n, delta_t, rough_ttb = 0, MAX_DT, 0.0
-
-        while n < n_intg:
-            if rough_ttb > 0:
-                delta_t = rough_ttb / n_intg
-            n = 1
-
-            bs_next = BombState(
-                charge=self,
-                load_density=load_density,
-                ignition_pressure=ignition_pressure,
-                time=0,
-                burnup_fraction=0,
-                areal_impulse=0,
-            )
-
-            while bs_next.burnup_fraction < Z_to:
-                bs_now = bs_next
-                bs_next = self.propagate_rk4(bomb_state=bs_now, dt=delta_t)
-                n += 1
-
-            rough_ttb = bs_next.time
-
-        tol_t = rough_ttb * acc
-
-        def time_burnup(time: float) -> float:
-            return (
-                self.propagate_rk4(
-                    bomb_state=bs_now, dt=time - bs_now.time
-                ).burnup_fraction
-                - Z_to
-            )
-
-        time_to = dekker(f=time_burnup, x_0=bs_now.time, x_1=bs_next.time, tol=tol_t)[0]
-        bs_to = self.propagate_rk4(bomb_state=bs_now, dt=time_to - bs_now.time)
-
-        return bs_to.areal_impulse
-
-    def dt(self, bomb_state: BombState) -> BombDelta:
-        P = bomb_state.pressure
-        return BombDelta(d_time=1, d_burnup_fraction=self.dZdt(P), d_areal_impulse=P)
-
-    def propagate_rk4(self, bomb_state: BombState, dt: float) -> BombState:
-        s_i = bomb_state.increment
-        df = self.dt
-
-        k1 = df(bomb_state)
-        k2 = df(s_i(d=0.5 * k1 * dt, dt=0.5 * dt))
-        k3 = df(s_i(d=0.5 * k2 * dt, dt=0.5 * dt))
-        k4 = df(s_i(d=k3 * dt, dt=dt))
-        return s_i(d=(k1 + k2 * 2 + k3 * 2 + k4) * dt / 6, dt=dt)
+        return self.reduced_burnrate * max(P, 1) ** self.pressure_exponent

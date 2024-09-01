@@ -6,8 +6,8 @@ from enum import Enum
 from math import log10
 from typing import TYPE_CHECKING, Dict, List, Tuple
 
-from . import (DEFAULT_GUN_IGNITION_PRESSURE, DEFAULT_GUN_START_PRESSURE,
-               DFEAULT_GUN_LOSS_FRACTION, Significance)
+from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
+               Significance)
 from .charge import Charge
 from .gun import Gun
 from .num import Find, dekker, gss, secant
@@ -148,7 +148,7 @@ class MatchingProblem:
         else:
             lower_limit = max(dekker(f_p, 0, upper_limit, tol=acc * upper_limit))
 
-        logger.info(f"charge limit solved to be {lower_limit}, {upper_limit}")
+        logger.info(f"charge limit solved to be {lower_limit} kg, {upper_limit} kg.")
         return lower_limit, upper_limit
 
     def solve_reduced_burn_rate(
@@ -204,7 +204,6 @@ class MatchingProblem:
 
         def f(reduced_burnrate: float) -> float:
             test_gun = get_test_gun(reduced_burnrate=reduced_burnrate)
-            print(test_gun)
             states = test_gun.to_burnout(
                 n_intg=n_intg, acc=acc, abort_travel=self.travel
             )
@@ -212,7 +211,6 @@ class MatchingProblem:
                 states.get_state_by_marker(Significance.PEAK_PRESSURE), target.value
             )
             result = pp - pressure
-            logger.info(f"{reduced_burnrate} -> {result}")
             return result
 
         # solve the burn rate coefficient on (0, +inf)
@@ -232,6 +230,10 @@ class MatchingProblem:
                 est, est_prime = est * 10, est
             f_est, f_est_prime = f(est), f_est
 
+        logger.info(
+            f"roughly estimated reduced burn rate between {est} and {est_prime}"
+        )
+
         """
         then, use `ballistics.num.dekker` to find the exact solution. this is necessary
         since the accuracy specification is realtive and the order of magnitude of the
@@ -241,6 +243,6 @@ class MatchingProblem:
             est, est_prime = dekker(
                 f=f, x_0=est, x_1=est_prime, tol=min(est, est_prime) * acc
             )
-        # gun = get_test_gun(reduced_burnrate=est)
-        # gun, gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
+
+        logger.info(f"reduced burn rate solved at {est}")
         return est

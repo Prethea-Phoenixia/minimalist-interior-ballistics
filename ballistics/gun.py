@@ -8,8 +8,7 @@ from typing import Callable, Dict, Iterable, List, Tuple
 
 from tabulate import tabulate
 
-from . import (DEFAULT_GUN_IGNITION_FORCE, DEFAULT_GUN_IGNITION_PRESSURE,
-               DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
+from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
                Significance)
 from .charge import Charge
 from .form_function import FormFunction
@@ -217,40 +216,6 @@ class Gun:
             d=(k1 + k2 * 2 + k3 * 2 + k4) * dx / 6, **generate_dargs(dx), marker=marker
         )
 
-    def set_ignition_charge(
-        self,
-        force: float = DEFAULT_GUN_IGNITION_FORCE,
-        ignition_pressure: float = DEFAULT_GUN_IGNITION_PRESSURE,
-    ):
-        """
-        Calculate the required ignition charge mass to generate the specified
-        ignition pressure, and set the `gun.ignition_charge` parameter.
-
-        Parameters
-        ----------
-        force: float
-            the propellant force of the ignition charge. Usually in the range of 250-
-            300 kJ/kg.
-        ignition_pressure: float
-            the pressure the ignition charge would develop at burnout.
-        """
-
-        ignition_charge_mass = (ignition_pressure / force) * (
-            self.chamber_volume - self.total_charge_volume
-        )
-        ignition_charge = Charge(
-            density=0,
-            force=force,
-            pressure_exponent=0,
-            covolume=0,
-            adiabatic_index=0,
-            reduced_burnrate=0,
-            gas_molar_mass=0,
-            form_function=None,
-        )
-
-        self.set_charge(charge=ignition_charge, mass=ignition_charge_mass)
-
     def to_start(self, n_intg: int, acc: float) -> StateList:
         # sanity check: maximum possible pressure developed is higher than start:
         if self.get_bomb_state().average_pressure < self.start_pressure:
@@ -258,8 +223,6 @@ class Gun:
                 "projectile cannot be started, the maximum pressure achievable is less\
  insufficient to overcome starting resistance."
             )
-
-        self.set_ignition_charge()
 
         initial_state = State(
             gun=self,
@@ -270,9 +233,6 @@ class Gun:
             marker=Significance.IGNITION,
             is_started=False,
         )
-
-        if initial_state.average_pressure == 0:
-            raise ValueError("no ignition charge has been set.")
 
         delta_t, rough_ttb = MAX_DT, 0.0
         states = StateList()

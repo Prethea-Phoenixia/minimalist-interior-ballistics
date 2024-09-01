@@ -68,11 +68,7 @@ class State:
         psi = self.volume_burnup_fractions
         l, v = self.travel, self.velocity
         l_psi = self.l_0 * (1 - self.incompressible_fraction(psi))
-        return max(
-            self.gas_energy(psi, v) / (self.S * (l_psi + l)),
-            # self.gas_energy(psi, v) / (self.S * (l_psi + l)),
-            0,
-        )
+        return max(self.gas_energy(psi, v) / (self.S * (l_psi + l)), 0)
 
     @cached_property
     def shot_pressure(self) -> float:
