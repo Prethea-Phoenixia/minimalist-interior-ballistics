@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from typing import Optional
 
-from . import MAX_DT, Significance
+from . import AMBIENT_PRESSURE, MAX_DT, Significance
 from .form_function import FormFunction
 from .num import dekker
 
@@ -135,16 +135,10 @@ class Charge:
 
     @cached_property
     def Z_k(self) -> float:
-        if self.form_function:
-            return self.form_function.Z_k
-        else:
-            return 0
+        return self.form_function.Z_k
 
     def psi_c(self, Z_c: float) -> float:
-        if self.form_function:
-            return self.form_function(Z_c)
-        else:
-            return 1
+        return self.form_function(Z_c)
 
     def dZdt(self, P: float) -> float:
-        return self.reduced_burnrate * max(P, 1) ** self.pressure_exponent
+        return self.reduced_burnrate * max(P, AMBIENT_PRESSURE) ** self.pressure_exponent

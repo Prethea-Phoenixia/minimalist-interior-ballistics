@@ -7,6 +7,8 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from typing import TYPE_CHECKING, Iterable, List, Optional, Sequence, Tuple
 
+from tabulate import tabulate
+
 from . import Significance
 
 if TYPE_CHECKING:
@@ -48,8 +50,7 @@ class State:
     @cached_property
     def volume_burnup_fractions(self) -> Tuple[float]:
         return tuple(
-            c.psi_c(max(min(Z_c, c.Z_k), 0))
-            for c, Z_c in zip(self.charges, self.burnup_fractions)
+            c.psi_c(max(min(Z_c, c.Z_k), 0)) for c, Z_c in zip(self.charges, self.burnup_fractions)
         )
 
     @cached_property
@@ -88,9 +89,7 @@ class State:
             1 + self.total_charge_mass / (2 * (1 + self.loss_fraction) * self.shot_mass)
         )
 
-    def increment(
-        self, d: Delta, marker: Significance, dt=..., dl=..., dv=...
-    ) -> State:
+    def increment(self, d: Delta, marker: Significance, dt=..., dl=..., dv=...) -> State:
         if dt != ...:
             dx, d_attr = dt, "time"
         elif dl != ...:
@@ -101,8 +100,7 @@ class State:
             raise ValueError("at least one of `dv, dt, dl` must be specified.")
 
         attrs = {
-            v_attr: getattr(self, v_attr)
-            + (getattr(d, "d_" + v_attr) if d_attr != v_attr else dx)
+            v_attr: getattr(self, v_attr) + (getattr(d, "d_" + v_attr) if d_attr != v_attr else dx)
             for v_attr in ("time", "travel", "velocity")
         }
 
@@ -164,12 +162,68 @@ class StateList(BaseList):
         for s in self.data:
             if s.marker == significance:
                 return s
-        raise ValueError(
-            f"StateList does not contain State with marker {significance}."
-        )
+        raise ValueError(f"StateList does not contain State with marker {significance}.")
 
     def has_state_with_marker(self, significance: Significance) -> bool:
         for s in self.data:
             if s.marker == significance:
                 return True
         return False
+
+    def tabulate(
+        self,
+        *args,
+        headers=(
+            "significance",
+            "time\nms",
+            "travel\nm",
+            "velocity\nm/s",
+            "breech\npressure\nMPa",
+            "average\npressure\nMPa",
+            "shot\npressure\nMPa",
+            "volume\nburnup\nfractions",
+        ),
+        **kwargs,
+    ) -> str:
+        """
+        Generates a plain, tabulated view of data for a list of
+        `State` objects.
+
+        Parameters
+        ----------
+        states: list of `State`
+            the list of `State` to be pretty-printed.
+        headers: tuple[str]
+            argument passed to `tabulate.tabulate()` to generate a header for the
+            table.
+        *args, **kwargs:
+            other positional and named arguments to be passed to `tabulate.tabulate()`,
+            after the aforementioned once, respectively.
+
+        Returns
+        -------
+        str
+            generated using `tabulate.tabulate()`.
+
+        Notes
+        -----
+        see documentation for [tabulate.tabulate](https://pypi.org/project/tabulate/)
+        for information on additional arguments.
+        """
+        return tabulate(
+            [
+                (
+                    state.marker.value,
+                    state.time * 1e3,
+                    state.travel,
+                    state.velocity,
+                    state.breech_pressure * 1e-6,
+                    state.average_pressure * 1e-6,
+                    state.shot_pressure * 1e-6,
+                    state.volume_burnup_fractions,
+                )
+                for state in self
+            ],
+            *args,
+            **{**{"headers": headers}, **kwargs},  # feeds additional arguments
+        )

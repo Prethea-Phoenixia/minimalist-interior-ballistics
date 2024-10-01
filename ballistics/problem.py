@@ -41,7 +41,7 @@ class MatchingProblem:
     gas_molar_mass: float
     form_function: FormFunction
 
-    caliber: float
+    cross_section: float
     shot_mass: float
     chamber_volume: float
     travel: float
@@ -56,7 +56,7 @@ class MatchingProblem:
 
     def get_base_gun(self) -> Gun:
         gun = Gun(
-            caliber=self.caliber,
+            cross_section=self.cross_section,
             shot_mass=self.shot_mass,
             chamber_volume=self.chamber_volume,
             loss_fraction=self.loss_fraction,
@@ -129,13 +129,9 @@ class MatchingProblem:
             test_gun = self.get_test_gun(reduced_burnrate=1, mass=mass)
             return test_gun.bomb_free_fraction
 
-        chamber_fill_mass = (
-            base_gun.chamber_volume - base_gun.total_charge_volume
-        ) * self.density
+        chamber_fill_mass = (base_gun.chamber_volume - base_gun.total_charge_volume) * self.density
 
-        upper_limit = min(
-            dekker(f_ff, 0, chamber_fill_mass, tol=chamber_fill_mass * acc)
-        )
+        upper_limit = min(dekker(f_ff, 0, chamber_fill_mass, tol=chamber_fill_mass * acc))
 
         def f_p(mass: float) -> float:
             # note this is defined on [0, chamber_fill_mass]
@@ -153,7 +149,7 @@ class MatchingProblem:
 
     def solve_reduced_burn_rate(
         self, mass: float, pressure: float, target: Target, n_intg: int, acc: float
-    ) -> float:
+    ) -> Tuple[float, Gun]:
         """
         solves the reduced burn rate such that the peak pressure developed in bore
         (at any one of the three `ballistics.problem.Target` locations)
@@ -180,14 +176,12 @@ class MatchingProblem:
         -------
         reduced_burnrate: float
             the solved reduced burnrate.
+        gun: `ballistics.gun.Gun` object
+            the gun corresponding to this solution.
         """
 
-        min_mass, max_mass = self.get_charge_mass_limits(
-            pressure=pressure, target=target, acc=acc
-        )
-        valid_range_prompt = (
-            f"valid range of charge mass: [{min_mass:.3f}, {max_mass:.3f}]"
-        )
+        min_mass, max_mass = self.get_charge_mass_limits(pressure=pressure, target=target, acc=acc)
+        valid_range_prompt = f"valid range of charge mass: [{min_mass:.3f}, {max_mass:.3f}]"
         if mass < min_mass:
             raise ValueError(
                 "specified charge cannot possibly develop the targeted pressure.\n"
@@ -195,8 +189,7 @@ class MatchingProblem:
             )
         elif mass > max_mass:
             raise ValueError(
-                "specified charge is excessive for this chamber design.\n"
-                + valid_range_prompt
+                "specified charge is excessive for this chamber design.\n" + valid_range_prompt
             )
 
         def get_test_gun(reduced_burnrate: float) -> Gun:
@@ -204,12 +197,8 @@ class MatchingProblem:
 
         def f(reduced_burnrate: float) -> float:
             test_gun = get_test_gun(reduced_burnrate=reduced_burnrate)
-            states = test_gun.to_burnout(
-                n_intg=n_intg, acc=acc, abort_travel=self.travel
-            )
-            pp = getattr(
-                states.get_state_by_marker(Significance.PEAK_PRESSURE), target.value
-            )
+            states = test_gun.to_burnout(n_intg=n_intg, acc=acc, abort_travel=self.travel)
+            pp = getattr(states.get_state_by_marker(Significance.PEAK_PRESSURE), target.value)
             result = pp - pressure
             return result
 
@@ -230,9 +219,7 @@ class MatchingProblem:
                 est, est_prime = est * 10, est
             f_est, f_est_prime = f(est), f_est
 
-        logger.info(
-            f"roughly estimated reduced burn rate between {est} and {est_prime}"
-        )
+        logger.info(f"roughly estimated reduced burn rate between {est} and {est_prime}")
 
         """
         then, use `ballistics.num.dekker` to find the exact solution. this is necessary
@@ -240,9 +227,7 @@ class MatchingProblem:
         estimates aren't known a-priori
         """
         while abs(est - est_prime) > acc * min(est, est_prime):
-            est, est_prime = dekker(
-                f=f, x_0=est, x_1=est_prime, tol=min(est, est_prime) * acc
-            )
+            est, est_prime = dekker(f=f, x_0=est, x_1=est_prime, tol=min(est, est_prime) * acc)
 
         logger.info(f"reduced burn rate solved at {est}")
-        return est
+        return est, get_test_gun(reduced_burnrate=est)

@@ -6,8 +6,6 @@ from functools import cached_property, wraps
 from math import ceil, inf, pi
 from typing import Callable, Dict, Iterable, List, Tuple
 
-from tabulate import tabulate
-
 from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
                Significance)
 from .charge import Charge
@@ -23,7 +21,7 @@ class Gun:
     and manages propellant charge.
     """
 
-    caliber: float
+    cross_section: float
     shot_mass: float
     chamber_volume: float
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
@@ -50,13 +48,12 @@ class Gun:
 
     @cached_property
     def S(self) -> float:
-        return 0.25 * self.caliber**2 * pi
+        return self.cross_section
 
     @cached_property
     def total_charge_volume(self) -> float:
         return sum(
-            m / c.density if c.density else 0
-            for c, m in zip(self.charges, self.charge_masses)
+            m / c.density if c.density else 0 for c, m in zip(self.charges, self.charge_masses)
         )
 
     @cached_property
@@ -103,7 +100,6 @@ class Gun:
         ):
             try:
                 delattr(self, attr)
-
             except AttributeError:
                 pass
 
@@ -140,8 +136,7 @@ class Gun:
 
     def gas_energy(self, psi: Tuple[float, ...], v: float) -> float:
         return sum(
-            c.force * w * psi_c
-            for c, w, psi_c in zip(self.charges, self.charge_masses, psi)
+            c.force * w * psi_c for c, w, psi_c in zip(self.charges, self.charge_masses, psi)
         ) - (0.5 * self.theta * self.phi * self.shot_mass * v**2)
 
     def incompressible_fraction(self, psi: Tuple[float, ...]) -> float:
@@ -161,9 +156,7 @@ class Gun:
         return Delta(
             d_time=1,
             d_travel=state.velocity if state.is_started else 0,
-            d_velocity=(
-                self.S * P / (self.phi * self.shot_mass) if state.is_started else 0
-            ),
+            d_velocity=(self.S * P / (self.phi * self.shot_mass) if state.is_started else 0),
             d_burnup_fractions=dZ,
         )
 
@@ -212,9 +205,7 @@ class Gun:
         k2 = df(s_i(d=0.5 * k1 * dx, **{**generate_dargs(0.5 * dx), **intermediate}))
         k3 = df(s_i(d=0.5 * k2 * dx, **{**generate_dargs(0.5 * dx), **intermediate}))
         k4 = df(s_i(d=k3 * dx, **{**generate_dargs(dx), **intermediate}))
-        return s_i(
-            d=(k1 + k2 * 2 + k3 * 2 + k4) * dx / 6, **generate_dargs(dx), marker=marker
-        )
+        return s_i(d=(k1 + k2 * 2 + k3 * 2 + k4) * dx / 6, **generate_dargs(dx), marker=marker)
 
     def to_start(self, n_intg: int, acc: float) -> StateList:
         # sanity check: maximum possible pressure developed is higher than start:
@@ -249,9 +240,7 @@ class Gun:
 
             rough_ttb = s_next.time
 
-        def state_at_time(
-            time: float, marker: Significance = Significance.INTERMEDIATE
-        ) -> State:
+        def state_at_time(time: float, marker: Significance = Significance.INTERMEDIATE) -> State:
             return self.propagate_rk4(state=s_now, dt=time - s_now.time, marker=marker)
 
         start_time = dekker(
@@ -350,9 +339,7 @@ class Gun:
             s = self.propagate_rk4(state=s_now, dt=time - s_now.time)
             return -1 if (burnout(s) or abort(s)) else 1
 
-        end_time = max(
-            dekker(f=time_end, x_0=s_now.time, x_1=s_next.time, tol=rough_ttb * acc)
-        )
+        end_time = max(dekker(f=time_end, x_0=s_now.time, x_1=s_next.time, tol=rough_ttb * acc))
 
         s_end = self.propagate_rk4(state=s_now, dt=end_time - s_now.time)
         if burnout(s_end):
@@ -392,9 +379,7 @@ class Gun:
             for _ in range(n_intg - 1):
                 states.append(state := self.propagate_rk4(state=state, dl=d_travel))
 
-            states.append(
-                self.propagate_rk4(state=state, dl=d_travel, marker=Significance.MUZZLE)
-            )
+            states.append(self.propagate_rk4(state=state, dl=d_travel, marker=Significance.MUZZLE))
 
         else:
             """
@@ -432,9 +417,7 @@ class Gun:
                 states.append(state := self.propagate_rk4(state=state, dv=d_velocity))
 
             states.append(
-                self.propagate_rk4(
-                    state=state, dv=d_velocity, marker=Significance.MUZZLE
-                )
+                self.propagate_rk4(state=state, dv=d_velocity, marker=Significance.MUZZLE)
             )
 
         else:
@@ -473,9 +456,7 @@ class Gun:
             s_i, s_j, s_k = states[i], states[j], states[k]
 
             def time_pressure(time: float) -> float:
-                return self.propagate_rk4(
-                    state=s_j, dt=time - s_j.time
-                ).average_pressure
+                return self.propagate_rk4(state=s_j, dt=time - s_j.time).average_pressure
 
             # conduct gss on (time_min, time_max)
             time_pmax = (
@@ -502,63 +483,5 @@ class Gun:
             #     s_pmax = State.remark(s_j, Significance.PEAK_PRESSURE)
 
             insort(states, s_pmax)
+
         return states
-
-    @staticmethod
-    def tabulate(
-        states: StateList,
-        *args,
-        headers=(
-            "significance",
-            "time\nms",
-            "travel\nm",
-            "velocity\nm/s",
-            "breech\npressure\nMPa",
-            "average\npressure\nMPa",
-            "shot\npressure\nMPa",
-            "volume\nburnup\nfractions",
-        ),
-        **kwargs,
-    ) -> str:
-        """
-        Generates a plain, tabulated view of data for a list of
-        `ballistics.state.State` objects.
-
-        Parameters
-        ----------
-        states: list of `ballistics.state.State`
-            the list of `ballistics.state.State` to be pretty-printed.
-        headers: tuple[str]
-            argument passed to `tabulate.tabulate()` to generate a header for the
-            table.
-        *args, **kwargs:
-            other positional and named arguments to be passed to `tabulate.tabulate()`,
-            after the aforementioned once, respectively.
-
-        Returns
-        -------
-        str
-            generated using `tabulate.tabulate()`.
-
-        Notes
-        -----
-        see documentation for [tabulate.tabulate](https://pypi.org/project/tabulate/)
-        for information on additional arguments.
-        """
-        return tabulate(
-            [
-                (
-                    state.marker.value,
-                    state.time * 1e3,
-                    state.travel,
-                    state.velocity,
-                    state.breech_pressure * 1e-6,
-                    state.average_pressure * 1e-6,
-                    state.shot_pressure * 1e-6,
-                    state.volume_burnup_fractions,
-                )
-                for state in states
-            ],
-            *args,
-            **{**{"headers": headers}, **kwargs},  # feeds additional arguments
-        )

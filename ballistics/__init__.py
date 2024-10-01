@@ -24,5 +24,11 @@ MAX_DT = 10e-3  # 10ms
 DEFAULT_GUN_START_PRESSURE = 30e6
 DFEAULT_GUN_LOSS_FRACTION = 0.05
 
+AMBIENT_PRESSURE = 101325
+"""
+in Pa. The pressure value used in `ballistics.charge.Charge` to force a minimum level of combustion
+rate.
+"""
+
 # DEFAULT_GUN_MIN_GROSS_LOAD_DENSITY = 200
 # DEFAULT_GUN_MAX_GROSS_LOAD_DENSITY = 1200

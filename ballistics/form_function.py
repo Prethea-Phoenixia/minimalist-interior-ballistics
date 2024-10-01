@@ -237,9 +237,7 @@ class FormFunction:
             A, B, C, b, a, rho_ratio = perf_dicts[n_perforations][shape]
 
         except IndexError:
-            raise ValueError(
-                "Supplied perforation and shape combination not supported."
-            )
+            raise ValueError("Supplied perforation and shape combination not supported.")
 
         rho = rho_ratio * rho_base
         Pi = (A * b + B * d_0) / (2 * c)
