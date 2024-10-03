@@ -4,14 +4,57 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import cached_property
 from math import pi
-from typing import Dict
+from typing import Dict, Tuple
 
 
 class MultiPerfShape(Enum):
-    CYLINDER = "cylinder"
-    ROSETTE = "rosette"
-    HEXAGON = "hexagon"
-    ROUNDED_HEXAGON = "rounded hexagon"
+    # fmt: off
+    SEVEN_PERF_CYLINDER = ("cylinder", 7, 1, 7, 0, (3, 8), (0, 0), 0.2956)
+    SEVEN_PERF_ROSETTE = ("rosette", 7, 2, 8, 12 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
+    FOURTEEN_PERF_ROSETTE = ("rosette", 14, 8 / 3, 47 / 3, 26 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
+    NINETEEN_PERF_ROSETTE = ("rosette", 19, 3, 21, 36 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
+    NINETEEN_PERF_CYLINDER = ("cylinder", 19, 1, 19, 0, (5, 12), (0, 0), 0.3559)
+    NINETEEN_PERF_HEXAGON = (
+        "hexagon", 19, 18 / pi, 19, 18 * (3 * 3**0.5 - 1) / pi, (1, 2), (1, 2), 0.1864,
+    )
+    NINETEEN_PERF_ROUNDED_HEXAGON = (
+        "rounded hexagon", 19, 3**0.5 + 12 / pi, 19, 3 - 3**0.5 + 12 * (4 * 3**0.5 - 1) / pi,
+        (1, 2), (1, 2), 0.1977
+    )
+    # fmt: on
+
+    def __new__(
+        cls,
+        value: str,
+        n: int,
+        A: float,
+        B: float,
+        C: float,
+        b_factors: Tuple[float, float],
+        a_factors: Tuple[float, float],
+        rho_ratio: float,
+    ):
+        obj = object.__new__(cls)
+        obj._value_ = value
+        obj.n = n
+        obj.A, obj.B, obj.C = A, B, C
+        obj.b_factors, obj.a_factors = b_factors, a_factors
+        obj.rho_ratio = rho_ratio
+        return obj
+
+    def __call__(
+        self, d_0: float, e_1: float
+    ) -> Tuple[int, float, float, float, float, float, float]:
+
+        return (
+            self.n,
+            self.A,
+            self.B,
+            self.C,
+            sum(v * f for v, f in zip((d_0, e_1), self.b_factors)),
+            sum(v * f for v, f in zip((d_0, e_1), self.a_factors)),
+            self.rho_ratio,
+        )
 
 
 @dataclass(frozen=True)
@@ -189,8 +232,7 @@ class FormFunction:
         arch_width: float,
         perforation_diameter: float,
         height: float,
-        n_perforations: int = 7,
-        shape: MultiPerfShape = MultiPerfShape.CYLINDER,
+        shape: MultiPerfShape,
     ) -> FormFunction:
         """
         form function that describes multiple perforated propellants of specified shape.
@@ -212,33 +254,10 @@ class FormFunction:
         d_0 = perforation_diameter
         e_1, c = 0.5 * arch_width, 0.5 * height
         beta = e_1 / c
-        n = n_perforations
+        # n = n_perforations
         rho_base = e_1 + 0.5 * d_0
 
-        # fmt: off
-        perf_dicts: Dict[int, Dict[MultiPerfShape, tuple]] = {
-            7: {
-                MultiPerfShape.CYLINDER: (1, 7, 0, 3 * d_0 + 8 * e_1, 0, 0.2956),
-                MultiPerfShape.ROSETTE: (2, 8, 12 * 3**0.5 / pi, d_0 + 4 * e_1, d_0 + 2 * e_1, 0.1547),
-            },
-            14: {
-                MultiPerfShape.ROSETTE: (8 / 3, 47 / 3, 26 * 3**0.5 / pi, d_0 + 4 * e_1, d_0 + 2 * e_1, 0.1547)
-            },
-            19: {
-                MultiPerfShape.ROSETTE: (3, 21, 36 * 3**0.5 / pi, d_0 + 4 * e_1, d_0 + 2 * e_1, 0.1547),
-                MultiPerfShape.CYLINDER: (1, 19, 0, 5 * d_0 + 12 * e_1, 0, 0.3559),
-                MultiPerfShape.HEXAGON: (18 / pi, 19, 18 * (3 * 3**0.5 - 1) / pi, d_0 + 2 * e_1, d_0 + 2 * e_1, 0.1864),
-                MultiPerfShape.ROUNDED_HEXAGON: (3**0.5 + 12 / pi, 19, 3 - 3**0.5 + 12 * (4 * 3**0.5 - 1) / pi, d_0 + 2 * e_1, d_0 + 2 * e_1, 0.1977)
-            },
-        }
-        # fmt: on
-
-        try:
-            A, B, C, b, a, rho_ratio = perf_dicts[n_perforations][shape]
-
-        except IndexError:
-            raise ValueError("Supplied perforation and shape combination not supported.")
-
+        n, A, B, C, b, a, rho_ratio = shape(d_0=d_0, e_1=e_1)
         rho = rho_ratio * rho_base
         Pi = (A * b + B * d_0) / (2 * c)
         Q = (C * a**2 + A * b**2 - B * d_0**2) / (2 * c) ** 2
@@ -246,7 +265,8 @@ class FormFunction:
         labda = beta * (n - 1 - 2 * Pi) / (Q + 2 * Pi)
         if labda < 0:
             raise ValueError(
-                "Short multi-perforated grains will combust regressively, this case is not well modeled.",
+                "Short multi-perforated grains will combust regressively, this case is not well\
+ modeled.",
             )
 
         return cls(
@@ -258,7 +278,7 @@ class FormFunction:
 
 
 if __name__ == "__main__":
-    f = FormFunction.multi_perf(5.5 * 2, 2, 1)
+    f = FormFunction.multi_perf(5.5 * 2, 2, 1, shape=MultiPerfShape.SEVEN_PERF_CYLINDER)
     print(f)
     print(1, f(1))
     print(f.Z_k, f(f.Z_k))

@@ -25,12 +25,9 @@ class State:
     time: float
     travel: float
     velocity: float
-    burnup_fractions: Tuple[float, ...]
+    burnup_fraction: float
     marker: Significance
     is_started: bool = True
-
-    def __getattr__(self, item):
-        return getattr(self.gun, item)
 
     def __lt__(self, other: State):
         # this enables sorting and bisect operation with array of `ballistics.state.State`.
@@ -43,15 +40,13 @@ class State:
             time=old_state.time,
             travel=old_state.travel,
             velocity=old_state.velocity,
-            burnup_fractions=old_state.burnup_fractions,
+            burnup_fraction=old_state.burnup_fraction,
             marker=new_significance,
         )
 
     @cached_property
-    def volume_burnup_fractions(self) -> Tuple[float]:
-        return tuple(
-            c.psi_c(max(min(Z_c, c.Z_k), 0)) for c, Z_c in zip(self.charges, self.burnup_fractions)
-        )
+    def volume_burnup_fraction(self) -> float:
+        return self.gun.charge.psi(max(min(self.burnup_fraction, self.gun.charge.Z_k), 0))
 
     @cached_property
     def average_pressure(self) -> float:
@@ -66,10 +61,11 @@ class State:
         of conditions encountered in conventional firearms (although it is of more
         concern in light-gas guns).
         """
-        psi = self.volume_burnup_fractions
         l, v = self.travel, self.velocity
-        l_psi = self.l_0 * (1 - self.incompressible_fraction(psi))
-        return max(self.gas_energy(psi, v) / (self.S * (l_psi + l)), 0)
+        l_psi = self.gun.l_0 * (1 - self.gun.incompressible_fraction(self.volume_burnup_fraction))
+        return max(
+            self.gun.gas_energy(self.volume_burnup_fraction, v) / (self.gun.S * (l_psi + l)), 0
+        )
 
     @cached_property
     def shot_pressure(self) -> float:
@@ -77,7 +73,7 @@ class State:
         `average_pressure`.
         """
         return self.average_pressure / (
-            1 + self.total_charge_mass / (3 * (1 + self.loss_fraction) * self.shot_mass)
+            1 + self.gun.charge_mass / (3 * (1 + self.gun.loss_fraction) * self.gun.shot_mass)
         )
 
     @cached_property
@@ -86,7 +82,7 @@ class State:
         `average_pressure`.
         """
         return self.shot_pressure * (
-            1 + self.total_charge_mass / (2 * (1 + self.loss_fraction) * self.shot_mass)
+            1 + self.gun.charge_mass / (2 * (1 + self.gun.loss_fraction) * self.gun.shot_mass)
         )
 
     def increment(self, d: Delta, marker: Significance, dt=..., dl=..., dv=...) -> State:
@@ -101,15 +97,12 @@ class State:
 
         attrs = {
             v_attr: getattr(self, v_attr) + (getattr(d, "d_" + v_attr) if d_attr != v_attr else dx)
-            for v_attr in ("time", "travel", "velocity")
+            for v_attr in ("time", "travel", "velocity", "burnup_fraction")
         }
 
         return State(
             gun=self.gun,
             **attrs,
-            burnup_fractions=tuple(
-                Z + dZ for Z, dZ in zip(self.burnup_fractions, d.d_burnup_fractions)
-            ),
             marker=marker,
             is_started=self.is_started,
         )
@@ -120,14 +113,14 @@ class Delta:
     d_time: float
     d_travel: float
     d_velocity: float
-    d_burnup_fractions: Tuple[float, ...]
+    d_burnup_fraction: float
 
     def __mul__(self, scalar: float) -> Delta:
         return Delta(
             d_time=self.d_time * scalar,
             d_travel=self.d_travel * scalar,
             d_velocity=self.d_velocity * scalar,
-            d_burnup_fractions=tuple(dZ * scalar for dZ in self.d_burnup_fractions),
+            d_burnup_fraction=self.d_burnup_fraction * scalar,
         )
 
     def __add__(self, other: Delta) -> Delta:
@@ -135,9 +128,7 @@ class Delta:
             d_time=self.d_time + other.d_time,
             d_travel=self.d_travel + other.d_travel,
             d_velocity=self.d_velocity + other.d_velocity,
-            d_burnup_fractions=tuple(
-                v + w for v, w in zip(self.d_burnup_fractions, other.d_burnup_fractions)
-            ),
+            d_burnup_fraction=self.d_burnup_fraction + other.d_burnup_fraction,
         )
 
     def __rmul__(self, scalar: float) -> Delta:
@@ -181,7 +172,7 @@ class StateList(BaseList):
             "breech\npressure\nMPa",
             "average\npressure\nMPa",
             "shot\npressure\nMPa",
-            "volume\nburnup\nfractions",
+            "volume\nburnup\nfraction",
         ),
         **kwargs,
     ) -> str:
@@ -220,7 +211,7 @@ class StateList(BaseList):
                     state.breech_pressure * 1e-6,
                     state.average_pressure * 1e-6,
                     state.shot_pressure * 1e-6,
-                    state.volume_burnup_fractions,
+                    state.volume_burnup_fraction,
                 )
                 for state in self
             ],

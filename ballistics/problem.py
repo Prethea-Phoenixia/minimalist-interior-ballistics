@@ -48,28 +48,13 @@ class MatchingProblem:
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
 
-    known_charge_loads: Dict[Charge, float] = field(default_factory=dict)
+    # known_charge_loads: Dict[Charge, float] = field(default_factory=dict)
 
     def __post_init__(self):
         if self.get_base_gun().bomb_free_fraction < 0:
             raise ValueError("pre-existing charges for this gun design is overfull")
 
-    def get_base_gun(self) -> Gun:
-        gun = Gun(
-            cross_section=self.cross_section,
-            shot_mass=self.shot_mass,
-            chamber_volume=self.chamber_volume,
-            loss_fraction=self.loss_fraction,
-            start_pressure=self.start_pressure,
-        )
-
-        for charge, mass in self.known_charge_loads.items():
-            gun.set_charge(charge=charge, mass=mass)
-
-        return gun
-
     def get_test_gun(self, reduced_burnrate: float, mass: float) -> Gun:
-        gun = self.get_base_gun()
         charge = Charge(
             density=self.density,
             force=self.force,
@@ -80,8 +65,20 @@ class MatchingProblem:
             gas_molar_mass=self.gas_molar_mass,
             form_function=self.form_function,
         )
-        gun.set_charge(charge=charge, mass=mass)
+
+        gun = Gun(
+            cross_section=self.cross_section,
+            shot_mass=self.shot_mass,
+            charge_mass=mass,
+            charge=charge,
+            chamber_volume=self.chamber_volume,
+            loss_fraction=self.loss_fraction,
+            start_pressure=self.start_pressure,
+        )
         return gun
+
+    def get_base_gun(self):
+        return self.get_test_gun(reduced_burnrate=1, mass=0)
 
     def get_charge_mass_limits(
         self, pressure: float, target: Target, acc: float
@@ -129,7 +126,7 @@ class MatchingProblem:
             test_gun = self.get_test_gun(reduced_burnrate=1, mass=mass)
             return test_gun.bomb_free_fraction
 
-        chamber_fill_mass = (base_gun.chamber_volume - base_gun.total_charge_volume) * self.density
+        chamber_fill_mass = (base_gun.chamber_volume - base_gun.charge_volume) * self.density
 
         upper_limit = min(dekker(f_ff, 0, chamber_fill_mass, tol=chamber_fill_mass * acc))
 

@@ -1,7 +1,7 @@
 import logging
 
 from ballistics.charge import Charge
-from ballistics.form_function import FormFunction
+from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.gun import Gun
 from ballistics.problem import MatchingProblem, Target
 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
             arch_width=10e-3,
             perforation_diameter=5e-3,
             height=0.12,
-            n_perforations=7,
+            shape=MultiPerfShape.SEVEN_PERF_CYLINDER,
         ),
     )
 

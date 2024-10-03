@@ -67,7 +67,10 @@
                                 <a class="variable" href="#Charge.Z_k">Z_k</a>
                         </li>
                         <li>
-                                <a class="function" href="#Charge.psi_c">psi_c</a>
+                                <a class="variable" href="#Charge.theta">theta</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Charge.psi">psi</a>
                         </li>
                         <li>
                                 <a class="function" href="#Charge.dZdt">dZdt</a>
@@ -102,7 +105,7 @@
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">MAX_DT</span><span class="p">,</span> <span class="n">Significance</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">,</span> <span class="n">MAX_DT</span><span class="p">,</span> <span class="n">Significance</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">.form_function</span> <span class="kn">import</span> <span class="n">FormFunction</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">.num</span> <span class="kn">import</span> <span class="n">dekker</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
@@ -152,7 +155,7 @@
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">        No particular unit is required, the only requirement being consistency across</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">        a set of `Charge` objects added to the same `ballistics.gun.Gun`. For the case</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        of a single `Charge`, any value will work.</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">    form_function: Optional[`ballistics.form_function.FormFunction`]</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">    form_function: `ballistics.form_function.FormFunction`</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        form function that describes the shape of charge.</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
@@ -160,92 +163,92 @@
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">    ----------</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">    Z_k: float</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        cached value from `ballistics.form_function.Z_k`.</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    Notes</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">    -----</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">    the Saint Robert&#39;s (Viellie&#39;s) burn rate law:</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    ```</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    u = a * P^n</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">    theta: float</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        adiabatic index - 1.</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">    Notes</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    -----</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    the Saint Robert&#39;s (Viellie&#39;s) burn rate law:</span>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">    ```</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    where:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    - u: linear burn rate, in m/s</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    - a: burn rate coefficient, in m/(s-Pa^n).</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">      - n: pressure exponent, dimensionless.</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    - P: average chamber pressure, in Pa.</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    is used to model the combustion behavior of the propellant.</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">    References</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    ----------</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">    - **[English]** Xu, Fu-ming. (2013). On The Definition of Propellant Force.</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    u = a * P^n</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    ```</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    where:</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    - u: linear burn rate, in m/s</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    - a: burn rate coefficient, in m/(s-Pa^n).</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">      - n: pressure exponent, dimensionless.</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    - P: average chamber pressure, in Pa.</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">    is used to model the combustion behavior of the propellant.</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">    References</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    ----------</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">    - **[English]** Xu, Fu-ming. (2013). On The Definition of Propellant Force.</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">    Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="n">density</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># u_1 / e_1</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="n">form_function</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FormFunction</span><span class="p">]</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="k">def</span> <span class="nf">from_dimension_and_burnrate</span><span class="p">(</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="n">density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="n">force</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span><span class="p">,</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="n">arch_width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Charge</span><span class="p">:</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        defines a charge using the measurement of arch thickness in conjunction with</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        burn rate coefficient data.</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        Parameters</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">        ----------</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">            see documentation for `Charge`.</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">        arch_width: float</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">            twice the propellant&#39;s &quot;web&quot;, or the minimum depth the propellant&#39;s</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">            burn surface must recede to achieve a &quot;burnthrough&quot;.</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">            see documentation of `ballistics.form_function.FormFunction` for more</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">            information.</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        burn_rate_coefficient: float</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">            coefficient used in de Saint Robert&#39;s burn rate law. See documentation for</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">            `Charge` for more information.</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>            <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">,</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>            <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>            <span class="n">pressure_exponent</span><span class="o">=</span><span class="n">pressure_exponent</span><span class="p">,</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>            <span class="n">covolume</span><span class="o">=</span><span class="n">covolume</span><span class="p">,</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>            <span class="n">adiabatic_index</span><span class="o">=</span><span class="n">adiabatic_index</span><span class="p">,</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>            <span class="n">gas_molar_mass</span><span class="o">=</span><span class="n">gas_molar_mass</span><span class="p">,</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>            <span class="n">reduced_burnrate</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">burn_rate_coefficient</span> <span class="o">/</span> <span class="n">arch_width</span><span class="p">,</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="n">form_function</span><span class="o">=</span><span class="n">form_function</span><span class="p">,</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>        <span class="p">)</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="nd">@cached_property</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="k">def</span> <span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">:</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>            <span class="k">return</span> <span class="mi">0</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="k">def</span> <span class="nf">psi_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z_c</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">:</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z_c</span><span class="p">)</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>            <span class="k">return</span> <span class="mi">1</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">density</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># u_1 / e_1</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="nd">@classmethod</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="k">def</span> <span class="nf">from_dimension_and_burnrate</span><span class="p">(</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="n">density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="n">force</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span><span class="p">,</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="n">arch_width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Charge</span><span class="p">:</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        defines a charge using the measurement of arch thickness in conjunction with</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        burn rate coefficient data.</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        Parameters</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">        ----------</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">            see documentation for `Charge`.</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        arch_width: float</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">            twice the propellant&#39;s &quot;web&quot;, or the minimum depth the propellant&#39;s</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">            burn surface must recede to achieve a &quot;burnthrough&quot;.</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">            see documentation of `ballistics.form_function.FormFunction` for more</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">            information.</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        burn_rate_coefficient: float</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">            coefficient used in de Saint Robert&#39;s burn rate law. See documentation for</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">            `Charge` for more information.</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>            <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">,</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>            <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>            <span class="n">pressure_exponent</span><span class="o">=</span><span class="n">pressure_exponent</span><span class="p">,</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>            <span class="n">covolume</span><span class="o">=</span><span class="n">covolume</span><span class="p">,</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>            <span class="n">adiabatic_index</span><span class="o">=</span><span class="n">adiabatic_index</span><span class="p">,</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="n">gas_molar_mass</span><span class="o">=</span><span class="n">gas_molar_mass</span><span class="p">,</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>            <span class="n">reduced_burnrate</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">burn_rate_coefficient</span> <span class="o">/</span> <span class="n">arch_width</span><span class="p">,</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>            <span class="n">form_function</span><span class="o">=</span><span class="n">form_function</span><span class="p">,</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="p">)</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="nd">@cached_property</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>    <span class="k">def</span> <span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="nd">@cached_property</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="k">def</span> <span class="nf">theta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span> <span class="o">-</span> <span class="mi">1</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="k">def</span> <span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>    <span class="k">def</span> <span class="nf">dZdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
 </span></pre></div>
 
 
@@ -253,8 +256,7 @@
                 <section id="Charge">
                             <input id="Charge-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
-                    <div class="decorator">@dataclass(frozen=True)</div>
-
+            
     <span class="def">class</span>
     <span class="name">Charge</span>:
 
@@ -262,8 +264,7 @@
 
     </div>
     <a class="headerlink" href="#Charge"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge-13"><a href="#Charge-13"><span class="linenos"> 13</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="Charge-14"><a href="#Charge-14"><span class="linenos"> 14</span></a><span class="k">class</span> <span class="nc">Charge</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge-14"><a href="#Charge-14"><span class="linenos"> 14</span></a><span class="k">class</span> <span class="nc">Charge</span><span class="p">:</span>
 </span><span id="Charge-15"><a href="#Charge-15"><span class="linenos"> 15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;class that represent individual charges as standalone designs.</span>
 </span><span id="Charge-16"><a href="#Charge-16"><span class="linenos"> 16</span></a>
 </span><span id="Charge-17"><a href="#Charge-17"><span class="linenos"> 17</span></a><span class="sd">    Parameters</span>
@@ -307,7 +308,7 @@
 </span><span id="Charge-55"><a href="#Charge-55"><span class="linenos"> 55</span></a><span class="sd">        No particular unit is required, the only requirement being consistency across</span>
 </span><span id="Charge-56"><a href="#Charge-56"><span class="linenos"> 56</span></a><span class="sd">        a set of `Charge` objects added to the same `ballistics.gun.Gun`. For the case</span>
 </span><span id="Charge-57"><a href="#Charge-57"><span class="linenos"> 57</span></a><span class="sd">        of a single `Charge`, any value will work.</span>
-</span><span id="Charge-58"><a href="#Charge-58"><span class="linenos"> 58</span></a><span class="sd">    form_function: Optional[`ballistics.form_function.FormFunction`]</span>
+</span><span id="Charge-58"><a href="#Charge-58"><span class="linenos"> 58</span></a><span class="sd">    form_function: `ballistics.form_function.FormFunction`</span>
 </span><span id="Charge-59"><a href="#Charge-59"><span class="linenos"> 59</span></a><span class="sd">        form function that describes the shape of charge.</span>
 </span><span id="Charge-60"><a href="#Charge-60"><span class="linenos"> 60</span></a>
 </span><span id="Charge-61"><a href="#Charge-61"><span class="linenos"> 61</span></a>
@@ -315,92 +316,92 @@
 </span><span id="Charge-63"><a href="#Charge-63"><span class="linenos"> 63</span></a><span class="sd">    ----------</span>
 </span><span id="Charge-64"><a href="#Charge-64"><span class="linenos"> 64</span></a><span class="sd">    Z_k: float</span>
 </span><span id="Charge-65"><a href="#Charge-65"><span class="linenos"> 65</span></a><span class="sd">        cached value from `ballistics.form_function.Z_k`.</span>
-</span><span id="Charge-66"><a href="#Charge-66"><span class="linenos"> 66</span></a>
-</span><span id="Charge-67"><a href="#Charge-67"><span class="linenos"> 67</span></a><span class="sd">    Notes</span>
-</span><span id="Charge-68"><a href="#Charge-68"><span class="linenos"> 68</span></a><span class="sd">    -----</span>
-</span><span id="Charge-69"><a href="#Charge-69"><span class="linenos"> 69</span></a><span class="sd">    the Saint Robert&#39;s (Viellie&#39;s) burn rate law:</span>
-</span><span id="Charge-70"><a href="#Charge-70"><span class="linenos"> 70</span></a><span class="sd">    ```</span>
-</span><span id="Charge-71"><a href="#Charge-71"><span class="linenos"> 71</span></a><span class="sd">    u = a * P^n</span>
+</span><span id="Charge-66"><a href="#Charge-66"><span class="linenos"> 66</span></a><span class="sd">    theta: float</span>
+</span><span id="Charge-67"><a href="#Charge-67"><span class="linenos"> 67</span></a><span class="sd">        adiabatic index - 1.</span>
+</span><span id="Charge-68"><a href="#Charge-68"><span class="linenos"> 68</span></a>
+</span><span id="Charge-69"><a href="#Charge-69"><span class="linenos"> 69</span></a><span class="sd">    Notes</span>
+</span><span id="Charge-70"><a href="#Charge-70"><span class="linenos"> 70</span></a><span class="sd">    -----</span>
+</span><span id="Charge-71"><a href="#Charge-71"><span class="linenos"> 71</span></a><span class="sd">    the Saint Robert&#39;s (Viellie&#39;s) burn rate law:</span>
 </span><span id="Charge-72"><a href="#Charge-72"><span class="linenos"> 72</span></a><span class="sd">    ```</span>
-</span><span id="Charge-73"><a href="#Charge-73"><span class="linenos"> 73</span></a><span class="sd">    where:</span>
-</span><span id="Charge-74"><a href="#Charge-74"><span class="linenos"> 74</span></a><span class="sd">    - u: linear burn rate, in m/s</span>
-</span><span id="Charge-75"><a href="#Charge-75"><span class="linenos"> 75</span></a><span class="sd">    - a: burn rate coefficient, in m/(s-Pa^n).</span>
-</span><span id="Charge-76"><a href="#Charge-76"><span class="linenos"> 76</span></a><span class="sd">      - n: pressure exponent, dimensionless.</span>
-</span><span id="Charge-77"><a href="#Charge-77"><span class="linenos"> 77</span></a><span class="sd">    - P: average chamber pressure, in Pa.</span>
-</span><span id="Charge-78"><a href="#Charge-78"><span class="linenos"> 78</span></a><span class="sd">    is used to model the combustion behavior of the propellant.</span>
-</span><span id="Charge-79"><a href="#Charge-79"><span class="linenos"> 79</span></a>
-</span><span id="Charge-80"><a href="#Charge-80"><span class="linenos"> 80</span></a><span class="sd">    References</span>
-</span><span id="Charge-81"><a href="#Charge-81"><span class="linenos"> 81</span></a><span class="sd">    ----------</span>
-</span><span id="Charge-82"><a href="#Charge-82"><span class="linenos"> 82</span></a><span class="sd">    - **[English]** Xu, Fu-ming. (2013). On The Definition of Propellant Force.</span>
-</span><span id="Charge-83"><a href="#Charge-83"><span class="linenos"> 83</span></a><span class="sd">    Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</span>
-</span><span id="Charge-84"><a href="#Charge-84"><span class="linenos"> 84</span></a>
-</span><span id="Charge-85"><a href="#Charge-85"><span class="linenos"> 85</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="Charge-73"><a href="#Charge-73"><span class="linenos"> 73</span></a><span class="sd">    u = a * P^n</span>
+</span><span id="Charge-74"><a href="#Charge-74"><span class="linenos"> 74</span></a><span class="sd">    ```</span>
+</span><span id="Charge-75"><a href="#Charge-75"><span class="linenos"> 75</span></a><span class="sd">    where:</span>
+</span><span id="Charge-76"><a href="#Charge-76"><span class="linenos"> 76</span></a><span class="sd">    - u: linear burn rate, in m/s</span>
+</span><span id="Charge-77"><a href="#Charge-77"><span class="linenos"> 77</span></a><span class="sd">    - a: burn rate coefficient, in m/(s-Pa^n).</span>
+</span><span id="Charge-78"><a href="#Charge-78"><span class="linenos"> 78</span></a><span class="sd">      - n: pressure exponent, dimensionless.</span>
+</span><span id="Charge-79"><a href="#Charge-79"><span class="linenos"> 79</span></a><span class="sd">    - P: average chamber pressure, in Pa.</span>
+</span><span id="Charge-80"><a href="#Charge-80"><span class="linenos"> 80</span></a><span class="sd">    is used to model the combustion behavior of the propellant.</span>
+</span><span id="Charge-81"><a href="#Charge-81"><span class="linenos"> 81</span></a>
+</span><span id="Charge-82"><a href="#Charge-82"><span class="linenos"> 82</span></a><span class="sd">    References</span>
+</span><span id="Charge-83"><a href="#Charge-83"><span class="linenos"> 83</span></a><span class="sd">    ----------</span>
+</span><span id="Charge-84"><a href="#Charge-84"><span class="linenos"> 84</span></a><span class="sd">    - **[English]** Xu, Fu-ming. (2013). On The Definition of Propellant Force.</span>
+</span><span id="Charge-85"><a href="#Charge-85"><span class="linenos"> 85</span></a><span class="sd">    Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</span>
 </span><span id="Charge-86"><a href="#Charge-86"><span class="linenos"> 86</span></a>
-</span><span id="Charge-87"><a href="#Charge-87"><span class="linenos"> 87</span></a>    <span class="n">density</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="Charge-88"><a href="#Charge-88"><span class="linenos"> 88</span></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="Charge-89"><a href="#Charge-89"><span class="linenos"> 89</span></a>    <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="Charge-90"><a href="#Charge-90"><span class="linenos"> 90</span></a>    <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="Charge-91"><a href="#Charge-91"><span class="linenos"> 91</span></a>    <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="Charge-92"><a href="#Charge-92"><span class="linenos"> 92</span></a>    <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># u_1 / e_1</span>
-</span><span id="Charge-93"><a href="#Charge-93"><span class="linenos"> 93</span></a>    <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="Charge-94"><a href="#Charge-94"><span class="linenos"> 94</span></a>    <span class="n">form_function</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FormFunction</span><span class="p">]</span>
-</span><span id="Charge-95"><a href="#Charge-95"><span class="linenos"> 95</span></a>
-</span><span id="Charge-96"><a href="#Charge-96"><span class="linenos"> 96</span></a>    <span class="nd">@classmethod</span>
-</span><span id="Charge-97"><a href="#Charge-97"><span class="linenos"> 97</span></a>    <span class="k">def</span> <span class="nf">from_dimension_and_burnrate</span><span class="p">(</span>
-</span><span id="Charge-98"><a href="#Charge-98"><span class="linenos"> 98</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="Charge-99"><a href="#Charge-99"><span class="linenos"> 99</span></a>        <span class="n">density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge-100"><a href="#Charge-100"><span class="linenos">100</span></a>        <span class="n">force</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge-101"><a href="#Charge-101"><span class="linenos">101</span></a>        <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge-102"><a href="#Charge-102"><span class="linenos">102</span></a>        <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge-103"><a href="#Charge-103"><span class="linenos">103</span></a>        <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge-104"><a href="#Charge-104"><span class="linenos">104</span></a>        <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge-105"><a href="#Charge-105"><span class="linenos">105</span></a>        <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span><span class="p">,</span>
-</span><span id="Charge-106"><a href="#Charge-106"><span class="linenos">106</span></a>        <span class="n">arch_width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge-107"><a href="#Charge-107"><span class="linenos">107</span></a>        <span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge-108"><a href="#Charge-108"><span class="linenos">108</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Charge</span><span class="p">:</span>
-</span><span id="Charge-109"><a href="#Charge-109"><span class="linenos">109</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Charge-110"><a href="#Charge-110"><span class="linenos">110</span></a><span class="sd">        defines a charge using the measurement of arch thickness in conjunction with</span>
-</span><span id="Charge-111"><a href="#Charge-111"><span class="linenos">111</span></a><span class="sd">        burn rate coefficient data.</span>
-</span><span id="Charge-112"><a href="#Charge-112"><span class="linenos">112</span></a>
-</span><span id="Charge-113"><a href="#Charge-113"><span class="linenos">113</span></a><span class="sd">        Parameters</span>
-</span><span id="Charge-114"><a href="#Charge-114"><span class="linenos">114</span></a><span class="sd">        ----------</span>
-</span><span id="Charge-115"><a href="#Charge-115"><span class="linenos">115</span></a><span class="sd">        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float</span>
-</span><span id="Charge-116"><a href="#Charge-116"><span class="linenos">116</span></a><span class="sd">            see documentation for `Charge`.</span>
-</span><span id="Charge-117"><a href="#Charge-117"><span class="linenos">117</span></a><span class="sd">        arch_width: float</span>
-</span><span id="Charge-118"><a href="#Charge-118"><span class="linenos">118</span></a><span class="sd">            twice the propellant&#39;s &quot;web&quot;, or the minimum depth the propellant&#39;s</span>
-</span><span id="Charge-119"><a href="#Charge-119"><span class="linenos">119</span></a><span class="sd">            burn surface must recede to achieve a &quot;burnthrough&quot;.</span>
-</span><span id="Charge-120"><a href="#Charge-120"><span class="linenos">120</span></a><span class="sd">            see documentation of `ballistics.form_function.FormFunction` for more</span>
-</span><span id="Charge-121"><a href="#Charge-121"><span class="linenos">121</span></a><span class="sd">            information.</span>
-</span><span id="Charge-122"><a href="#Charge-122"><span class="linenos">122</span></a><span class="sd">        burn_rate_coefficient: float</span>
-</span><span id="Charge-123"><a href="#Charge-123"><span class="linenos">123</span></a><span class="sd">            coefficient used in de Saint Robert&#39;s burn rate law. See documentation for</span>
-</span><span id="Charge-124"><a href="#Charge-124"><span class="linenos">124</span></a><span class="sd">            `Charge` for more information.</span>
-</span><span id="Charge-125"><a href="#Charge-125"><span class="linenos">125</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Charge-126"><a href="#Charge-126"><span class="linenos">126</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span id="Charge-127"><a href="#Charge-127"><span class="linenos">127</span></a>            <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">,</span>
-</span><span id="Charge-128"><a href="#Charge-128"><span class="linenos">128</span></a>            <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
-</span><span id="Charge-129"><a href="#Charge-129"><span class="linenos">129</span></a>            <span class="n">pressure_exponent</span><span class="o">=</span><span class="n">pressure_exponent</span><span class="p">,</span>
-</span><span id="Charge-130"><a href="#Charge-130"><span class="linenos">130</span></a>            <span class="n">covolume</span><span class="o">=</span><span class="n">covolume</span><span class="p">,</span>
-</span><span id="Charge-131"><a href="#Charge-131"><span class="linenos">131</span></a>            <span class="n">adiabatic_index</span><span class="o">=</span><span class="n">adiabatic_index</span><span class="p">,</span>
-</span><span id="Charge-132"><a href="#Charge-132"><span class="linenos">132</span></a>            <span class="n">gas_molar_mass</span><span class="o">=</span><span class="n">gas_molar_mass</span><span class="p">,</span>
-</span><span id="Charge-133"><a href="#Charge-133"><span class="linenos">133</span></a>            <span class="n">reduced_burnrate</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">burn_rate_coefficient</span> <span class="o">/</span> <span class="n">arch_width</span><span class="p">,</span>
-</span><span id="Charge-134"><a href="#Charge-134"><span class="linenos">134</span></a>            <span class="n">form_function</span><span class="o">=</span><span class="n">form_function</span><span class="p">,</span>
-</span><span id="Charge-135"><a href="#Charge-135"><span class="linenos">135</span></a>        <span class="p">)</span>
-</span><span id="Charge-136"><a href="#Charge-136"><span class="linenos">136</span></a>
-</span><span id="Charge-137"><a href="#Charge-137"><span class="linenos">137</span></a>    <span class="nd">@cached_property</span>
-</span><span id="Charge-138"><a href="#Charge-138"><span class="linenos">138</span></a>    <span class="k">def</span> <span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge-139"><a href="#Charge-139"><span class="linenos">139</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">:</span>
-</span><span id="Charge-140"><a href="#Charge-140"><span class="linenos">140</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
-</span><span id="Charge-141"><a href="#Charge-141"><span class="linenos">141</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Charge-142"><a href="#Charge-142"><span class="linenos">142</span></a>            <span class="k">return</span> <span class="mi">0</span>
-</span><span id="Charge-143"><a href="#Charge-143"><span class="linenos">143</span></a>
-</span><span id="Charge-144"><a href="#Charge-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="nf">psi_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z_c</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge-145"><a href="#Charge-145"><span class="linenos">145</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">:</span>
-</span><span id="Charge-146"><a href="#Charge-146"><span class="linenos">146</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z_c</span><span class="p">)</span>
-</span><span id="Charge-147"><a href="#Charge-147"><span class="linenos">147</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Charge-148"><a href="#Charge-148"><span class="linenos">148</span></a>            <span class="k">return</span> <span class="mi">1</span>
+</span><span id="Charge-87"><a href="#Charge-87"><span class="linenos"> 87</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="Charge-88"><a href="#Charge-88"><span class="linenos"> 88</span></a>
+</span><span id="Charge-89"><a href="#Charge-89"><span class="linenos"> 89</span></a>    <span class="n">density</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="Charge-90"><a href="#Charge-90"><span class="linenos"> 90</span></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="Charge-91"><a href="#Charge-91"><span class="linenos"> 91</span></a>    <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="Charge-92"><a href="#Charge-92"><span class="linenos"> 92</span></a>    <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="Charge-93"><a href="#Charge-93"><span class="linenos"> 93</span></a>    <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="Charge-94"><a href="#Charge-94"><span class="linenos"> 94</span></a>    <span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># u_1 / e_1</span>
+</span><span id="Charge-95"><a href="#Charge-95"><span class="linenos"> 95</span></a>    <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="Charge-96"><a href="#Charge-96"><span class="linenos"> 96</span></a>    <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span>
+</span><span id="Charge-97"><a href="#Charge-97"><span class="linenos"> 97</span></a>
+</span><span id="Charge-98"><a href="#Charge-98"><span class="linenos"> 98</span></a>    <span class="nd">@classmethod</span>
+</span><span id="Charge-99"><a href="#Charge-99"><span class="linenos"> 99</span></a>    <span class="k">def</span> <span class="nf">from_dimension_and_burnrate</span><span class="p">(</span>
+</span><span id="Charge-100"><a href="#Charge-100"><span class="linenos">100</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="Charge-101"><a href="#Charge-101"><span class="linenos">101</span></a>        <span class="n">density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge-102"><a href="#Charge-102"><span class="linenos">102</span></a>        <span class="n">force</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge-103"><a href="#Charge-103"><span class="linenos">103</span></a>        <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge-104"><a href="#Charge-104"><span class="linenos">104</span></a>        <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge-105"><a href="#Charge-105"><span class="linenos">105</span></a>        <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge-106"><a href="#Charge-106"><span class="linenos">106</span></a>        <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge-107"><a href="#Charge-107"><span class="linenos">107</span></a>        <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span><span class="p">,</span>
+</span><span id="Charge-108"><a href="#Charge-108"><span class="linenos">108</span></a>        <span class="n">arch_width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge-109"><a href="#Charge-109"><span class="linenos">109</span></a>        <span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge-110"><a href="#Charge-110"><span class="linenos">110</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Charge</span><span class="p">:</span>
+</span><span id="Charge-111"><a href="#Charge-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Charge-112"><a href="#Charge-112"><span class="linenos">112</span></a><span class="sd">        defines a charge using the measurement of arch thickness in conjunction with</span>
+</span><span id="Charge-113"><a href="#Charge-113"><span class="linenos">113</span></a><span class="sd">        burn rate coefficient data.</span>
+</span><span id="Charge-114"><a href="#Charge-114"><span class="linenos">114</span></a>
+</span><span id="Charge-115"><a href="#Charge-115"><span class="linenos">115</span></a><span class="sd">        Parameters</span>
+</span><span id="Charge-116"><a href="#Charge-116"><span class="linenos">116</span></a><span class="sd">        ----------</span>
+</span><span id="Charge-117"><a href="#Charge-117"><span class="linenos">117</span></a><span class="sd">        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float</span>
+</span><span id="Charge-118"><a href="#Charge-118"><span class="linenos">118</span></a><span class="sd">            see documentation for `Charge`.</span>
+</span><span id="Charge-119"><a href="#Charge-119"><span class="linenos">119</span></a><span class="sd">        arch_width: float</span>
+</span><span id="Charge-120"><a href="#Charge-120"><span class="linenos">120</span></a><span class="sd">            twice the propellant&#39;s &quot;web&quot;, or the minimum depth the propellant&#39;s</span>
+</span><span id="Charge-121"><a href="#Charge-121"><span class="linenos">121</span></a><span class="sd">            burn surface must recede to achieve a &quot;burnthrough&quot;.</span>
+</span><span id="Charge-122"><a href="#Charge-122"><span class="linenos">122</span></a><span class="sd">            see documentation of `ballistics.form_function.FormFunction` for more</span>
+</span><span id="Charge-123"><a href="#Charge-123"><span class="linenos">123</span></a><span class="sd">            information.</span>
+</span><span id="Charge-124"><a href="#Charge-124"><span class="linenos">124</span></a><span class="sd">        burn_rate_coefficient: float</span>
+</span><span id="Charge-125"><a href="#Charge-125"><span class="linenos">125</span></a><span class="sd">            coefficient used in de Saint Robert&#39;s burn rate law. See documentation for</span>
+</span><span id="Charge-126"><a href="#Charge-126"><span class="linenos">126</span></a><span class="sd">            `Charge` for more information.</span>
+</span><span id="Charge-127"><a href="#Charge-127"><span class="linenos">127</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Charge-128"><a href="#Charge-128"><span class="linenos">128</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span id="Charge-129"><a href="#Charge-129"><span class="linenos">129</span></a>            <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">,</span>
+</span><span id="Charge-130"><a href="#Charge-130"><span class="linenos">130</span></a>            <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+</span><span id="Charge-131"><a href="#Charge-131"><span class="linenos">131</span></a>            <span class="n">pressure_exponent</span><span class="o">=</span><span class="n">pressure_exponent</span><span class="p">,</span>
+</span><span id="Charge-132"><a href="#Charge-132"><span class="linenos">132</span></a>            <span class="n">covolume</span><span class="o">=</span><span class="n">covolume</span><span class="p">,</span>
+</span><span id="Charge-133"><a href="#Charge-133"><span class="linenos">133</span></a>            <span class="n">adiabatic_index</span><span class="o">=</span><span class="n">adiabatic_index</span><span class="p">,</span>
+</span><span id="Charge-134"><a href="#Charge-134"><span class="linenos">134</span></a>            <span class="n">gas_molar_mass</span><span class="o">=</span><span class="n">gas_molar_mass</span><span class="p">,</span>
+</span><span id="Charge-135"><a href="#Charge-135"><span class="linenos">135</span></a>            <span class="n">reduced_burnrate</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">burn_rate_coefficient</span> <span class="o">/</span> <span class="n">arch_width</span><span class="p">,</span>
+</span><span id="Charge-136"><a href="#Charge-136"><span class="linenos">136</span></a>            <span class="n">form_function</span><span class="o">=</span><span class="n">form_function</span><span class="p">,</span>
+</span><span id="Charge-137"><a href="#Charge-137"><span class="linenos">137</span></a>        <span class="p">)</span>
+</span><span id="Charge-138"><a href="#Charge-138"><span class="linenos">138</span></a>
+</span><span id="Charge-139"><a href="#Charge-139"><span class="linenos">139</span></a>    <span class="nd">@cached_property</span>
+</span><span id="Charge-140"><a href="#Charge-140"><span class="linenos">140</span></a>    <span class="k">def</span> <span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge-141"><a href="#Charge-141"><span class="linenos">141</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
+</span><span id="Charge-142"><a href="#Charge-142"><span class="linenos">142</span></a>
+</span><span id="Charge-143"><a href="#Charge-143"><span class="linenos">143</span></a>    <span class="nd">@cached_property</span>
+</span><span id="Charge-144"><a href="#Charge-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="nf">theta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge-145"><a href="#Charge-145"><span class="linenos">145</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span> <span class="o">-</span> <span class="mi">1</span>
+</span><span id="Charge-146"><a href="#Charge-146"><span class="linenos">146</span></a>
+</span><span id="Charge-147"><a href="#Charge-147"><span class="linenos">147</span></a>    <span class="k">def</span> <span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge-148"><a href="#Charge-148"><span class="linenos">148</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
 </span><span id="Charge-149"><a href="#Charge-149"><span class="linenos">149</span></a>
 </span><span id="Charge-150"><a href="#Charge-150"><span class="linenos">150</span></a>    <span class="k">def</span> <span class="nf">dZdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge-151"><a href="#Charge-151"><span class="linenos">151</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
+</span><span id="Charge-151"><a href="#Charge-151"><span class="linenos">151</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
 </span></pre></div>
 
 
@@ -458,7 +459,7 @@ value used to calculate the average adiabatic index of a gas mixture.
 No particular unit is required, the only requirement being consistency across
 a set of <code><a href="#Charge">Charge</a></code> objects added to the same <code><a href="gun.html#Gun">ballistics.gun.Gun</a></code>. For the case
 of a single <code><a href="#Charge">Charge</a></code>, any value will work.</li>
-<li><strong>form_function</strong> (Optional[<code><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></code>]):
+<li><strong>form_function</strong> (<code><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></code>):
 form function that describes the shape of charge.</li>
 </ul>
 
@@ -467,6 +468,8 @@ form function that describes the shape of charge.</li>
 <ul>
 <li><strong>Z_k</strong> (float):
 cached value from <code>ballistics.form_function.Z_k</code>.</li>
+<li><strong>theta</strong> (float):
+adiabatic index - 1.</li>
 </ul>
 
 <h6 id="notes">Notes</h6>
@@ -500,7 +503,7 @@ Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</li>
                             <div id="Charge.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Charge</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">density</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">force</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">form_function</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></span><span class="p">]</span></span>)</span>
+        <span class="name">Charge</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">density</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">force</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">reduced_burnrate</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">form_function</span><span class="p">:</span> <span class="n"><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></span></span>)</span>
 
         
     </div>
@@ -588,7 +591,7 @@ Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</li>
                             </div>
                             <div id="Charge.form_function" class="classattr">
                                 <div class="attr variable">
-            <span class="name">form_function</span><span class="annotation">: Optional[<a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a>]</span>
+            <span class="name">form_function</span><span class="annotation">: <a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></span>
 
         
     </div>
@@ -609,46 +612,46 @@ Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</li>
 
     </div>
     <a class="headerlink" href="#Charge.from_dimension_and_burnrate"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.from_dimension_and_burnrate-96"><a href="#Charge.from_dimension_and_burnrate-96"><span class="linenos"> 96</span></a>    <span class="nd">@classmethod</span>
-</span><span id="Charge.from_dimension_and_burnrate-97"><a href="#Charge.from_dimension_and_burnrate-97"><span class="linenos"> 97</span></a>    <span class="k">def</span> <span class="nf">from_dimension_and_burnrate</span><span class="p">(</span>
-</span><span id="Charge.from_dimension_and_burnrate-98"><a href="#Charge.from_dimension_and_burnrate-98"><span class="linenos"> 98</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-99"><a href="#Charge.from_dimension_and_burnrate-99"><span class="linenos"> 99</span></a>        <span class="n">density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-100"><a href="#Charge.from_dimension_and_burnrate-100"><span class="linenos">100</span></a>        <span class="n">force</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-101"><a href="#Charge.from_dimension_and_burnrate-101"><span class="linenos">101</span></a>        <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-102"><a href="#Charge.from_dimension_and_burnrate-102"><span class="linenos">102</span></a>        <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-103"><a href="#Charge.from_dimension_and_burnrate-103"><span class="linenos">103</span></a>        <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-104"><a href="#Charge.from_dimension_and_burnrate-104"><span class="linenos">104</span></a>        <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-105"><a href="#Charge.from_dimension_and_burnrate-105"><span class="linenos">105</span></a>        <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-106"><a href="#Charge.from_dimension_and_burnrate-106"><span class="linenos">106</span></a>        <span class="n">arch_width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-107"><a href="#Charge.from_dimension_and_burnrate-107"><span class="linenos">107</span></a>        <span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-108"><a href="#Charge.from_dimension_and_burnrate-108"><span class="linenos">108</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Charge</span><span class="p">:</span>
-</span><span id="Charge.from_dimension_and_burnrate-109"><a href="#Charge.from_dimension_and_burnrate-109"><span class="linenos">109</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Charge.from_dimension_and_burnrate-110"><a href="#Charge.from_dimension_and_burnrate-110"><span class="linenos">110</span></a><span class="sd">        defines a charge using the measurement of arch thickness in conjunction with</span>
-</span><span id="Charge.from_dimension_and_burnrate-111"><a href="#Charge.from_dimension_and_burnrate-111"><span class="linenos">111</span></a><span class="sd">        burn rate coefficient data.</span>
-</span><span id="Charge.from_dimension_and_burnrate-112"><a href="#Charge.from_dimension_and_burnrate-112"><span class="linenos">112</span></a>
-</span><span id="Charge.from_dimension_and_burnrate-113"><a href="#Charge.from_dimension_and_burnrate-113"><span class="linenos">113</span></a><span class="sd">        Parameters</span>
-</span><span id="Charge.from_dimension_and_burnrate-114"><a href="#Charge.from_dimension_and_burnrate-114"><span class="linenos">114</span></a><span class="sd">        ----------</span>
-</span><span id="Charge.from_dimension_and_burnrate-115"><a href="#Charge.from_dimension_and_burnrate-115"><span class="linenos">115</span></a><span class="sd">        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float</span>
-</span><span id="Charge.from_dimension_and_burnrate-116"><a href="#Charge.from_dimension_and_burnrate-116"><span class="linenos">116</span></a><span class="sd">            see documentation for `Charge`.</span>
-</span><span id="Charge.from_dimension_and_burnrate-117"><a href="#Charge.from_dimension_and_burnrate-117"><span class="linenos">117</span></a><span class="sd">        arch_width: float</span>
-</span><span id="Charge.from_dimension_and_burnrate-118"><a href="#Charge.from_dimension_and_burnrate-118"><span class="linenos">118</span></a><span class="sd">            twice the propellant&#39;s &quot;web&quot;, or the minimum depth the propellant&#39;s</span>
-</span><span id="Charge.from_dimension_and_burnrate-119"><a href="#Charge.from_dimension_and_burnrate-119"><span class="linenos">119</span></a><span class="sd">            burn surface must recede to achieve a &quot;burnthrough&quot;.</span>
-</span><span id="Charge.from_dimension_and_burnrate-120"><a href="#Charge.from_dimension_and_burnrate-120"><span class="linenos">120</span></a><span class="sd">            see documentation of `ballistics.form_function.FormFunction` for more</span>
-</span><span id="Charge.from_dimension_and_burnrate-121"><a href="#Charge.from_dimension_and_burnrate-121"><span class="linenos">121</span></a><span class="sd">            information.</span>
-</span><span id="Charge.from_dimension_and_burnrate-122"><a href="#Charge.from_dimension_and_burnrate-122"><span class="linenos">122</span></a><span class="sd">        burn_rate_coefficient: float</span>
-</span><span id="Charge.from_dimension_and_burnrate-123"><a href="#Charge.from_dimension_and_burnrate-123"><span class="linenos">123</span></a><span class="sd">            coefficient used in de Saint Robert&#39;s burn rate law. See documentation for</span>
-</span><span id="Charge.from_dimension_and_burnrate-124"><a href="#Charge.from_dimension_and_burnrate-124"><span class="linenos">124</span></a><span class="sd">            `Charge` for more information.</span>
-</span><span id="Charge.from_dimension_and_burnrate-125"><a href="#Charge.from_dimension_and_burnrate-125"><span class="linenos">125</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Charge.from_dimension_and_burnrate-126"><a href="#Charge.from_dimension_and_burnrate-126"><span class="linenos">126</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span id="Charge.from_dimension_and_burnrate-127"><a href="#Charge.from_dimension_and_burnrate-127"><span class="linenos">127</span></a>            <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-128"><a href="#Charge.from_dimension_and_burnrate-128"><span class="linenos">128</span></a>            <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-129"><a href="#Charge.from_dimension_and_burnrate-129"><span class="linenos">129</span></a>            <span class="n">pressure_exponent</span><span class="o">=</span><span class="n">pressure_exponent</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-130"><a href="#Charge.from_dimension_and_burnrate-130"><span class="linenos">130</span></a>            <span class="n">covolume</span><span class="o">=</span><span class="n">covolume</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-131"><a href="#Charge.from_dimension_and_burnrate-131"><span class="linenos">131</span></a>            <span class="n">adiabatic_index</span><span class="o">=</span><span class="n">adiabatic_index</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-132"><a href="#Charge.from_dimension_and_burnrate-132"><span class="linenos">132</span></a>            <span class="n">gas_molar_mass</span><span class="o">=</span><span class="n">gas_molar_mass</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-133"><a href="#Charge.from_dimension_and_burnrate-133"><span class="linenos">133</span></a>            <span class="n">reduced_burnrate</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">burn_rate_coefficient</span> <span class="o">/</span> <span class="n">arch_width</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-134"><a href="#Charge.from_dimension_and_burnrate-134"><span class="linenos">134</span></a>            <span class="n">form_function</span><span class="o">=</span><span class="n">form_function</span><span class="p">,</span>
-</span><span id="Charge.from_dimension_and_burnrate-135"><a href="#Charge.from_dimension_and_burnrate-135"><span class="linenos">135</span></a>        <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.from_dimension_and_burnrate-98"><a href="#Charge.from_dimension_and_burnrate-98"><span class="linenos"> 98</span></a>    <span class="nd">@classmethod</span>
+</span><span id="Charge.from_dimension_and_burnrate-99"><a href="#Charge.from_dimension_and_burnrate-99"><span class="linenos"> 99</span></a>    <span class="k">def</span> <span class="nf">from_dimension_and_burnrate</span><span class="p">(</span>
+</span><span id="Charge.from_dimension_and_burnrate-100"><a href="#Charge.from_dimension_and_burnrate-100"><span class="linenos">100</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-101"><a href="#Charge.from_dimension_and_burnrate-101"><span class="linenos">101</span></a>        <span class="n">density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-102"><a href="#Charge.from_dimension_and_burnrate-102"><span class="linenos">102</span></a>        <span class="n">force</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-103"><a href="#Charge.from_dimension_and_burnrate-103"><span class="linenos">103</span></a>        <span class="n">pressure_exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-104"><a href="#Charge.from_dimension_and_burnrate-104"><span class="linenos">104</span></a>        <span class="n">covolume</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-105"><a href="#Charge.from_dimension_and_burnrate-105"><span class="linenos">105</span></a>        <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-106"><a href="#Charge.from_dimension_and_burnrate-106"><span class="linenos">106</span></a>        <span class="n">gas_molar_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-107"><a href="#Charge.from_dimension_and_burnrate-107"><span class="linenos">107</span></a>        <span class="n">form_function</span><span class="p">:</span> <span class="n">FormFunction</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-108"><a href="#Charge.from_dimension_and_burnrate-108"><span class="linenos">108</span></a>        <span class="n">arch_width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-109"><a href="#Charge.from_dimension_and_burnrate-109"><span class="linenos">109</span></a>        <span class="n">burn_rate_coefficient</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-110"><a href="#Charge.from_dimension_and_burnrate-110"><span class="linenos">110</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Charge</span><span class="p">:</span>
+</span><span id="Charge.from_dimension_and_burnrate-111"><a href="#Charge.from_dimension_and_burnrate-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Charge.from_dimension_and_burnrate-112"><a href="#Charge.from_dimension_and_burnrate-112"><span class="linenos">112</span></a><span class="sd">        defines a charge using the measurement of arch thickness in conjunction with</span>
+</span><span id="Charge.from_dimension_and_burnrate-113"><a href="#Charge.from_dimension_and_burnrate-113"><span class="linenos">113</span></a><span class="sd">        burn rate coefficient data.</span>
+</span><span id="Charge.from_dimension_and_burnrate-114"><a href="#Charge.from_dimension_and_burnrate-114"><span class="linenos">114</span></a>
+</span><span id="Charge.from_dimension_and_burnrate-115"><a href="#Charge.from_dimension_and_burnrate-115"><span class="linenos">115</span></a><span class="sd">        Parameters</span>
+</span><span id="Charge.from_dimension_and_burnrate-116"><a href="#Charge.from_dimension_and_burnrate-116"><span class="linenos">116</span></a><span class="sd">        ----------</span>
+</span><span id="Charge.from_dimension_and_burnrate-117"><a href="#Charge.from_dimension_and_burnrate-117"><span class="linenos">117</span></a><span class="sd">        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float</span>
+</span><span id="Charge.from_dimension_and_burnrate-118"><a href="#Charge.from_dimension_and_burnrate-118"><span class="linenos">118</span></a><span class="sd">            see documentation for `Charge`.</span>
+</span><span id="Charge.from_dimension_and_burnrate-119"><a href="#Charge.from_dimension_and_burnrate-119"><span class="linenos">119</span></a><span class="sd">        arch_width: float</span>
+</span><span id="Charge.from_dimension_and_burnrate-120"><a href="#Charge.from_dimension_and_burnrate-120"><span class="linenos">120</span></a><span class="sd">            twice the propellant&#39;s &quot;web&quot;, or the minimum depth the propellant&#39;s</span>
+</span><span id="Charge.from_dimension_and_burnrate-121"><a href="#Charge.from_dimension_and_burnrate-121"><span class="linenos">121</span></a><span class="sd">            burn surface must recede to achieve a &quot;burnthrough&quot;.</span>
+</span><span id="Charge.from_dimension_and_burnrate-122"><a href="#Charge.from_dimension_and_burnrate-122"><span class="linenos">122</span></a><span class="sd">            see documentation of `ballistics.form_function.FormFunction` for more</span>
+</span><span id="Charge.from_dimension_and_burnrate-123"><a href="#Charge.from_dimension_and_burnrate-123"><span class="linenos">123</span></a><span class="sd">            information.</span>
+</span><span id="Charge.from_dimension_and_burnrate-124"><a href="#Charge.from_dimension_and_burnrate-124"><span class="linenos">124</span></a><span class="sd">        burn_rate_coefficient: float</span>
+</span><span id="Charge.from_dimension_and_burnrate-125"><a href="#Charge.from_dimension_and_burnrate-125"><span class="linenos">125</span></a><span class="sd">            coefficient used in de Saint Robert&#39;s burn rate law. See documentation for</span>
+</span><span id="Charge.from_dimension_and_burnrate-126"><a href="#Charge.from_dimension_and_burnrate-126"><span class="linenos">126</span></a><span class="sd">            `Charge` for more information.</span>
+</span><span id="Charge.from_dimension_and_burnrate-127"><a href="#Charge.from_dimension_and_burnrate-127"><span class="linenos">127</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Charge.from_dimension_and_burnrate-128"><a href="#Charge.from_dimension_and_burnrate-128"><span class="linenos">128</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span id="Charge.from_dimension_and_burnrate-129"><a href="#Charge.from_dimension_and_burnrate-129"><span class="linenos">129</span></a>            <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-130"><a href="#Charge.from_dimension_and_burnrate-130"><span class="linenos">130</span></a>            <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-131"><a href="#Charge.from_dimension_and_burnrate-131"><span class="linenos">131</span></a>            <span class="n">pressure_exponent</span><span class="o">=</span><span class="n">pressure_exponent</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-132"><a href="#Charge.from_dimension_and_burnrate-132"><span class="linenos">132</span></a>            <span class="n">covolume</span><span class="o">=</span><span class="n">covolume</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-133"><a href="#Charge.from_dimension_and_burnrate-133"><span class="linenos">133</span></a>            <span class="n">adiabatic_index</span><span class="o">=</span><span class="n">adiabatic_index</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-134"><a href="#Charge.from_dimension_and_burnrate-134"><span class="linenos">134</span></a>            <span class="n">gas_molar_mass</span><span class="o">=</span><span class="n">gas_molar_mass</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-135"><a href="#Charge.from_dimension_and_burnrate-135"><span class="linenos">135</span></a>            <span class="n">reduced_burnrate</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">burn_rate_coefficient</span> <span class="o">/</span> <span class="n">arch_width</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-136"><a href="#Charge.from_dimension_and_burnrate-136"><span class="linenos">136</span></a>            <span class="n">form_function</span><span class="o">=</span><span class="n">form_function</span><span class="p">,</span>
+</span><span id="Charge.from_dimension_and_burnrate-137"><a href="#Charge.from_dimension_and_burnrate-137"><span class="linenos">137</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -682,34 +685,46 @@ coefficient used in de Saint Robert's burn rate law. See documentation for
 
     </div>
     <a class="headerlink" href="#Charge.Z_k"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.Z_k-137"><a href="#Charge.Z_k-137"><span class="linenos">137</span></a>    <span class="nd">@cached_property</span>
-</span><span id="Charge.Z_k-138"><a href="#Charge.Z_k-138"><span class="linenos">138</span></a>    <span class="k">def</span> <span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge.Z_k-139"><a href="#Charge.Z_k-139"><span class="linenos">139</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">:</span>
-</span><span id="Charge.Z_k-140"><a href="#Charge.Z_k-140"><span class="linenos">140</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
-</span><span id="Charge.Z_k-141"><a href="#Charge.Z_k-141"><span class="linenos">141</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Charge.Z_k-142"><a href="#Charge.Z_k-142"><span class="linenos">142</span></a>            <span class="k">return</span> <span class="mi">0</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.Z_k-139"><a href="#Charge.Z_k-139"><span class="linenos">139</span></a>    <span class="nd">@cached_property</span>
+</span><span id="Charge.Z_k-140"><a href="#Charge.Z_k-140"><span class="linenos">140</span></a>    <span class="k">def</span> <span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge.Z_k-141"><a href="#Charge.Z_k-141"><span class="linenos">141</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
 </span></pre></div>
 
 
     
 
                             </div>
-                            <div id="Charge.psi_c" class="classattr">
-                                        <input id="Charge.psi_c-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="Charge.theta" class="classattr">
+                                        <input id="Charge.theta-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">theta</span><span class="annotation">: float</span>
+
+                <label class="view-source-button" for="Charge.theta-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Charge.theta"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.theta-143"><a href="#Charge.theta-143"><span class="linenos">143</span></a>    <span class="nd">@cached_property</span>
+</span><span id="Charge.theta-144"><a href="#Charge.theta-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="nf">theta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge.theta-145"><a href="#Charge.theta-145"><span class="linenos">145</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adiabatic_index</span> <span class="o">-</span> <span class="mi">1</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="Charge.psi" class="classattr">
+                                        <input id="Charge.psi-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">psi_c</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">Z_c</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+        <span class="name">psi</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">Z</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
 
-                <label class="view-source-button" for="Charge.psi_c-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="Charge.psi-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Charge.psi_c"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.psi_c-144"><a href="#Charge.psi_c-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="nf">psi_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z_c</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge.psi_c-145"><a href="#Charge.psi_c-145"><span class="linenos">145</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">:</span>
-</span><span id="Charge.psi_c-146"><a href="#Charge.psi_c-146"><span class="linenos">146</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z_c</span><span class="p">)</span>
-</span><span id="Charge.psi_c-147"><a href="#Charge.psi_c-147"><span class="linenos">147</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Charge.psi_c-148"><a href="#Charge.psi_c-148"><span class="linenos">148</span></a>            <span class="k">return</span> <span class="mi">1</span>
+    <a class="headerlink" href="#Charge.psi"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.psi-147"><a href="#Charge.psi-147"><span class="linenos">147</span></a>    <span class="k">def</span> <span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge.psi-148"><a href="#Charge.psi-148"><span class="linenos">148</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -728,7 +743,7 @@ coefficient used in de Saint Robert's burn rate law. See documentation for
     </div>
     <a class="headerlink" href="#Charge.dZdt"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.dZdt-150"><a href="#Charge.dZdt-150"><span class="linenos">150</span></a>    <span class="k">def</span> <span class="nf">dZdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge.dZdt-151"><a href="#Charge.dZdt-151"><span class="linenos">151</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
+</span><span id="Charge.dZdt-151"><a href="#Charge.dZdt-151"><span class="linenos">151</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
 </span></pre></div>
 
 

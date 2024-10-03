@@ -54,7 +54,7 @@ class Charge:
         No particular unit is required, the only requirement being consistency across
         a set of `Charge` objects added to the same `ballistics.gun.Gun`. For the case
         of a single `Charge`, any value will work.
-    form_function: Optional[`ballistics.form_function.FormFunction`]
+    form_function: `ballistics.form_function.FormFunction`
         form function that describes the shape of charge.
 
 
@@ -62,6 +62,8 @@ class Charge:
     ----------
     Z_k: float
         cached value from `ballistics.form_function.Z_k`.
+    theta: float
+        adiabatic index - 1.
 
     Notes
     -----
@@ -90,7 +92,7 @@ class Charge:
     adiabatic_index: float
     reduced_burnrate: float  # u_1 / e_1
     gas_molar_mass: float
-    form_function: Optional[FormFunction]
+    form_function: FormFunction
 
     @classmethod
     def from_dimension_and_burnrate(
@@ -137,8 +139,12 @@ class Charge:
     def Z_k(self) -> float:
         return self.form_function.Z_k
 
-    def psi_c(self, Z_c: float) -> float:
-        return self.form_function(Z_c)
+    @cached_property
+    def theta(self) -> float:
+        return self.adiabatic_index - 1
+
+    def psi(self, Z: float) -> float:
+        return self.form_function(Z)
 
     def dZdt(self, P: float) -> float:
         return self.reduced_burnrate * max(P, AMBIENT_PRESSURE) ** self.pressure_exponent

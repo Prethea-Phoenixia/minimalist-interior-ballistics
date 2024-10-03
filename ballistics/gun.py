@@ -23,98 +23,36 @@ class Gun:
 
     cross_section: float
     shot_mass: float
+    charge_mass: float
+    charge: Charge
     chamber_volume: float
+
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
-
-    def __post_init__(self):
-        self._charges = {}
 
     @cached_property
     def l_0(self) -> float:
         return self.chamber_volume / self.S
 
     @cached_property
-    def total_charge_mass(self) -> float:
-        return sum(self.charge_masses)
-
-    @cached_property
-    def charge_masses(self) -> Tuple[float]:
-        return tuple(self._charges.values())
-
-    @cached_property
-    def charges(self) -> Tuple[Charge]:
-        return tuple(self._charges.keys())
-
-    @cached_property
     def S(self) -> float:
         return self.cross_section
 
     @cached_property
-    def total_charge_volume(self) -> float:
-        return sum(
-            m / c.density if c.density else 0 for c, m in zip(self.charges, self.charge_masses)
-        )
+    def delta(self) -> float:
+        return self.charge_mass / self.chamber_volume
+
+    @cached_property
+    def charge_volume(self) -> float:
+        return self.charge_mass / self.charge.density
 
     @cached_property
     def phi(self) -> float:
-        return 1 + self.loss_fraction + self.total_charge_mass / (3 * self.shot_mass)
+        return 1 + self.loss_fraction + self.charge_mass / (3 * self.shot_mass)
 
     @cached_property
     def bomb_free_fraction(self) -> float:
-        ff = 1.0
-        for c, w in zip(self.charges, self.charge_masses):
-            ff -= c.covolume * w / self.chamber_volume
-        return ff
-
-    @cached_property
-    def theta(self) -> float:
-        # calculated the average adiabatic index for the gas mixture.
-        molar_sum = sum(
-            w / c.gas_molar_mass if c.gas_molar_mass else 0
-            for c, w in zip(self.charges, self.charge_masses)
-        )
-        if molar_sum == 0:
-            return 0
-        average_Cp, average_Cv = 0.0, 0.0
-        for c, w in zip(self.charges, self.charge_masses):
-            if c.gas_molar_mass:
-                adiabatic_index = c.adiabatic_index
-                molar_fraction = (w / c.gas_molar_mass) / molar_sum
-                average_Cp += molar_fraction * (adiabatic_index) / (adiabatic_index - 1)
-                average_Cv += molar_fraction / (adiabatic_index - 1)
-            else:
-                continue
-
-        return average_Cp / average_Cv - 1
-
-    def _reset_cached_properties(self) -> None:
-        for attr in (
-            "charges",
-            "charge_masses",
-            "total_charge_mass",
-            "total_charge_volume",
-            "phi",
-            "bomb_free_fraction",
-            "theta",
-        ):
-            try:
-                delattr(self, attr)
-            except AttributeError:
-                pass
-
-    def set_charge(self, charge: Charge, mass: float) -> None:
-        self._charges[charge] = mass
-        self._reset_cached_properties()
-
-    def pop_charge(self, charge: Charge) -> float:
-        """
-        Remove a `ballistics.charge.Charge` from a gun's load, and return the corresponding
-        mass of the charge.
-        """
-        mass = self._charges.pop(charge, 0.0)
-        self._reset_cached_properties()
-        return mass
+        return 1 - self.charge.covolume * self.charge_mass / self.chamber_volume
 
     def get_bomb_state(self) -> State:
         """
@@ -130,34 +68,29 @@ class Gun:
             time=0,
             travel=0,
             velocity=0,
-            burnup_fractions=tuple(c.Z_k for c in self.charges),
+            burnup_fraction=self.charge.Z_k,
             marker=Significance.BOMB,
         )
 
-    def gas_energy(self, psi: Tuple[float, ...], v: float) -> float:
-        return sum(
-            c.force * w * psi_c for c, w, psi_c in zip(self.charges, self.charge_masses, psi)
-        ) - (0.5 * self.theta * self.phi * self.shot_mass * v**2)
+    def gas_energy(self, psi: float, v: float) -> float:
+        return (
+            self.charge.force * self.charge_mass * psi
+            - 0.5 * self.charge.theta * self.phi * self.shot_mass * v**2
+        )
 
-    def incompressible_fraction(self, psi: Tuple[float, ...]) -> float:
-        i_f = 0.0
-        for c, w, psi_c in zip(self.charges, self.charge_masses, psi):
-            if c.density:
-                delta_c = w / self.chamber_volume
-                i_f += (1 - psi_c) * delta_c / c.density + c.covolume * psi_c * delta_c
-            else:
-                continue
-
-        return i_f
+    def incompressible_fraction(self, psi: float) -> float:
+        return (
+            1 - psi
+        ) * self.delta / self.charge.density + self.charge.covolume * psi * self.delta
 
     def dt(self, state: State) -> Delta:
         P = state.average_pressure
-        dZ = tuple(c.dZdt(P) for Z, c in zip(state.burnup_fractions, self.charges))
+        dZ = self.charge.dZdt(P)
         return Delta(
             d_time=1,
             d_travel=state.velocity if state.is_started else 0,
             d_velocity=(self.S * P / (self.phi * self.shot_mass) if state.is_started else 0),
-            d_burnup_fractions=dZ,
+            d_burnup_fraction=dZ,
         )
 
     def dl(self, state: State) -> Delta:
@@ -220,7 +153,7 @@ class Gun:
             time=0,
             travel=0,
             velocity=0,
-            burnup_fractions=tuple(0 for _ in self.charges),
+            burnup_fraction=0,
             marker=Significance.IGNITION,
             is_started=False,
         )
@@ -305,10 +238,10 @@ class Gun:
         """
 
         pre_start_states = self.to_start(n_intg=n_intg, acc=acc)
-        Z_c0 = max(pre_start_states).burnup_fractions
+        Z_c0 = max(pre_start_states).burnup_fraction
 
         def burnout(state: State) -> int:
-            return all(Z >= c.Z_k for Z, c in zip(state.burnup_fractions, self.charges))
+            return state.burnup_fraction > self.charge.Z_k
 
         def abort(state: State) -> bool:
             return state.travel > abort_travel or state.velocity > abort_velocity
@@ -325,7 +258,7 @@ class Gun:
                 time=0.0,
                 travel=0.0,
                 velocity=0.0,
-                burnup_fractions=Z_c0,
+                burnup_fraction=Z_c0,
                 marker=Significance.START,
             )
 
@@ -373,7 +306,6 @@ class Gun:
         states = self.to_burnout(n_intg=n_intg, acc=acc, abort_travel=travel)
 
         if states.has_state_with_marker(Significance.BURNOUT):
-
             state = max(states)
             d_travel = (travel - state.travel) / n_intg
             for _ in range(n_intg - 1):
@@ -458,7 +390,6 @@ class Gun:
             def time_pressure(time: float) -> float:
                 return self.propagate_rk4(state=s_j, dt=time - s_j.time).average_pressure
 
-            # conduct gss on (time_min, time_max)
             time_pmax = (
                 sum(
                     gss(
@@ -476,11 +407,6 @@ class Gun:
                 dt=time_pmax - s_j.time,
                 marker=Significance.PEAK_PRESSURE,
             )
-
-            # if s_i.average_pressure > s_pmax.average_pressure:
-            #     s_pmax = State.remark(s_i, Significance.PEAK_PRESSURE)
-            # elif s_j.average_pressure > s_pmax.average_pressure:
-            #     s_pmax = State.remark(s_j, Significance.PEAK_PRESSURE)
 
             insort(states, s_pmax)
 
