@@ -2,11 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Optional
 
-from . import AMBIENT_PRESSURE, MAX_DT, Significance
+from . import AMBIENT_PRESSURE
 from .form_function import FormFunction
-from .num import dekker
 
 
 @dataclass(frozen=True)

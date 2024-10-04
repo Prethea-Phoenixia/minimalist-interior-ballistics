@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from bisect import bisect, insort
+from bisect import insort
 from dataclasses import dataclass
-from functools import cached_property, wraps
-from math import ceil, inf, pi
-from typing import Callable, Dict, Iterable, List, Tuple
+from functools import cached_property
+from math import inf
+from typing import Dict
 
 from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
                Significance)
 from .charge import Charge
-from .form_function import FormFunction
-from .num import Find, dekker, gss
+from .num import dekker, gss_max
 from .state import Delta, State, StateList
 
 
@@ -368,7 +367,7 @@ class Gun:
 
         Notes
         -----
-        Implementation wise, conducts a gold-section search using `ballistics.num.gss`
+        Implementation wise, conducts a gold-section search using `ballistics.num.gss_max`
         in the interval bracketed by the step before and after the step where maximum
         pressure is recorded. By intercepting the accuracy specification passed to the
         generating functions, the peak-pressure point is determined to (at worst) step size
@@ -391,15 +390,7 @@ class Gun:
                 return self.propagate_rk4(state=s_j, dt=time - s_j.time).average_pressure
 
             time_pmax = (
-                sum(
-                    gss(
-                        f=time_pressure,
-                        x_0=s_i.time,
-                        x_1=s_k.time,
-                        find=Find.MAX,
-                        tol=acc * total_time,
-                    )
-                )
+                sum(gss_max(f=time_pressure, x_0=s_i.time, x_1=s_k.time, tol=acc * total_time))
                 * 0.5
             )
             s_pmax = self.propagate_rk4(

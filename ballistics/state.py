@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-# class StateList(BaseList):
 import sys
 from collections import UserList
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import cached_property
-from typing import TYPE_CHECKING, Iterable, List, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, Iterable, Optional
 
 from tabulate import tabulate
 

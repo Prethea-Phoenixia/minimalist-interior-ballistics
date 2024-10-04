@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import cached_property
 from math import pi
-from typing import Dict, Tuple
+from typing import Tuple
 
 
 class MultiPerfShape(Enum):

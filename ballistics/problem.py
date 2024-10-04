@@ -1,28 +1,20 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
-from enum import Enum
-from math import log10
-from typing import TYPE_CHECKING, Dict, List, Tuple
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Tuple
 
 from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
                Significance)
 from .charge import Charge
 from .gun import Gun
-from .num import Find, dekker, gss, secant
+from .num import dekker
+from .pressure_target import PressureTarget
 
 if TYPE_CHECKING:
-    from .state import State, StateList
     from .form_function import FormFunction
 
 logger = logging.getLogger(__name__)
-
-
-class Target(Enum):
-    BREECH = "breech_pressure"
-    AVERAGE = "average_pressure"
-    SHOT = "shot_pressure"
 
 
 @dataclass(frozen=True)
@@ -81,7 +73,7 @@ class MatchingProblem:
         return self.get_test_gun(reduced_burnrate=1, mass=0)
 
     def get_charge_mass_limits(
-        self, pressure: float, target: Target, acc: float
+        self, pressure_target: PressureTarget, acc: float
     ) -> Tuple[float, float]:
         """
         Find the maximum and minimum valid charge mass value for the outlined gun design
@@ -133,8 +125,8 @@ class MatchingProblem:
         def f_p(mass: float) -> float:
             # note this is defined on [0, chamber_fill_mass]
             test_gun = self.get_test_gun(reduced_burnrate=1, mass=mass)
-            test_gun_bomb_pressure = getattr(test_gun.get_bomb_state(), target.value)
-            return test_gun_bomb_pressure - pressure
+            test_gun_bomb_pressure = pressure_target.retrieve_from(test_gun.get_bomb_state())
+            return test_gun_bomb_pressure - pressure_target.value
 
         if f_p(0) > 0:
             lower_limit = 0.0
@@ -145,7 +137,7 @@ class MatchingProblem:
         return lower_limit, upper_limit
 
     def solve_reduced_burn_rate(
-        self, mass: float, pressure: float, target: Target, n_intg: int, acc: float
+        self, mass: float, pressure_target: PressureTarget, n_intg: int, acc: float
     ) -> Tuple[float, Gun]:
         """
         solves the reduced burn rate such that the peak pressure developed in bore
@@ -177,7 +169,7 @@ class MatchingProblem:
             the gun corresponding to this solution.
         """
 
-        min_mass, max_mass = self.get_charge_mass_limits(pressure=pressure, target=target, acc=acc)
+        min_mass, max_mass = self.get_charge_mass_limits(pressure_target=pressure_target, acc=acc)
         valid_range_prompt = f"valid range of charge mass: [{min_mass:.3f}, {max_mass:.3f}]"
         if mass < min_mass:
             raise ValueError(
@@ -195,9 +187,13 @@ class MatchingProblem:
         def f(reduced_burnrate: float) -> float:
             test_gun = get_test_gun(reduced_burnrate=reduced_burnrate)
             states = test_gun.to_burnout(n_intg=n_intg, acc=acc, abort_travel=self.travel)
-            pp = getattr(states.get_state_by_marker(Significance.PEAK_PRESSURE), target.value)
-            result = pp - pressure
-            return result
+
+            return (
+                pressure_target.retrieve_from(
+                    states.get_state_by_marker(Significance.PEAK_PRESSURE)
+                )
+                - pressure_target.value
+            )
 
         # solve the burn rate coefficient on (0, +inf)
 

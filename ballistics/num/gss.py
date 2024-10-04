@@ -1,25 +1,41 @@
 from __future__ import annotations
 
 import math
-from enum import Enum
 from typing import Callable, Tuple
 
 _invphi = (math.sqrt(5) - 1) / 2  # 1 / phi
 _invphi2 = (3 - math.sqrt(5)) / 2  # 1 / phi^2
 
 
-class Find(Enum):
-    MIN = "min"
-    MAX = "max"
-
-
-def gss(
+def gss_min(
     f: Callable[[float], float],
     x_0: float,
     x_1: float,
     tol: float,
-    find: Find = Find.MIN,
     max_it: int = 33,
+) -> Tuple[float, float]:
+    """Calls `_gss` with boolean flag set to false. See `_gss` for documentation"""
+    return _gss(f=f, x_0=x_0, x_1=x_1, tol=tol, max_it=max_it, find_min=True)
+
+
+def gss_max(
+    f: Callable[[float], float],
+    x_0: float,
+    x_1: float,
+    tol: float,
+    max_it: int = 33,
+) -> Tuple[float, float]:
+    """Calls `_gss` with boolean flag set to false. See `_gss` for documentation"""
+    return _gss(f=f, x_0=x_0, x_1=x_1, tol=tol, max_it=max_it, find_min=False)
+
+
+def _gss(
+    f: Callable[[float], float],
+    x_0: float,
+    x_1: float,
+    tol: float,
+    max_it: int = 33,
+    find_min=True,
 ) -> Tuple[float, float]:
     """Golden-section search, for the solution of local extremum of a univariate
     function within a specified interval. Successively divides the interval by (sqrt(5)-1)/2.
@@ -32,13 +48,12 @@ def gss(
         univariate objective function, valid on (min(`x_0`, `x_1`), max(`x_0`, `x_1`)).
     x_0, x_1 : float
         bounds of the extremum. Values can be provided in any order.
-    find : `Find`
-        Enum flag, either `Find.MIN` or `Find.MAX`. Determines whether the search
-        will be for a local minima or maxima, respectively.
     tol : float
         convergence criteria, maximum allowed width of the resulting interval.
     max_it: int
         terminating condition, maximum numbers of iterations allowed.
+    find_min: bool
+        boolean flag to determine the direction of gold section search.
 
     Raises
     ------
@@ -57,13 +72,6 @@ def gss(
     for providing a reasonable initial interval and tolerance.
 
     """
-
-    if find == Find.MIN:
-        find_min = True
-    elif find == Find.MAX:
-        find_min = False
-    else:
-        raise ValueError(f"{find} should be either Find.MIN or Find.MAX.")
 
     tol = abs(tol)
 
@@ -100,4 +108,4 @@ if __name__ == "__main__":
     def f(x):
         return (x - 1) ** 2
 
-    print(gss(f, 0, 2, find=Find.MIN, tol=1e-4))
+    print(gss_min(f, 0, 2, tol=1e-4))

@@ -1,9 +1,7 @@
 import logging
 
-from ballistics.charge import Charge
 from ballistics.form_function import FormFunction, MultiPerfShape
-from ballistics.gun import Gun
-from ballistics.problem import MatchingProblem, Target
+from ballistics.problem import MatchingProblem, PressureTarget
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +32,7 @@ if __name__ == "__main__":
 
     _, g = p.solve_reduced_burn_rate(
         mass=1.08,
-        pressure=268e6,
-        target=Target.AVERAGE,
+        pressure_target=PressureTarget.average_pressure(value=268e6),
         n_intg=10,
         acc=1e-4,
     )
