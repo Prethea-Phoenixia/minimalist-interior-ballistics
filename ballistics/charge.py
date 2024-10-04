@@ -8,8 +8,8 @@ from .form_function import FormFunction
 
 
 @dataclass(frozen=True)
-class Charge:
-    """class that represent individual charges as standalone designs.
+class Propellant:
+    """class that represent propellant before they are cut into gun charges.
 
     Parameters
     ----------
@@ -21,7 +21,16 @@ class Charge:
         ideal gas), when expanding from its isochoric adiabatic flame temperature
         to absolute zero, in an isentropic manner. Unit in J/kg, or (m/s)^2.
     pressure_exponent: float
-        see the Notes section.
+        parameter in the Saint Robert's (Viellie's) burn rate law:
+        ```
+        u = a * P^n
+        ```
+        where:
+        - u: linear burn rate, in m/s
+        - a: burn rate coefficient, in m s^-1 Pa^-n.
+          - n: pressure exponent, dimensionless.
+        - P: average chamber pressure, in Pa.
+        is used to model the combustion behavior of the propellant.
     covolume: float
         the co-volume of a propellant, as used in the Nobel-Abel equation of state:
         ```
@@ -37,44 +46,14 @@ class Charge:
         the (average) heat capacity ratio of the working gas while in-bore.
         At elevated temperatures and with a mix of species, this parameter typically
         clusters around 1.23-1.25.
-    reduced_burnrate: float
-        the burn-rate coefficient is factored against the propellant's arch,
-        to produce the `reduced burn rate`, defined as:
-        ```
-        u / e
-        ```
-        where:
-        - u: burn rate coefficient, in m/s-Pa^n.
-          - n: burn rate exponent, dimensionless.
-        - 2e: width of the propellant arch.
-    gas_molar_mass: float
-        value used to calculate the average adiabatic index of a gas mixture.
-        No particular unit is required, the only requirement being consistency across
-        a set of `Charge` objects added to the same `ballistics.gun.Gun`. For the case
-        of a single `Charge`, any value will work.
-    form_function: `ballistics.form_function.FormFunction`
-        form function that describes the shape of charge.
+
 
 
     Attributes
     ----------
-    Z_k: float
-        cached value from `ballistics.form_function.Z_k`.
     theta: float
         adiabatic index - 1.
 
-    Notes
-    -----
-    the Saint Robert's (Viellie's) burn rate law:
-    ```
-    u = a * P^n
-    ```
-    where:
-    - u: linear burn rate, in m/s
-    - a: burn rate coefficient, in m/(s-Pa^n).
-      - n: pressure exponent, dimensionless.
-    - P: average chamber pressure, in Pa.
-    is used to model the combustion behavior of the propellant.
 
     References
     ----------
@@ -88,22 +67,86 @@ class Charge:
     pressure_exponent: float
     covolume: float
     adiabatic_index: float
+
+    @cached_property
+    def theta(self) -> float:
+        return self.adiabatic_index - 1
+
+
+@dataclass(frozen=True)
+class Charge(Propellant):
+    """class that represent individual charge designs.
+
+    Parameters
+    ----------
+    density, force, pressure_exponent, covolume, adiabatic_index: float
+        see documentation for `Propellant`.
+    reduced_burnrate: float
+        the burn-rate coefficient is factored against the propellant's arch,
+        to produce the `reduced burn rate`, defined as:
+        ```
+        a / e
+        ```
+        where:
+        - a: burn rate coefficient, in m Pa^-n s^-1.
+          - n: burn rate exponent, dimensionless.
+        - 2e: width of the propellant arch.
+    form_function: `ballistics.form_function.FormFunction`
+        form function that describes the shape of charge.
+
+    Attributes
+    ----------
+    Z_k: float
+        cached value from `ballistics.form_function.FormFunction.Z_k`.
+    theta: float
+        see documentation for `Propellant`
+
+    References
+    ----------
+    - **[English]** Xu, Fu-ming. (2013). On The Definition of Propellant Force.
+    Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.
+
+    """
+
     reduced_burnrate: float  # u_1 / e_1
-    gas_molar_mass: float
     form_function: FormFunction
 
     @classmethod
-    def from_dimension_and_burnrate(
+    def from_propellant(
+        cls, reduced_burnrate: float, propellant: Propellant, form_function: FormFunction
+    ) -> Charge:
+        """
+        defines a charge with propellant and reduced burn rate.
+
+        Parameters
+        ----------
+        reduced_burnrate: float
+            see documentation of `ballistics.form_function.FormFunction` for more information.
+        propellant: `Propellant`
+            base propellant of this charge.
+        form_function:
+            `ballistics.form_function.FormFunction` object that describes the geometry of this
+            propellant.
+
+        """
+
+        return cls(
+            density=propellant.density,
+            force=propellant.force,
+            pressure_exponent=propellant.pressure_exponent,
+            covolume=propellant.covolume,
+            adiabatic_index=propellant.adiabatic_index,
+            reduced_burnrate=reduced_burnrate,
+            form_function=form_function,
+        )
+
+    @classmethod
+    def from_propellant_and_geometry(
         cls,
-        density: float,
-        force: float,
-        pressure_exponent: float,
-        covolume: float,
-        adiabatic_index: float,
-        gas_molar_mass: float,
-        form_function: FormFunction,
         arch_width: float,
         burn_rate_coefficient: float,
+        propellant: Propellant,
+        form_function: FormFunction,
     ) -> Charge:
         """
         defines a charge using the measurement of arch thickness in conjunction with
@@ -111,8 +154,6 @@ class Charge:
 
         Parameters
         ----------
-        density, force, pressure_exponent, covolume, adiabatic_index, gas_molar_mass: float
-            see documentation for `Charge`.
         arch_width: float
             twice the propellant's "web", or the minimum depth the propellant's
             burn surface must recede to achieve a "burnthrough".
@@ -121,25 +162,22 @@ class Charge:
         burn_rate_coefficient: float
             coefficient used in de Saint Robert's burn rate law. See documentation for
             `Charge` for more information.
+        propellant: `Propellant`
+            base propellant of this charge.
+        form_function:
+            `ballistics.form_function.FormFunction` object that describes the geometry of this
+            propellant.
+
         """
-        return cls(
-            density=density,
-            force=force,
-            pressure_exponent=pressure_exponent,
-            covolume=covolume,
-            adiabatic_index=adiabatic_index,
-            gas_molar_mass=gas_molar_mass,
+        return cls.from_propellant(
             reduced_burnrate=2 * burn_rate_coefficient / arch_width,
+            propellant=propellant,
             form_function=form_function,
         )
 
     @cached_property
     def Z_k(self) -> float:
         return self.form_function.Z_k
-
-    @cached_property
-    def theta(self) -> float:
-        return self.adiabatic_index - 1
 
     def psi(self, Z: float) -> float:
         return self.form_function(Z)

@@ -1,7 +1,8 @@
 import logging
 
+from ballistics.charge import Charge, Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
-from ballistics.problem import MatchingProblem, PressureTarget
+from ballistics.matching_problem import MatchingProblem, PressureTarget
 
 logger = logging.getLogger(__name__)
 
@@ -14,14 +15,15 @@ if __name__ == "__main__":
         shot_mass=6.2,
         chamber_volume=1.484e-3,
         travel=2.687,
-        loss_fraction=0.03,
+        loss_fraction=0.1,
         start_pressure=30e6,
-        density=1600,
-        force=950000 * 0.98,
-        pressure_exponent=0.83,
-        covolume=1e-3,
-        adiabatic_index=1.2,
-        gas_molar_mass=23.55,
+        propellant=Propellant(
+            density=1600,
+            force=950000 * 0.98,
+            pressure_exponent=0.83,
+            covolume=1e-3,
+            adiabatic_index=1.2,
+        ),
         form_function=FormFunction.multi_perf(
             arch_width=10e-3,
             perforation_diameter=5e-3,

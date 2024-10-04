@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Tuple
 
 from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
                Significance)
-from .charge import Charge
+from .charge import Charge, Propellant
 from .gun import Gun
 from .num import dekker
 from .pressure_target import PressureTarget
@@ -25,12 +25,7 @@ class MatchingProblem:
     shot velocity.
     """
 
-    density: float
-    force: float
-    pressure_exponent: float
-    covolume: float
-    adiabatic_index: float
-    gas_molar_mass: float
+    propellant: Propellant
     form_function: FormFunction
 
     cross_section: float
@@ -47,14 +42,9 @@ class MatchingProblem:
             raise ValueError("pre-existing charges for this gun design is overfull")
 
     def get_test_gun(self, reduced_burnrate: float, mass: float) -> Gun:
-        charge = Charge(
-            density=self.density,
-            force=self.force,
-            pressure_exponent=self.pressure_exponent,
-            covolume=self.covolume,
-            adiabatic_index=self.adiabatic_index,
+        charge = Charge.from_propellant(
             reduced_burnrate=reduced_burnrate,
-            gas_molar_mass=self.gas_molar_mass,
+            propellant=self.propellant,
             form_function=self.form_function,
         )
 
@@ -118,7 +108,9 @@ class MatchingProblem:
             test_gun = self.get_test_gun(reduced_burnrate=1, mass=mass)
             return test_gun.bomb_free_fraction
 
-        chamber_fill_mass = (base_gun.chamber_volume - base_gun.charge_volume) * self.density
+        chamber_fill_mass = (
+            base_gun.chamber_volume - base_gun.charge_volume
+        ) * self.propellant.density
 
         upper_limit = min(dekker(f_ff, 0, chamber_fill_mass, tol=chamber_fill_mass * acc))
 
