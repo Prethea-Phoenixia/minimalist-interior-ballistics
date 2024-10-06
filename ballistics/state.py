@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from collections import UserList
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cached_property
 from typing import TYPE_CHECKING, Iterable, Optional
 
@@ -20,7 +20,7 @@ class State:
     of equations.
     """
 
-    gun: Gun
+    gun: Gun = field(repr=False)
     time: float
     travel: float
     velocity: float
@@ -62,9 +62,9 @@ class State:
         """
         l, v = self.travel, self.velocity
         l_psi = self.gun.l_0 * (1 - self.gun.incompressible_fraction(self.volume_burnup_fraction))
-        return max(
-            self.gun.gas_energy(self.volume_burnup_fraction, v) / (self.gun.S * (l_psi + l)), 0
-        )
+        p = self.gun.gas_energy(self.volume_burnup_fraction, v) / (self.gun.S * (l_psi + l))
+
+        return p
 
     @cached_property
     def shot_pressure(self) -> float:

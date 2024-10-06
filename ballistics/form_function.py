@@ -155,7 +155,7 @@ class FormFunction:
         elif 1 < Z <= self.Z_k:  # post fracture
             return self.chi_s * Z * (1 + self.labda_s * Z)
 
-        raise ValueError(f"psi(Z) is defined in [0, {self.Z_k}]")
+        raise ValueError(f"psi(Z) is defined in [0, {self.Z_k}], but called with Z = {Z}")
 
     def sigma(self, Z: float) -> float:
         if 0 <= Z <= 1:  # pre-fracture

@@ -33,3 +33,6 @@ class PressureTarget:
 
     def retrieve_from(self, state: State) -> float:
         return getattr(state, self.target)
+
+    def describe(self) -> str:
+        return self.target.replace("_", " ") + f" of {self.value * 1e-6:.2f} MPa"

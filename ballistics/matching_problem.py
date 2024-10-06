@@ -2,14 +2,17 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from functools import wraps
 from typing import TYPE_CHECKING, Tuple
 
 from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
-               Significance)
+               MINIMUM_BOMB_STATE_FREE_FRACTION,
+               REDUCED_BURN_RATE_INITIAL_GUESS, Significance)
 from .charge import Charge, Propellant
 from .gun import Gun
 from .num import dekker
 from .pressure_target import PressureTarget
+from .state import StateList
 
 if TYPE_CHECKING:
     from .form_function import FormFunction
@@ -20,9 +23,8 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class MatchingProblem:
     """
-    Given known gun and charge loading parameters, deduce the (additional) charge
-    that is required to *match* the performance, in terms of peak pressure and
-    shot velocity.
+    Given known gun and charge loading parameters, deduce the charge that is required to *match*
+    the performance, in terms of peak pressure and shot velocity.
     """
 
     propellant: Propellant
@@ -34,12 +36,6 @@ class MatchingProblem:
     travel: float
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
-
-    # known_charge_loads: Dict[Charge, float] = field(default_factory=dict)
-
-    def __post_init__(self):
-        if self.get_base_gun().bomb_free_fraction < 0:
-            raise ValueError("pre-existing charges for this gun design is overfull")
 
     def get_test_gun(self, reduced_burnrate: float, mass: float) -> Gun:
         charge = Charge.from_propellant(
@@ -63,7 +59,7 @@ class MatchingProblem:
         return self.get_test_gun(reduced_burnrate=1, mass=0)
 
     def get_charge_mass_limits(
-        self, pressure_target: PressureTarget, acc: float
+        self, pressure_target: PressureTarget, acc: float, logging_preamble: str = ""
     ) -> Tuple[float, float]:
         """
         Find the maximum and minimum valid charge mass value for the outlined gun design
@@ -93,9 +89,11 @@ class MatchingProblem:
         The lower limit is found by finding the required mass of charge to bring the
         gun's bomb-pressure to at least the targeted pressure levels.
 
-        The upper limit is found by finding the point at which the bomb-pressure of
-        a charge design goes to infinity. This is an artifact of the limited
-        applicability of the Nobel-Abel equation of state for very high pressures.
+        The upper limit is found when the complete combustion of charge within
+        chamber reduces volumetric free fraction to less than specified in module wide
+        constant `ballistics.MINIMUM_BOMB_STATE_FREE_FRACTION`, since the Nobel-Abel
+        equation of state does not model high pressure (and correspondingly
+        high incompressibility) well.
 
         The reduced-burn rate that corresponds to the limiting charge
         weights asymptotically approaches `+inf` for the lower limit, and 0 for the
@@ -106,11 +104,9 @@ class MatchingProblem:
 
         def f_ff(mass: float) -> float:
             test_gun = self.get_test_gun(reduced_burnrate=1, mass=mass)
-            return test_gun.bomb_free_fraction
+            return test_gun.bomb_free_fraction - MINIMUM_BOMB_STATE_FREE_FRACTION
 
-        chamber_fill_mass = (
-            base_gun.chamber_volume - base_gun.charge_volume
-        ) * self.propellant.density
+        chamber_fill_mass = base_gun.chamber_volume * self.propellant.density
 
         upper_limit = min(dekker(f_ff, 0, chamber_fill_mass, tol=chamber_fill_mass * acc))
 
@@ -120,27 +116,35 @@ class MatchingProblem:
             test_gun_bomb_pressure = pressure_target.retrieve_from(test_gun.get_bomb_state())
             return test_gun_bomb_pressure - pressure_target.value
 
-        if f_p(0) > 0:
-            lower_limit = 0.0
-        else:
-            lower_limit = max(dekker(f_p, 0, upper_limit, tol=acc * upper_limit))
+        lower_limit = max(dekker(f_p, 0, upper_limit, tol=chamber_fill_mass * acc))
 
-        logger.info(f"charge limit solved to be {lower_limit} kg, {upper_limit} kg.")
+        logger.info(logging_preamble + "CHARGE LIMIT")
+        logger.info(logging_preamble + f"{pressure_target.describe()} ->")
+        logger.info(
+            logging_preamble + f"-> charge from {lower_limit:.2f} kg to {upper_limit:.2f} kg"
+        )
+        logger.info(logging_preamble + "END")
         return lower_limit, upper_limit
 
-    def solve_reduced_burn_rate(
-        self, mass: float, pressure_target: PressureTarget, n_intg: int, acc: float
-    ) -> Tuple[float, Gun]:
+    def solve_reduced_burn_rate_at_pressure(
+        self,
+        mass: float,
+        pressure_target: PressureTarget,
+        n_intg: int,
+        acc: float,
+        logging_preamble: str = "",
+    ) -> Gun:
         """
         solves the reduced burn rate such that the peak pressure developed in bore
-        (at any one of the three `ballistics.problem.Target` locations)
-        matches the desired value.
+        matches the desired value. This is the outer, user facing function that validates
+        the input by checking against the known charge mass limits. The calculation is
+        instead under `MatchingProblem._solve_reduced_burn_rate_at_pressure` method.
 
         Parameters
         ----------
         mass: float
             the mass of the charge.
-        pressure, target: float, `ballistics.problem.Target`
+        pressure_target: float, `ballistics.pressure_target.PressureTarget`
             the pressure to target, along with its point-of-measurement.
         n_intg, acc: int, float
             parameter passed to `ballistics.gun.Gun.to_burnout`. In addition, `acc`
@@ -155,13 +159,16 @@ class MatchingProblem:
 
         Returns
         -------
-        reduced_burnrate: float
-            the solved reduced burnrate.
         gun: `ballistics.gun.Gun` object
             the gun corresponding to this solution.
-        """
 
-        min_mass, max_mass = self.get_charge_mass_limits(pressure_target=pressure_target, acc=acc)
+        """
+        logger.info("MATCH PRESSURE PROBLEM")
+        logger.info(f"{pressure_target.describe()} ->")
+        min_mass, max_mass = self.get_charge_mass_limits(
+            pressure_target=pressure_target, acc=acc, logging_preamble="\t"
+        )
+
         valid_range_prompt = f"valid range of charge mass: [{min_mass:.3f}, {max_mass:.3f}]"
         if mass < min_mass:
             raise ValueError(
@@ -170,22 +177,36 @@ class MatchingProblem:
             )
         elif mass > max_mass:
             raise ValueError(
-                "specified charge is excessive for this chamber design.\n" + valid_range_prompt
+                "specified charge exceed maximum load density considered.\n" + valid_range_prompt
             )
 
-        def get_test_gun(reduced_burnrate: float) -> Gun:
-            return self.get_test_gun(reduced_burnrate=reduced_burnrate, mass=mass)
+        gun = self._solve_reduced_burn_rate_at_pressure(
+            mass=mass, pressure_target=pressure_target, n_intg=n_intg, acc=acc
+        )
+
+        logger.info(logging_preamble + "END")
+
+        return gun
+
+    def _solve_reduced_burn_rate_at_pressure(
+        self,
+        mass: float,
+        pressure_target: PressureTarget,
+        n_intg: int,
+        acc: float,
+        logging_preamble: str = "",
+    ):
 
         def f(reduced_burnrate: float) -> float:
-            test_gun = get_test_gun(reduced_burnrate=reduced_burnrate)
+            test_gun = self.get_test_gun(reduced_burnrate=reduced_burnrate, mass=mass)
             states = test_gun.to_burnout(n_intg=n_intg, acc=acc, abort_travel=self.travel)
-
-            return (
+            delta_p = (
                 pressure_target.retrieve_from(
                     states.get_state_by_marker(Significance.PEAK_PRESSURE)
                 )
                 - pressure_target.value
             )
+            return delta_p
 
         # solve the burn rate coefficient on (0, +inf)
 
@@ -193,7 +214,7 @@ class MatchingProblem:
         first, find two estimate, est and est' (rendered as est_prime) such that
         the solution is bracketed
         """
-        est = est_prime = 1.0
+        est = est_prime = REDUCED_BURN_RATE_INITIAL_GUESS
         f_est = f_est_prime = f(est)
         while f_est * f_est_prime >= 0:
             if f_est > 0:  # burnt too fast
@@ -204,8 +225,6 @@ class MatchingProblem:
                 est, est_prime = est * 10, est
             f_est, f_est_prime = f(est), f_est
 
-        logger.info(f"roughly estimated reduced burn rate between {est} and {est_prime}")
-
         """
         then, use `ballistics.num.dekker` to find the exact solution. this is necessary
         since the accuracy specification is realtive and the order of magnitude of the
@@ -214,5 +233,61 @@ class MatchingProblem:
         while abs(est - est_prime) > acc * min(est, est_prime):
             est, est_prime = dekker(f=f, x_0=est, x_1=est_prime, tol=min(est, est_prime) * acc)
 
-        logger.info(f"reduced burn rate solved at {est}")
-        return est, get_test_gun(reduced_burnrate=est)
+        logger.info(logging_preamble + f"charge {mass:.2f} kg -> r.b.r {est:.2e} s^-1")
+
+        return self.get_test_gun(reduced_burnrate=est, mass=mass)
+
+    def solve_charge_mass_at_velocity_and_pressure(
+        self,
+        pressure_target: PressureTarget,
+        velocity_target: float,
+        n_intg: int,
+        acc: float,
+        logging_preamble: str = "",
+    ) -> Gun:
+        logger.info(logging_preamble + "MATCH VELOCITY AND PRESSURE PROBLEM")
+        logger.info(
+            logging_preamble
+            + f"velocity of {velocity_target:.1f} m/s, {pressure_target.describe()} ->"
+        )
+        min_mass, max_mass = self.get_charge_mass_limits(
+            pressure_target=pressure_target, acc=acc, logging_preamble="\t"
+        )
+
+        def f(mass: float) -> float:
+            gun = self._solve_reduced_burn_rate_at_pressure(
+                mass=mass,
+                pressure_target=pressure_target,
+                n_intg=n_intg,
+                acc=acc,
+                logging_preamble=logging_preamble + "\t",
+            )
+            states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
+            muzzle_state = states.get_state_by_marker(significance=Significance.MUZZLE)
+
+            return muzzle_state.velocity - velocity_target
+
+        dv_min = f(mass=min_mass)
+        dv_max = f(mass=max_mass)
+        logger.info(logging_preamble + "VELOCITY RANGE")
+        logger.info(
+            logging_preamble
+            + f"-> velocity from {velocity_target + dv_min:.2f} to {velocity_target + dv_max:.2f} m/s"
+        )
+        if not dv_min < 0 < dv_max:
+            raise ValueError(
+                "targeted velocity is not achievable in the range of valid loading condition."
+            )
+
+        # target velocity is achievable, find the corresponding charge mass to get it.
+        mass, _ = dekker(f=f, x_0=min_mass, x_1=max_mass, tol=acc)
+        gun = self._solve_reduced_burn_rate_at_pressure(
+            mass=mass, pressure_target=pressure_target, n_intg=n_intg, acc=acc
+        )
+
+        logger.info(
+            logging_preamble
+            + f"-> charge mass {mass:.2f} kg, r.b.r {gun.charge.reduced_burnrate:.2e} s^-1"
+        )
+        logger.info(logging_preamble + "END")
+        return

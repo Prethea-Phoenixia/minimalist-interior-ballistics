@@ -47,13 +47,10 @@ class Propellant:
         At elevated temperatures and with a mix of species, this parameter typically
         clusters around 1.23-1.25.
 
-
-
     Attributes
     ----------
     theta: float
         adiabatic index - 1.
-
 
     References
     ----------
@@ -75,7 +72,7 @@ class Propellant:
 
 @dataclass(frozen=True)
 class Charge(Propellant):
-    """class that represent individual charge designs.
+    """class that represent particular charge design.
 
     Parameters
     ----------

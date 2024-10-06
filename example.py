@@ -32,15 +32,23 @@ if __name__ == "__main__":
         ),
     )
 
-    _, g = p.solve_reduced_burn_rate(
+    g = p.solve_reduced_burn_rate_at_pressure(
         mass=1.08,
         pressure_target=PressureTarget.average_pressure(value=268e6),
-        n_intg=10,
+        n_intg=100,
         acc=1e-4,
     )
-    print(g.to_travel(2.687, n_intg=10, acc=1e-4).tabulate())
+    # print(g.to_travel(2.687, n_intg=10, acc=1e-4).tabulate())
+
+    p.solve_charge_mass_at_velocity_and_pressure(
+        pressure_target=PressureTarget.average_pressure(value=268e6),
+        velocity_target=680,
+        n_intg=10,
+        acc=1e-3,
+    )
 
     logger.info("ended")
+
 
 """
 kgf s   9.8 kg m    s           kg

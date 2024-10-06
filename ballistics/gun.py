@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from bisect import insort
 from dataclasses import dataclass
 from functools import cached_property
@@ -11,6 +12,8 @@ from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
 from .charge import Charge
 from .num import dekker, gss_max
 from .state import Delta, State, StateList
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -229,13 +232,13 @@ class Gun:
         from which `ballistics.num.dekker` is called to numerically find the burnout
         point to an accuracy of `acc` times the approximate total time.
 
-        In the abort case, the behavior is the same as the above, but the point
-        of abort is found and marked with `ballistics.Significance.MUZZLE` instead.
+        In the abort case, the last step is dropped such that the returned
+        `ballistics.state.StateList` does not contain any point that exceeds the abort
+        criteria, whether travel or velocity.
 
         In either case, the result is passed through `Gun.mark_max_pressure` to mark
         the peak pressure point.
         """
-
         pre_start_states = self.to_start(n_intg=n_intg, acc=acc)
         Z_c0 = max(pre_start_states).burnup_fraction
 
@@ -277,17 +280,14 @@ class Gun:
         if burnout(s_end):
             s_burnout = State.remark(s_end, new_significance=Significance.BURNOUT)
             states.append(s_burnout)
-        else:
-            s_muzzle = State.remark(s_end, new_significance=Significance.MUZZLE)
-            states.append(s_muzzle)
 
         return self.mark_max_pressure(states=states, acc=acc)
 
     def to_travel(self, travel: float, n_intg: int, acc: float) -> StateList:
         """
-        Conducts integration up to the desired shot-travel using length-wise ODE, if
-        the travel is greater than burnout point. Otherwise, length-wise ODE is used
-        to single-step from the last point before the specified travel.
+        Conducts integration up to the desired shot-travel using time-wise ODE, if
+        the travel is greater than burnout point. Then, length-wise ODE is used
+        to single-step to the specified travel.
 
         Parameters
         ----------
@@ -299,25 +299,22 @@ class Gun:
         Returns
         -------
         list of `ballistics.state.State`.
-
         """
 
         states = self.to_burnout(n_intg=n_intg, acc=acc, abort_travel=travel)
+        state = max(states)
 
         if states.has_state_with_marker(Significance.BURNOUT):
-            state = max(states)
-            d_travel = (travel - state.travel) / n_intg
-            for _ in range(n_intg - 1):
-                states.append(state := self.propagate_rk4(state=state, dl=d_travel))
+            dt = (max(states).time - min(states).time) / len(states)
+            next_state = self.propagate_rk4(state=state, dt=dt)
 
-            states.append(self.propagate_rk4(state=state, dl=d_travel, marker=Significance.MUZZLE))
+            while next_state.travel < travel:
+                states.append(state := next_state)
+                next_state = self.propagate_rk4(state=state, dt=dt)
 
-        else:
-            """
-            the case where `to_burnout` has aborted less than a single step
-            to the targeted projectile travel:
-            """
-            return states
+        states.append(
+            self.propagate_rk4(state=state, dl=travel - state.travel, marker=Significance.MUZZLE)
+        )
 
         return self.mark_max_pressure(states=states, acc=acc)
 
@@ -340,23 +337,22 @@ class Gun:
         """
 
         states = self.to_burnout(n_intg=n_intg, acc=acc, abort_velocity=velocity)
+        state = max(states)
 
         if states.has_state_with_marker(Significance.BURNOUT):
-            state = max(states)
-            d_velocity = (velocity - state.velocity) / n_intg
-            for _ in range(n_intg - 1):
-                states.append(state := self.propagate_rk4(state=state, dv=d_velocity))
 
-            states.append(
-                self.propagate_rk4(state=state, dv=d_velocity, marker=Significance.MUZZLE)
+            dt = (max(states).time - min(states).time) / len(states)
+            next_state = self.propagate_rk4(state=state, dt=dt)
+
+            while next_state.velocity < velocity:
+                states.append(state := next_state)
+                next_state = self.propagate_rk4(state=state, dt=dt)
+
+        states.append(
+            self.propagate_rk4(
+                state=state, dv=velocity - state.velocity, marker=Significance.MUZZLE
             )
-
-        else:
-            """
-            the case where `to_burnout` has aborted less than a single step
-            to the targeted projectile travel:
-            """
-            return states
+        )
 
         return self.mark_max_pressure(states=states, acc=acc)
 
@@ -387,7 +383,8 @@ class Gun:
             s_i, s_j, s_k = states[i], states[j], states[k]
 
             def time_pressure(time: float) -> float:
-                return self.propagate_rk4(state=s_j, dt=time - s_j.time).average_pressure
+                p_t = self.propagate_rk4(state=s_j, dt=time - s_j.time).average_pressure
+                return p_t
 
             time_pmax = (
                 sum(gss_max(f=time_pressure, x_0=s_i.time, x_1=s_k.time, tol=acc * total_time))
