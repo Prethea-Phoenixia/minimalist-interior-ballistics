@@ -163,10 +163,10 @@ class MatchingProblem:
             the gun corresponding to this solution.
 
         """
-        logger.info("MATCH PRESSURE PROBLEM")
-        logger.info(f"{pressure_target.describe()} ->")
+        logger.info(logging_preamble + "MATCH PRESSURE PROBLEM")
+        logger.info(logging_preamble + f"{pressure_target.describe()} ->")
         min_mass, max_mass = self.get_charge_mass_limits(
-            pressure_target=pressure_target, acc=acc, logging_preamble="\t"
+            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
 
         valid_range_prompt = f"valid range of charge mass: [{min_mass:.3f}, {max_mass:.3f}]"
@@ -251,7 +251,7 @@ class MatchingProblem:
             + f"velocity of {velocity_target:.1f} m/s, {pressure_target.describe()} ->"
         )
         min_mass, max_mass = self.get_charge_mass_limits(
-            pressure_target=pressure_target, acc=acc, logging_preamble="\t"
+            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
 
         def f(mass: float) -> float:
