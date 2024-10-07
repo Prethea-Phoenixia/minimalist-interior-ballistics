@@ -16,7 +16,7 @@ from .state import Delta, State, StateList
 logger = logging.getLogger(__name__)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Gun:
     """
     Class that tracks physical properties of the bore (i.e. that are charge-invariant)
@@ -55,6 +55,13 @@ class Gun:
     @cached_property
     def bomb_free_fraction(self) -> float:
         return 1 - self.charge.covolume * self.charge_mass / self.chamber_volume
+
+    @cached_property
+    def velocity_limit(self) -> float:
+        return (
+            (2 * self.charge.force * self.charge_mass)
+            / (self.charge.theta * self.phi * self.shot_mass)
+        ) ** 0.5
 
     def get_bomb_state(self) -> State:
         """
