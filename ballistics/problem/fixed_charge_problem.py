@@ -1,17 +1,15 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
-from functools import wraps
 from typing import TYPE_CHECKING, Tuple
 
+from attrs import frozen
+
 from .. import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
-                MINIMUM_BOMB_STATE_FREE_FRACTION,
-                REDUCED_BURN_RATE_INITIAL_GUESS, Significance)
+                MINIMUM_BOMB_STATE_FREE_FRACTION)
 from ..charge import Charge, Propellant
 from ..gun import Gun
 from ..num import dekker
-from .fixed_volume_problem import FixedVolumeProblem
 from .pressure_target import PressureTarget
 
 if TYPE_CHECKING:
@@ -21,27 +19,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-# @dataclass(frozen=True)
-# class MinimumBoreVolumeProblem:
-#     propellant: Propellant
-#     form_function: FormFunction
-
-#     cross_section: float
-#     shot_mass: float
-#     travel: float
-#     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
-#     start_pressure: float = DEFAULT_GUN_START_PRESSURE
-
-#     def find_minimum_bore_volume_solution(
-#         self, pressure_target: PressureTarget, velocity_target: float
-#     ) -> Gun:
-#         """
-#         given a set of performance (pressure & velocity) targets, find the minimum bore
-#         volume (as a sum of chamber and bore volumes) solution.
-#         """
-
-
-@dataclass(frozen=True)
+@frozen(kw_only=True)
 class FixedChargeProblem:
     propellant: Propellant
     form_function: FormFunction
@@ -73,7 +51,34 @@ class FixedChargeProblem:
 
     def get_chamber_volume_limits(
         self, pressure_target: PressureTarget, acc: float, logging_preamble: str = ""
-    ) -> Gun:
+    ) -> Tuple[float, float]:
+        """
+        find the range of valid chamber volume
+
+        Parameters
+        ----------
+        pressure_target, acc: `ballistics.problem.pressure_target.PressureTarget`, float
+            see `FixedVolumeProblem.solve_reduced_burn_rate` for more information.
+
+        Returns
+        -------
+        lower_limit, upper_limit: float
+
+        Notes
+        -----
+        The upper limit is determined to ensure minimum free fraction for the bomb case.
+
+        The lower limit is such that the pressure specification may be achieved in the
+        bomb case. Choice of the more conservative solution ensures valid (finite) burn
+        rate if it were to be used.
+
+        For more explanation of the rationale, reference
+        `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limit`.
+
+        """
+
+        logger.info(logging_preamble + "VOLUME LIMIT")
+        logger.info(logging_preamble + f"{pressure_target.describe()} ->")
 
         def f_ff(chamber_volume: float) -> float:
             test_gun = self.get_test_gun(reduced_burnrate=1, chamber_volume=chamber_volume)
@@ -100,8 +105,6 @@ class FixedChargeProblem:
 
         upper_limit = min(dekker(f=f_p, x_0=lower_limit, x_1=bound, tol=chamber_min_volume * acc))
 
-        logger.info(logging_preamble + "VOLUME LIMIT")
-        logger.info(logging_preamble + f"{pressure_target.describe()} ->")
         logger.info(
             logging_preamble
             + f"-> chamber from {lower_limit * 1e3:.2f} L to {upper_limit * 1e3:.2f} L"

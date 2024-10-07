@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import logging
 from bisect import insort
-from dataclasses import dataclass
 from functools import cached_property
 from math import inf
 from typing import Dict
+
+from attrs import frozen
 
 from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
                Significance)
@@ -16,7 +17,7 @@ from .state import Delta, State, StateList
 logger = logging.getLogger(__name__)
 
 
-@dataclass(frozen=True)
+@frozen(kw_only=True)
 class Gun:
     """
     Class that tracks physical properties of the bore (i.e. that are charge-invariant)

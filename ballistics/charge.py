@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from functools import cached_property
+
+from attrs import frozen
 
 from . import AMBIENT_PRESSURE
 from .form_function import FormFunction
 
 
-@dataclass(frozen=True)
+@frozen(kw_only=True)
 class Propellant:
     """class that represent propellant before they are cut into gun charges.
 
@@ -70,7 +71,7 @@ class Propellant:
         return self.adiabatic_index - 1
 
 
-@dataclass(frozen=True)
+@frozen(kw_only=True)
 class Charge(Propellant):
     """class that represent particular charge design.
 

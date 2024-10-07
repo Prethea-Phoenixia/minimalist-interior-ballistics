@@ -142,10 +142,10 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span> <span class="nn">sys</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">UserList</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">field</span><span class="p">,</span> <span class="n">frozen</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Significance</span>
@@ -154,7 +154,7 @@
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="kn">from</span> <span class="nn">.gun</span> <span class="kn">import</span> <span class="n">Gun</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;class representing a particular point in the interior ballistic system</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    of equations.</span>
@@ -247,7 +247,7 @@
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="p">)</span>
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="k">class</span> <span class="nc">Delta</span><span class="p">:</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="n">d_time</span><span class="p">:</span> <span class="nb">float</span>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">d_travel</span><span class="p">:</span> <span class="nb">float</span>
@@ -471,15 +471,30 @@ of equations.</p>
 
 
                             <div id="State.__init__" class="classattr">
-                                <div class="attr function">
+                                        <input id="State.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
             
-        <span class="name">State</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">gun</span><span class="p">:</span> <span class="n"><a href="gun.html#Gun">ballistics.gun.Gun</a></span>,</span><span class="param">	<span class="n">time</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">travel</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">burnup_fraction</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">marker</span><span class="p">:</span> <span class="n"><a href="../ballistics.html#Significance">ballistics.Significance</a></span>,</span><span class="param">	<span class="n">is_started</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span>)</span>
+        <span class="name">State</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">gun</span><span class="p">:</span> <span class="n"><a href="gun.html#Gun">ballistics.gun.Gun</a></span>,</span><span class="param">	<span class="n">time</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">travel</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">burnup_fraction</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">marker</span><span class="p">:</span> <span class="n"><a href="../ballistics.html#Significance">ballistics.Significance</a></span>,</span><span class="param">	<span class="n">is_started</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span>)</span>
 
-        
+                <label class="view-source-button" for="State.__init__-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#State.__init__"></a>
-    
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="State.__init__-2"><a href="#State.__init__-2"><span class="linenos"> 2</span></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">gun</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">travel</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">burnup_fraction</span><span class="p">,</span> <span class="n">marker</span><span class="p">,</span> <span class="n">is_started</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;is_started&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">):</span>
+</span><span id="State.__init__-3"><a href="#State.__init__-3"><span class="linenos"> 3</span></a>    <span class="n">_setattr</span> <span class="o">=</span> <span class="n">_cached_setattr_get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="State.__init__-4"><a href="#State.__init__-4"><span class="linenos"> 4</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;gun&#39;</span><span class="p">,</span> <span class="n">gun</span><span class="p">)</span>
+</span><span id="State.__init__-5"><a href="#State.__init__-5"><span class="linenos"> 5</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+</span><span id="State.__init__-6"><a href="#State.__init__-6"><span class="linenos"> 6</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;travel&#39;</span><span class="p">,</span> <span class="n">travel</span><span class="p">)</span>
+</span><span id="State.__init__-7"><a href="#State.__init__-7"><span class="linenos"> 7</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span>
+</span><span id="State.__init__-8"><a href="#State.__init__-8"><span class="linenos"> 8</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;burnup_fraction&#39;</span><span class="p">,</span> <span class="n">burnup_fraction</span><span class="p">)</span>
+</span><span id="State.__init__-9"><a href="#State.__init__-9"><span class="linenos"> 9</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;marker&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="p">)</span>
+</span><span id="State.__init__-10"><a href="#State.__init__-10"><span class="linenos">10</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;is_started&#39;</span><span class="p">,</span> <span class="n">is_started</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Method generated by attrs for class State.</p>
+</div>
+
 
                             </div>
                             <div id="State.gun" class="classattr">
@@ -550,8 +565,7 @@ of equations.</p>
                             </div>
                             <div id="State.is_started" class="classattr">
                                 <div class="attr variable">
-            <span class="name">is_started</span><span class="annotation">: bool</span>        =
-<span class="default_value">True</span>
+            <span class="name">is_started</span><span class="annotation">: bool</span>
 
         
     </div>
@@ -589,53 +603,24 @@ of equations.</p>
 
                             </div>
                             <div id="State.volume_burnup_fraction" class="classattr">
-                                        <input id="State.volume_burnup_fraction-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr variable">
+                                <div class="attr variable">
             <span class="name">volume_burnup_fraction</span><span class="annotation">: float</span>
 
-                <label class="view-source-button" for="State.volume_burnup_fraction-view-source"><span>View Source</span></label>
-
+        
     </div>
     <a class="headerlink" href="#State.volume_burnup_fraction"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="State.volume_burnup_fraction-47"><a href="#State.volume_burnup_fraction-47"><span class="linenos">47</span></a>    <span class="nd">@cached_property</span>
-</span><span id="State.volume_burnup_fraction-48"><a href="#State.volume_burnup_fraction-48"><span class="linenos">48</span></a>    <span class="k">def</span> <span class="nf">volume_burnup_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="State.volume_burnup_fraction-49"><a href="#State.volume_burnup_fraction-49"><span class="linenos">49</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">charge</span><span class="o">.</span><span class="n">psi</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">burnup_fraction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">charge</span><span class="o">.</span><span class="n">Z_k</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span>
-</span></pre></div>
-
-
+    
     
 
                             </div>
                             <div id="State.average_pressure" class="classattr">
-                                        <input id="State.average_pressure-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr variable">
+                                <div class="attr variable">
             <span class="name">average_pressure</span><span class="annotation">: float</span>
 
-                <label class="view-source-button" for="State.average_pressure-view-source"><span>View Source</span></label>
-
+        
     </div>
     <a class="headerlink" href="#State.average_pressure"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="State.average_pressure-51"><a href="#State.average_pressure-51"><span class="linenos">51</span></a>    <span class="nd">@cached_property</span>
-</span><span id="State.average_pressure-52"><a href="#State.average_pressure-52"><span class="linenos">52</span></a>    <span class="k">def</span> <span class="nf">average_pressure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="State.average_pressure-53"><a href="#State.average_pressure-53"><span class="linenos">53</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;the length-averaged pressure in the equivalent gun, under the Lagrange</span>
-</span><span id="State.average_pressure-54"><a href="#State.average_pressure-54"><span class="linenos">54</span></a><span class="sd">        gradient of 0-dimensional interior ballistics.</span>
-</span><span id="State.average_pressure-55"><a href="#State.average_pressure-55"><span class="linenos">55</span></a>
-</span><span id="State.average_pressure-56"><a href="#State.average_pressure-56"><span class="linenos">56</span></a><span class="sd">        Notes</span>
-</span><span id="State.average_pressure-57"><a href="#State.average_pressure-57"><span class="linenos">57</span></a><span class="sd">        -----</span>
-</span><span id="State.average_pressure-58"><a href="#State.average_pressure-58"><span class="linenos">58</span></a><span class="sd">        The equivalent gun is a is formed by stretching the chamber volume of the</span>
-</span><span id="State.average_pressure-59"><a href="#State.average_pressure-59"><span class="linenos">59</span></a><span class="sd">        actual gun into a section such that the gun is of uniform cross section</span>
-</span><span id="State.average_pressure-60"><a href="#State.average_pressure-60"><span class="linenos">60</span></a><span class="sd">        throughout. The error of this treatment is usually insignificant for the range</span>
-</span><span id="State.average_pressure-61"><a href="#State.average_pressure-61"><span class="linenos">61</span></a><span class="sd">        of conditions encountered in conventional firearms (although it is of more</span>
-</span><span id="State.average_pressure-62"><a href="#State.average_pressure-62"><span class="linenos">62</span></a><span class="sd">        concern in light-gas guns).</span>
-</span><span id="State.average_pressure-63"><a href="#State.average_pressure-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="State.average_pressure-64"><a href="#State.average_pressure-64"><span class="linenos">64</span></a>        <span class="n">l</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span>
-</span><span id="State.average_pressure-65"><a href="#State.average_pressure-65"><span class="linenos">65</span></a>        <span class="n">l_psi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">l_0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">incompressible_fraction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume_burnup_fraction</span><span class="p">))</span>
-</span><span id="State.average_pressure-66"><a href="#State.average_pressure-66"><span class="linenos">66</span></a>        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">gas_energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume_burnup_fraction</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">S</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_psi</span> <span class="o">+</span> <span class="n">l</span><span class="p">))</span>
-</span><span id="State.average_pressure-67"><a href="#State.average_pressure-67"><span class="linenos">67</span></a>
-</span><span id="State.average_pressure-68"><a href="#State.average_pressure-68"><span class="linenos">68</span></a>        <span class="k">return</span> <span class="n">p</span>
-</span></pre></div>
-
-
+    
             <div class="docstring"><p>the length-averaged pressure in the equivalent gun, under the Lagrange
 gradient of 0-dimensional interior ballistics.</p>
 
@@ -651,25 +636,13 @@ concern in light-gas guns).</p>
 
                             </div>
                             <div id="State.shot_pressure" class="classattr">
-                                        <input id="State.shot_pressure-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr variable">
+                                <div class="attr variable">
             <span class="name">shot_pressure</span><span class="annotation">: float</span>
 
-                <label class="view-source-button" for="State.shot_pressure-view-source"><span>View Source</span></label>
-
+        
     </div>
     <a class="headerlink" href="#State.shot_pressure"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="State.shot_pressure-70"><a href="#State.shot_pressure-70"><span class="linenos">70</span></a>    <span class="nd">@cached_property</span>
-</span><span id="State.shot_pressure-71"><a href="#State.shot_pressure-71"><span class="linenos">71</span></a>    <span class="k">def</span> <span class="nf">shot_pressure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="State.shot_pressure-72"><a href="#State.shot_pressure-72"><span class="linenos">72</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;the shot-base pressure in the equivalent gun. For more info refer to</span>
-</span><span id="State.shot_pressure-73"><a href="#State.shot_pressure-73"><span class="linenos">73</span></a><span class="sd">        `average_pressure`.</span>
-</span><span id="State.shot_pressure-74"><a href="#State.shot_pressure-74"><span class="linenos">74</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="State.shot_pressure-75"><a href="#State.shot_pressure-75"><span class="linenos">75</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">average_pressure</span> <span class="o">/</span> <span class="p">(</span>
-</span><span id="State.shot_pressure-76"><a href="#State.shot_pressure-76"><span class="linenos">76</span></a>            <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">charge_mass</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">loss_fraction</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">shot_mass</span><span class="p">)</span>
-</span><span id="State.shot_pressure-77"><a href="#State.shot_pressure-77"><span class="linenos">77</span></a>        <span class="p">)</span>
-</span></pre></div>
-
-
+    
             <div class="docstring"><p>the shot-base pressure in the equivalent gun. For more info refer to
 <code><a href="#State.average_pressure">average_pressure</a></code>.</p>
 </div>
@@ -677,25 +650,13 @@ concern in light-gas guns).</p>
 
                             </div>
                             <div id="State.breech_pressure" class="classattr">
-                                        <input id="State.breech_pressure-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr variable">
+                                <div class="attr variable">
             <span class="name">breech_pressure</span><span class="annotation">: float</span>
 
-                <label class="view-source-button" for="State.breech_pressure-view-source"><span>View Source</span></label>
-
+        
     </div>
     <a class="headerlink" href="#State.breech_pressure"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="State.breech_pressure-79"><a href="#State.breech_pressure-79"><span class="linenos">79</span></a>    <span class="nd">@cached_property</span>
-</span><span id="State.breech_pressure-80"><a href="#State.breech_pressure-80"><span class="linenos">80</span></a>    <span class="k">def</span> <span class="nf">breech_pressure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="State.breech_pressure-81"><a href="#State.breech_pressure-81"><span class="linenos">81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;the breech face pressure in the equivalent gun. For more info refer to</span>
-</span><span id="State.breech_pressure-82"><a href="#State.breech_pressure-82"><span class="linenos">82</span></a><span class="sd">        `average_pressure`.</span>
-</span><span id="State.breech_pressure-83"><a href="#State.breech_pressure-83"><span class="linenos">83</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="State.breech_pressure-84"><a href="#State.breech_pressure-84"><span class="linenos">84</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shot_pressure</span> <span class="o">*</span> <span class="p">(</span>
-</span><span id="State.breech_pressure-85"><a href="#State.breech_pressure-85"><span class="linenos">85</span></a>            <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">charge_mass</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">loss_fraction</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">shot_mass</span><span class="p">)</span>
-</span><span id="State.breech_pressure-86"><a href="#State.breech_pressure-86"><span class="linenos">86</span></a>        <span class="p">)</span>
-</span></pre></div>
-
-
+    
             <div class="docstring"><p>the breech face pressure in the equivalent gun. For more info refer to
 <code><a href="#State.average_pressure">average_pressure</a></code>.</p>
 </div>
@@ -785,15 +746,27 @@ concern in light-gas guns).</p>
     
 
                             <div id="Delta.__init__" class="classattr">
-                                <div class="attr function">
+                                        <input id="Delta.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
             
-        <span class="name">Delta</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">d_time</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">d_travel</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">d_velocity</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">d_burnup_fraction</span><span class="p">:</span> <span class="nb">float</span></span>)</span>
+        <span class="name">Delta</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">d_time</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">d_travel</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">d_velocity</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">d_burnup_fraction</span><span class="p">:</span> <span class="nb">float</span></span>)</span>
 
-        
+                <label class="view-source-button" for="Delta.__init__-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#Delta.__init__"></a>
-    
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Delta.__init__-2"><a href="#Delta.__init__-2"><span class="linenos">2</span></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">d_time</span><span class="p">,</span> <span class="n">d_travel</span><span class="p">,</span> <span class="n">d_velocity</span><span class="p">,</span> <span class="n">d_burnup_fraction</span><span class="p">):</span>
+</span><span id="Delta.__init__-3"><a href="#Delta.__init__-3"><span class="linenos">3</span></a>    <span class="n">_setattr</span> <span class="o">=</span> <span class="n">_cached_setattr_get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="Delta.__init__-4"><a href="#Delta.__init__-4"><span class="linenos">4</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;d_time&#39;</span><span class="p">,</span> <span class="n">d_time</span><span class="p">)</span>
+</span><span id="Delta.__init__-5"><a href="#Delta.__init__-5"><span class="linenos">5</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;d_travel&#39;</span><span class="p">,</span> <span class="n">d_travel</span><span class="p">)</span>
+</span><span id="Delta.__init__-6"><a href="#Delta.__init__-6"><span class="linenos">6</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;d_velocity&#39;</span><span class="p">,</span> <span class="n">d_velocity</span><span class="p">)</span>
+</span><span id="Delta.__init__-7"><a href="#Delta.__init__-7"><span class="linenos">7</span></a>    <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;d_burnup_fraction&#39;</span><span class="p">,</span> <span class="n">d_burnup_fraction</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Method generated by attrs for class Delta.</p>
+</div>
+
 
                             </div>
                             <div id="Delta.d_time" class="classattr">

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import sys
 from collections import UserList
-from dataclasses import dataclass, field
 from functools import cached_property
 from typing import TYPE_CHECKING, Iterable, Optional
 
+from attrs import field, frozen
 from tabulate import tabulate
 
 from . import Significance
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from .gun import Gun
 
 
-@dataclass(frozen=True)
+@frozen(kw_only=True)
 class State:
     """class representing a particular point in the interior ballistic system
     of equations.
@@ -107,7 +107,7 @@ class State:
         )
 
 
-@dataclass(frozen=True)
+@frozen(kw_only=True)
 class Delta:
     d_time: float
     d_travel: float

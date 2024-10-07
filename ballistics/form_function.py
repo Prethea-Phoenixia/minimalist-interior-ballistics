@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from enum import Enum
 from functools import cached_property
 from math import pi
 from typing import Tuple
+
+from attrs import frozen
 
 
 class MultiPerfShape(Enum):
@@ -23,41 +24,23 @@ class MultiPerfShape(Enum):
     )
     # fmt: on
 
-    def __new__(
-        cls,
-        value: str,
-        n: int,
-        A: float,
-        B: float,
-        C: float,
-        b_factors: Tuple[float, float],
-        a_factors: Tuple[float, float],
-        rho_ratio: float,
-    ):
-        obj = object.__new__(cls)
-        obj._value_ = value
-        obj.n = n
-        obj.A, obj.B, obj.C = A, B, C
-        obj.b_factors, obj.a_factors = b_factors, a_factors
-        obj.rho_ratio = rho_ratio
-        return obj
-
     def __call__(
         self, d_0: float, e_1: float
     ) -> Tuple[int, float, float, float, float, float, float]:
+        desc, n, A, B, C, b_factors, a_factors, rho_ratio = self.value
 
         return (
-            self.n,
-            self.A,
-            self.B,
-            self.C,
-            sum(v * f for v, f in zip((d_0, e_1), self.b_factors)),
-            sum(v * f for v, f in zip((d_0, e_1), self.a_factors)),
-            self.rho_ratio,
+            n,
+            A,
+            B,
+            C,
+            sum(v * f for v, f in zip((d_0, e_1), b_factors)),
+            sum(v * f for v, f in zip((d_0, e_1), a_factors)),
+            rho_ratio,
         )
 
 
-@dataclass(frozen=True)
+@frozen(kw_only=True)
 class FormFunction:
     """form function relates the volumetric burnup-ratio to the linear (depth-wise)
     burnup ratio, usually denoted psi and Z, respectively.
@@ -199,12 +182,8 @@ class FormFunction:
         # sort values in ascending order
         e_1, b, c = (0.5 * v for v in sorted([length, width, height]))
         alpha, beta = e_1 / b, e_1 / c
-
-        return cls(
-            chi := 1 + alpha + beta,
-            labda=-(alpha + beta + alpha * beta) / chi,
-            mu=alpha * beta / chi,
-        )
+        chi = 1 + alpha + beta
+        return cls(chi=chi, labda=-(alpha + beta + alpha * beta) / chi, mu=alpha * beta / chi)
 
     @classmethod
     def single_perf(cls, arch_width: float, height: float) -> FormFunction:

@@ -33,7 +33,7 @@ if __name__ == "__main__":
         ),
     )
 
-    g = p.solve_reduced_burn_rate_at_pressure(
+    g = p.solve_reduced_burn_rate_for_charge_at_pressure(
         charge_mass=1.08,
         pressure_target=PressureTarget.average_pressure(value=268e6),
         n_intg=100,
