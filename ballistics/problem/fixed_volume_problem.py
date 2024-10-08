@@ -87,7 +87,7 @@ class FixedVolumeProblem(BaseProblem):
         lower_limit = max(dekker(f_p, 0, upper_limit, tol=chamber_fill_mass * acc))
 
         logger.info(
-            logging_preamble + f"-> charge from {lower_limit:.2f} kg to {upper_limit:.2f} kg"
+            logging_preamble + f"-> charge from {lower_limit:.3f} kg to {upper_limit:.3f} kg"
         )
         logger.info(logging_preamble + "END")
         return lower_limit, upper_limit
@@ -105,8 +105,8 @@ class FixedVolumeProblem(BaseProblem):
         """
         solves the reduced burn rate such that the peak pressure developed in bore
         matches the desired value. This is the outer, user facing function that validates
-        the input by checking against the known charge mass limits. The calculation is
-        instead under `FixedVolumeProblem._solve_reduced_burn_rate_at_pressure` method.
+        the input by checking against the calcualted charge mass limits. Implementation
+        instead under `BaseProblem.solve_reduced_burn_rate_at_pressure` method.
 
         Parameters
         ----------
@@ -148,7 +148,7 @@ class FixedVolumeProblem(BaseProblem):
                 "specified charge exceed maximum load density considered.\n" + valid_range_prompt
             )
 
-        gun = super().solve_reduced_burn_rate_at_pressure(
+        gun = self.solve_reduced_burn_rate_at_pressure(
             charge_mass=charge_mass,
             chamber_volume=self.chamber_volume,
             pressure_target=pressure_target,
@@ -196,7 +196,7 @@ class FixedVolumeProblem(BaseProblem):
         logger.info(logging_preamble + "VELOCITY RANGE")
         logger.info(
             logging_preamble
-            + f"-> velocity from {velocity_target + dv_min:.2f} to {velocity_target + dv_max:.2f} m/s"
+            + f"-> velocity from {velocity_target + dv_min:.3f} to {velocity_target + dv_max:.3f} m/s"
         )
         if not dv_min < 0 < dv_max:
             raise ValueError(
@@ -215,7 +215,7 @@ class FixedVolumeProblem(BaseProblem):
 
         logger.info(
             logging_preamble
-            + f"-> charge mass {charge_mass:.2f} kg, r.b.r {gun.charge.reduced_burnrate:.2e} s^-1"
+            + f"-> charge mass {charge_mass:.3f} kg, r.b.r {gun.charge.reduced_burnrate:.2e} s^-1"
         )
         logger.info(logging_preamble + "END")
         return gun

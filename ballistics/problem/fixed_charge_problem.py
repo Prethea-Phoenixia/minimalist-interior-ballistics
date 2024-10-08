@@ -1,35 +1,24 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Tuple
+from typing import Tuple
 
 from attrs import frozen
 
-from .. import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
-                MINIMUM_BOMB_STATE_FREE_FRACTION)
-from ..charge import Charge, Propellant
+from .. import MINIMUM_BOMB_STATE_FREE_FRACTION
+from ..charge import Charge
 from ..gun import Gun
 from ..num import dekker
+from .base_problem import BaseProblem
 from .pressure_target import PressureTarget
-
-if TYPE_CHECKING:
-    from ..form_function import FormFunction
-
 
 logger = logging.getLogger(__name__)
 
 
 @frozen(kw_only=True)
-class FixedChargeProblem:
-    propellant: Propellant
-    form_function: FormFunction
+class FixedChargeProblem(BaseProblem):
 
-    cross_section: float
-    shot_mass: float
     charge_mass: float
-    travel: float
-    loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
-    start_pressure: float = DEFAULT_GUN_START_PRESSURE
 
     def get_test_gun(self, reduced_burnrate: float, chamber_volume: float) -> Gun:
         charge = Charge.from_propellant(
@@ -107,7 +96,76 @@ class FixedChargeProblem:
 
         logger.info(
             logging_preamble
-            + f"-> chamber from {lower_limit * 1e3:.2f} L to {upper_limit * 1e3:.2f} L"
+            + f"-> chamber from {lower_limit * 1e3:.3f} L to {upper_limit * 1e3:.3f} L"
         )
         logger.info(logging_preamble + "END")
         return lower_limit, upper_limit
+
+    def solve_reduced_burn_rate_for_volume_at_pressure(
+        self,
+        *,
+        chamber_volume: float,
+        pressure_target: PressureTarget,
+        n_intg: int,
+        acc: float,
+        logging_preamble: str = "",
+        **kwargs,
+    ) -> Gun:
+        """
+        solves the reduced burn rate such that the peak pressure developed in bore
+        matches the desired value. This is the outer, user facing function that validates
+        the input by checking against the calculated chamber volume limits. Implementation
+        is instead under `BaseProblem.solve_reduced_burn_rate_at_pressure` method.
+
+        Parameters
+        ----------
+        chamber_volume: float
+            volume of the chamber.
+        pressure_target: float, `ballistics.problem.pressure_target.PressureTarget`
+            the pressure to target, along with its point-of-measurement.
+        n_intg, acc: int, float
+            parameter passed to `ballistics.gun.Gun.to_burnout`. In addition, `acc`
+            specifies the relative accuracy to which the reduced burn-rate is solved to,
+            using an iterative procedure.
+
+        Raises
+        ------
+        ValueError
+            if the specified charge mass is either too low or too high for this
+            gun design.
+
+        Returns
+        -------
+        gun: `ballistics.gun.Gun` object
+            the gun corresponding to this solution.
+
+        """
+        logger.info(logging_preamble + "MATCH PRESSURE PROBLEM")
+        logger.info(logging_preamble + f"{pressure_target.describe()} ->")
+        min_vol, max_vol = self.get_chamber_volume_limits(
+            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
+        )
+
+        valid_range_prompt = (
+            f"valid range of chamber_volume: [{min_vol * 1e3:.3f} L, {max_vol * 1e3:.3f} L]"
+        )
+        if chamber_volume < min_vol:
+            raise ValueError(
+                "specified chamber not enough to prevent miniimum bomb state free fraction constraint violation.\n"
+                + valid_range_prompt
+            )
+        elif chamber_volume > max_vol:
+            raise ValueError(
+                "specified chamber volume too large for the targeted pressure to develop.\n"
+                + valid_range_prompt
+            )
+
+        gun = self.solve_reduced_burn_rate_at_pressure(
+            charge_mass=self.charge_mass,
+            chamber_volume=chamber_volume,
+            pressure_target=pressure_target,
+            n_intg=n_intg,
+            acc=acc,
+        )
+        logger.info(logging_preamble + "END")
+        return gun
