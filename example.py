@@ -40,12 +40,12 @@ if __name__ == "__main__":
         acc=1e-4,
     )
 
-    # g = p.solve_charge_mass_at_velocity_and_pressure(
-    #     pressure_target=PressureTarget.average_pressure(value=268e6),
-    #     velocity_target=680,
-    #     n_intg=10,
-    #     acc=1e-3,
-    # )
+    g = p.solve_charge_mass_at_velocity_and_pressure(
+        pressure_target=PressureTarget.average_pressure(value=268e6),
+        velocity_target=680,
+        n_intg=10,
+        acc=1e-3,
+    )
 
     q = FixedChargeProblem(
         cross_section=0.469e-2,
@@ -76,6 +76,13 @@ if __name__ == "__main__":
     q.solve_reduced_burn_rate_for_volume_at_pressure(
         chamber_volume=1.484e-3,
         pressure_target=PressureTarget.average_pressure(value=268e6),
+        n_intg=100,
+        acc=1e-3,
+    )
+
+    q.solve_chamber_volume_at_velocity_and_pressure(
+        pressure_target=PressureTarget.average_pressure(value=268e6),
+        velocity_target=680,
         n_intg=100,
         acc=1e-3,
     )

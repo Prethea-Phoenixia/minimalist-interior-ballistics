@@ -29,10 +29,10 @@ class PressureTarget:
 
     @classmethod
     def shot_pressure(cls, value: float):
-        return cls(value, target=cls.shot)
+        return cls(value, target=cls.SHOT)
 
     def retrieve_from(self, state: State) -> float:
         return getattr(state, self.target)
 
     def describe(self) -> str:
-        return self.target.replace("_", " ") + f" of {self.value * 1e-6:.2f} MPa"
+        return self.target.replace("_", " ") + f" of {self.value * 1e-6:.3f} MPa"

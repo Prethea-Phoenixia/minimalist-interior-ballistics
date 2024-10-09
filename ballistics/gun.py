@@ -198,6 +198,23 @@ class Gun:
 
         return states
 
+    def get_velocity_post_burnout(self, burnout_state: State, travel: float) -> float:
+        l_k, v_k = burnout_state.travel, burnout_state.velocity
+        l_1 = self.l_0 * (1 - self.incompressible_fraction(1))
+        v_j = self.velocity_limit
+        theta = self.charge.theta
+        return (1 - (1 - (v_k / v_j) ** 2) / ((l_1 + travel) / (l_1 + l_k)) ** theta) ** 0.5 * v_j
+
+    def get_travel_post_burnout(self, burnout_state: State, velocity: float) -> float:
+        l_k, v_k = burnout_state.travel, burnout_state.velocity
+        l_1 = self.l_0 * (1 - self.incompressible_fraction(1))
+        v_j = self.velocity_limit
+        theta = self.charge.theta
+
+        return (l_1 + l_k) * ((1 - (velocity / v_j) ** 2) / (1 - (v_k / v_j) ** 2)) ** (
+            -1 / theta
+        ) - l_1
+
     def to_burnout(
         self,
         n_intg: int,
@@ -291,7 +308,7 @@ class Gun:
 
         return self.mark_max_pressure(states=states, acc=acc)
 
-    def to_travel(self, travel: float, n_intg: int, acc: float) -> StateList:
+    def to_travel(self, *, travel: float, n_intg: int, acc: float) -> StateList:
         """
         Conducts integration up to the desired shot-travel using time-wise ODE, if
         the travel is greater than burnout point. Then, length-wise ODE is used
@@ -313,9 +330,24 @@ class Gun:
         state = max(states)
 
         if states.has_state_with_marker(Significance.BURNOUT):
-            dt = (max(states).time - min(states).time) / len(states)
-            next_state = self.propagate_rk4(state=state, dt=dt)
+            burnout_state = states.get_state_by_marker(Significance.BURNOUT)
 
+            # use the analytical function to estimate mv.
+            v_muzzle = self.get_velocity_post_burnout(burnout_state=burnout_state, travel=travel)
+            v_burnout = burnout_state.velocity
+
+            # estimate the number of steps needed to be taken
+            v_average = (v_muzzle + v_burnout) * 0.5
+            ttm_est = (travel - burnout_state.travel) / v_average
+
+            """
+            use a step size that is the greater of
+            > previous step size in `to_burnout`
+            > a conservative estimate of the time to muzzle `ttm_est`, divided by `n_intg`.
+            """
+            dt = max((max(states).time - min(states).time) / len(states), ttm_est / n_intg)
+
+            next_state = self.propagate_rk4(state=state, dt=dt)
             while next_state.travel < travel:
                 states.append(state := next_state)
                 next_state = self.propagate_rk4(state=state, dt=dt)
@@ -326,43 +358,43 @@ class Gun:
 
         return self.mark_max_pressure(states=states, acc=acc)
 
-    def to_velocity(self, velocity: float, n_intg: int, acc: float) -> StateList:
-        """
-        Conducts integration up to the desired velocity using velocity-wise ODE
-        from burnout point to muzzle exit. Calls `.to_burnout` for integration up
-        to the burnout point.
-        Parameters
-        ----------
-        velocity: float
-            the projectile velocity to which the integration is done to.
-        n_intg, acc: int, float
-            see documentation for `Gun.to_burnout`.
+    # def to_velocity(self, velocity: float, n_intg: int, acc: float) -> StateList:
+    #     """
+    #     Conducts integration up to the desired velocity using velocity-wise ODE
+    #     from burnout point to muzzle exit. Calls `.to_burnout` for integration up
+    #     to the burnout point.
+    #     Parameters
+    #     ----------
+    #     velocity: float
+    #         the projectile velocity to which the integration is done to.
+    #     n_intg, acc: int, float
+    #         see documentation for `Gun.to_burnout`.
 
-        Returns
-        -------
-        list of `ballistics.state.State`.
+    #     Returns
+    #     -------
+    #     list of `ballistics.state.State`.
 
-        """
+    #     """
 
-        states = self.to_burnout(n_intg=n_intg, acc=acc, abort_velocity=velocity)
-        state = max(states)
+    #     states = self.to_burnout(n_intg=n_intg, acc=acc, abort_velocity=velocity)
+    #     state = max(states)
 
-        if states.has_state_with_marker(Significance.BURNOUT):
+    #     if states.has_state_with_marker(Significance.BURNOUT):
 
-            dt = (max(states).time - min(states).time) / len(states)
-            next_state = self.propagate_rk4(state=state, dt=dt)
+    #         dt = (max(states).time - min(states).time) / len(states)
+    #         next_state = self.propagate_rk4(state=state, dt=dt)
 
-            while next_state.velocity < velocity:
-                states.append(state := next_state)
-                next_state = self.propagate_rk4(state=state, dt=dt)
+    #         while next_state.velocity < velocity:
+    #             states.append(state := next_state)
+    #             next_state = self.propagate_rk4(state=state, dt=dt)
 
-        states.append(
-            self.propagate_rk4(
-                state=state, dv=velocity - state.velocity, marker=Significance.MUZZLE
-            )
-        )
+    #     states.append(
+    #         self.propagate_rk4(
+    #             state=state, dv=velocity - state.velocity, marker=Significance.MUZZLE
+    #         )
+    #     )
 
-        return self.mark_max_pressure(states=states, acc=acc)
+    #     return self.mark_max_pressure(states=states, acc=acc)
 
     def mark_max_pressure(self, states: StateList, acc: float) -> StateList:
         """
