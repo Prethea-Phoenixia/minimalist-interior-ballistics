@@ -16,6 +16,7 @@ class Significance(Enum):
     INTERMEDIATE = "x"
     STEP = ""
     BOMB = "bomb"
+    ADIABAT = "adiabat"
 
 
 _g_0 = 9.806
@@ -31,7 +32,7 @@ rate.
 """
 
 REDUCED_BURN_RATE_INITIAL_GUESS = 1.0
-MINIMUM_BOMB_STATE_FREE_FRACTION = 0.1
+
 
 # DEFAULT_GUN_MIN_GROSS_LOAD_DENSITY = 200
 # DEFAULT_GUN_MAX_GROSS_LOAD_DENSITY = 1200

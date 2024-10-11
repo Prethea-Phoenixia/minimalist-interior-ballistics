@@ -29,7 +29,9 @@ class BaseProblem:
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
 
-    def get_gun(self, *, reduced_burnrate: float, charge_mass: float, chamber_volume: float) -> Gun:
+    def get_gun(
+        self, *, charge_mass: float, chamber_volume: float, reduced_burnrate: float = 0
+    ) -> Gun:
         charge = Charge.from_propellant(
             reduced_burnrate=reduced_burnrate,
             propellant=self.propellant,
@@ -65,6 +67,7 @@ class BaseProblem:
                 chamber_volume=chamber_volume,
             )
             states = test_gun.to_burnout(n_intg=n_intg, acc=acc, abort_travel=self.travel)
+            # logger.info(states.tabulate())
             delta_p = (
                 pressure_target.retrieve_from(
                     states.get_state_by_marker(Significance.PEAK_PRESSURE)
@@ -100,8 +103,8 @@ class BaseProblem:
 
         logger.info(
             logging_preamble
-            + f"charge {charge_mass:.2f} kg, volume {chamber_volume * 1e3:.2f} L "
-            + f"-> r.b.r {est:.2e} s^-1"
+            + f"SOLVE REDUCED BURN RATE charge {charge_mass:.3f} kg, volume {chamber_volume * 1e3:.3f} L"
+            + f" -> GUN r.b.r {est:.2e} s^-1 END"
         )
 
         return self.get_gun(

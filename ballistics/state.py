@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 from collections import UserList
 from functools import cached_property
+from math import inf
 from typing import TYPE_CHECKING, Iterable, Optional
 
 from attrs import field, frozen
@@ -62,9 +63,10 @@ class State:
         """
         l, v = self.travel, self.velocity
         l_psi = self.gun.l_0 * (1 - self.gun.incompressible_fraction(self.volume_burnup_fraction))
-        p = self.gun.gas_energy(self.volume_burnup_fraction, v) / (self.gun.S * (l_psi + l))
-
-        return p
+        if l_psi <= 0:
+            return inf
+        else:
+            return self.gun.gas_energy(self.volume_burnup_fraction, v) / (self.gun.S * (l_psi + l))
 
     @cached_property
     def shot_pressure(self) -> float:

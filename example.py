@@ -1,6 +1,6 @@
 import logging
 
-from ballistics.charge import Charge, Propellant
+from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.problem import (FixedChargeProblem, FixedVolumeProblem,
                                 PressureTarget)
@@ -9,7 +9,13 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        filename="example.log",
+        format="[%(asctime)s] [%(levelname)8s] %(message)s",  # (%(filename)s:%(lineno)s),
+        datefmt="%Y-%m-%d %H:%M:%S",
+        filemode="w+",
+    )
     logger.info("Started")
     p = FixedVolumeProblem(
         cross_section=0.469e-2,
@@ -42,7 +48,7 @@ if __name__ == "__main__":
 
     g = p.solve_charge_mass_at_velocity_and_pressure(
         pressure_target=PressureTarget.average_pressure(value=268e6),
-        velocity_target=680,
+        velocity_target=650,
         n_intg=10,
         acc=1e-3,
     )
@@ -52,11 +58,11 @@ if __name__ == "__main__":
         shot_mass=6.2,
         charge_mass=1.08,
         travel=2.687,
-        loss_fraction=0.1,
+        loss_fraction=0.02,
         start_pressure=30e6,
         propellant=Propellant(
             density=1600,
-            force=950000 * 0.98,
+            force=950000 / 0.98,
             pressure_exponent=0.83,
             covolume=1e-3,
             adiabatic_index=1.2,
@@ -69,22 +75,24 @@ if __name__ == "__main__":
         ),
     )
 
-    q.get_chamber_volume_limits(
-        pressure_target=PressureTarget.average_pressure(value=268e6), acc=1e-3
-    )
+    # q.get_chamber_volume_limits(
+    #     pressure_target=PressureTarget.average_pressure(value=268e6), acc=1e-3
+    # )
 
     q.solve_reduced_burn_rate_for_volume_at_pressure(
         chamber_volume=1.484e-3,
         pressure_target=PressureTarget.average_pressure(value=268e6),
-        n_intg=100,
+        n_intg=10,
         acc=1e-3,
     )
 
-    q.solve_chamber_volume_at_velocity_and_pressure(
-        pressure_target=PressureTarget.average_pressure(value=268e6),
-        velocity_target=680,
-        n_intg=100,
-        acc=1e-3,
+    print(
+        q.solve_chamber_volume_at_velocity_and_pressure(
+            pressure_target=PressureTarget.average_pressure(value=268e6),
+            velocity_target=680,
+            n_intg=10,
+            acc=1e-3,
+        )
     )
 
     logger.info("ended")

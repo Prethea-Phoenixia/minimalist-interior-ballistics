@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import logging
-from typing import Tuple
+from functools import cached_property
+from typing import Optional, Tuple
 
 from attrs import frozen
 
-from .. import MINIMUM_BOMB_STATE_FREE_FRACTION, Significance
+from .. import Significance
 from ..gun import Gun
-from ..num import dekker
+from ..num import dekker, gss_max
 from .base_problem import BaseProblem
 from .pressure_target import PressureTarget
 
@@ -23,12 +24,16 @@ class FixedVolumeProblem(BaseProblem):
 
     chamber_volume: float
 
-    def get_gun(self, *, reduced_burnrate: float, charge_mass: float, **kwargs) -> Gun:
+    def get_gun(self, *, charge_mass: float, reduced_burnrate: float = 0, **kwargs) -> Gun:
         return super().get_gun(
             reduced_burnrate=reduced_burnrate,
             charge_mass=charge_mass,
             chamber_volume=self.chamber_volume,
         )
+
+    @cached_property
+    def chamber_fill_mass(self) -> float:
+        return self.chamber_volume * self.propellant.density
 
     def get_charge_mass_limits(
         self, *, pressure_target: PressureTarget, acc: float, logging_preamble: str = ""
@@ -57,8 +62,7 @@ class FixedVolumeProblem(BaseProblem):
         gun's bomb-pressure to at least the targeted pressure levels.
 
         The upper limit is found when the complete combustion of charge within
-        chamber reduces volumetric free fraction to less than specified in module wide
-        constant `ballistics.MINIMUM_BOMB_STATE_FREE_FRACTION`, since the Nobel-Abel
+        chamber reduces volumetric free fraction to less than `acc`, since the Nobel-Abel
         equation of state does not model high pressure (and correspondingly
         high incompressibility) well.
 
@@ -67,29 +71,28 @@ class FixedVolumeProblem(BaseProblem):
         upper limit. Care is taken such that the returned limits, being numerically
         solved, errs on the conservative side.
         """
-        logger.info(logging_preamble + "CHARGE LIMIT")
-        logger.info(logging_preamble + f"{pressure_target.describe()} ->")
 
         def f_ff(charge_mass: float) -> float:
-            test_gun = self.get_gun(reduced_burnrate=1, charge_mass=charge_mass)
-            return test_gun.bomb_free_fraction - MINIMUM_BOMB_STATE_FREE_FRACTION
+            test_gun = self.get_gun(charge_mass=charge_mass)
+            return test_gun.bomb_free_fraction - acc
 
-        chamber_fill_mass = self.chamber_volume * self.propellant.density
+        chamber_fill_mass = self.chamber_fill_mass
 
         upper_limit = min(dekker(f_ff, 0, chamber_fill_mass, tol=chamber_fill_mass * acc))
 
         def f_p(charge_mass: float) -> float:
             # note this is defined on [0, chamber_fill_mass]
-            test_gun = self.get_gun(reduced_burnrate=1, charge_mass=charge_mass)
+            test_gun = self.get_gun(charge_mass=charge_mass)
             test_gun_bomb_pressure = pressure_target.retrieve_from(test_gun.get_bomb_state())
             return test_gun_bomb_pressure - pressure_target.value
 
         lower_limit = max(dekker(f_p, 0, upper_limit, tol=chamber_fill_mass * acc))
-
         logger.info(
-            logging_preamble + f"-> charge from {lower_limit:.3f} kg to {upper_limit:.3f} kg"
+            logging_preamble
+            + "CHARGE LIMIT"
+            + f" {pressure_target.describe()} -> "
+            + f"charge from {lower_limit:.3f} kg to {upper_limit:.3f} kg END"
         )
-        logger.info(logging_preamble + "END")
         return lower_limit, upper_limit
 
     def solve_reduced_burn_rate_for_charge_at_pressure(
@@ -131,8 +134,9 @@ class FixedVolumeProblem(BaseProblem):
             the gun corresponding to this solution.
 
         """
-        logger.info(logging_preamble + "MATCH PRESSURE PROBLEM")
-        logger.info(logging_preamble + f"{pressure_target.describe()} ->")
+        logger.info(
+            logging_preamble + "MATCH PRESSURE PROBLEM " + f"{pressure_target.describe()} ->"
+        )
         min_mass, max_mass = self.get_charge_mass_limits(
             pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
@@ -154,8 +158,9 @@ class FixedVolumeProblem(BaseProblem):
             pressure_target=pressure_target,
             n_intg=n_intg,
             acc=acc,
+            logging_preamble=logging_preamble + "\t",
         )
-        logger.info(logging_preamble + "END")
+        logger.info(logging_preamble + f"-> GUN r.b.r {gun.charge.reduced_burnrate:.2e} s^-1 END")
 
         return gun
 
@@ -167,13 +172,13 @@ class FixedVolumeProblem(BaseProblem):
         n_intg: int,
         acc: float,
         logging_preamble: str = "",
-    ) -> Gun:
-        logger.info(logging_preamble + "MATCH VELOCITY AND PRESSURE PROBLEM")
+    ) -> Tuple[Optional[Gun], Optional[Gun]]:
         logger.info(
             logging_preamble
+            + "MATCH VELOCITY AND PRESSURE PROBLEM "
             + f"velocity of {velocity_target:.1f} m/s, {pressure_target.describe()} ->"
         )
-        min_mass, max_mass = self.get_charge_mass_limits(
+        mass_min, mass_max = self.get_charge_mass_limits(
             pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
 
@@ -184,38 +189,56 @@ class FixedVolumeProblem(BaseProblem):
                 pressure_target=pressure_target,
                 n_intg=n_intg,
                 acc=acc,
-                logging_preamble=logging_preamble,
+                logging_preamble=logging_preamble + "\t",
             )
             states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
             muzzle_state = states.get_state_by_marker(significance=Significance.MUZZLE)
 
             return muzzle_state.velocity - velocity_target
 
-        dv_min = f(charge_mass=min_mass)
-        dv_max = f(charge_mass=max_mass)
-        logger.info(logging_preamble + "VELOCITY RANGE")
+        dv_mass_min = f(charge_mass=mass_min)
+        dv_mass_max = f(charge_mass=mass_max)
+
+        mass_opt = (
+            sum(gss_max(f=f, x_0=mass_min, x_1=mass_max, tol=self.chamber_fill_mass * acc)) * 0.5
+        )
+
+        dv_min = min(dv_mass_min, dv_mass_max)
+        dv_max = f(mass_opt)
+
         logger.info(
             logging_preamble
-            + f"-> velocity from {velocity_target + dv_min:.3f} to {velocity_target + dv_max:.3f} m/s"
+            + f"VELOCITY RANGE -> velocity from {velocity_target + dv_min:.3f} to {velocity_target + dv_max:.3f} m/s"
         )
         if not dv_min < 0 < dv_max:
             raise ValueError(
                 "targeted velocity is not achievable in the range of valid loading condition."
             )
 
-        # target velocity is achievable, find the corresponding charge mass to get it.
-        charge_mass, _ = dekker(f=f, x_0=min_mass, x_1=max_mass, tol=acc)
-        gun = self.solve_reduced_burn_rate_at_pressure(
-            charge_mass=charge_mass,
-            chamber_volume=self.chamber_volume,
-            pressure_target=pressure_target,
-            n_intg=n_intg,
-            acc=acc,
-        )
+        def g(mass_i: float, mass_j: float, dv_i: float, dv_j: float) -> Optional[Gun]:
+            if dv_i <= 0 <= dv_j:
+                # target velocity is achievable, find the corresponding charge mass to get it.
+                charge_mass, _ = dekker(
+                    f=f, x_0=mass_i, x_1=mass_j, tol=acc * self.chamber_fill_mass
+                )
+                gun = self.solve_reduced_burn_rate_at_pressure(
+                    charge_mass=charge_mass,
+                    chamber_volume=self.chamber_volume,
+                    pressure_target=pressure_target,
+                    n_intg=n_intg,
+                    acc=acc,
+                    logging_preamble=logging_preamble + "\t",
+                )
 
-        logger.info(
-            logging_preamble
-            + f"-> charge mass {charge_mass:.3f} kg, r.b.r {gun.charge.reduced_burnrate:.2e} s^-1"
+                logger.info(
+                    logging_preamble
+                    + f"-> GUN charge mass {charge_mass:.3f} kg, r.b.r {gun.charge.reduced_burnrate:.2e} s^-1 END"
+                )
+                return gun
+            else:
+                return None
+
+        return (
+            g(mass_i=mass_min, mass_j=mass_opt, dv_i=dv_mass_min, dv_j=dv_max),
+            g(mass_i=mass_opt, mass_j=mass_max, dv_i=dv_max, dv_j=dv_mass_max),
         )
-        logger.info(logging_preamble + "END")
-        return gun

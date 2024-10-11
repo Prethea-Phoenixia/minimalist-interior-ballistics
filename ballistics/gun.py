@@ -348,6 +348,7 @@ class Gun:
             dt = max((max(states).time - min(states).time) / len(states), ttm_est / n_intg)
 
             next_state = self.propagate_rk4(state=state, dt=dt)
+
             while next_state.travel < travel:
                 states.append(state := next_state)
                 next_state = self.propagate_rk4(state=state, dt=dt)
@@ -423,7 +424,10 @@ class Gun:
             s_i, s_j, s_k = states[i], states[j], states[k]
 
             def time_pressure(time: float) -> float:
-                p_t = self.propagate_rk4(state=s_j, dt=time - s_j.time).average_pressure
+                if s_i.time <= time < s_j.time:
+                    p_t = self.propagate_rk4(state=s_i, dt=time - s_i.time).average_pressure
+                elif s_j.time <= time < s_k.time:
+                    p_t = self.propagate_rk4(state=s_j, dt=time - s_j.time).average_pressure
                 return p_t
 
             time_pmax = (
