@@ -234,12 +234,13 @@ class FixedVolumeProblem(BaseProblem):
                 logger.info(
                     logging_preamble
                     + f"-> GUN charge mass {charge_mass:.3f} kg, "
-                    + f"r.b.r {gun.charge.reduced_burnrate:.2e} s^-1 END"
+                    + f"r.b.r {gun.charge.reduced_burnrate:.2e} s^-1s"
                 )
                 return gun
             else:
                 return None
 
+        logger.info(logging_preamble + "END")
         return (
             g(mass_i=mass_min, mass_j=mass_opt, dv_i=dv_mass_min, dv_j=dv_max),
             g(mass_i=mass_opt, mass_j=mass_max, dv_i=dv_max, dv_j=dv_mass_max),
