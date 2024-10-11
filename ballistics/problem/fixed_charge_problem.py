@@ -153,7 +153,8 @@ class FixedChargeProblem(BaseProblem):
         )
         if chamber_volume < min_vol:
             raise ValueError(
-                "specified chamber not enough to prevent miniimum bomb state free fraction constraint violation.\n"
+                "specified chamber volume too small to accomodate charge incompressibility"
+                + " at bomb state.\n"
                 + valid_range_prompt
             )
         elif chamber_volume > max_vol:
@@ -216,7 +217,8 @@ class FixedChargeProblem(BaseProblem):
 
         logger.info(
             logging_preamble
-            + f"VELOCITY RANGE -> velocity from {velocity_target + dv_min:.3f} to {velocity_target + dv_opt:.3f} m/s"
+            + f"VELOCITY RANGE -> velocity from {velocity_target + dv_min:.3f} "
+            + f"to {velocity_target + dv_opt:.3f} m/s"
         )
         if not dv_min < 0 < dv_opt:
             raise ValueError(
@@ -240,7 +242,8 @@ class FixedChargeProblem(BaseProblem):
 
                 logger.info(
                     logging_preamble
-                    + f"-> GUN chamber {chamber_volume * 1e3:.3f} L, r.b.r {gun.charge.reduced_burnrate:.2e} s^-1"
+                    + f"-> GUN chamber {chamber_volume * 1e3:.3f} L, "
+                    + f"r.b.r {gun.charge.reduced_burnrate:.2e} s^-1"
                 )
                 return gun
             else:

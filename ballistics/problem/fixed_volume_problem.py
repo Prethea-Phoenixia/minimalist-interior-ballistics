@@ -208,7 +208,8 @@ class FixedVolumeProblem(BaseProblem):
 
         logger.info(
             logging_preamble
-            + f"VELOCITY RANGE -> velocity from {velocity_target + dv_min:.3f} to {velocity_target + dv_max:.3f} m/s"
+            + f"VELOCITY RANGE -> velocity from {velocity_target + dv_min:.3f} to "
+            + f"{velocity_target + dv_max:.3f} m/s"
         )
         if not dv_min < 0 < dv_max:
             raise ValueError(
@@ -232,7 +233,8 @@ class FixedVolumeProblem(BaseProblem):
 
                 logger.info(
                     logging_preamble
-                    + f"-> GUN charge mass {charge_mass:.3f} kg, r.b.r {gun.charge.reduced_burnrate:.2e} s^-1 END"
+                    + f"-> GUN charge mass {charge_mass:.3f} kg, "
+                    + f"r.b.r {gun.charge.reduced_burnrate:.2e} s^-1 END"
                 )
                 return gun
             else:
