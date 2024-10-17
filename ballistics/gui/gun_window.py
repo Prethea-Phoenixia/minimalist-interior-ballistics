@@ -7,6 +7,7 @@ from typing import Callable, Optional, Tuple, Union
 
 from ..gun import Gun
 from . import DEFAULT_ENTRY_WIDTH, DEFAULT_PAD
+from .misc import tree_selected
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,8 @@ class DefineGunWindow(Toplevel):
             self.add_label_entry_label_groups(i, v)
             for i, v in enumerate(
                 [
+                    ("Name", basis.name if basis else None, ""),
+                    ("Description", basis.description if basis else None, ""),
                     ("Cross Section", basis.cross_section if basis else None, "dm²"),
                     ("Shot Mass", basis.shot_mass if basis else None, "kg"),
                     ("Charge Mass", basis.charge_mass if basis else None, "kg"),
@@ -40,8 +43,29 @@ class DefineGunWindow(Toplevel):
 
         self.gun = None
 
+    def define_gun(self):
+        try:
+            cross_section, shot_mass, charge_mass, chamber_volume, loss_fraction, start_pressure = (
+                float(e.get()) for e in self.value_entries[2:]
+            )
+
+            self.gun = Gun(
+                cross_section=cross_section,
+                shot_mass=shot_mass,
+                charge_mass=charge_mass,
+                chamber_volume=chamber_volume,
+                loss_fraction=loss_fraction,
+                start_pressure=start_pressure,
+                description=self.value_entries[1].get(),
+                name=self.value_entries[0].get(),
+            )
+            self.destroy()
+
+        except ValueError as e:
+            logger.error(e)
+
     def add_label_entry_label_groups(
-        self, row, values: Tuple[str, Optional[Union[int, float]], str]
+        self, row, values: Tuple[str, Optional[Union[int, float, str]], str]
     ) -> Entry:
         label_text, entry_value, unit_text = values
         Label(self, text=label_text).grid(row=row, column=0, sticky="nsew", **DEFAULT_PAD)
@@ -52,48 +76,55 @@ class DefineGunWindow(Toplevel):
         Label(self, text=unit_text).grid(row=row, column=2, sticky="nsew", **DEFAULT_PAD)
         return e
 
-    def define_gun(self):
-        pass
-
 
 class GunFrame(Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=2)
         self.columnconfigure(1, weight=8)
 
-        self.tree = Treeview(self)
-        self.tree.grid(row=0, column=0, sticky="nsew")
+        # self.ops = GunOpsFrame(self, add_gun_func=self.add_gun)
+        # self.ops.grid(row=1, column=0, sticky="nsew")
 
-        self.ops = GunOpsFrame(self, add_gun_func=self.add_gun)
-        self.ops.grid(row=1, column=0, sticky="nsew")
+        button_frame = LabelFrame(self, text="Operations")
+        button_frame.grid(row=0, column=0, sticky="nsew")
+
+        add_button = Button(button_frame, text="Add/Edit Gun", command=self.add_edit_gun)
+        add_button.grid(row=0, column=0, sticky="nsew")
+
+        self.tree = Treeview(self)
+        self.tree.grid(row=1, column=0, sticky="nsew")
 
         overview_frame = OverviewPane(self)
         overview_frame.grid(row=0, column=1, rowspan=2, sticky="nsew")
 
         self.guns = {}
 
-    def add_gun(self):
-        dgw = DefineGunWindow(self)
+    @tree_selected
+    def add_edit_gun(self, tvid):
+        dgw = DefineGunWindow(self, basis=self.guns[tvid] if tvid else None)
         self.wait_window(dgw)
+        gun = dgw.gun
+        if gun:
+            self.add_gun(gun)
 
-        gun = dgw.get_gun()
-
-        gid = self.tree.insert("", "end", text="Gun")
+    def add_gun(self, gun: Gun):
+        gid = self.tree.insert(
+            "",
+            "end",
+            values=(
+                gun.name,
+                gun.description,
+                gun.cross_section,
+                gun.shot_mass,
+                gun.charge.name,
+                gun.charge_mass,
+                gun.chamber_volume,
+            ),
+        )
         self.guns[gid] = gun
-
-
-class GunOpsFrame(LabelFrame):
-    def __init__(self, *args, text="Operations", add_gun_func: Callable, **kwargs):
-        super().__init__(*args, text=text, **kwargs)
-
-        self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
-
-        self.add_button = Button(self, text="Add Gun", command=add_gun_func)
-        self.add_button.grid(row=0, column=0, sticky="nsew")
 
 
 class OverviewPane(LabelFrame):

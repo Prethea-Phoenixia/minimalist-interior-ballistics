@@ -116,7 +116,7 @@ class PropellantFrame(Frame):
         self.props = {}
 
     def add_prop(self, prop: Propellant):
-        pid = self.tree.insert(
+        tvid = self.tree.insert(
             "",
             "end",
             values=(
@@ -129,22 +129,21 @@ class PropellantFrame(Frame):
                 f"{prop.adiabatic_index:.3f}",
             ),
         )
-        self.props[pid] = prop
+        self.props[tvid] = prop
 
     @tree_selected
-    def add_edit_prop(self, pid):
-
-        dpw = DefinePropellantWindow(self, basis=self.props[pid] if pid else None)
+    def add_edit_prop(self, tvid):
+        dpw = DefinePropellantWindow(self, basis=self.props[tvid] if tvid else None)
         self.wait_window(dpw)
         prop = dpw.prop
         if prop:
             self.add_prop(prop)
 
     @tree_selected
-    def del_prop(self, pid):
-        if pid:
-            self.props.pop(pid)
-            self.tree.delete(pid)
+    def del_prop(self, tvid):
+        if tvid:
+            self.props.pop(tvid)
+            self.tree.delete(tvid)
 
     def load_props(self):
         try:

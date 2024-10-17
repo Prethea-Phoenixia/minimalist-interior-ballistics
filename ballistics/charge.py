@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import logging
 from functools import cached_property
-from typing import List, Tuple
+from typing import Tuple
 
 from attrs import field, frozen
 

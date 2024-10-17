@@ -6,7 +6,7 @@ from functools import cached_property
 from math import inf
 from typing import Dict
 
-from attrs import frozen
+from attrs import field, frozen
 
 from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
                Significance)
@@ -24,6 +24,8 @@ class Gun:
     and manages propellant charge.
     """
 
+    name: str = field(default="")
+    description: str = field(default="")
     cross_section: float
     shot_mass: float
     charge_mass: float
