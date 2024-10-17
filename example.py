@@ -7,8 +7,7 @@ from ballistics.problem import (FixedChargeProblem, FixedVolumeProblem,
 
 logger = logging.getLogger(__name__)
 
-
-if __name__ == "__main__":
+if __name__ in {"__main__", "__mp_main__"}:
     logging.basicConfig(
         level=logging.INFO,
         filename="example.log",
@@ -74,10 +73,6 @@ if __name__ == "__main__":
             shape=MultiPerfShape.SEVEN_PERF_CYLINDER,
         ),
     )
-
-    # q.get_chamber_volume_limits(
-    #     pressure_target=PressureTarget.average_pressure(value=268e6), acc=1e-3
-    # )
 
     q.solve_reduced_burn_rate_for_volume_at_pressure(
         chamber_volume=1.484e-3,

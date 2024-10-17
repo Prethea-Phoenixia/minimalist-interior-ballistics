@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import csv
+import logging
 from functools import cached_property
+from typing import List, Tuple
 
-from attrs import frozen
+from attrs import field, frozen
 
 from . import AMBIENT_PRESSURE
 from .form_function import FormFunction
+
+logger = logging.getLogger(__name__)
 
 
 @frozen(kw_only=True)
@@ -60,6 +65,8 @@ class Propellant:
 
     """
 
+    name: str = field(default="")
+    description: str = field(default="")
     density: float
     force: float
     pressure_exponent: float
@@ -69,6 +76,42 @@ class Propellant:
     @cached_property
     def theta(self) -> float:
         return self.adiabatic_index - 1
+
+    @staticmethod
+    def from_csv_file(file_name: str) -> Tuple[Propellant, ...]:
+        prop_list = []
+        with open(file_name, mode="r", encoding="utf-8") as file:
+            reader = csv.reader(file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            for row in reader:
+                try:
+                    (
+                        adiabatic_index,
+                        density,
+                        force,
+                        covolume,
+                        pressure_exponent,
+                        flame_temperature,
+                    ) = (float(v) for v in row[2:])
+
+                    name, description = row[:2]
+
+                    prop_list.append(
+                        Propellant(
+                            name=name,
+                            description=description,
+                            adiabatic_index=adiabatic_index,
+                            density=density,
+                            force=force,
+                            covolume=covolume,
+                            pressure_exponent=pressure_exponent,
+                        )
+                    )
+
+                except ValueError as e:
+                    logger.warn("skipped reading line: " + str(e))
+
+                # print(", ".join(row))
+        return tuple(prop_list)
 
 
 @frozen(kw_only=True)
@@ -111,7 +154,12 @@ class Charge(Propellant):
 
     @classmethod
     def from_propellant(
-        cls, reduced_burnrate: float, propellant: Propellant, form_function: FormFunction
+        cls,
+        reduced_burnrate: float,
+        propellant: Propellant,
+        form_function: FormFunction,
+        description: str = "",
+        name: str = "",
     ) -> Charge:
         """
         defines a charge with propellant and reduced burn rate.
@@ -129,6 +177,8 @@ class Charge(Propellant):
         """
 
         return cls(
+            name=name,
+            description=description,
             density=propellant.density,
             force=propellant.force,
             pressure_exponent=propellant.pressure_exponent,
