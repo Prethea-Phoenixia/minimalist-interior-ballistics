@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from tkinter import Toplevel, filedialog
+from tkinter import StringVar, Toplevel, filedialog
 from tkinter.ttk import Button, Frame, Label, LabelFrame, Scrollbar, Treeview
 from typing import Optional, Tuple
 
@@ -38,12 +38,12 @@ class DefinePropellantWindow(Toplevel):
             row=len(self.value_entries), column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
 
-        self.prop = None
-
-        self.error_label = Label(self, relief="sunken")
-        self.error_label.grid(
+        self.error_var = StringVar()
+        Label(self, relief="sunken", textvariable=self.error_var).grid(
             row=len(self.value_entries) + 1, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
+
+        self.prop = None
 
     def define_prop(self):
         try:
@@ -66,8 +66,8 @@ class DefinePropellantWindow(Toplevel):
             self.destroy()
 
         except ValueError as e:
-            self.error_label["text"] = str(e)
-            logger.error(e)
+            logger.info(str(e))
+            self.error_var.set(str(e))
 
 
 class PropellantFrame(Frame):

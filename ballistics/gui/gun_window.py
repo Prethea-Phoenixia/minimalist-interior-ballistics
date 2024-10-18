@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import logging
-from tkinter import Toplevel
+from tkinter import StringVar, Toplevel
 from tkinter.ttk import (Button, Combobox, Frame, Label, LabelFrame, Notebook,
                          Scrollbar, Treeview)
 from typing import Callable, Optional, Tuple
 
-from ..charge import Propellant
+from ..charge import Charge, Propellant
 from ..form_function import FormFunction, MultiPerfShape
 from ..gun import Gun
 from . import DEFAULT_PAD
@@ -55,39 +55,33 @@ class DefineGunWindow(Toplevel):
         self.prop_combo.grid(
             row=len(self.value_entries), column=1, columnspan=2, sticky="nsew", **DEFAULT_PAD
         )
-        if len(self.props) > 0:
-            self.prop_combo.current(0)
 
-        form_function_frame = FormFunctionFrame(self)
-        form_function_frame.grid(
+        self.form_function_frame = FormFunctionFrame(self)
+        self.form_function_frame.grid(
             row=len(self.value_entries) + 1, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
-
-        # charge_frame = LabelFrame(self, text="Charge Design")
-        # charge_frame.grid(
-        #     row=len(self.value_entries), column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
-        # )
-        # charge_frame.columnconfigure(0, weight=1)
-        # charge_frame.rowconfigure(0, weight=1)
-
-        # list_var = StringVar(value=[p.name for p in props])
-        # charge_box = Listbox(charge_frame, listvariable=list_var)
-        # charge_box.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
 
         button = Button(self, text="Confirm", command=self.define_gun)
         button.grid(
             row=len(self.value_entries) + 2, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
-        self.error_label = Label(self, relief="sunken")
-        self.error_label.grid(
+        self.error_var = StringVar()
+        Label(self, textvariable=self.error_var, relief="sunken").grid(
             row=len(self.value_entries) + 3, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
 
         self.gun = None
 
+    def get_prop(self) -> Optional[Propellant]:
+        i = self.prop_combo.current()
+        if i == -1:
+            raise ValueError("no propellant has been selected.")
+        else:
+            return self.props[i]
+
     def define_gun(self):
         try:
-            name, description = (e.get for e in self.value_entries[:2])
+            name, description = (e.get() for e in self.value_entries[:2])
             (
                 cross_section,
                 shot_mass,
@@ -103,14 +97,18 @@ class DefineGunWindow(Toplevel):
             start_pressure *= 1e6  # MPa to Pa
             loss_fraction *= 1e-2  # % to 1
 
-            # prop = self.props[self.prop_combo.current()]
-            # shape = self.shapes[self.shape_combo.current()]
+            charge = Charge.from_propellant(
+                reduced_burnrate=reduced_burnrate,
+                propellant=self.get_prop(),
+                form_function=self.form_function_frame.get_form_function(),
+            )
 
             self.gun = Gun(
                 name=name,
                 description=description,
                 cross_section=cross_section,
                 shot_mass=shot_mass,
+                charge=charge,
                 charge_mass=charge_mass,
                 chamber_volume=chamber_volume,
                 loss_fraction=loss_fraction,
@@ -118,8 +116,8 @@ class DefineGunWindow(Toplevel):
             )
             self.destroy()
 
-        except ValueError as e:
-            self.error_label["text"] = str(e)
+        except (ValueError, IndexError) as e:
+            self.error_var.set(str(e))
             logger.error(e)
 
 
@@ -163,14 +161,8 @@ class GunFrame(Frame):
             self.add_gun(gun)
 
     def add_gun(self, gun: Gun):
-        gid = self.tree.insert(
-            "",
-            "end",
-            values=(
-                gun.name,
-                gun.description,
-            ),
-        )
+        print(gun)
+        gid = self.tree.insert("", "end", text=gun.name)
         self.guns[gid] = gun
 
 
@@ -192,9 +184,6 @@ class FormFunctionFrame(LabelFrame):
         self.add_non_perf()
         self.add_single_perf()
         self.add_multi_perf()
-
-        self.error_label = Label(self, relief="sunken")
-        self.error_label.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
 
     def prepare_tab(self, tab_text: str) -> Frame:
         tab_frame = Frame(self.notebook)
@@ -231,7 +220,7 @@ class FormFunctionFrame(LabelFrame):
             values=tuple(shape.describe() for shape in self.multi_perf_shapes),
         )
         self.multi_perf_combo.grid(row=0, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD)
-        self.multi_perf_combo.current(0)
+        # self.multi_perf_combo.current(0)
 
         self.multi_perf_entries = tuple(
             add_label_entry_label_groups(multi_perf_frame, i, v)
@@ -247,30 +236,35 @@ class FormFunctionFrame(LabelFrame):
 
     def get_form_function(self) -> Optional[FormFunction]:
         tab_index = self.notebook.index(self.notebook.select())
-        try:
-            if tab_index == 0:
-                length, width, height = (e.get() for e in self.single_perf_entries)
-                return FormFunction.non_perf(length=length, width=width, height=height)
 
-            elif tab_index == 1:
-                arch_width, height = (e.get() for e in self.single_perf_entries)
-                return FormFunction.single_perf(arch_width=arch_width, height=height)
+        # try:
+        if tab_index == 0:
+            length, width, height = (float(e.get()) for e in self.non_perf_entries)
+            return FormFunction.non_perf(length=length, width=width, height=height)
 
-            elif tab_index == 2:
-                arch_width, perforation_diameter, height = (
-                    e.get() for e in self.multi_perf_entries
-                )
-                return FormFunction.multi_perf(
-                    arch_width=arch_width,
-                    perforation_diameter=perforation_diameter,
-                    height=height,
-                    shape=self.multi_perf_shapes[self.multi_perf_combo.current()],
-                )
+        elif tab_index == 1:
+            arch_width, height = (float(e.get()) for e in self.single_perf_entries)
+            return FormFunction.single_perf(arch_width=arch_width, height=height)
 
-        except ValueError as e:
-            self.error_label["text"] = str(e)
+        elif tab_index == 2:
+            arch_width, perforation_diameter, height = (
+                float(e.get()) for e in self.multi_perf_entries
+            )
+            return FormFunction.multi_perf(
+                arch_width=arch_width,
+                perforation_diameter=perforation_diameter,
+                height=height,
+                shape=self.get_shape(),
+            )
 
         return None
+
+    def get_shape(self):
+        i = self.multi_perf_combo.current()
+        if i == -1:
+            raise ValueError("no shape selected")
+        else:
+            return self.multi_perf_shapes[i]
 
 
 class OverviewFrame(LabelFrame):
