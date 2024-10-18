@@ -24,6 +24,10 @@ class MultiPerfShape(Enum):
     )
     # fmt: on
 
+    def describe(self) -> str:
+        desc, n, *_ = self.value
+        return f"{n}-perforated {desc}"
+
     def __call__(
         self, d_0: float, e_1: float
     ) -> Tuple[int, float, float, float, float, float, float]:

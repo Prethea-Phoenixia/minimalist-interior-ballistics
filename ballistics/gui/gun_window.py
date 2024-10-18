@@ -1,19 +1,28 @@
 from __future__ import annotations
 
 import logging
-from tkinter import Toplevel, filedialog
-from tkinter.ttk import Button, Entry, Frame, Label, LabelFrame, Treeview
-from typing import Callable, Optional, Tuple, Union
+from tkinter import Toplevel
+from tkinter.ttk import (Button, Combobox, Frame, Label, LabelFrame, Notebook,
+                         Scrollbar, Treeview)
+from typing import Callable, Optional, Tuple
 
+from ..charge import Propellant
+from ..form_function import FormFunction, MultiPerfShape
 from ..gun import Gun
-from . import DEFAULT_ENTRY_WIDTH, DEFAULT_PAD
-from .misc import tree_selected
+from . import DEFAULT_PAD
+from .misc import add_label_entry_label_groups, tree_selected
 
 logger = logging.getLogger(__name__)
 
 
 class DefineGunWindow(Toplevel):
-    def __init__(self, *args, basis: Optional[Gun] = None, **kwargs):
+    def __init__(
+        self,
+        *args,
+        basis: Optional[Gun] = None,
+        get_props_func: Callable[[], Tuple[Propellant]],
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         # self.master = master
 
@@ -21,90 +30,133 @@ class DefineGunWindow(Toplevel):
         self.columnconfigure(1, weight=1)
 
         self.value_entries = tuple(
-            self.add_label_entry_label_groups(i, v)
+            add_label_entry_label_groups(self, i, v)
             for i, v in enumerate(
                 [
                     ("Name", basis.name if basis else None, ""),
                     ("Description", basis.description if basis else None, ""),
-                    ("Cross Section", basis.cross_section if basis else None, "dm²"),
+                    ("Cross Section", basis.cross_section * 1e2 if basis else None, "dm²"),
                     ("Shot Mass", basis.shot_mass if basis else None, "kg"),
                     ("Charge Mass", basis.charge_mass if basis else None, "kg"),
-                    ("Chamber Volume", basis.charge_volume if basis else None, "L"),
-                    ("Loss Fraction", basis.loss_fraction if basis else None, "%"),
-                    ("Start Pressure", basis.start_pressure if basis else None, "MPa"),
+                    ("Chamber Volume", basis.charge_volume * 1e3 if basis else None, "L"),
+                    ("Loss Fraction", basis.loss_fraction * 1e2 if basis else None, "%"),
+                    ("Start Pressure", basis.start_pressure * 1e-6 if basis else None, "MPa"),
+                    ("Reduced Burn Rate", basis.charge.reduced_burnrate if basis else None, "/s"),
                 ]
             )
         )
 
+        Label(self, text="Propellant").grid(
+            row=len(self.value_entries), column=0, sticky="nsew", **DEFAULT_PAD
+        )
+
+        self.props = get_props_func()
+        self.prop_combo = Combobox(self, state="readonly", values=tuple(p.name for p in self.props))
+        self.prop_combo.grid(
+            row=len(self.value_entries), column=1, columnspan=2, sticky="nsew", **DEFAULT_PAD
+        )
+        if len(self.props) > 0:
+            self.prop_combo.current(0)
+
+        form_function_frame = FormFunctionFrame(self)
+        form_function_frame.grid(
+            row=len(self.value_entries) + 1, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+        )
+
+        # charge_frame = LabelFrame(self, text="Charge Design")
+        # charge_frame.grid(
+        #     row=len(self.value_entries), column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+        # )
+        # charge_frame.columnconfigure(0, weight=1)
+        # charge_frame.rowconfigure(0, weight=1)
+
+        # list_var = StringVar(value=[p.name for p in props])
+        # charge_box = Listbox(charge_frame, listvariable=list_var)
+        # charge_box.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+
         button = Button(self, text="Confirm", command=self.define_gun)
         button.grid(
-            row=len(self.value_entries), column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+            row=len(self.value_entries) + 2, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+        )
+        self.error_label = Label(self, relief="sunken")
+        self.error_label.grid(
+            row=len(self.value_entries) + 3, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
 
         self.gun = None
 
     def define_gun(self):
         try:
-            cross_section, shot_mass, charge_mass, chamber_volume, loss_fraction, start_pressure = (
-                float(e.get()) for e in self.value_entries[2:]
-            )
+            name, description = (e.get for e in self.value_entries[:2])
+            (
+                cross_section,
+                shot_mass,
+                charge_mass,
+                chamber_volume,
+                loss_fraction,
+                start_pressure,
+                reduced_burnrate,
+            ) = (float(e.get()) for e in self.value_entries[2:])
+
+            cross_section *= 1e-2  # dm^2 to m^2
+            chamber_volume *= 1e-3  # L to m^3
+            start_pressure *= 1e6  # MPa to Pa
+            loss_fraction *= 1e-2  # % to 1
+
+            # prop = self.props[self.prop_combo.current()]
+            # shape = self.shapes[self.shape_combo.current()]
 
             self.gun = Gun(
+                name=name,
+                description=description,
                 cross_section=cross_section,
                 shot_mass=shot_mass,
                 charge_mass=charge_mass,
                 chamber_volume=chamber_volume,
                 loss_fraction=loss_fraction,
                 start_pressure=start_pressure,
-                description=self.value_entries[1].get(),
-                name=self.value_entries[0].get(),
             )
             self.destroy()
 
         except ValueError as e:
+            self.error_label["text"] = str(e)
             logger.error(e)
-
-    def add_label_entry_label_groups(
-        self, row, values: Tuple[str, Optional[Union[int, float, str]], str]
-    ) -> Entry:
-        label_text, entry_value, unit_text = values
-        Label(self, text=label_text).grid(row=row, column=0, sticky="nsew", **DEFAULT_PAD)
-        e = Entry(self, width=DEFAULT_ENTRY_WIDTH)  # entry width is in characters
-        e.delete(0, "end")
-        e.insert(0, f"{entry_value}" if entry_value else "")
-        e.grid(row=row, column=1, sticky="nsew", **DEFAULT_PAD)
-        Label(self, text=unit_text).grid(row=row, column=2, sticky="nsew", **DEFAULT_PAD)
-        return e
 
 
 class GunFrame(Frame):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, get_props_func=Callable[[], Tuple[Propellant]], **kwargs):
+        self.get_props_func = get_props_func
         super().__init__(*args, **kwargs)
 
         self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=2)
-        self.columnconfigure(1, weight=8)
-
-        # self.ops = GunOpsFrame(self, add_gun_func=self.add_gun)
-        # self.ops.grid(row=1, column=0, sticky="nsew")
+        self.columnconfigure(2, weight=8)
 
         button_frame = LabelFrame(self, text="Operations")
-        button_frame.grid(row=0, column=0, sticky="nsew")
+        button_frame.grid(row=0, column=0, columnspan=2, sticky="nsew", **DEFAULT_PAD)
 
         add_button = Button(button_frame, text="Add/Edit Gun", command=self.add_edit_gun)
-        add_button.grid(row=0, column=0, sticky="nsew")
+        add_button.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
 
-        self.tree = Treeview(self)
-        self.tree.grid(row=1, column=0, sticky="nsew")
+        self.tree = Treeview(self, show="tree")
 
-        overview_frame = OverviewPane(self)
-        overview_frame.grid(row=0, column=1, rowspan=2, sticky="nsew")
+        vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
+        vsb.grid(row=1, column=1, sticky="nsew", **DEFAULT_PAD)
+
+        self.tree.config(yscrollcommand=vsb.set)
+
+        self.tree.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
+
+        overview_frame = OverviewFrame(self)
+        overview_frame.grid(row=0, column=2, rowspan=2, sticky="nsew", **DEFAULT_PAD)
 
         self.guns = {}
 
     @tree_selected
     def add_edit_gun(self, tvid):
-        dgw = DefineGunWindow(self, basis=self.guns[tvid] if tvid else None)
+        dgw = DefineGunWindow(
+            self, basis=self.guns[tvid] if tvid else None, get_props_func=self.get_props_func
+        )
         self.wait_window(dgw)
         gun = dgw.gun
         if gun:
@@ -117,17 +169,111 @@ class GunFrame(Frame):
             values=(
                 gun.name,
                 gun.description,
-                gun.cross_section,
-                gun.shot_mass,
-                gun.charge.name,
-                gun.charge_mass,
-                gun.chamber_volume,
             ),
         )
         self.guns[gid] = gun
 
 
-class OverviewPane(LabelFrame):
+class FormFunctionFrame(LabelFrame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, text="Geometry", **kwargs)
+
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        self.notebook = Notebook(self)
+        self.notebook.enable_traversal()
+        self.notebook.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+
+        self.notebook.columnconfigure(0, weight=1)
+        self.notebook.rowconfigure(0, weight=1)
+
+        # this order is depended upon for correct functioning of the program.
+        self.add_non_perf()
+        self.add_single_perf()
+        self.add_multi_perf()
+
+        self.error_label = Label(self, relief="sunken")
+        self.error_label.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
+
+    def prepare_tab(self, tab_text: str) -> Frame:
+        tab_frame = Frame(self.notebook)
+        tab_frame.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+        tab_frame.columnconfigure(1, weight=1)
+        self.notebook.add(tab_frame, text=tab_text)
+        return tab_frame
+
+    def add_non_perf(self):
+        non_perf_frame = self.prepare_tab("Non Perf.")
+
+        self.non_perf_entries = tuple(
+            add_label_entry_label_groups(non_perf_frame, i, v)
+            for i, v in enumerate(
+                [("Length", None, "mm"), ("Width", None, "mm"), ("Height", None, "mm")]
+            )
+        )
+
+    def add_single_perf(self):
+        single_perf_frame = self.prepare_tab("Single Perf.")
+
+        self.single_perf_entries = tuple(
+            add_label_entry_label_groups(single_perf_frame, i, v)
+            for i, v in enumerate([("Arch Width", None, "mm"), ("Height", None, "mm")])
+        )
+
+    def add_multi_perf(self):
+        multi_perf_frame = self.prepare_tab("Muliple Perf.")
+
+        self.multi_perf_shapes = tuple(mps for mps in MultiPerfShape)
+        self.multi_perf_combo = Combobox(
+            multi_perf_frame,
+            state="readonly",
+            values=tuple(shape.describe() for shape in self.multi_perf_shapes),
+        )
+        self.multi_perf_combo.grid(row=0, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD)
+        self.multi_perf_combo.current(0)
+
+        self.multi_perf_entries = tuple(
+            add_label_entry_label_groups(multi_perf_frame, i, v)
+            for i, v in enumerate(
+                [
+                    ("Arch Width", None, "mm"),
+                    ("Perforation Diameter", None, "mm"),
+                    ("Height", None, "mm"),
+                ],
+                1,
+            )
+        )
+
+    def get_form_function(self) -> Optional[FormFunction]:
+        tab_index = self.notebook.index(self.notebook.select())
+        try:
+            if tab_index == 0:
+                length, width, height = (e.get() for e in self.single_perf_entries)
+                return FormFunction.non_perf(length=length, width=width, height=height)
+
+            elif tab_index == 1:
+                arch_width, height = (e.get() for e in self.single_perf_entries)
+                return FormFunction.single_perf(arch_width=arch_width, height=height)
+
+            elif tab_index == 2:
+                arch_width, perforation_diameter, height = (
+                    e.get() for e in self.multi_perf_entries
+                )
+                return FormFunction.multi_perf(
+                    arch_width=arch_width,
+                    perforation_diameter=perforation_diameter,
+                    height=height,
+                    shape=self.multi_perf_shapes[self.multi_perf_combo.current()],
+                )
+
+        except ValueError as e:
+            self.error_label["text"] = str(e)
+
+        return None
+
+
+class OverviewFrame(LabelFrame):
     def __init__(self, *args, text="Overview", **kwargs):
         super().__init__(*args, text=text, **kwargs)
 

@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import logging
 from tkinter import Toplevel, filedialog
-from tkinter.ttk import (Button, Entry, Frame, Label, LabelFrame, Scrollbar,
-                         Treeview)
-from typing import Optional, Tuple, Union
+from tkinter.ttk import Button, Frame, Label, LabelFrame, Scrollbar, Treeview
+from typing import Optional, Tuple
 
 from ..charge import Propellant
-from . import DEFAULT_ENTRY_WIDTH, DEFAULT_PAD
-from .misc import tree_selected
+from . import DEFAULT_PAD
+from .misc import add_label_entry_label_groups, tree_selected
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +20,7 @@ class DefinePropellantWindow(Toplevel):
         self.columnconfigure(1, weight=1)
 
         self.value_entries = tuple(
-            self.add_label_entry_label_groups(i, v)
+            add_label_entry_label_groups(self, i, v)
             for i, v in enumerate(
                 [
                     ("Name", basis.name if basis else None, ""),
@@ -40,6 +39,11 @@ class DefinePropellantWindow(Toplevel):
         )
 
         self.prop = None
+
+        self.error_label = Label(self, relief="sunken")
+        self.error_label.grid(
+            row=len(self.value_entries) + 1, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+        )
 
     def define_prop(self):
         try:
@@ -62,19 +66,8 @@ class DefinePropellantWindow(Toplevel):
             self.destroy()
 
         except ValueError as e:
+            self.error_label["text"] = str(e)
             logger.error(e)
-
-    def add_label_entry_label_groups(
-        self, row, values: Tuple[str, Optional[Union[int, float, str]], str]
-    ) -> Entry:
-        label_text, entry_value, unit_text = values
-        Label(self, text=label_text).grid(row=row, column=0, sticky="nsew", **DEFAULT_PAD)
-        e = Entry(self, width=DEFAULT_ENTRY_WIDTH)  # entry width is in characters
-        e.delete(0, "end")
-        e.insert(0, f"{entry_value}" if entry_value else "")
-        e.grid(row=row, column=1, sticky="nsew", **DEFAULT_PAD)
-        Label(self, text=unit_text).grid(row=row, column=2, sticky="nsew", **DEFAULT_PAD)
-        return e
 
 
 class PropellantFrame(Frame):
@@ -100,8 +93,9 @@ class PropellantFrame(Frame):
         self.tree.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
         button_frame = LabelFrame(self, text="Operations")
         button_frame.grid(row=0, column=0, columnspan=2, sticky="nsew", **DEFAULT_PAD)
-        # for i in range(2):
-        #     button_frame.columnconfigure(i, weight=1)
+
+        for i in range(3):
+            button_frame.columnconfigure(i, weight=1)
 
         # button_frame.column
         add_edit_button = Button(button_frame, text="Add/Edit", command=self.add_edit_prop)

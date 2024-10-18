@@ -26,12 +26,14 @@ class MainFrame(Frame):
         notebook.rowconfigure(0, weight=1)
         notebook.columnconfigure(0, weight=1)
 
-        gun_selection_frame = GunFrame(notebook)
-        gun_selection_frame.grid(row=0, column=0, sticky="nsew")
-        notebook.add(gun_selection_frame, text="Gun Design(s)")
-
         propellant_selection_frame = PropellantFrame(notebook)
         propellant_selection_frame.grid(row=0, column=0, sticky="nsew")
+
+        gun_selection_frame = GunFrame(
+            notebook, get_props_func=propellant_selection_frame.get_props
+        )
+        gun_selection_frame.grid(row=0, column=0, sticky="nsew")
+        notebook.add(gun_selection_frame, text="Gun Design(s)")
         notebook.add(propellant_selection_frame, text="Propellants")
 
 
