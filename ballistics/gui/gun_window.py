@@ -38,7 +38,7 @@ class DefineGunWindow(Toplevel):
                     ("Cross Section", basis.cross_section * 1e2 if basis else None, "dm²"),
                     ("Shot Mass", basis.shot_mass if basis else None, "kg"),
                     ("Charge Mass", basis.charge_mass if basis else None, "kg"),
-                    ("Chamber Volume", basis.charge_volume * 1e3 if basis else None, "L"),
+                    ("Chamber Volume", basis.chamber_volume * 1e3 if basis else None, "L"),
                     ("Loss Fraction", basis.loss_fraction * 1e2 if basis else None, "%"),
                     ("Start Pressure", basis.start_pressure * 1e-6 if basis else None, "MPa"),
                     ("Reduced Burn Rate", basis.charge.reduced_burnrate if basis else None, "/s"),
@@ -161,9 +161,15 @@ class GunFrame(Frame):
             self.add_gun(gun)
 
     def add_gun(self, gun: Gun):
-        print(gun)
+
         gid = self.tree.insert("", "end", text=gun.name)
         self.guns[gid] = gun
+
+    @tree_selected
+    def del_gun(self, tvid):
+        if tvid:
+            self.guns.pop(tvid)
+            self.tree.delete(tvid)
 
 
 class FormFunctionFrame(LabelFrame):
