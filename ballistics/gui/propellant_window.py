@@ -6,8 +6,8 @@ from tkinter.ttk import Button, Frame, LabelFrame, Scrollbar, Treeview
 from typing import Optional, Tuple
 
 from ..charge import Propellant
-from . import DEFAULT_PAD
-from .misc import add_label_entry_label_groups, tree_selected
+from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
+from .misc import add_label_entry_label_group, tree_selected
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class DefinePropellantWindow(Toplevel):
         self.columnconfigure(1, weight=1)
 
         self.value_entries = tuple(
-            add_label_entry_label_groups(self, i, *v)
+            add_label_entry_label_group(self, i, *v)
             for i, v in enumerate(
                 [
                     ("Name", "", basis.name + " (copy)" if basis else None),
@@ -49,7 +49,9 @@ class DefinePropellantWindow(Toplevel):
         description_frame.columnconfigure(0, weight=1)
         description_frame.rowconfigure(0, weight=1)
 
-        self.text = Text(description_frame, width=40, height=10, wrap="none")
+        self.text = Text(
+            description_frame, width=DEFAULT_TEXT_WIDTH, height=DEFAULT_TEXT_HEIGHT, wrap="none"
+        )
         self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
         self.text.insert("end", basis.description if basis else "")
 
@@ -63,7 +65,7 @@ class DefinePropellantWindow(Toplevel):
     def define_prop(self):
         try:
             density, force, pressure_exponent, covolume, adiabatic_index = (
-                float(e.get()) for e in self.value_entries[1:-1]
+                float(sv.get()) for sv in self.value_entries[1:-1]
             )
             brcs = self.value_entries[-1].get()
             burn_rate_coefficient = float(brcs) * 1e-9 if brcs else None
@@ -95,7 +97,7 @@ class PropellantFrame(Frame):
         self.columnconfigure(2, weight=8)
         self.rowconfigure(1, weight=1)
 
-        cols = ("name", "ρ g/cm³", "f J/g", "n", "ɑ cm³/g", "γ", "u_1 (nm/s)/Paⁿ")
+        cols = ("name", "ρ g/cm³", "f J/g", "n", "ɑ cm³/g", "γ", "u (nm/s)/Paⁿ")
         widths = (200, 100, 100, 100, 100, 100, 200)
 
         self.tree = Treeview(self, columns=cols, show="headings", selectmode="browse")
@@ -116,7 +118,11 @@ class PropellantFrame(Frame):
         overview_frame.rowconfigure(0, weight=1)
         overview_frame.columnconfigure(0, weight=1)
         self.overview_text = Text(
-            overview_frame, state="disabled", width=40, height=10, wrap="none"
+            overview_frame,
+            state="disabled",
+            width=DEFAULT_TEXT_WIDTH,
+            height=DEFAULT_TEXT_HEIGHT,
+            wrap="none",
         )
         self.overview_text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
 

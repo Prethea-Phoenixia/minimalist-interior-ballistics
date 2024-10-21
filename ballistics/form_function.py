@@ -5,7 +5,7 @@ from functools import cached_property
 from math import pi
 from typing import Tuple
 
-from attrs import frozen
+from attrs import field, frozen
 
 
 class MultiPerfShape(Enum):
@@ -30,10 +30,11 @@ class MultiPerfShape(Enum):
 
     def __call__(
         self, d_0: float, e_1: float
-    ) -> Tuple[int, float, float, float, float, float, float]:
+    ) -> Tuple[str, int, float, float, float, float, float, float]:
         desc, n, A, B, C, b_factors, a_factors, rho_ratio = self.value
 
         return (
+            desc,
             n,
             A,
             B,
@@ -113,6 +114,8 @@ class FormFunction:
     - **[中文]** 张小兵，金志明（2014）枪炮内弹道学，北京理工大学出版社，第一章1.3小节
     """
 
+    name: str = field(default="")
+    description: str = field(default="")
     chi: float
     labda: float
     mu: float
@@ -187,7 +190,13 @@ class FormFunction:
         e_1, b, c = (0.5 * v for v in sorted([length, width, height]))
         alpha, beta = e_1 / b, e_1 / c
         chi = 1 + alpha + beta
-        return cls(chi=chi, labda=-(alpha + beta + alpha * beta) / chi, mu=alpha * beta / chi)
+        return cls(
+            name="grain",
+            description=f"{e_1*2:.1f} x {b*2:.1f} x {c*2:.1f} mm",
+            chi=chi,
+            labda=-(alpha + beta + alpha * beta) / chi,
+            mu=alpha * beta / chi,
+        )
 
     @classmethod
     def single_perf(cls, arch_width: float, height: float) -> FormFunction:
@@ -207,7 +216,13 @@ class FormFunction:
         # effectively the case for above where width = +inf
         e_1, c = (0.5 * v for v in (arch_width, height))
         beta = e_1 / c
-        return cls(chi=1 + beta, labda=-beta / (1 + beta), mu=0)
+        return cls(
+            name="tube",
+            description=f"{e_1*2:.1f} / 1 - {c*2:.1f} mm",
+            chi=1 + beta,
+            labda=-beta / (1 + beta),
+            mu=0,
+        )
 
     @classmethod
     def multi_perf(
@@ -240,7 +255,7 @@ class FormFunction:
         # n = n_perforations
         rho_base = e_1 + 0.5 * d_0
 
-        n, A, B, C, b, a, rho_ratio = shape(d_0=d_0, e_1=e_1)
+        desc, n, A, B, C, b, a, rho_ratio = shape(d_0=d_0, e_1=e_1)
         rho = rho_ratio * rho_base
         Pi = (A * b + B * d_0) / (2 * c)
         Q = (C * a**2 + A * b**2 - B * d_0**2) / (2 * c) ** 2
@@ -253,6 +268,8 @@ class FormFunction:
             )
 
         return cls(
+            name=f"{n} perf {desc}",
+            description=f"{e_1*2:.1f} / {n} (d = {d_0:.1f}) - {c*2:.1f} mm",
             chi=beta * (Q + 2 * Pi) / Q,
             labda=labda,
             mu=beta**2 * (1 - n) / (Q + 2 * Pi),

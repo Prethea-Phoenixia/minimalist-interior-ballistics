@@ -11,8 +11,8 @@ from typing import Callable, Optional, Tuple
 from ..charge import Charge, Propellant
 from ..form_function import FormFunction, MultiPerfShape
 from ..gun import Gun
-from . import DEFAULT_PAD
-from .misc import add_label_entry_label_groups, tree_selected
+from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
+from .misc import add_label_entry_label_group, tree_selected
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class DefineGunWindow(Toplevel):
         self.columnconfigure(1, weight=1)
 
         self.value_entries = tuple(
-            add_label_entry_label_groups(self, i, *v)
+            add_label_entry_label_group(self, i, *v)
             for i, v in enumerate(
                 [
                     ("Name", "", basis.name + " (copy)" if basis else None),
@@ -42,7 +42,11 @@ class DefineGunWindow(Toplevel):
                     ("Chamber Volume", "L", basis.chamber_volume * 1e3 if basis else None),
                     ("Loss Fraction", "%", basis.loss_fraction * 1e2 if basis else None),
                     ("Start Pressure", "MPa", basis.start_pressure * 1e-6 if basis else None),
-                    ("Reduced Burn Rate", "/s", basis.charge.reduced_burnrate if basis else None),
+                    (
+                        "Reduced Burn Rate",
+                        "/ns",
+                        basis.charge.reduced_burnrate * 1e9 if basis else None,
+                    ),
                 ]
             )
         )
@@ -64,7 +68,9 @@ class DefineGunWindow(Toplevel):
         description_frame.columnconfigure(0, weight=1)
         description_frame.rowconfigure(0, weight=1)
 
-        self.text = Text(description_frame, width=40, height=10, wrap="none")
+        self.text = Text(
+            description_frame, width=DEFAULT_TEXT_WIDTH, height=DEFAULT_TEXT_HEIGHT, wrap="none"
+        )
         self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
         self.text.insert("end", basis.description if basis else "")
 
@@ -104,11 +110,17 @@ class DefineGunWindow(Toplevel):
             chamber_volume *= 1e-3  # L to m^3
             start_pressure *= 1e6  # MPa to Pa
             loss_fraction *= 1e-2  # % to 1
+            reduced_burnrate *= 1e-9  # ns to s
 
+            prop = self.get_prop()
+            ff = self.form_function_frame.get_form_function()
+            # the charge name is automatically generated.
             charge = Charge.from_propellant(
+                name=" ".join((prop.name, ff.name)),
+                description=ff.description,
                 reduced_burnrate=reduced_burnrate,
-                propellant=self.get_prop(),
-                form_function=self.form_function_frame.get_form_function(),
+                propellant=prop,
+                form_function=ff,
             )
 
             self.gun = Gun(
@@ -138,18 +150,101 @@ class GunFrame(Frame):
         self.columnconfigure(2, weight=8)
 
         self.tree = Treeview(self, show="tree", selectmode="browse")
-
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
         vsb.grid(row=1, column=1, sticky="nsew", **DEFAULT_PAD)
-
         self.tree.config(yscrollcommand=vsb.set)
-
         self.tree.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
+        self.tree.bind("<<TreeviewSelect>>", self.set_overview)
 
         self.overview_frame = LabelFrame(self, text="Overview")
         self.overview_frame.grid(row=0, column=2, rowspan=2, sticky="nsew", **DEFAULT_PAD)
+        self.overview_frame.columnconfigure(0, weight=1)
+        self.overview_frame.columnconfigure(1, weight=1)
+        self.overview_frame.columnconfigure(2, weight=1)
+        self.overview_frame.columnconfigure(3, weight=1)
+
+        top_param_frame = Frame(self.overview_frame)
+        top_param_frame.grid(row=0, column=1, columnspan=2, sticky="nsew", **DEFAULT_PAD)
+        top_param_frame.columnconfigure(1, weight=1)
+
+        self.top_params = tuple(
+            add_label_entry_label_group(top_param_frame, i, *v, disabled=True)
+            for i, v in enumerate([("Charge Name", ""), ("Charge Desc.", "")])
+        )
+
+        left_param_frame = Frame(self.overview_frame)
+        left_param_frame.grid(row=1, column=1, stick="nsew", **DEFAULT_PAD)
+        left_param_frame.columnconfigure(1, weight=1)
+        self.left_params = tuple(
+            add_label_entry_label_group(left_param_frame, i, *v, disabled=True)
+            for i, v in enumerate(
+                [("Cross Section", "dm²"), ("Shot Mass", "kg"), ("Charge Mass", "kg")]
+            )
+        )
+
+        mid_param_frame = Frame(self.overview_frame)
+        mid_param_frame.grid(row=1, column=2, stick="nsew", **DEFAULT_PAD)
+        mid_param_frame.columnconfigure(1, weight=1)
+        self.mid_params = tuple(
+            add_label_entry_label_group(mid_param_frame, i, *v, disabled=True)
+            for i, v in enumerate(
+                [("Chamber Vol.", "L"), ("Start Pressure", "MPa"), ("Loss Fraction", "%")]
+            )
+        )
+
+        right_param_frame = Frame(self.overview_frame)
+        right_param_frame.grid(row=0, column=3, rowspan=2, stick="nsew", **DEFAULT_PAD)
+        right_param_frame.columnconfigure(1, weight=1)
+        self.right_params = tuple(
+            add_label_entry_label_group(right_param_frame, i, *v, disabled=True)
+            for i, v in enumerate([("χ", ""), ("λ", ""), ("μ", ""), ("Zₖ", ""), ("u/e", "/ns")])
+        )
+
+        self.overview_text = Text(
+            self.overview_frame,
+            state="disabled",
+            width=DEFAULT_TEXT_WIDTH,
+            height=DEFAULT_TEXT_HEIGHT,
+            wrap="none",
+        )
+        self.overview_text.grid(row=0, column=0, rowspan=2, sticky="nsew", **DEFAULT_PAD)
 
         self.guns = {}
+
+    @tree_selected
+    def set_overview(self, *args, tvid, **kwargs):
+        self.overview_text.config(state="normal")
+        self.overview_text.delete(1.0, "end")
+        if tvid:
+            gun = self.guns[tvid]
+            self.overview_text.insert("insert", gun.description)
+
+            for v, sv in zip(
+                (gun.charge.name, gun.charge.description),
+                self.top_params,
+            ):
+                sv.set(v)
+
+            for v, sv in zip(
+                (gun.cross_section * 1e2, gun.shot_mass, gun.charge_mass),
+                self.left_params,
+            ):
+                sv.set(v)
+
+            for v, sv in zip(
+                (gun.chamber_volume * 1e3, gun.start_pressure * 1e-6, gun.loss_fraction * 1e2),
+                self.mid_params,
+            ):
+                sv.set(v)
+
+            ff = gun.charge.form_function
+            for v, sv in zip(
+                (ff.chi, ff.labda, ff.mu, ff.Z_k, gun.charge.reduced_burnrate * 1e9),
+                self.right_params,
+            ):
+                sv.set(v)
+
+        self.overview_text.config(state="disabled")
 
     @tree_selected
     def add_edit_gun(self, tvid):
@@ -217,7 +312,7 @@ class FormFunctionFrame(LabelFrame):
         non_perf_frame = self.prepare_tab("Non Perf.")
 
         self.non_perf_entries = tuple(
-            add_label_entry_label_groups(non_perf_frame, i, *v)
+            add_label_entry_label_group(non_perf_frame, i, *v)
             for i, v in enumerate([("Length", "mm"), ("Width", "mm"), ("Height", "mm")])
         )
 
@@ -225,7 +320,7 @@ class FormFunctionFrame(LabelFrame):
         single_perf_frame = self.prepare_tab("Single Perf.")
 
         self.single_perf_entries = tuple(
-            add_label_entry_label_groups(single_perf_frame, i, *v)
+            add_label_entry_label_group(single_perf_frame, i, *v)
             for i, v in enumerate([("Arch Width", "mm"), ("Height", "mm")])
         )
 
@@ -241,7 +336,7 @@ class FormFunctionFrame(LabelFrame):
         self.multi_perf_combo.grid(row=0, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD)
 
         self.multi_perf_entries = tuple(
-            add_label_entry_label_groups(multi_perf_frame, i, *v)
+            add_label_entry_label_group(multi_perf_frame, i, *v)
             for i, v in enumerate(
                 [
                     ("Arch Width", "mm"),
@@ -257,16 +352,16 @@ class FormFunctionFrame(LabelFrame):
 
         # try:
         if tab_index == 0:
-            length, width, height = (float(e.get()) for e in self.non_perf_entries)
+            length, width, height = (float(sv.get()) for sv in self.non_perf_entries)
             return FormFunction.non_perf(length=length, width=width, height=height)
 
         elif tab_index == 1:
-            arch_width, height = (float(e.get()) for e in self.single_perf_entries)
+            arch_width, height = (float(sv.get()) for sv in self.single_perf_entries)
             return FormFunction.single_perf(arch_width=arch_width, height=height)
 
         elif tab_index == 2:
             arch_width, perforation_diameter, height = (
-                float(e.get()) for e in self.multi_perf_entries
+                float(sv.get()) for sv in self.multi_perf_entries
             )
             return FormFunction.multi_perf(
                 arch_width=arch_width,
