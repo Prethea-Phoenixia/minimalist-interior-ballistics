@@ -104,8 +104,11 @@ class MainFrame(Frame):
         edit_menu.add_command(label="Add/Copy Propellant", command=propellant_frame.add_edit_prop)
         edit_menu.add_command(label="Delete Propellant", command=propellant_frame.del_prop)
 
-        file_menu.add_cascade(label="Load Propellant(s)", command=propellant_frame.load_props)
+        file_menu.add_command(label="Save Gun(s)", command=gun_frame.save_guns)
+        file_menu.add_command(label="Load Gun(s)", command=gun_frame.load_guns)
         file_menu.add_separator()
+
+        file_menu.add_command(label="Load Propellant(s)", command=propellant_frame.load_props)
 
 
 def main():

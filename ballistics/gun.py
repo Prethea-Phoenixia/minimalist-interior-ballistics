@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import json
 import logging
 from bisect import insort
 from functools import cached_property
 from math import inf
-from typing import Dict
+from typing import Dict, Iterable, List, Tuple
 
 from attrs import field, frozen
+from cattrs import Converter
 
 from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
                Significance)
@@ -34,6 +36,29 @@ class Gun:
 
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
+
+    def to_json(self):
+        converter = Converter()
+        return converter.unstructure(self)
+
+    @staticmethod
+    def from_json(json_dict: Dict) -> Gun:
+        converter = Converter()
+        return converter.structure(json_dict, Gun)
+
+    @staticmethod
+    def to_file(guns: Iterable[Gun], filename: str):
+        with open(filename, mode="w", encoding="utf-8") as f:
+            json.dump([gun.to_json() for gun in guns], f, ensure_ascii=False, indent="\t")
+
+    @staticmethod
+    def from_file(filename: str) -> Tuple[Gun, ...]:
+        guns = []
+        with open(filename, mode="r", encoding="utf-8") as f:
+            for json_dict in json.load(f):
+                guns.append(Gun.from_json(json_dict))
+
+        return tuple(guns)
 
     @cached_property
     def l_0(self) -> float:

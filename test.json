@@ -1,0 +1,56 @@
+[
+	{
+		"name": "",
+		"description": "",
+		"cross_section": 0.00469,
+		"shot_mass": 6.2,
+		"charge_mass": 1.08,
+		"charge": {
+			"name": "",
+			"description": "",
+			"burn_rate_coefficient": null,
+			"density": 1600,
+			"force": 969387.7551020408,
+			"pressure_exponent": 0.83,
+			"covolume": 0.001,
+			"adiabatic_index": 1.2,
+			"reduced_burnrate": 3.68611287932923e-05,
+			"form_function": {
+				"chi": 0.7149122807017545,
+				"labda": 0.2208588957055215,
+				"mu": -0.024539877300613498,
+				"Z_k": 1.4433999999999998
+			}
+		},
+		"chamber_volume": 0.001484,
+		"loss_fraction": 0.02,
+		"start_pressure": 30000000.0
+	},
+	{
+		"name": "",
+		"description": "",
+		"cross_section": 0.00469,
+		"shot_mass": 6.2,
+		"charge_mass": 1.08,
+		"charge": {
+			"name": "",
+			"description": "",
+			"burn_rate_coefficient": null,
+			"density": 1600,
+			"force": 969387.7551020408,
+			"pressure_exponent": 0.83,
+			"covolume": 0.001,
+			"adiabatic_index": 1.2,
+			"reduced_burnrate": 3.68611287932923e-05,
+			"form_function": {
+				"chi": 0.7149122807017545,
+				"labda": 0.2208588957055215,
+				"mu": -0.024539877300613498,
+				"Z_k": 1.4433999999999998
+			}
+		},
+		"chamber_volume": 0.001484,
+		"loss_fraction": 0.02,
+		"start_pressure": 30000000.0
+	}
+]

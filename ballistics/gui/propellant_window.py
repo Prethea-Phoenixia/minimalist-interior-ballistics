@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import logging
-from tkinter import StringVar, Text, Toplevel, filedialog
-from tkinter.ttk import Button, Frame, Label, LabelFrame, Scrollbar, Treeview
+from tkinter import Text, Toplevel, filedialog
+from tkinter.ttk import Button, Frame, LabelFrame, Scrollbar, Treeview
 from typing import Optional, Tuple
 
 from ..charge import Propellant
@@ -16,7 +16,7 @@ class DefinePropellantWindow(Toplevel):
     def __init__(self, *args, basis: Optional[Propellant] = None, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.title("Define Propellant")
+        self.title("Define Propellant (* fields are optional)")
         self.columnconfigure(1, weight=1)
 
         self.value_entries = tuple(

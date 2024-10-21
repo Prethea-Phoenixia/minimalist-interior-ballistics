@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from tkinter import StringVar, Text, Toplevel
+from tkinter.filedialog import askopenfilename
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import (Button, Combobox, Frame, Label, LabelFrame, Notebook,
                          Scrollbar, Treeview)
@@ -88,7 +89,7 @@ class DefineGunWindow(Toplevel):
 
     def define_gun(self):
         try:
-            name = self.value_entry[0].get()
+            name = self.value_entries[0].get()
             (
                 cross_section,
                 shot_mass,
@@ -136,7 +137,7 @@ class GunFrame(Frame):
         self.columnconfigure(0, weight=2)
         self.columnconfigure(2, weight=8)
 
-        self.tree = Treeview(self, show="tree")
+        self.tree = Treeview(self, show="tree", selectmode="browse")
 
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
         vsb.grid(row=1, column=1, sticky="nsew", **DEFAULT_PAD)
@@ -159,6 +160,21 @@ class GunFrame(Frame):
         gun = dgw.gun
         if gun:
             self.add_gun(gun)
+
+    def save_guns(self):
+        fn = askopenfilename(
+            parent=self, title="Save To File", filetypes=[("JavaScript Object Notation", ".json")]
+        )
+        if fn:
+            Gun.to_file(guns=self.guns.values(), filename=fn)
+
+    def load_guns(self):
+        fn = askopenfilename(
+            parent=self, title="Load From File", filetypes=[("JavaScript Object Notation", ".json")]
+        )
+        if fn:
+            for gun in Gun.from_file(filename=fn):
+                self.add_gun(gun)
 
     def add_gun(self, gun: Gun):
         gid = self.tree.insert("", "end", text=gun.name)

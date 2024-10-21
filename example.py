@@ -2,6 +2,7 @@ import logging
 
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
+from ballistics.gun import Gun
 from ballistics.problem import (FixedChargeProblem, FixedVolumeProblem,
                                 PressureTarget)
 
@@ -10,10 +11,10 @@ logger = logging.getLogger(__name__)
 if __name__ in {"__main__", "__mp_main__"}:
     logging.basicConfig(
         level=logging.INFO,
-        filename="example.log",
+        # filename="example.log",
         format="[%(asctime)s] [%(levelname)8s] %(message)s",  # (%(filename)s:%(lineno)s),
         datefmt="%Y-%m-%d %H:%M:%S",
-        filemode="w+",
+        # filemode="w+",
     )
     logger.info("Started")
     p = FixedVolumeProblem(
@@ -38,19 +39,19 @@ if __name__ in {"__main__", "__mp_main__"}:
         ),
     )
 
-    g = p.solve_reduced_burn_rate_for_charge_at_pressure(
-        charge_mass=1.08,
-        pressure_target=PressureTarget.average_pressure(value=268e6),
-        n_intg=100,
-        acc=1e-4,
-    )
+    # g = p.solve_reduced_burn_rate_for_charge_at_pressure(
+    #     charge_mass=1.08,
+    #     pressure_target=PressureTarget.average_pressure(value=268e6),
+    #     n_intg=100,
+    #     acc=1e-4,
+    # )
 
-    g = p.solve_charge_mass_at_velocity_and_pressure(
-        pressure_target=PressureTarget.average_pressure(value=268e6),
-        velocity_target=650,
-        n_intg=10,
-        acc=1e-3,
-    )
+    # g = p.solve_charge_mass_at_velocity_and_pressure(
+    #     pressure_target=PressureTarget.average_pressure(value=268e6),
+    #     velocity_target=650,
+    #     n_intg=10,
+    #     acc=1e-3,
+    # )
 
     q = FixedChargeProblem(
         cross_section=0.469e-2,
@@ -74,7 +75,7 @@ if __name__ in {"__main__", "__mp_main__"}:
         ),
     )
 
-    q.solve_reduced_burn_rate_for_volume_at_pressure(
+    g = q.solve_reduced_burn_rate_for_volume_at_pressure(
         chamber_volume=1.484e-3,
         pressure_target=PressureTarget.average_pressure(value=268e6),
         n_intg=10,
@@ -89,6 +90,10 @@ if __name__ in {"__main__", "__mp_main__"}:
             acc=1e-3,
         )
     )
+
+    Gun.to_file([g, g], "test.json")
+
+    Gun.from_file(filename="test.json")
 
     logger.info("ended")
 
