@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import codecs
 import csv
 import logging
 from functools import cached_property
-from typing import Tuple
+from typing import Optional, Tuple
 
 from attrs import field, frozen
 
@@ -67,6 +68,7 @@ class Propellant:
 
     name: str = field(default="")
     description: str = field(default="")
+    burn_rate_coefficient: Optional[float] = field(default=None)
     density: float
     force: float
     pressure_exponent: float
@@ -90,25 +92,28 @@ class Propellant:
                         force,
                         covolume,
                         pressure_exponent,
-                        flame_temperature,
-                    ) = (float(v) for v in row[2:])
+                        burn_rate_coefficient,
+                    ) = row[2:]
 
                     name, description = row[:2]
 
                     prop_list.append(
                         Propellant(
                             name=name,
-                            description=description,
-                            adiabatic_index=adiabatic_index,
-                            density=density,
-                            force=force,
-                            covolume=covolume,
-                            pressure_exponent=pressure_exponent,
+                            description=codecs.decode(description, "unicode_escape"),
+                            adiabatic_index=float(adiabatic_index),
+                            density=float(density),
+                            force=float(force),
+                            covolume=float(covolume),
+                            pressure_exponent=float(pressure_exponent),
+                            burn_rate_coefficient=(
+                                float(burn_rate_coefficient) if burn_rate_coefficient else None
+                            ),
                         )
                     )
 
                 except ValueError as e:
-                    logger.warn("skipped reading line: " + str(e))
+                    logger.warn("skipped line in propellant definition: " + str(e))
 
                 # print(", ".join(row))
         return tuple(prop_list)

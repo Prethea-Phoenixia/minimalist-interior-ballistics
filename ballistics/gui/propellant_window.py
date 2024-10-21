@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from tkinter import StringVar, Toplevel, filedialog
+from tkinter import StringVar, Text, Toplevel, filedialog
 from tkinter.ttk import Button, Frame, Label, LabelFrame, Scrollbar, Treeview
 from typing import Optional, Tuple
 
@@ -20,27 +20,42 @@ class DefinePropellantWindow(Toplevel):
         self.columnconfigure(1, weight=1)
 
         self.value_entries = tuple(
-            add_label_entry_label_groups(self, i, v)
+            add_label_entry_label_groups(self, i, *v)
             for i, v in enumerate(
                 [
-                    ("Name", basis.name if basis else None, ""),
-                    ("Description", basis.description if basis else None, ""),
-                    ("Density", basis.density * 1e-3 if basis else None, "g/cm³"),
-                    ("Force", basis.force * 1e-3 if basis else None, "J/g"),
-                    ("Pressure Exponent", basis.pressure_exponent if basis else None, ""),
-                    ("Covolume", basis.covolume * 1e3 if basis else None, "cm³/g"),
-                    ("Adiabatic Index", basis.adiabatic_index if basis else None, ""),
+                    ("Name", "", basis.name + " (copy)" if basis else None),
+                    ("Density", "g/cm³", basis.density * 1e-3 if basis else None),
+                    ("Force", "J/g", basis.force * 1e-3 if basis else None),
+                    ("Pressure Exponent", "", basis.pressure_exponent if basis else None),
+                    ("Covolume", "cm³/g", basis.covolume * 1e3 if basis else None),
+                    ("Adiabatic Index", "", basis.adiabatic_index if basis else None),
+                    (
+                        "Burn Rate Coefficient*",
+                        "(nm/s)/Paⁿ",
+                        (
+                            basis.burn_rate_coefficient * 1e9
+                            if basis and basis.burn_rate_coefficient
+                            else None
+                        ),
+                    ),
                 ]
             )
         )
+
+        description_frame = LabelFrame(self, text="Description")
+        description_frame.grid(
+            row=0, column=3, rowspan=len(self.value_entries) + 1, sticky="nsew", **DEFAULT_PAD
+        )
+        description_frame.columnconfigure(0, weight=1)
+        description_frame.rowconfigure(0, weight=1)
+
+        self.text = Text(description_frame, width=40, height=10, wrap="none")
+        self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+        self.text.insert("end", basis.description if basis else "")
+
         button = Button(self, text="Confirm", command=self.define_prop)
         button.grid(
             row=len(self.value_entries), column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
-        )
-
-        self.error_var = StringVar()
-        Label(self, relief="sunken", textvariable=self.error_var).grid(
-            row=len(self.value_entries) + 1, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
 
         self.prop = None
@@ -48,11 +63,14 @@ class DefinePropellantWindow(Toplevel):
     def define_prop(self):
         try:
             density, force, pressure_exponent, covolume, adiabatic_index = (
-                float(e.get()) for e in self.value_entries[2:]
+                float(e.get()) for e in self.value_entries[1:-1]
             )
-            force *= 1000  # J/kg
-            covolume /= 1000
-            density *= 1000
+            brcs = self.value_entries[-1].get()
+            burn_rate_coefficient = float(brcs) * 1e-9 if brcs else None
+
+            force *= 1e3  # J/kg
+            covolume *= 1e-3
+            density *= 1e3
 
             self.prop = Propellant(
                 density=density,
@@ -60,26 +78,27 @@ class DefinePropellantWindow(Toplevel):
                 pressure_exponent=pressure_exponent,
                 covolume=covolume,
                 adiabatic_index=adiabatic_index,
-                description=self.value_entries[1].get(),
+                description=self.text.get("1.0", "end-1c"),
                 name=self.value_entries[0].get(),
+                burn_rate_coefficient=burn_rate_coefficient,
             )
             self.destroy()
 
         except ValueError as e:
-            logger.info(str(e))
-            self.error_var.set(str(e))
+            logger.warning(e)
 
 
 class PropellantFrame(Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(0, weight=2)
+        self.columnconfigure(2, weight=8)
         self.rowconfigure(1, weight=1)
 
-        cols = ("name", "desc", "ρ (g/cm³)", "f (J/g)", "n", "ɑ (cm³/g)", "γ")
-        widths = (100, 400, 100, 100, 100, 100, 100)
+        cols = ("name", "ρ g/cm³", "f J/g", "n", "ɑ cm³/g", "γ", "u_1 (nm/s)/Paⁿ")
+        widths = (200, 100, 100, 100, 100, 100, 200)
 
-        self.tree = Treeview(self, columns=cols, show="headings")
+        self.tree = Treeview(self, columns=cols, show="headings", selectmode="browse")
 
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
         vsb.grid(row=1, column=1, sticky="nsew", **DEFAULT_PAD)
@@ -91,23 +110,26 @@ class PropellantFrame(Frame):
             self.tree.column(column=f"{col}", width=width, minwidth=width, stretch=True, anchor="c")
 
         self.tree.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
-        button_frame = LabelFrame(self, text="Operations")
-        button_frame.grid(row=0, column=0, columnspan=2, sticky="nsew", **DEFAULT_PAD)
 
-        for i in range(3):
-            button_frame.columnconfigure(i, weight=1)
+        overview_frame = LabelFrame(self, text="Overview")
+        overview_frame.grid(row=0, column=2, rowspan=2, sticky="nsew", **DEFAULT_PAD)
+        overview_frame.rowconfigure(0, weight=1)
+        overview_frame.columnconfigure(0, weight=1)
+        self.overview_text = Text(
+            overview_frame, state="disabled", width=40, height=10, wrap="none"
+        )
+        self.overview_text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
 
-        # button_frame.column
-        add_edit_button = Button(button_frame, text="Add/Edit", command=self.add_edit_prop)
-        add_edit_button.grid(row=0, column=0, sticky="nsew")
-
-        del_button = Button(button_frame, text="Delete", command=self.del_prop)
-        del_button.grid(row=0, column=1, stick="nsew")
-
-        load_button = Button(button_frame, text="Load from File", command=self.load_props)
-        load_button.grid(row=0, column=2, sticky="nsew")
-
+        self.tree.bind("<<TreeviewSelect>>", self.set_overview)
         self.props = {}
+
+    @tree_selected
+    def set_overview(self, *args, tvid, **kwargs):
+        self.overview_text.config(state="normal")
+        self.overview_text.delete(1.0, "end")
+        if tvid:
+            self.overview_text.insert("insert", self.props[tvid].description)
+        self.overview_text.config(state="disabled")
 
     def add_prop(self, prop: Propellant):
         tvid = self.tree.insert(
@@ -115,12 +137,12 @@ class PropellantFrame(Frame):
             "end",
             values=(
                 prop.name,
-                prop.description,
                 f"{prop.density * 1e-3:.3f}",
                 f"{prop.force * 1e-3:.0f}",
                 f"{prop.pressure_exponent:.3f}",
                 f"{prop.covolume * 1e3:.3f}",
                 f"{prop.adiabatic_index:.3f}",
+                f"{prop.burn_rate_coefficient * 1e9:.3g}" if prop.burn_rate_coefficient else "N/A",
             ),
         )
         self.props[tvid] = prop
@@ -151,7 +173,7 @@ class PropellantFrame(Frame):
                 for prop in props:
                     self.add_prop(prop)
         except ValueError as e:
-            logger.info(str(e))
+            logger.warning(e)
 
     def get_props(self) -> Tuple[Propellant]:
         return tuple(self.props.values())

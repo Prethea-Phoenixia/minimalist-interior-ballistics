@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import logging
-from tkinter import StringVar, Toplevel
+from tkinter import StringVar, Text, Toplevel
+from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import (Button, Combobox, Frame, Label, LabelFrame, Notebook,
                          Scrollbar, Treeview)
 from typing import Callable, Optional, Tuple
@@ -30,18 +31,17 @@ class DefineGunWindow(Toplevel):
         self.columnconfigure(1, weight=1)
 
         self.value_entries = tuple(
-            add_label_entry_label_groups(self, i, v)
+            add_label_entry_label_groups(self, i, *v)
             for i, v in enumerate(
                 [
-                    ("Name", basis.name if basis else None, ""),
-                    ("Description", basis.description if basis else None, ""),
-                    ("Cross Section", basis.cross_section * 1e2 if basis else None, "dm²"),
-                    ("Shot Mass", basis.shot_mass if basis else None, "kg"),
-                    ("Charge Mass", basis.charge_mass if basis else None, "kg"),
-                    ("Chamber Volume", basis.chamber_volume * 1e3 if basis else None, "L"),
-                    ("Loss Fraction", basis.loss_fraction * 1e2 if basis else None, "%"),
-                    ("Start Pressure", basis.start_pressure * 1e-6 if basis else None, "MPa"),
-                    ("Reduced Burn Rate", basis.charge.reduced_burnrate if basis else None, "/s"),
+                    ("Name", "", basis.name + " (copy)" if basis else None),
+                    ("Cross Section", "dm²", basis.cross_section * 1e2 if basis else None),
+                    ("Shot Mass", "kg", basis.shot_mass if basis else None),
+                    ("Charge Mass", "kg", basis.charge_mass if basis else None),
+                    ("Chamber Volume", "L", basis.chamber_volume * 1e3 if basis else None),
+                    ("Loss Fraction", "%", basis.loss_fraction * 1e2 if basis else None),
+                    ("Start Pressure", "MPa", basis.start_pressure * 1e-6 if basis else None),
+                    ("Reduced Burn Rate", "/s", basis.charge.reduced_burnrate if basis else None),
                 ]
             )
         )
@@ -56,6 +56,17 @@ class DefineGunWindow(Toplevel):
             row=len(self.value_entries), column=1, columnspan=2, sticky="nsew", **DEFAULT_PAD
         )
 
+        description_frame = LabelFrame(self, text="Description")
+        description_frame.grid(
+            row=0, column=3, rowspan=len(self.value_entries) + 3, sticky="nsew", **DEFAULT_PAD
+        )
+        description_frame.columnconfigure(0, weight=1)
+        description_frame.rowconfigure(0, weight=1)
+
+        self.text = Text(description_frame, width=40, height=10, wrap="none")
+        self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+        self.text.insert("end", basis.description if basis else "")
+
         self.form_function_frame = FormFunctionFrame(self)
         self.form_function_frame.grid(
             row=len(self.value_entries) + 1, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
@@ -64,10 +75,6 @@ class DefineGunWindow(Toplevel):
         button = Button(self, text="Confirm", command=self.define_gun)
         button.grid(
             row=len(self.value_entries) + 2, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
-        )
-        self.error_var = StringVar()
-        Label(self, textvariable=self.error_var, relief="sunken").grid(
-            row=len(self.value_entries) + 3, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
 
         self.gun = None
@@ -81,7 +88,7 @@ class DefineGunWindow(Toplevel):
 
     def define_gun(self):
         try:
-            name, description = (e.get() for e in self.value_entries[:2])
+            name = self.value_entry[0].get()
             (
                 cross_section,
                 shot_mass,
@@ -90,7 +97,7 @@ class DefineGunWindow(Toplevel):
                 loss_fraction,
                 start_pressure,
                 reduced_burnrate,
-            ) = (float(e.get()) for e in self.value_entries[2:])
+            ) = (float(e.get()) for e in self.value_entries[1:])
 
             cross_section *= 1e-2  # dm^2 to m^2
             chamber_volume *= 1e-3  # L to m^3
@@ -105,7 +112,7 @@ class DefineGunWindow(Toplevel):
 
             self.gun = Gun(
                 name=name,
-                description=description,
+                description=self.text.get("1.0", "end-1c"),
                 cross_section=cross_section,
                 shot_mass=shot_mass,
                 charge=charge,
@@ -117,7 +124,6 @@ class DefineGunWindow(Toplevel):
             self.destroy()
 
         except (ValueError, IndexError) as e:
-            self.error_var.set(str(e))
             logger.error(e)
 
 
@@ -130,12 +136,6 @@ class GunFrame(Frame):
         self.columnconfigure(0, weight=2)
         self.columnconfigure(2, weight=8)
 
-        button_frame = LabelFrame(self, text="Operations")
-        button_frame.grid(row=0, column=0, columnspan=2, sticky="nsew", **DEFAULT_PAD)
-
-        add_button = Button(button_frame, text="Add/Edit Gun", command=self.add_edit_gun)
-        add_button.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
-
         self.tree = Treeview(self, show="tree")
 
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
@@ -145,8 +145,8 @@ class GunFrame(Frame):
 
         self.tree.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
 
-        overview_frame = OverviewFrame(self)
-        overview_frame.grid(row=0, column=2, rowspan=2, sticky="nsew", **DEFAULT_PAD)
+        self.overview_frame = LabelFrame(self, text="Overview")
+        self.overview_frame.grid(row=0, column=2, rowspan=2, sticky="nsew", **DEFAULT_PAD)
 
         self.guns = {}
 
@@ -161,7 +161,6 @@ class GunFrame(Frame):
             self.add_gun(gun)
 
     def add_gun(self, gun: Gun):
-
         gid = self.tree.insert("", "end", text=gun.name)
         self.guns[gid] = gun
 
@@ -202,18 +201,16 @@ class FormFunctionFrame(LabelFrame):
         non_perf_frame = self.prepare_tab("Non Perf.")
 
         self.non_perf_entries = tuple(
-            add_label_entry_label_groups(non_perf_frame, i, v)
-            for i, v in enumerate(
-                [("Length", None, "mm"), ("Width", None, "mm"), ("Height", None, "mm")]
-            )
+            add_label_entry_label_groups(non_perf_frame, i, *v)
+            for i, v in enumerate([("Length", "mm"), ("Width", "mm"), ("Height", "mm")])
         )
 
     def add_single_perf(self):
         single_perf_frame = self.prepare_tab("Single Perf.")
 
         self.single_perf_entries = tuple(
-            add_label_entry_label_groups(single_perf_frame, i, v)
-            for i, v in enumerate([("Arch Width", None, "mm"), ("Height", None, "mm")])
+            add_label_entry_label_groups(single_perf_frame, i, *v)
+            for i, v in enumerate([("Arch Width", "mm"), ("Height", "mm")])
         )
 
     def add_multi_perf(self):
@@ -226,15 +223,14 @@ class FormFunctionFrame(LabelFrame):
             values=tuple(shape.describe() for shape in self.multi_perf_shapes),
         )
         self.multi_perf_combo.grid(row=0, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD)
-        # self.multi_perf_combo.current(0)
 
         self.multi_perf_entries = tuple(
-            add_label_entry_label_groups(multi_perf_frame, i, v)
+            add_label_entry_label_groups(multi_perf_frame, i, *v)
             for i, v in enumerate(
                 [
-                    ("Arch Width", None, "mm"),
-                    ("Perforation Diameter", None, "mm"),
-                    ("Height", None, "mm"),
+                    ("Arch Width", "mm"),
+                    ("Perforation Diameter", "mm"),
+                    ("Height", "mm"),
                 ],
                 1,
             )
@@ -276,6 +272,3 @@ class FormFunctionFrame(LabelFrame):
 class OverviewFrame(LabelFrame):
     def __init__(self, *args, text="Overview", **kwargs):
         super().__init__(*args, text=text, **kwargs)
-
-        self.label = Label(self, text="testy")
-        self.label.grid(row=0, column=0, sticky="nsew")
