@@ -12,7 +12,7 @@ from ..charge import Charge, Propellant
 from ..form_function import FormFunction, MultiPerfShape
 from ..gun import Gun
 from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
-from .misc import add_label_entry_label_group, tree_selected
+from .misc import add_frame_group, add_label_entry_label_group, tree_selected
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +68,7 @@ class DefineGunWindow(Toplevel):
         description_frame.columnconfigure(0, weight=1)
         description_frame.rowconfigure(0, weight=1)
 
-        self.text = Text(
+        self.text = ScrolledText(
             description_frame, width=DEFAULT_TEXT_WIDTH, height=DEFAULT_TEXT_HEIGHT, wrap="none"
         )
         self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
@@ -145,63 +145,79 @@ class GunFrame(Frame):
         self.get_props_func = get_props_func
         super().__init__(*args, **kwargs)
 
-        self.rowconfigure(1, weight=1)
+        # self.rowconfigure(0, weight=1)
+        self.rowconfigure(2, weight=1)
         self.columnconfigure(0, weight=2)
-        self.columnconfigure(2, weight=8)
+        # self.columnconfigure(2, weight=4)
+        self.columnconfigure(3, weight=8)
 
         self.tree = Treeview(self, show="tree", selectmode="browse")
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
-        vsb.grid(row=1, column=1, sticky="nsew", **DEFAULT_PAD)
+        vsb.grid(row=0, column=1, rowspan=3, sticky="nsew", **DEFAULT_PAD)
         self.tree.config(yscrollcommand=vsb.set)
-        self.tree.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
+        self.tree.grid(row=0, column=0, rowspan=3, sticky="nsew", **DEFAULT_PAD)
         self.tree.bind("<<TreeviewSelect>>", self.set_overview)
 
-        self.overview_frame = LabelFrame(self, text="Overview")
-        self.overview_frame.grid(row=0, column=2, rowspan=2, sticky="nsew", **DEFAULT_PAD)
-        self.overview_frame.columnconfigure(0, weight=1)
-        self.overview_frame.columnconfigure(1, weight=1)
-        self.overview_frame.columnconfigure(2, weight=1)
-        self.overview_frame.columnconfigure(3, weight=1)
+        overview_frame = self.add_overview_frame()
+        overview_frame.grid(row=0, column=2, columnspan=2, sticky="nsew", **DEFAULT_PAD)
 
-        top_param_frame = Frame(self.overview_frame)
-        top_param_frame.grid(row=0, column=1, columnspan=2, sticky="nsew", **DEFAULT_PAD)
-        top_param_frame.columnconfigure(1, weight=1)
+        derived_frame = self.add_derived_frame()
+        derived_frame.grid(row=1, column=2, sticky="nsew", **DEFAULT_PAD)
 
-        self.top_params = tuple(
-            add_label_entry_label_group(top_param_frame, i, *v, disabled=True)
-            for i, v in enumerate([("Charge Name", ""), ("Charge Desc.", "")])
+        control_frame = self.add_control_frame()
+        control_frame.grid(row=1, column=3, stick="nsew", **DEFAULT_PAD)
+
+        self.guns = {}
+
+    def add_control_frame(self) -> LabelFrame:
+        control_frame = LabelFrame(self, text="Control")
+
+        Label(control_frame, text="test").grid(row=0, column=0, stick="nsew", **DEFAULT_PAD)
+
+        return control_frame
+
+    def add_overview_frame(self) -> LabelFrame:
+        overview_frame = LabelFrame(self, text="Overview")
+
+        overview_frame.columnconfigure(0, weight=1)
+        overview_frame.columnconfigure(1, weight=1)
+        overview_frame.columnconfigure(2, weight=1)
+        overview_frame.columnconfigure(3, weight=1)
+
+        ov_top_frame, self.ov_top_params = add_frame_group(
+            overview_frame, ((v, "", None, True) for v in ("Charge Name", "Charge Desc."))
         )
+        ov_top_frame.grid(row=0, column=1, columnspan=2, sticky="nsew", **DEFAULT_PAD)
 
-        left_param_frame = Frame(self.overview_frame)
-        left_param_frame.grid(row=1, column=1, stick="nsew", **DEFAULT_PAD)
-        left_param_frame.columnconfigure(1, weight=1)
-        self.left_params = tuple(
-            add_label_entry_label_group(left_param_frame, i, *v, disabled=True)
-            for i, v in enumerate(
-                [("Cross Section", "dm²"), ("Shot Mass", "kg"), ("Charge Mass", "kg")]
-            )
+        ov_left_frame, self.ov_left_params = add_frame_group(
+            overview_frame,
+            (
+                (*v, None, True)
+                for v in (("Cross Section", "dm²"), ("Shot Mass", "kg"), ("Charge Mass", "kg"))
+            ),
         )
+        ov_left_frame.grid(row=1, column=1, stick="nsew", **DEFAULT_PAD)
 
-        mid_param_frame = Frame(self.overview_frame)
-        mid_param_frame.grid(row=1, column=2, stick="nsew", **DEFAULT_PAD)
-        mid_param_frame.columnconfigure(1, weight=1)
-        self.mid_params = tuple(
-            add_label_entry_label_group(mid_param_frame, i, *v, disabled=True)
-            for i, v in enumerate(
-                [("Chamber Vol.", "L"), ("Start Pressure", "MPa"), ("Loss Fraction", "%")]
-            )
+        ov_mid_frame, self.ov_mid_params = add_frame_group(
+            overview_frame,
+            (
+                (*v, None, True)
+                for v in (("Chamber Vol.", "L"), ("Start Pressure", "MPa"), ("Loss Fraction", "%"))
+            ),
         )
+        ov_mid_frame.grid(row=1, column=2, stick="nsew", **DEFAULT_PAD)
 
-        right_param_frame = Frame(self.overview_frame)
-        right_param_frame.grid(row=0, column=3, rowspan=2, stick="nsew", **DEFAULT_PAD)
-        right_param_frame.columnconfigure(1, weight=1)
-        self.right_params = tuple(
-            add_label_entry_label_group(right_param_frame, i, *v, disabled=True)
-            for i, v in enumerate([("χ", ""), ("λ", ""), ("μ", ""), ("Zₖ", ""), ("u/e", "/ns")])
+        ov_right_frame, self.ov_right_params = add_frame_group(
+            overview_frame,
+            (
+                (*v, None, True)
+                for v in (("χ", ""), ("λ", ""), ("μ", ""), ("Zₖ", ""), ("u/e", "/ns"))
+            ),
         )
+        ov_right_frame.grid(row=0, column=3, rowspan=2, stick="nsew", **DEFAULT_PAD)
 
-        self.overview_text = Text(
-            self.overview_frame,
+        self.overview_text = ScrolledText(
+            overview_frame,
             state="disabled",
             width=DEFAULT_TEXT_WIDTH,
             height=DEFAULT_TEXT_HEIGHT,
@@ -209,7 +225,25 @@ class GunFrame(Frame):
         )
         self.overview_text.grid(row=0, column=0, rowspan=2, sticky="nsew", **DEFAULT_PAD)
 
-        self.guns = {}
+        return overview_frame
+
+    def add_derived_frame(self) -> LabelFrame:
+        derived_frame = LabelFrame(self, text="Derived")
+        derived_frame.columnconfigure(0, weight=1)
+
+        dv_frame, self.dv_params = add_frame_group(
+            derived_frame,
+            (
+                (*v, None, True)
+                for v in (
+                    ("Velocity Limit", "m/s"),
+                    ("Load Density", "g/cm³"),
+                )
+            ),
+        )
+        dv_frame.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+
+        return derived_frame
 
     @tree_selected
     def set_overview(self, *args, tvid, **kwargs):
@@ -221,27 +255,30 @@ class GunFrame(Frame):
 
             for v, sv in zip(
                 (gun.charge.name, gun.charge.description),
-                self.top_params,
+                self.ov_top_params,
             ):
                 sv.set(v)
 
             for v, sv in zip(
                 (gun.cross_section * 1e2, gun.shot_mass, gun.charge_mass),
-                self.left_params,
+                self.ov_left_params,
             ):
                 sv.set(v)
 
             for v, sv in zip(
                 (gun.chamber_volume * 1e3, gun.start_pressure * 1e-6, gun.loss_fraction * 1e2),
-                self.mid_params,
+                self.ov_mid_params,
             ):
                 sv.set(v)
 
             ff = gun.charge.form_function
             for v, sv in zip(
                 (ff.chi, ff.labda, ff.mu, ff.Z_k, gun.charge.reduced_burnrate * 1e9),
-                self.right_params,
+                self.ov_right_params,
             ):
+                sv.set(v)
+
+            for v, sv in zip((gun.velocity_limit, gun.delta * 1e-3), self.dv_params):
                 sv.set(v)
 
         self.overview_text.config(state="disabled")

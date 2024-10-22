@@ -1,4 +1,5 @@
-from tkinter import Entry, Frame, Label, StringVar, Toplevel
+from tkinter import Entry, Label, StringVar, Toplevel
+from tkinter.ttk import Frame
 from typing import Optional, Tuple, Union
 
 from tktooltip import ToolTip  # type: ignore[import-untyped]
@@ -11,6 +12,14 @@ def tree_selected(func):
         return func(pf, *args, tvid=pf.tree.focus(), **kwargs)
 
     return wrapped
+
+
+def add_frame_group(parent, values) -> Tuple[Frame, Tuple[StringVar, ...]]:
+    group_frame = Frame(parent)
+    group_frame.columnconfigure(1, weight=1)
+    return group_frame, tuple(
+        add_label_entry_label_group(group_frame, i, *v) for i, v in enumerate(values)
+    )
 
 
 def add_label_entry_label_group(

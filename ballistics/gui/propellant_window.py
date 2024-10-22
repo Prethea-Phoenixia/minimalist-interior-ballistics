@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import logging
-from tkinter import Text, Toplevel, filedialog
+from tkinter import Toplevel, filedialog
+from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Button, Frame, LabelFrame, Scrollbar, Treeview
 from typing import Optional, Tuple
 
@@ -49,7 +50,7 @@ class DefinePropellantWindow(Toplevel):
         description_frame.columnconfigure(0, weight=1)
         description_frame.rowconfigure(0, weight=1)
 
-        self.text = Text(
+        self.text = ScrolledText(
             description_frame, width=DEFAULT_TEXT_WIDTH, height=DEFAULT_TEXT_HEIGHT, wrap="none"
         )
         self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
@@ -117,7 +118,7 @@ class PropellantFrame(Frame):
         overview_frame.grid(row=0, column=2, rowspan=2, sticky="nsew", **DEFAULT_PAD)
         overview_frame.rowconfigure(0, weight=1)
         overview_frame.columnconfigure(0, weight=1)
-        self.overview_text = Text(
+        self.overview_text = ScrolledText(
             overview_frame,
             state="disabled",
             width=DEFAULT_TEXT_WIDTH,
