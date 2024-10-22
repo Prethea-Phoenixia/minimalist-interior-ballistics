@@ -29,6 +29,7 @@ class DefineGunWindow(Toplevel):
         # self.master = master
 
         self.title("Define Gun")
+        self.columnconfigure(3, weight=1)
         self.columnconfigure(1, weight=1)
 
         self.value_entries = tuple(
@@ -51,14 +52,26 @@ class DefineGunWindow(Toplevel):
             )
         )
 
-        Label(self, text="Propellant").grid(
-            row=len(self.value_entries), column=0, sticky="nsew", **DEFAULT_PAD
+        prop_frame = LabelFrame(self, text="Propellant")
+        prop_frame.grid(
+            row=len(self.value_entries), column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
+        prop_frame.columnconfigure(0, weight=1)
 
         self.props = get_props_func()
-        self.prop_combo = Combobox(self, state="readonly", values=tuple(p.name for p in self.props))
-        self.prop_combo.grid(
-            row=len(self.value_entries), column=1, columnspan=2, sticky="nsew", **DEFAULT_PAD
+        self.prop_combo = Combobox(
+            prop_frame, state="readonly", values=tuple(p.name for p in self.props)
+        )
+        self.prop_combo.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+
+        self.form_function_frame = FormFunctionFrame(self)
+        self.form_function_frame.grid(
+            row=len(self.value_entries) + 1, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+        )
+
+        button = Button(self, text="Confirm", command=self.define_gun)
+        button.grid(
+            row=len(self.value_entries) + 2, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
         )
 
         description_frame = LabelFrame(self, text="Description")
@@ -73,16 +86,6 @@ class DefineGunWindow(Toplevel):
         )
         self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
         self.text.insert("end", basis.description if basis else "")
-
-        self.form_function_frame = FormFunctionFrame(self)
-        self.form_function_frame.grid(
-            row=len(self.value_entries) + 1, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
-        )
-
-        button = Button(self, text="Confirm", command=self.define_gun)
-        button.grid(
-            row=len(self.value_entries) + 2, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
-        )
 
         self.gun = None
 
@@ -151,12 +154,12 @@ class GunFrame(Frame):
         # self.columnconfigure(2, weight=4)
         self.columnconfigure(3, weight=8)
 
-        self.tree = Treeview(self, show="tree", selectmode="browse")
-        vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
+        self.guns_tree = Treeview(self, show="tree", selectmode="browse")
+        vsb = Scrollbar(self, orient="vertical", command=self.guns_tree.yview)
         vsb.grid(row=0, column=1, rowspan=3, sticky="nsew", **DEFAULT_PAD)
-        self.tree.config(yscrollcommand=vsb.set)
-        self.tree.grid(row=0, column=0, rowspan=3, sticky="nsew", **DEFAULT_PAD)
-        self.tree.bind("<<TreeviewSelect>>", self.set_overview)
+        self.guns_tree.config(yscrollcommand=vsb.set)
+        self.guns_tree.grid(row=0, column=0, rowspan=3, sticky="nsew", **DEFAULT_PAD)
+        self.guns_tree.bind("<<TreeviewSelect>>", self.set_overview)
 
         overview_frame = self.add_overview_frame()
         overview_frame.grid(row=0, column=2, columnspan=2, sticky="nsew", **DEFAULT_PAD)
@@ -167,7 +170,23 @@ class GunFrame(Frame):
         control_frame = self.add_control_frame()
         control_frame.grid(row=1, column=3, stick="nsew", **DEFAULT_PAD)
 
+        states_frame = self.add_states_frame()
+        states_frame.grid(row=2, column=2, columnspan=2, stick="nsew", **DEFAULT_PAD)
+
         self.guns = {}
+
+    def add_states_frame(self) -> LabelFrame:
+        states_frame = LabelFrame(self, text="States")
+        states_frame.columnconfigure(0, weight=1)
+        states_frame.rowconfigure(0, weight=1)
+
+        self.states_tree = Treeview(states_frame, show="headings", selectmode="browse")
+        vsb = Scrollbar(states_frame, orient="vertical", command=self.guns_tree.yview)
+        vsb.grid(row=0, column=1, sticky="nsew", **DEFAULT_PAD)
+        self.states_tree.config(yscrollcommand=vsb.set)
+        self.states_tree.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+
+        return states_frame
 
     def add_control_frame(self) -> LabelFrame:
         control_frame = LabelFrame(self, text="Control")
@@ -309,14 +328,14 @@ class GunFrame(Frame):
                 self.add_gun(gun)
 
     def add_gun(self, gun: Gun):
-        gid = self.tree.insert("", "end", text=gun.name)
+        gid = self.guns_tree.insert("", "end", text=gun.name)
         self.guns[gid] = gun
 
     @tree_selected
     def del_gun(self, tvid):
         if tvid:
             self.guns.pop(tvid)
-            self.tree.delete(tvid)
+            self.guns_tree.delete(tvid)
 
 
 class FormFunctionFrame(LabelFrame):

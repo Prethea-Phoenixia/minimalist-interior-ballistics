@@ -74,7 +74,7 @@ class State:
         `average_pressure`.
         """
         return self.average_pressure / (
-            1 + self.gun.charge_mass / (3 * (1 + self.gun.loss_fraction) * self.gun.shot_mass)
+            (1 + self.gun.loss_fraction) + self.gun.charge_mass / (3 * self.gun.shot_mass)
         )
 
     @cached_property
@@ -83,7 +83,7 @@ class State:
         `average_pressure`.
         """
         return self.shot_pressure * (
-            1 + self.gun.charge_mass / (2 * (1 + self.gun.loss_fraction) * self.gun.shot_mass)
+            (1 + self.gun.loss_fraction) + self.gun.charge_mass / (2 * self.gun.shot_mass)
         )
 
     def increment(self, d: Delta, marker: Significance, dt=..., dl=..., dv=...) -> State:
