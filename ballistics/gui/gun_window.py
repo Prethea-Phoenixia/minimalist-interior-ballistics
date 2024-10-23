@@ -20,17 +20,20 @@ logger = logging.getLogger(__name__)
 class DefineGunWindow(Toplevel):
     def __init__(
         self,
+        parent,
         *args,
         basis: Optional[Gun] = None,
         get_props_func: Callable[[], Tuple[Propellant]],
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
-        # self.master = master
+        super().__init__(parent, *args, **kwargs)
+
+        self.resizable(False, False)
+        self.transient(parent)
 
         self.title("Define Gun")
         self.columnconfigure(3, weight=1)
-        self.columnconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
 
         self.value_entries = tuple(
             add_label_entry_label_group(self, i, *v)
@@ -191,7 +194,8 @@ class GunFrame(Frame):
     def add_control_frame(self) -> LabelFrame:
         control_frame = LabelFrame(self, text="Control")
 
-        Label(control_frame, text="test").grid(row=0, column=0, stick="nsew", **DEFAULT_PAD)
+        Label(control_frame, text="To Length:").grid(row=0, column=0, stick="nsew", **DEFAULT_PAD)
+        Label(control_frame, text="To Velocity:").grid(row=1, column=0, stick="nsew", **DEFAULT_PAD)
 
         return control_frame
 
@@ -264,7 +268,7 @@ class GunFrame(Frame):
 
         return derived_frame
 
-    @tree_selected
+    @tree_selected("guns_tree")
     def set_overview(self, *args, tvid, **kwargs):
         self.overview_text.config(state="normal")
         self.overview_text.delete(1.0, "end")
@@ -302,7 +306,7 @@ class GunFrame(Frame):
 
         self.overview_text.config(state="disabled")
 
-    @tree_selected
+    @tree_selected("guns_tree")
     def add_edit_gun(self, tvid):
         dgw = DefineGunWindow(
             self, basis=self.guns[tvid] if tvid else None, get_props_func=self.get_props_func
@@ -331,7 +335,7 @@ class GunFrame(Frame):
         gid = self.guns_tree.insert("", "end", text=gun.name)
         self.guns[gid] = gun
 
-    @tree_selected
+    @tree_selected("guns_tree")
     def del_gun(self, tvid):
         if tvid:
             self.guns.pop(tvid)
@@ -360,7 +364,7 @@ class FormFunctionFrame(LabelFrame):
     def prepare_tab(self, tab_text: str) -> Frame:
         tab_frame = Frame(self.notebook)
         tab_frame.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
-        tab_frame.columnconfigure(1, weight=1)
+        tab_frame.columnconfigure(0, weight=1)
         self.notebook.add(tab_frame, text=tab_text)
         return tab_frame
 

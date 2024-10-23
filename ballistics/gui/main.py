@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import logging
 from ctypes import windll
-from tkinter import Menu, Tk
+from tkinter import Menu, Tk, Toplevel
 from tkinter.scrolledtext import ScrolledText
-from tkinter.ttk import Frame, Notebook
+from tkinter.ttk import Button, Entry, Frame, Label, Notebook
+from typing import Callable
 
-from . import DEFAULT_PAD
+from . import DEFAULT_ACC, DEFAULT_ENTRY_WIDTH, DEFAULT_PAD, DEFAULT_STEPS
 from .gun_window import GunFrame
 from .propellant_window import PropellantFrame
 
@@ -34,6 +35,49 @@ class TextHandler(logging.Handler):
         self.text.after(10, append)
 
 
+class DefineParameterFrame(Toplevel):
+    def __init__(
+        self,
+        parent,
+        *args,
+        label: str,
+        validator: Callable[[float], bool],
+        warn: str,
+        title: str = "Set Parameter",
+        astype: type = float,
+        **kwargs,
+    ):
+        super().__init__(parent, *args, **kwargs)
+        self.resizable(False, False)
+        self.transient(parent)
+        self.title(title)
+        self.columnconfigure(0, weight=1)
+        self.astype = astype
+        self.warn = warn
+
+        self.validator = validator
+        Label(self, text=label, anchor="center").grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+        self.entry = Entry(self, width=DEFAULT_ENTRY_WIDTH)
+        self.entry.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
+
+        Button(self, text="Confirm", command=self.define_val).grid(
+            row=2, column=0, sticky="nsew", **DEFAULT_PAD
+        )
+
+        self.val = None
+
+    def define_val(self):
+        if v := self.entry.get():
+            try:
+                val = self.astype(v)
+                if not self.validator(val):
+                    raise ValueError(self.warn)
+                self.val = val
+                self.destroy()
+            except ValueError as e:
+                logger.warning(str(e))
+
+
 class MainFrame(Frame):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -43,15 +87,14 @@ class MainFrame(Frame):
 
         file_menu = Menu(menubar)
         edit_menu = Menu(menubar)
+        config_menu = Menu(menubar)
 
         menubar.add_cascade(menu=file_menu, label="File")
         menubar.add_cascade(menu=edit_menu, label="Edit")
+        menubar.add_cascade(menu=config_menu, label="Config")
 
-        # prop_edit_menu = Menu(edit_menu)
-        # edit_menu.add_cascade(menu=prop_edit_menu, label="Propellant")
-
-        # prop_file_menu = Menu(file_menu)
-        # file_menu.add_cascade(menu=prop_file_menu, label="Propellant")
+        self.acc = DEFAULT_ACC
+        self.steps = DEFAULT_STEPS
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -94,6 +137,7 @@ class MainFrame(Frame):
 
         gun_frame = GunFrame(notebook, get_props_func=propellant_frame.get_props)
         gun_frame.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+
         notebook.add(gun_frame, text="Gun Design(s)")
         notebook.add(propellant_frame, text="Propellants")
 
@@ -109,6 +153,39 @@ class MainFrame(Frame):
         file_menu.add_separator()
 
         file_menu.add_command(label="Load Propellant(s)", command=propellant_frame.load_props)
+
+        config_menu.add_command(label=f"Accuracy ({self.acc:.3g})", command=self.set_acc)
+        config_menu.add_command(label=f"Steps ({self.steps:.3g})", command=self.set_steps)
+
+        self.config_menu = config_menu
+
+    def set_acc(self):
+        dpf = DefineParameterFrame(
+            self,
+            label="Accuracy",
+            validator=lambda x: 1 > x > 0,
+            astype=float,
+            warn="Accuracy must be float between 0 and 1",
+        )
+        self.wait_window(dpf)
+        val = dpf.val
+        if val:
+            self.acc = val
+            self.config_menu.entryconfigure(0, label=f"Accuracy ({self.acc:.3g})")
+
+    def set_steps(self):
+        dpf = DefineParameterFrame(
+            self,
+            label="Steps",
+            validator=lambda x: x > 0,
+            astype=int,
+            warn="Steps must be integer greater than 0",
+        )
+        self.wait_window(dpf)
+        val = dpf.val
+        if val:
+            self.steps = val
+            self.config_menu.entryconfigure(1, label=f"Steps ({self.steps:.3g})")
 
 
 def main():

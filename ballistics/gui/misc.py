@@ -7,11 +7,14 @@ from tktooltip import ToolTip  # type: ignore[import-untyped]
 from . import DEFAULT_ENTRY_WIDTH, DEFAULT_PAD
 
 
-def tree_selected(func):
-    def wrapped(pf, *args, **kwargs):
-        return func(pf, *args, tvid=pf.tree.focus(), **kwargs)
+def tree_selected(treeattr: str = "tree"):
+    def selected(func):
+        def wrapped(pf, *args, **kwargs):
+            return func(pf, *args, tvid=getattr(pf, treeattr).focus(), **kwargs)
 
-    return wrapped
+        return wrapped
+
+    return selected
 
 
 def add_frame_group(parent, values) -> Tuple[Frame, Tuple[StringVar, ...]]:

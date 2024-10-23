@@ -14,11 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 class DefinePropellantWindow(Toplevel):
-    def __init__(self, *args, basis: Optional[Propellant] = None, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent, *args, basis: Optional[Propellant] = None, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.resizable(False, False)
+        self.transient(parent)
 
         self.title("Define Propellant (* fields are optional)")
-        self.columnconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
 
         self.value_entries = tuple(
             add_label_entry_label_group(self, i, *v)
@@ -130,7 +133,7 @@ class PropellantFrame(Frame):
         self.tree.bind("<<TreeviewSelect>>", self.set_overview)
         self.props = {}
 
-    @tree_selected
+    @tree_selected()
     def set_overview(self, *args, tvid, **kwargs):
         self.overview_text.config(state="normal")
         self.overview_text.delete(1.0, "end")
@@ -154,7 +157,7 @@ class PropellantFrame(Frame):
         )
         self.props[tvid] = prop
 
-    @tree_selected
+    @tree_selected()
     def add_edit_prop(self, tvid):
         dpw = DefinePropellantWindow(self, basis=self.props[tvid] if tvid else None)
         self.wait_window(dpw)
@@ -162,7 +165,7 @@ class PropellantFrame(Frame):
         if prop:
             self.add_prop(prop)
 
-    @tree_selected
+    @tree_selected()
     def del_prop(self, tvid):
         if tvid:
             self.props.pop(tvid)
