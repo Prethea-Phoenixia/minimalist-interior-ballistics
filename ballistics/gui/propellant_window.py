@@ -97,8 +97,7 @@ class DefinePropellantWindow(Toplevel):
 class PropellantFrame(Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.columnconfigure(0, weight=2)
-        self.columnconfigure(2, weight=8)
+        self.columnconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
 
         cols = ("name", "ρ g/cm³", "f J/g", "n", "ɑ cm³/g", "γ", "u (nm/s)/Paⁿ")

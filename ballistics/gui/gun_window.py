@@ -157,12 +157,12 @@ class GunFrame(Frame):
         # self.columnconfigure(2, weight=4)
         self.columnconfigure(3, weight=8)
 
-        self.guns_tree = Treeview(self, show="tree", selectmode="browse")
-        vsb = Scrollbar(self, orient="vertical", command=self.guns_tree.yview)
+        self.tree = Treeview(self, show="tree", selectmode="browse")
+        vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
         vsb.grid(row=0, column=1, rowspan=3, sticky="nsew", **DEFAULT_PAD)
-        self.guns_tree.config(yscrollcommand=vsb.set)
-        self.guns_tree.grid(row=0, column=0, rowspan=3, sticky="nsew", **DEFAULT_PAD)
-        self.guns_tree.bind("<<TreeviewSelect>>", self.set_overview)
+        self.tree.config(yscrollcommand=vsb.set)
+        self.tree.grid(row=0, column=0, rowspan=3, sticky="nsew", **DEFAULT_PAD)
+        self.tree.bind("<<TreeviewSelect>>", self.set_overview)
 
         overview_frame = self.add_overview_frame()
         overview_frame.grid(row=0, column=2, columnspan=2, sticky="nsew", **DEFAULT_PAD)
@@ -173,23 +173,10 @@ class GunFrame(Frame):
         control_frame = self.add_control_frame()
         control_frame.grid(row=1, column=3, stick="nsew", **DEFAULT_PAD)
 
-        states_frame = self.add_states_frame()
+        states_frame = StatesFrame(self)
         states_frame.grid(row=2, column=2, columnspan=2, stick="nsew", **DEFAULT_PAD)
 
         self.guns = {}
-
-    def add_states_frame(self) -> LabelFrame:
-        states_frame = LabelFrame(self, text="States")
-        states_frame.columnconfigure(0, weight=1)
-        states_frame.rowconfigure(0, weight=1)
-
-        self.states_tree = Treeview(states_frame, show="headings", selectmode="browse")
-        vsb = Scrollbar(states_frame, orient="vertical", command=self.guns_tree.yview)
-        vsb.grid(row=0, column=1, sticky="nsew", **DEFAULT_PAD)
-        self.states_tree.config(yscrollcommand=vsb.set)
-        self.states_tree.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
-
-        return states_frame
 
     def add_control_frame(self) -> LabelFrame:
         control_frame = LabelFrame(self, text="Control")
@@ -268,7 +255,7 @@ class GunFrame(Frame):
 
         return derived_frame
 
-    @tree_selected("guns_tree")
+    @tree_selected()
     def set_overview(self, *args, tvid, **kwargs):
         self.overview_text.config(state="normal")
         self.overview_text.delete(1.0, "end")
@@ -306,7 +293,7 @@ class GunFrame(Frame):
 
         self.overview_text.config(state="disabled")
 
-    @tree_selected("guns_tree")
+    @tree_selected()
     def add_edit_gun(self, tvid):
         dgw = DefineGunWindow(
             self, basis=self.guns[tvid] if tvid else None, get_props_func=self.get_props_func
@@ -332,14 +319,14 @@ class GunFrame(Frame):
                 self.add_gun(gun)
 
     def add_gun(self, gun: Gun):
-        gid = self.guns_tree.insert("", "end", text=gun.name)
+        gid = self.tree.insert("", "end", text=gun.name)
         self.guns[gid] = gun
 
-    @tree_selected("guns_tree")
+    @tree_selected()
     def del_gun(self, tvid):
         if tvid:
             self.guns.pop(tvid)
-            self.guns_tree.delete(tvid)
+            self.tree.delete(tvid)
 
 
 class FormFunctionFrame(LabelFrame):
@@ -440,6 +427,30 @@ class FormFunctionFrame(LabelFrame):
             return self.multi_perf_shapes[i]
 
 
-class OverviewFrame(LabelFrame):
-    def __init__(self, *args, text="Overview", **kwargs):
-        super().__init__(*args, text=text, **kwargs)
+class StatesFrame(LabelFrame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(text="States", *args, **kwargs)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        cols = (
+            "marker",
+            "time ms",
+            "travel m",
+            "velocity m/s",
+            "burnup",
+            "breech p. MPa",
+            "average p. MPa",
+            "shot p. MPa",
+        )
+        widths = (100, 100, 100, 100, 100, 100, 100, 100)
+
+        self.tree = Treeview(self, columns=cols, show="headings", selectmode="browse")
+        vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
+        vsb.grid(row=0, column=1, sticky="nsew", **DEFAULT_PAD)
+        self.tree.config(yscrollcommand=vsb.set)
+        self.tree.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+
+        for width, col in zip(widths, self.tree["columns"]):
+            self.tree.heading(column=col, text=col, anchor="c")
+            self.tree.column(column=col, width=width, minwidth=width, stretch=True, anchor="c")
