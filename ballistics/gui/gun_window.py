@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import logging
-from tkinter import StringVar, Text, Toplevel
+from tkinter import Toplevel
 from tkinter.filedialog import askopenfilename
-from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import (Button, Combobox, Frame, Label, LabelFrame, Notebook,
                          Scrollbar, Treeview)
 from typing import Callable, Optional, Tuple
@@ -13,6 +12,8 @@ from ..form_function import FormFunction, MultiPerfShape
 from ..gun import Gun
 from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
 from .misc import add_frame_group, add_label_entry_label_group, tree_selected
+# from tkinter.scrolledtext import ScrolledText
+from .themed_scrolled_text import ThemedScrolledText as ScrolledText
 
 logger = logging.getLogger(__name__)
 
@@ -151,17 +152,15 @@ class GunFrame(Frame):
         self.get_props_func = get_props_func
         super().__init__(*args, **kwargs)
 
-        # self.rowconfigure(0, weight=1)
         self.rowconfigure(2, weight=1)
         self.columnconfigure(0, weight=2)
-        # self.columnconfigure(2, weight=4)
         self.columnconfigure(3, weight=8)
 
         self.tree = Treeview(self, show="tree", selectmode="browse")
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
-        vsb.grid(row=0, column=1, rowspan=3, sticky="nsew", **DEFAULT_PAD)
+        vsb.grid(row=0, column=1, rowspan=3, sticky="nsew")
         self.tree.config(yscrollcommand=vsb.set)
-        self.tree.grid(row=0, column=0, rowspan=3, sticky="nsew", **DEFAULT_PAD)
+        self.tree.grid(row=0, column=0, rowspan=3, sticky="nsew")
         self.tree.bind("<<TreeviewSelect>>", self.set_overview)
 
         overview_frame = self.add_overview_frame()
@@ -447,9 +446,9 @@ class StatesFrame(LabelFrame):
 
         self.tree = Treeview(self, columns=cols, show="headings", selectmode="browse")
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
-        vsb.grid(row=0, column=1, sticky="nsew", **DEFAULT_PAD)
+        vsb.grid(row=0, column=1, sticky="nsew")
         self.tree.config(yscrollcommand=vsb.set)
-        self.tree.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+        self.tree.grid(row=0, column=0, sticky="nsew")
 
         for width, col in zip(widths, self.tree["columns"]):
             self.tree.heading(column=col, text=col, anchor="c")

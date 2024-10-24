@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import logging
 from tkinter import Toplevel, filedialog
-from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Button, Frame, LabelFrame, Scrollbar, Treeview
 from typing import Optional, Tuple
 
 from ..charge import Propellant
 from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
 from .misc import add_label_entry_label_group, tree_selected
+# from tkinter.scrolledtext import ScrolledText
+from .themed_scrolled_text import ThemedScrolledText as ScrolledText
 
 logger = logging.getLogger(__name__)
 
@@ -104,17 +105,15 @@ class PropellantFrame(Frame):
         widths = (200, 100, 100, 100, 100, 100, 200)
 
         self.tree = Treeview(self, columns=cols, show="headings", selectmode="browse")
-
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
-        vsb.grid(row=1, column=1, sticky="nsew", **DEFAULT_PAD)
-
+        vsb.grid(row=1, column=1, sticky="nsew")
         self.tree.config(yscrollcommand=vsb.set)
 
         for width, col in zip(widths, self.tree["columns"]):
             self.tree.heading(column=f"{col}", text=f"{col}", anchor="c")
             self.tree.column(column=f"{col}", width=width, minwidth=width, stretch=True, anchor="c")
 
-        self.tree.grid(row=1, column=0, sticky="nsew", **DEFAULT_PAD)
+        self.tree.grid(row=1, column=0, sticky="nsew")
 
         overview_frame = LabelFrame(self, text="Overview")
         overview_frame.grid(row=0, column=2, rowspan=2, sticky="nsew", **DEFAULT_PAD)

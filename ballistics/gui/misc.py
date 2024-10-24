@@ -1,8 +1,6 @@
-from tkinter import Entry, Label, StringVar, Toplevel
-from tkinter.ttk import Frame
+from tkinter import StringVar, Toplevel
+from tkinter.ttk import Entry, Frame, Label
 from typing import Optional, Tuple, Union
-
-from tktooltip import ToolTip  # type: ignore[import-untyped]
 
 from . import DEFAULT_ENTRY_WIDTH, DEFAULT_PAD
 

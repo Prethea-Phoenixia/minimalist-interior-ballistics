@@ -3,13 +3,18 @@ from __future__ import annotations
 import logging
 from ctypes import windll
 from tkinter import Menu, Tk, Toplevel
-from tkinter.scrolledtext import ScrolledText
-from tkinter.ttk import Button, Entry, Frame, Label, Notebook
+# from tkinter.scrolledtext import ScrolledText
+from tkinter.ttk import Button, Entry, Frame, Label, Notebook, Style
 from typing import Callable
 
 from . import DEFAULT_ACC, DEFAULT_ENTRY_WIDTH, DEFAULT_PAD, DEFAULT_STEPS
 from .gun_window import GunFrame
 from .propellant_window import PropellantFrame
+from .themed_scrolled_text import ThemedScrolledText as ScrolledText
+
+# from ttkthemes import ThemedTk
+# import sv_ttk
+
 
 logger = logging.getLogger(__name__)
 
@@ -193,12 +198,16 @@ def main():
     windll.shcore.SetProcessDpiAwareness(1)
 
     root = Tk()
+
+    # root.tk.call("tk", "scaling", 3)
+
     root.option_add("*tearOff", False)
 
     main_frame = MainFrame(root)
     main_frame.grid(row=0, column=0, sticky="nsew")
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
+    # Style().theme_use("clam")
     root.mainloop()
 
 
