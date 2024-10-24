@@ -7,7 +7,6 @@ from typing import Optional, Tuple
 from attrs import frozen
 
 from .. import Significance
-from ..charge import Charge
 from ..gun import Gun
 from ..num import dekker, gss_max
 from .base_problem import BaseProblem
@@ -18,26 +17,14 @@ logger = logging.getLogger(__name__)
 
 @frozen(kw_only=True)
 class FixedChargeProblem(BaseProblem):
-
     charge_mass: float
 
     def get_gun(self, *, chamber_volume: float, reduced_burnrate: float = 0, **kwargs) -> Gun:
-        charge = Charge.from_propellant(
-            reduced_burnrate=reduced_burnrate,
-            propellant=self.propellant,
-            form_function=self.form_function,
-        )
-
-        gun = Gun(
-            cross_section=self.cross_section,
-            shot_mass=self.shot_mass,
+        return super().get_gun(
             charge_mass=self.charge_mass,
-            charge=charge,
             chamber_volume=chamber_volume,
-            loss_fraction=self.loss_fraction,
-            start_pressure=self.start_pressure,
+            reduced_burnrate=reduced_burnrate,
         )
-        return gun
 
     @cached_property
     def chamber_min_volume(self) -> float:

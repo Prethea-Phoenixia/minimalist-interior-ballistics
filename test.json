@@ -25,6 +25,7 @@
 			}
 		},
 		"chamber_volume": 0.001484,
+		"travel": 2.687,
 		"loss_fraction": 0.02,
 		"start_pressure": 30000000.0
 	},
@@ -54,6 +55,7 @@
 			}
 		},
 		"chamber_volume": 0.001484,
+		"travel": 2.687,
 		"loss_fraction": 0.02,
 		"start_pressure": 30000000.0
 	}

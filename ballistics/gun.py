@@ -33,6 +33,7 @@ class Gun:
     charge_mass: float
     charge: Charge
     chamber_volume: float
+    travel: float
 
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
@@ -385,44 +386,6 @@ class Gun:
         )
 
         return self.mark_max_pressure(states=states, acc=acc)
-
-    # def to_velocity(self, velocity: float, n_intg: int, acc: float) -> StateList:
-    #     """
-    #     Conducts integration up to the desired velocity using velocity-wise ODE
-    #     from burnout point to muzzle exit. Calls `.to_burnout` for integration up
-    #     to the burnout point.
-    #     Parameters
-    #     ----------
-    #     velocity: float
-    #         the projectile velocity to which the integration is done to.
-    #     n_intg, acc: int, float
-    #         see documentation for `Gun.to_burnout`.
-
-    #     Returns
-    #     -------
-    #     list of `ballistics.state.State`.
-
-    #     """
-
-    #     states = self.to_burnout(n_intg=n_intg, acc=acc, abort_velocity=velocity)
-    #     state = max(states)
-
-    #     if states.has_state_with_marker(Significance.BURNOUT):
-
-    #         dt = (max(states).time - min(states).time) / len(states)
-    #         next_state = self.propagate_rk4(state=state, dt=dt)
-
-    #         while next_state.velocity < velocity:
-    #             states.append(state := next_state)
-    #             next_state = self.propagate_rk4(state=state, dt=dt)
-
-    #     states.append(
-    #         self.propagate_rk4(
-    #             state=state, dv=velocity - state.velocity, marker=Significance.MUZZLE
-    #         )
-    #     )
-
-    #     return self.mark_max_pressure(states=states, acc=acc)
 
     def mark_max_pressure(self, states: StateList, acc: float) -> StateList:
         """

@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from attrs import frozen
+from attrs import field, frozen
 
 from .. import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
                 REDUCED_BURN_RATE_INITIAL_GUESS, Significance)
@@ -20,6 +20,8 @@ logger = logging.getLogger(__name__)
 
 @frozen(kw_only=True)
 class BaseProblem:
+    name: str = field(default="")
+    description: str = field(default="")
     propellant: Propellant
     form_function: FormFunction
 
@@ -29,25 +31,23 @@ class BaseProblem:
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
 
-    def get_gun(
-        self, *, charge_mass: float, chamber_volume: float, reduced_burnrate: float = 0
-    ) -> Gun:
-        charge = Charge.from_propellant(
-            reduced_burnrate=reduced_burnrate,
-            propellant=self.propellant,
-            form_function=self.form_function,
-        )
-
-        gun = Gun(
+    def get_gun(self, *, charge_mass: float, chamber_volume: float, reduced_burnrate: float) -> Gun:
+        return Gun(
+            name=self.name,
+            description=self.description,
             cross_section=self.cross_section,
             shot_mass=self.shot_mass,
             charge_mass=charge_mass,
-            charge=charge,
+            charge=Charge.from_propellant(
+                reduced_burnrate=reduced_burnrate,
+                propellant=self.propellant,
+                form_function=self.form_function,
+            ),
             chamber_volume=chamber_volume,
+            travel=self.travel,
             loss_fraction=self.loss_fraction,
             start_pressure=self.start_pressure,
         )
-        return gun
 
     def solve_reduced_burn_rate_at_pressure(
         self,
