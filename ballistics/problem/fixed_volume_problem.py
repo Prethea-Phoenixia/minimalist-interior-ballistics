@@ -36,7 +36,7 @@ class FixedVolumeProblem(BaseProblem):
         return self.chamber_volume * self.propellant.density
 
     def get_charge_mass_limits(
-        self, *, pressure_target: PressureTarget, acc: float, logging_preamble: str = ""
+        self, pressure_target: PressureTarget, *, acc: float, logging_preamble: str = ""
     ) -> Tuple[float, float]:
         """
         Find the maximum and minimum valid charge mass value for the outlined gun design
@@ -97,9 +97,9 @@ class FixedVolumeProblem(BaseProblem):
 
     def solve_reduced_burn_rate_for_charge_at_pressure(
         self,
-        *,
         charge_mass: float,
         pressure_target: PressureTarget,
+        *,
         n_intg: int,
         acc: float,
         logging_preamble: str = "",
@@ -166,9 +166,9 @@ class FixedVolumeProblem(BaseProblem):
 
     def solve_charge_mass_at_velocity_and_pressure(
         self,
-        *,
-        pressure_target: PressureTarget,
         velocity_target: float,
+        pressure_target: PressureTarget,
+        *,
         n_intg: int,
         acc: float,
         logging_preamble: str = "",

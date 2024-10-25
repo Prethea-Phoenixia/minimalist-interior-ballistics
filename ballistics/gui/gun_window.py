@@ -52,6 +52,7 @@ class DefineGunWindow(Toplevel):
                         "/ns",
                         basis.charge.reduced_burnrate * 1e9 if basis else None,
                     ),
+                    ("Shot Travel", "dm", basis.travel * 10 if basis else None),
                 ]
             )
         )
@@ -111,6 +112,7 @@ class DefineGunWindow(Toplevel):
                 loss_fraction,
                 start_pressure,
                 reduced_burnrate,
+                shot_travel,
             ) = (float(e.get()) for e in self.value_entries[1:])
 
             cross_section *= 1e-2  # dm^2 to m^2
@@ -118,6 +120,7 @@ class DefineGunWindow(Toplevel):
             start_pressure *= 1e6  # MPa to Pa
             loss_fraction *= 1e-2  # % to 1
             reduced_burnrate *= 1e-9  # ns to s
+            shot_travel *= 1e-1
 
             prop = self.get_prop()
             ff = self.form_function_frame.get_form_function()
@@ -140,6 +143,7 @@ class DefineGunWindow(Toplevel):
                 chamber_volume=chamber_volume,
                 loss_fraction=loss_fraction,
                 start_pressure=start_pressure,
+                shot_travel=shot_travel,
             )
             self.destroy()
 

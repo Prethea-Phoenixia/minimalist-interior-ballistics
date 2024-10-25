@@ -31,7 +31,7 @@ class FixedChargeProblem(BaseProblem):
         return self.charge_mass / self.propellant.density
 
     def get_chamber_volume_limits(
-        self, pressure_target: PressureTarget, acc: float, logging_preamble: str = ""
+        self, pressure_target: PressureTarget, *, acc: float, logging_preamble: str = ""
     ) -> Tuple[float, float]:
         """
         find the range of valid chamber volume
@@ -92,9 +92,9 @@ class FixedChargeProblem(BaseProblem):
 
     def solve_reduced_burn_rate_for_volume_at_pressure(
         self,
-        *,
         chamber_volume: float,
         pressure_target: PressureTarget,
+        *,
         n_intg: int,
         acc: float,
         logging_preamble: str = "",
@@ -163,9 +163,9 @@ class FixedChargeProblem(BaseProblem):
 
     def solve_chamber_volume_at_velocity_and_pressure(
         self,
-        *,
-        pressure_target: PressureTarget,
         velocity_target: float,
+        pressure_target: PressureTarget,
+        *,
         n_intg: int,
         acc: float,
         logging_preamble: str = "",

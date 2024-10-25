@@ -5,7 +5,7 @@ import logging
 from bisect import insort
 from functools import cached_property
 from math import inf
-from typing import Dict, Iterable, List, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from attrs import field, frozen
 from cattrs import Converter
@@ -110,7 +110,7 @@ class Gun:
             marker=Significance.BOMB,
         )
 
-    def gas_energy(self, psi: float, v: float) -> float:
+    def gas_energy(self, *, psi: float, v: float) -> float:
         return (
             self.charge.force * self.charge_mass * psi
             - 0.5 * self.charge.theta * self.phi * self.shot_mass * v**2
@@ -147,6 +147,7 @@ class Gun:
     def propagate_rk4(
         self,
         state: State,
+        *,
         dt=...,
         dl=...,
         dv=...,
@@ -178,7 +179,7 @@ class Gun:
         k4 = df(s_i(d=k3 * dx, **{**generate_dargs(dx), **intermediate}))
         return s_i(d=(k1 + k2 * 2 + k3 * 2 + k4) * dx / 6, **generate_dargs(dx), marker=marker)
 
-    def to_start(self, n_intg: int, acc: float) -> StateList:
+    def to_start(self, *, n_intg: int, acc: float) -> StateList:
         # sanity check: maximum possible pressure developed is higher than start:
         if self.get_bomb_state().average_pressure < self.start_pressure:
             raise ValueError(
@@ -207,12 +208,12 @@ class Gun:
             states = StateList([s_next])
             while s_next.average_pressure < self.start_pressure:
                 states.append(s_now := s_next)
-                s_next = self.propagate_rk4(state=s_now, dt=delta_t)
+                s_next = self.propagate_rk4(s_now, dt=delta_t)
 
             rough_ttb = s_next.time
 
         def state_at_time(time: float, marker: Significance = Significance.INTERMEDIATE) -> State:
-            return self.propagate_rk4(state=s_now, dt=time - s_now.time, marker=marker)
+            return self.propagate_rk4(s_now, dt=time - s_now.time, marker=marker)
 
         start_time = dekker(
             f=lambda t: state_at_time(t).average_pressure - self.start_pressure,
@@ -226,14 +227,14 @@ class Gun:
 
         return states
 
-    def get_velocity_post_burnout(self, burnout_state: State, travel: float) -> float:
+    def get_velocity_post_burnout(self, *, burnout_state: State, travel: float) -> float:
         l_k, v_k = burnout_state.travel, burnout_state.velocity
         l_1 = self.l_0 * (1 - self.incompressible_fraction(1))
         v_j = self.velocity_limit
         theta = self.charge.theta
         return (1 - (1 - (v_k / v_j) ** 2) / ((l_1 + travel) / (l_1 + l_k)) ** theta) ** 0.5 * v_j
 
-    def get_travel_post_burnout(self, burnout_state: State, velocity: float) -> float:
+    def get_travel_post_burnout(self, *, burnout_state: State, velocity: float) -> float:
         l_k, v_k = burnout_state.travel, burnout_state.velocity
         l_1 = self.l_0 * (1 - self.incompressible_fraction(1))
         v_j = self.velocity_limit
@@ -245,6 +246,7 @@ class Gun:
 
     def to_burnout(
         self,
+        *,
         n_intg: int,
         acc: float,
         abort_velocity: float = inf,
@@ -319,24 +321,24 @@ class Gun:
 
             while not (burnout(s_next) or abort(s_next)):
                 states.append(s_now := s_next)
-                s_next = self.propagate_rk4(state=s_now, dt=delta_t)
+                s_next = self.propagate_rk4(s_now, dt=delta_t)
 
             rough_ttb = s_next.time
 
         def time_end(time: float) -> float:
-            s = self.propagate_rk4(state=s_now, dt=time - s_now.time)
+            s = self.propagate_rk4(s_now, dt=time - s_now.time)
             return -1 if (burnout(s) or abort(s)) else 1
 
         end_time = max(dekker(f=time_end, x_0=s_now.time, x_1=s_next.time, tol=rough_ttb * acc))
 
-        s_end = self.propagate_rk4(state=s_now, dt=end_time - s_now.time)
+        s_end = self.propagate_rk4(s_now, dt=end_time - s_now.time)
         if burnout(s_end):
             s_burnout = State.remark(s_end, new_significance=Significance.BURNOUT)
             states.append(s_burnout)
 
-        return self.mark_max_pressure(states=states, acc=acc)
+        return self.mark_max_pressure(states, acc=acc)
 
-    def to_travel(self, *, travel: float, n_intg: int, acc: float) -> StateList:
+    def to_travel(self, travel: Optional[float] = None, *, n_intg: int, acc: float) -> StateList:
         """
         Conducts integration up to the desired shot-travel using time-wise ODE, if
         the travel is greater than burnout point. Then, length-wise ODE is used
@@ -353,6 +355,9 @@ class Gun:
         -------
         list of `ballistics.state.State`.
         """
+
+        if not travel:
+            travel = self.travel
 
         states = self.to_burnout(n_intg=n_intg, acc=acc, abort_travel=travel)
         state = max(states)
@@ -375,19 +380,19 @@ class Gun:
             """
             dt = max((max(states).time - min(states).time) / len(states), ttm_est / n_intg)
 
-            next_state = self.propagate_rk4(state=state, dt=dt)
+            next_state = self.propagate_rk4(state, dt=dt)
 
             while next_state.travel < travel:
                 states.append(state := next_state)
-                next_state = self.propagate_rk4(state=state, dt=dt)
+                next_state = self.propagate_rk4(state, dt=dt)
 
         states.append(
-            self.propagate_rk4(state=state, dl=travel - state.travel, marker=Significance.MUZZLE)
+            self.propagate_rk4(state, dl=travel - state.travel, marker=Significance.MUZZLE)
         )
 
-        return self.mark_max_pressure(states=states, acc=acc)
+        return self.mark_max_pressure(states, acc=acc)
 
-    def mark_max_pressure(self, states: StateList, acc: float) -> StateList:
+    def mark_max_pressure(self, states: StateList, *, acc: float) -> StateList:
         """
         Finds the maximum pressure point and insert it into a list of
         `ballistics.state.State`, passed in as argument.
@@ -415,9 +420,9 @@ class Gun:
 
             def time_pressure(time: float) -> float:
                 if s_i.time <= time < s_j.time:
-                    p_t = self.propagate_rk4(state=s_i, dt=time - s_i.time).average_pressure
+                    p_t = self.propagate_rk4(s_i, dt=time - s_i.time).average_pressure
                 elif s_j.time <= time < s_k.time:
-                    p_t = self.propagate_rk4(state=s_j, dt=time - s_j.time).average_pressure
+                    p_t = self.propagate_rk4(s_j, dt=time - s_j.time).average_pressure
                 return p_t
 
             time_pmax = (
@@ -425,9 +430,7 @@ class Gun:
                 * 0.5
             )
             s_pmax = self.propagate_rk4(
-                state=s_j,
-                dt=time_pmax - s_j.time,
-                marker=Significance.PEAK_PRESSURE,
+                s_j, dt=time_pmax - s_j.time, marker=Significance.PEAK_PRESSURE
             )
 
             insort(states, s_pmax)

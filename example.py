@@ -46,12 +46,12 @@ if __name__ in {"__main__", "__mp_main__"}:
     #     acc=1e-4,
     # )
 
-    # g = p.solve_charge_mass_at_velocity_and_pressure(
-    #     pressure_target=PressureTarget.average_pressure(value=268e6),
-    #     velocity_target=650,
-    #     n_intg=10,
-    #     acc=1e-3,
-    # )
+    g = p.solve_charge_mass_at_velocity_and_pressure(
+        pressure_target=PressureTarget.average_pressure(value=268e6),
+        velocity_target=650,
+        n_intg=10,
+        acc=1e-3,
+    )
 
     q = FixedChargeProblem(
         cross_section=0.469e-2,
@@ -75,7 +75,7 @@ if __name__ in {"__main__", "__mp_main__"}:
         ),
     )
 
-    g = q.solve_reduced_burn_rate_for_volume_at_pressure(
+    q.solve_reduced_burn_rate_for_volume_at_pressure(
         chamber_volume=1.484e-3,
         pressure_target=PressureTarget.average_pressure(value=268e6),
         n_intg=10,
@@ -91,9 +91,9 @@ if __name__ in {"__main__", "__mp_main__"}:
         )
     )
 
-    Gun.to_file([g, g], "test.json")
+    # Gun.to_file([g, g], "test.json")
 
-    Gun.from_file(filename="test.json")
+    # Gun.from_file(filename="test.json")
 
     logger.info("ended")
 

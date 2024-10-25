@@ -66,7 +66,9 @@ class State:
         if l_psi <= 0:
             return inf
         else:
-            return self.gun.gas_energy(self.volume_burnup_fraction, v) / (self.gun.S * (l_psi + l))
+            return self.gun.gas_energy(psi=self.volume_burnup_fraction, v=v) / (
+                self.gun.S * (l_psi + l)
+            )
 
     @cached_property
     def shot_pressure(self) -> float:
