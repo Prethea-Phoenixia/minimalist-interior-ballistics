@@ -12,7 +12,6 @@ from ..form_function import FormFunction, MultiPerfShape
 from ..gun import Gun
 from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
 from .misc import add_frame_group, add_label_entry_label_group, tree_selected
-# from tkinter.scrolledtext import ScrolledText
 from .themed_scrolled_text import ThemedScrolledText as ScrolledText
 
 logger = logging.getLogger(__name__)
@@ -112,7 +111,7 @@ class DefineGunWindow(Toplevel):
                 loss_fraction,
                 start_pressure,
                 reduced_burnrate,
-                shot_travel,
+                travel,
             ) = (float(e.get()) for e in self.value_entries[1:])
 
             cross_section *= 1e-2  # dm^2 to m^2
@@ -120,7 +119,7 @@ class DefineGunWindow(Toplevel):
             start_pressure *= 1e6  # MPa to Pa
             loss_fraction *= 1e-2  # % to 1
             reduced_burnrate *= 1e-9  # ns to s
-            shot_travel *= 1e-1
+            travel *= 1e-1
 
             prop = self.get_prop()
             ff = self.form_function_frame.get_form_function()
@@ -143,7 +142,7 @@ class DefineGunWindow(Toplevel):
                 chamber_volume=chamber_volume,
                 loss_fraction=loss_fraction,
                 start_pressure=start_pressure,
-                shot_travel=shot_travel,
+                travel=travel,
             )
             self.destroy()
 
@@ -173,21 +172,21 @@ class GunFrame(Frame):
         derived_frame = self.add_derived_frame()
         derived_frame.grid(row=1, column=2, sticky="nsew", **DEFAULT_PAD)
 
-        control_frame = self.add_control_frame()
-        control_frame.grid(row=1, column=3, stick="nsew", **DEFAULT_PAD)
+        # control_frame = self.add_control_frame()
+        # control_frame.grid(row=1, column=3, stick="nsew", **DEFAULT_PAD)
 
         states_frame = StatesFrame(self)
         states_frame.grid(row=2, column=2, columnspan=2, stick="nsew", **DEFAULT_PAD)
 
         self.guns = {}
 
-    def add_control_frame(self) -> LabelFrame:
-        control_frame = LabelFrame(self, text="Control")
+    # def add_control_frame(self) -> LabelFrame:
+    #     control_frame = LabelFrame(self, text="Control")
 
-        Label(control_frame, text="To Length:").grid(row=0, column=0, stick="nsew", **DEFAULT_PAD)
-        Label(control_frame, text="To Velocity:").grid(row=1, column=0, stick="nsew", **DEFAULT_PAD)
+    #     Label(control_frame, text="To Length:").grid(row=0, column=0, stick="nsew", **DEFAULT_PAD)
+    #     Label(control_frame, text="To Velocity:").grid(row=1, column=0, stick="nsew", **DEFAULT_PAD)
 
-        return control_frame
+    #     return control_frame
 
     def add_overview_frame(self) -> LabelFrame:
         overview_frame = LabelFrame(self, text="Overview")
@@ -197,38 +196,6 @@ class GunFrame(Frame):
         overview_frame.columnconfigure(2, weight=1)
         overview_frame.columnconfigure(3, weight=1)
 
-        ov_top_frame, self.ov_top_params = add_frame_group(
-            overview_frame, ((v, "", None, True) for v in ("Charge Name", "Charge Desc."))
-        )
-        ov_top_frame.grid(row=0, column=1, columnspan=2, sticky="nsew", **DEFAULT_PAD)
-
-        ov_left_frame, self.ov_left_params = add_frame_group(
-            overview_frame,
-            (
-                (*v, None, True)
-                for v in (("Cross Section", "dm²"), ("Shot Mass", "kg"), ("Charge Mass", "kg"))
-            ),
-        )
-        ov_left_frame.grid(row=1, column=1, stick="nsew", **DEFAULT_PAD)
-
-        ov_mid_frame, self.ov_mid_params = add_frame_group(
-            overview_frame,
-            (
-                (*v, None, True)
-                for v in (("Chamber Vol.", "L"), ("Start Pressure", "MPa"), ("Loss Fraction", "%"))
-            ),
-        )
-        ov_mid_frame.grid(row=1, column=2, stick="nsew", **DEFAULT_PAD)
-
-        ov_right_frame, self.ov_right_params = add_frame_group(
-            overview_frame,
-            (
-                (*v, None, True)
-                for v in (("χ", ""), ("λ", ""), ("μ", ""), ("Zₖ", ""), ("u/e", "/ns"))
-            ),
-        )
-        ov_right_frame.grid(row=0, column=3, rowspan=2, stick="nsew", **DEFAULT_PAD)
-
         self.overview_text = ScrolledText(
             overview_frame,
             state="disabled",
@@ -237,6 +204,45 @@ class GunFrame(Frame):
             wrap="none",
         )
         self.overview_text.grid(row=0, column=0, rowspan=2, sticky="nsew", **DEFAULT_PAD)
+
+        ov_top_frame, self.ov_top_params = add_frame_group(
+            overview_frame, ((v, "", None, True) for v in ("Charge Name", "Charge Desc."))
+        )
+        ov_top_frame.grid(row=0, column=1, columnspan=3, sticky="nsew", **DEFAULT_PAD)
+
+        ov_left_frame, self.ov_left_params = add_frame_group(
+            overview_frame,
+            (
+                (*v, None, True)
+                for v in (
+                    ("Cross Section", "dm²"),
+                    ("Shot Mass", "kg"),
+                    ("Charge Mass", "kg"),
+                    ("Chamber Vol.", "L"),
+                )
+            ),
+        )
+        ov_left_frame.grid(row=1, column=1, stick="nsew", **DEFAULT_PAD)
+
+        ov_mid_frame, self.ov_mid_params = add_frame_group(
+            overview_frame,
+            (
+                (*v, None, True)
+                for v in (
+                    ("Start Pressure", "MPa"),
+                    ("Loss Fraction", "%"),
+                    ("Red. Burnrate", "/ns"),
+                    ("Shot Travel", "dm"),
+                )
+            ),
+        )
+        ov_mid_frame.grid(row=1, column=2, stick="nsew", **DEFAULT_PAD)
+
+        ov_right_frame, self.ov_right_params = add_frame_group(
+            overview_frame,
+            ((*v, None, True) for v in (("χ", ""), ("λ", ""), ("μ", ""), ("Zₖ", ""))),
+        )
+        ov_right_frame.grid(row=1, column=3, stick="nsew", **DEFAULT_PAD)
 
         return overview_frame
 
@@ -273,20 +279,30 @@ class GunFrame(Frame):
                 sv.set(v)
 
             for v, sv in zip(
-                (gun.cross_section * 1e2, gun.shot_mass, gun.charge_mass),
+                (gun.cross_section * 1e2, gun.shot_mass, gun.charge_mass, gun.chamber_volume * 1e3),
                 self.ov_left_params,
             ):
                 sv.set(v)
 
             for v, sv in zip(
-                (gun.chamber_volume * 1e3, gun.start_pressure * 1e-6, gun.loss_fraction * 1e2),
+                (
+                    gun.start_pressure * 1e-6,
+                    gun.loss_fraction * 1e2,
+                    gun.charge.reduced_burnrate * 1e9,
+                    gun.travel * 10,
+                ),
                 self.ov_mid_params,
             ):
                 sv.set(v)
 
             ff = gun.charge.form_function
             for v, sv in zip(
-                (ff.chi, ff.labda, ff.mu, ff.Z_k, gun.charge.reduced_burnrate * 1e9),
+                (
+                    ff.chi,
+                    ff.labda,
+                    ff.mu,
+                    ff.Z_k,
+                ),
                 self.ov_right_params,
             ):
                 sv.set(v)
