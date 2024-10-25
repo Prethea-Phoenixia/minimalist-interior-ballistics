@@ -172,21 +172,10 @@ class GunFrame(Frame):
         derived_frame = self.add_derived_frame()
         derived_frame.grid(row=1, column=2, sticky="nsew", **DEFAULT_PAD)
 
-        # control_frame = self.add_control_frame()
-        # control_frame.grid(row=1, column=3, stick="nsew", **DEFAULT_PAD)
-
         states_frame = StatesFrame(self)
         states_frame.grid(row=2, column=2, columnspan=2, stick="nsew", **DEFAULT_PAD)
 
         self.guns = {}
-
-    # def add_control_frame(self) -> LabelFrame:
-    #     control_frame = LabelFrame(self, text="Control")
-
-    #     Label(control_frame, text="To Length:").grid(row=0, column=0, stick="nsew", **DEFAULT_PAD)
-    #     Label(control_frame, text="To Velocity:").grid(row=1, column=0, stick="nsew", **DEFAULT_PAD)
-
-    #     return control_frame
 
     def add_overview_frame(self) -> LabelFrame:
         overview_frame = LabelFrame(self, text="Overview")
