@@ -3,13 +3,14 @@ from __future__ import annotations
 import logging
 from tkinter import Toplevel
 from tkinter.filedialog import askopenfilename
-from tkinter.ttk import (Button, Combobox, Frame, Label, LabelFrame, Notebook,
+from tkinter.ttk import (Button, Combobox, Frame, LabelFrame, Notebook,
                          Scrollbar, Treeview)
-from typing import Callable, Optional, Tuple
+from typing import Callable, Dict, Optional, Tuple
 
 from ..charge import Charge, Propellant
 from ..form_function import FormFunction, MultiPerfShape
 from ..gun import Gun
+from ..state import State
 from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
 from .misc import add_frame_group, add_label_entry_label_group, tree_selected
 from .themed_scrolled_text import ThemedScrolledText as ScrolledText
@@ -27,7 +28,7 @@ class DefineGunWindow(Toplevel):
         **kwargs,
     ):
         super().__init__(parent, *args, **kwargs)
-
+        self.parent = parent
         self.resizable(False, False)
         self.transient(parent)
 
@@ -151,9 +152,20 @@ class DefineGunWindow(Toplevel):
 
 
 class GunFrame(Frame):
-    def __init__(self, *args, get_props_func=Callable[[], Tuple[Propellant]], **kwargs):
+    def __init__(
+        self,
+        parent,
+        *args,
+        get_props_func: Callable[[], Tuple[Propellant]],
+        get_acc_func: Callable[[], float],
+        get_steps_func: Callable[[], int],
+        **kwargs,
+    ):
+        self.parent = parent
         self.get_props_func = get_props_func
-        super().__init__(*args, **kwargs)
+        self.get_acc_func = get_acc_func
+        self.get_steps_func = get_steps_func
+        super().__init__(parent, *args, **kwargs)
 
         self.rowconfigure(2, weight=1)
         self.columnconfigure(0, weight=2)
@@ -164,7 +176,7 @@ class GunFrame(Frame):
         vsb.grid(row=0, column=1, rowspan=3, sticky="nsew")
         self.tree.config(yscrollcommand=vsb.set)
         self.tree.grid(row=0, column=0, rowspan=3, sticky="nsew")
-        self.tree.bind("<<TreeviewSelect>>", self.set_overview)
+        self.tree.bind("<<TreeviewSelect>>", self.set_overview_and_states)
 
         overview_frame = self.add_overview_frame()
         overview_frame.grid(row=0, column=2, columnspan=2, sticky="nsew", **DEFAULT_PAD)
@@ -172,10 +184,10 @@ class GunFrame(Frame):
         derived_frame = self.add_derived_frame()
         derived_frame.grid(row=1, column=2, sticky="nsew", **DEFAULT_PAD)
 
-        states_frame = StatesFrame(self)
-        states_frame.grid(row=2, column=2, columnspan=2, stick="nsew", **DEFAULT_PAD)
+        self.states_frame = StatesFrame(self)
+        self.states_frame.grid(row=2, column=2, columnspan=2, stick="nsew", **DEFAULT_PAD)
 
-        self.guns = {}
+        self.guns: Dict[str, Gun] = {}
 
     def add_overview_frame(self) -> LabelFrame:
         overview_frame = LabelFrame(self, text="Overview")
@@ -218,8 +230,8 @@ class GunFrame(Frame):
             (
                 (*v, None, True)
                 for v in (
-                    ("Start Pressure", "MPa"),
                     ("Loss Fraction", "%"),
+                    ("Start Pressure", "MPa"),
                     ("Red. Burnrate", "/ns"),
                     ("Shot Travel", "dm"),
                 )
@@ -253,53 +265,59 @@ class GunFrame(Frame):
 
         return derived_frame
 
-    @tree_selected()
-    def set_overview(self, *args, tvid, **kwargs):
+    def set_overview(self, gun: Gun) -> None:
         self.overview_text.config(state="normal")
         self.overview_text.delete(1.0, "end")
-        if tvid:
-            gun = self.guns[tvid]
-            self.overview_text.insert("insert", gun.description)
 
-            for v, sv in zip(
-                (gun.charge.name, gun.charge.description),
-                self.ov_top_params,
-            ):
-                sv.set(v)
+        self.overview_text.insert("insert", gun.description)
 
-            for v, sv in zip(
-                (gun.cross_section * 1e2, gun.shot_mass, gun.charge_mass, gun.chamber_volume * 1e3),
-                self.ov_left_params,
-            ):
-                sv.set(v)
+        for v_str, sv in zip(
+            (gun.charge.name, gun.charge.description),
+            self.ov_top_params,
+        ):
+            sv.set(v_str)
 
-            for v, sv in zip(
-                (
-                    gun.start_pressure * 1e-6,
-                    gun.loss_fraction * 1e2,
-                    gun.charge.reduced_burnrate * 1e9,
-                    gun.travel * 10,
-                ),
-                self.ov_mid_params,
-            ):
-                sv.set(v)
+        for v_flt, sv in zip(
+            (gun.cross_section * 1e2, gun.shot_mass, gun.charge_mass, gun.chamber_volume * 1e3),
+            self.ov_left_params,
+        ):
+            sv.set(f"{v_flt:.3f}")
 
-            ff = gun.charge.form_function
-            for v, sv in zip(
-                (
-                    ff.chi,
-                    ff.labda,
-                    ff.mu,
-                    ff.Z_k,
-                ),
-                self.ov_right_params,
-            ):
-                sv.set(v)
+        # fmt: off
+        for v_flt, sv in zip(
+            (
+                gun.loss_fraction * 1e2, gun.start_pressure * 1e-6,
+                gun.charge.reduced_burnrate * 1e9, gun.travel * 10,
+            ),
+            self.ov_mid_params
+        ):
+            sv.set(f"{v_flt:.3f}")
+        # fmt: on
 
-            for v, sv in zip((gun.velocity_limit, gun.delta * 1e-3), self.dv_params):
-                sv.set(v)
+        ff = gun.charge.form_function
+        for v_flt, sv in zip((ff.chi, ff.labda, ff.mu, ff.Z_k), self.ov_right_params):
+            sv.set(f"{v_flt:.3f}")
+
+        for v_flt, sv in zip((gun.velocity_limit, gun.delta * 1e-3), self.dv_params):
+            sv.set(f"{v_flt:.3f}")
 
         self.overview_text.config(state="disabled")
+
+    def set_states(self, gun: Gun) -> None:
+        try:
+            states = gun.to_travel(n_intg=self.get_steps_func(), acc=self.get_acc_func())
+            self.states_frame.clear()
+            for state in states:
+                self.states_frame.insert(state=state)
+        except ValueError as e:
+            logger.error(e)
+
+    @tree_selected()
+    def set_overview_and_states(self, *args, tvid: str, **kwargs):
+        if tvid:
+            gun = self.guns[tvid]
+            self.set_overview(gun=gun)
+            self.set_states(gun=gun)
 
     @tree_selected()
     def add_edit_gun(self, tvid):
@@ -444,7 +462,7 @@ class StatesFrame(LabelFrame):
         cols = (
             "marker",
             "time ms",
-            "travel m",
+            "travel dm",
             "velocity m/s",
             "burnup",
             "breech p. MPa",
@@ -462,3 +480,22 @@ class StatesFrame(LabelFrame):
         for width, col in zip(widths, self.tree["columns"]):
             self.tree.heading(column=col, text=col, anchor="c")
             self.tree.column(column=col, width=width, minwidth=width, stretch=True, anchor="c")
+
+    def clear(self):
+        self.tree.delete(*self.tree.get_children())
+
+    def insert(self, state: State):
+        self.tree.insert(
+            parent="",
+            index="end",
+            values=(
+                state.marker.value,
+                f"{state.time * 1e3:.3f}",
+                f"{state.travel * 10:.3f}",
+                f"{state.velocity:.3f}",
+                f"{state.volume_burnup_fraction:.1%}",
+                f"{state.breech_pressure * 1e-6:.3f}",
+                f"{state.average_pressure * 1e-6:.3f}",
+                f"{state.shot_pressure * 1e-6:.3f}",
+            ),
+        )

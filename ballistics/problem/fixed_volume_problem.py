@@ -191,7 +191,12 @@ class FixedVolumeProblem(BaseProblem):
                 acc=acc,
                 logging_preamble=logging_preamble + "\t",
             )
-            states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
+            states = gun.to_travel(
+                travel=self.travel,
+                n_intg=n_intg,
+                acc=acc,
+                logging_preamble=logging_preamble + "\t",
+            )
             muzzle_state = states.get_state_by_marker(significance=Significance.MUZZLE)
 
             return muzzle_state.velocity - velocity_target

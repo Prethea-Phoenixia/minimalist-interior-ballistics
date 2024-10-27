@@ -5,7 +5,7 @@ import logging
 from bisect import insort
 from functools import cached_property
 from math import inf
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, Optional, Tuple
 
 from attrs import field, frozen
 from cattrs import Converter
@@ -31,12 +31,12 @@ class Gun:
     cross_section: float
     shot_mass: float
     charge_mass: float
-    charge: Charge
     chamber_volume: float
-    travel: float
-
     loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
+    travel: float
+
+    charge: Charge
 
     def to_json(self):
         converter = Converter()
@@ -251,6 +251,7 @@ class Gun:
         acc: float,
         abort_velocity: float = inf,
         abort_travel: float = inf,
+        logging_preamble: str = "",
     ) -> StateList:
         """
         Integrates projectile motion up to the propellant burnout point and returns
@@ -336,9 +337,11 @@ class Gun:
             s_burnout = State.remark(s_end, new_significance=Significance.BURNOUT)
             states.append(s_burnout)
 
-        return self.mark_max_pressure(states, acc=acc)
+        return self.mark_max_pressure(states, acc=acc, logging_preamble=logging_preamble)
 
-    def to_travel(self, travel: Optional[float] = None, *, n_intg: int, acc: float) -> StateList:
+    def to_travel(
+        self, travel: Optional[float] = None, *, n_intg: int, acc: float, logging_preamble: str = ""
+    ) -> StateList:
         """
         Conducts integration up to the desired shot-travel using time-wise ODE, if
         the travel is greater than burnout point. Then, length-wise ODE is used
@@ -390,9 +393,11 @@ class Gun:
             self.propagate_rk4(state, dl=travel - state.travel, marker=Significance.MUZZLE)
         )
 
-        return self.mark_max_pressure(states, acc=acc)
+        return self.mark_max_pressure(states, acc=acc, logging_preamble=logging_preamble)
 
-    def mark_max_pressure(self, states: StateList, *, acc: float) -> StateList:
+    def mark_max_pressure(
+        self, states: StateList, *, acc: float, logging_preamble: str = ""
+    ) -> StateList:
         """
         Finds the maximum pressure point and insert it into a list of
         `ballistics.state.State`, passed in as argument.
@@ -434,5 +439,11 @@ class Gun:
             )
 
             insort(states, s_pmax)
+
+            logger.info(
+                logging_preamble
+                + f"GUN INTEGRATED -> P. avg. max. {s_pmax.average_pressure * 1e-6:.3f} MPa"
+                + f" at {s_pmax.time * 1e3:.3f} ms "
+            )
 
         return states

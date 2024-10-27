@@ -141,8 +141,8 @@ class PropellantFrame(Frame):
 
     def add_prop(self, prop: Propellant):
         tvid = self.tree.insert(
-            "",
-            "end",
+            parent="",
+            index="end",
             values=(
                 prop.name,
                 f"{prop.density * 1e-3:.3f}",

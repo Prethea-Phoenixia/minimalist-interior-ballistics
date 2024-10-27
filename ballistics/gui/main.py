@@ -98,8 +98,8 @@ class MainFrame(Frame):
         menubar.add_cascade(menu=edit_menu, label="Edit")
         menubar.add_cascade(menu=config_menu, label="Config")
 
-        self.acc = DEFAULT_ACC
-        self.steps = DEFAULT_STEPS
+        self.acc: float = DEFAULT_ACC
+        self.steps: int = DEFAULT_STEPS
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -140,7 +140,12 @@ class MainFrame(Frame):
         propellant_frame = PropellantFrame(notebook)
         propellant_frame.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
 
-        gun_frame = GunFrame(notebook, get_props_func=propellant_frame.get_props)
+        gun_frame = GunFrame(
+            notebook,
+            get_props_func=propellant_frame.get_props,
+            get_acc_func=lambda: self.acc,
+            get_steps_func=lambda: self.steps,
+        )
         gun_frame.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
 
         notebook.add(gun_frame, text="Gun Design(s)")
@@ -196,13 +201,8 @@ class MainFrame(Frame):
 def main():
 
     windll.shcore.SetProcessDpiAwareness(1)
-
     root = Tk()
-
-    # root.tk.call("tk", "scaling", 3)
-
     root.option_add("*tearOff", False)
-
     main_frame = MainFrame(root)
     main_frame.grid(row=0, column=0, sticky="nsew")
     root.columnconfigure(0, weight=1)

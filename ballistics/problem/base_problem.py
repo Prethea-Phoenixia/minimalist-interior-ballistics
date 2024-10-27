@@ -66,7 +66,12 @@ class BaseProblem:
                 charge_mass=charge_mass,
                 chamber_volume=chamber_volume,
             )
-            states = test_gun.to_burnout(n_intg=n_intg, acc=acc, abort_travel=self.travel)
+            states = test_gun.to_burnout(
+                n_intg=n_intg,
+                acc=acc,
+                abort_travel=self.travel,
+                logging_preamble=logging_preamble + "\t",
+            )
             # logger.info(states.tabulate())
             delta_p = (
                 pressure_target.retrieve_from(
