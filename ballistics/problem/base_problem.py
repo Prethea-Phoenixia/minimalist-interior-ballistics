@@ -108,8 +108,8 @@ class BaseProblem:
 
         logger.info(
             logging_preamble
-            + f"SOLVE REDUCED BURN RATE charge {charge_mass:.3f} kg, volume {chamber_volume * 1e3:.3f} L"
-            + f" -> GUN r.b.r {est:.2e} s^-1 END"
+            + f"CHARGE {charge_mass:.3f} kg CHAMBER {chamber_volume * 1e3:.3f} L"
+            + f" -> REDUCED BURN RATE {est:.2e} s^-1 END"
         )
 
         return self.get_gun(

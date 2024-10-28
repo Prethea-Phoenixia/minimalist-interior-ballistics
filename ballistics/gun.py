@@ -440,7 +440,7 @@ class Gun:
 
             insort(states, s_pmax)
 
-            logger.info(
+            logger.debug(
                 logging_preamble
                 + f"GUN -> PMAX {s_pmax.average_pressure * 1e-6:.3f} MPa"
                 + f" AT {s_pmax.time * 1e3:.3f} ms "
