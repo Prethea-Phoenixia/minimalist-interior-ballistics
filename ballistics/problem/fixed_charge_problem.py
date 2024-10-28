@@ -164,15 +164,15 @@ class FixedChargeProblem(BaseProblem):
         )
         return gun
 
-    def solve_chamber_volume_at_velocity_and_pressure(
+    def solve_chamber_volume_at_pressure_for_velocity(
         self,
-        velocity_target: float,
         pressure_target: PressureTarget,
         *,
+        velocity_target: Optional[float] = None,
         n_intg: int,
         acc: float,
         logging_preamble: str = "",
-    ) -> Tuple[Optional[Gun], Optional[Gun]]:
+    ) -> Tuple[Optional[Gun], Optional[Gun], Optional[Gun]]:
         logger.info(
             logging_preamble
             + "MATCH VELOCITY AND PRESSURE PROBLEM "
@@ -182,8 +182,8 @@ class FixedChargeProblem(BaseProblem):
             pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
 
-        def f(chamber_volume: float) -> float:
-            gun = self.get_gun_developing_pressure(
+        def get_gun_with_volume(chamber_volume: float) -> Gun:
+            return self.get_gun_developing_pressure(
                 charge_mass=self.charge_mass,
                 chamber_volume=chamber_volume,
                 pressure_target=pressure_target,
@@ -191,62 +191,65 @@ class FixedChargeProblem(BaseProblem):
                 acc=acc,
                 logging_preamble=logging_preamble + "\t",
             )
+
+        def f(chamber_volume: float) -> float:
+            gun = get_gun_with_volume(chamber_volume=chamber_volume)
             states = gun.to_travel(
                 travel=self.travel,
                 n_intg=n_intg,
                 acc=acc,
                 logging_preamble=logging_preamble + "\t",
             )
-            # logger.info(states.tabulate())
             muzzle_state = states.get_state_by_marker(significance=Significance.MUZZLE)
 
-            return muzzle_state.velocity - velocity_target
+            return muzzle_state.velocity
 
         vol_opt = sum(gss_max(f, x_0=vol_min, x_1=vol_max, tol=self.chamber_min_volume * acc)) * 0.5
-        dv_opt = f(vol_opt)
+        v_opt = f(vol_opt)
 
-        dv_min_vol = f(chamber_volume=vol_min)
-        dv_max_vol = f(chamber_volume=vol_max)
+        v_min_vol = f(chamber_volume=vol_min)
+        v_max_vol = f(chamber_volume=vol_max)
 
-        dv_min = min(dv_min_vol, dv_max_vol)
+        v_min = min(v_min_vol, v_max_vol)
 
-        logger.info(
-            logging_preamble
-            + f"-> VELOCITY RANGE {velocity_target + dv_min:.3f} "
-            + f"TO {velocity_target + dv_opt:.3f} m/s"
-        )
-        if not dv_min < 0 < dv_opt:
-            raise ValueError(
-                "targeted velocity is not achievable in the range of valid loading condition."
+        logger.info(logging_preamble + f"-> VELOCITY RANGE {v_min:.3f} TO {v_opt:.3f} m/s")
+
+        if velocity_target:
+            if not v_min < velocity_target <= v_opt:
+                raise ValueError(
+                    "targeted velocity is not achievable in the range of valid loading condition."
+                )
+
+            def g(vol_i: float, vol_j: float, v_i: float, v_j: float) -> Optional[Gun]:
+                if min(v_i, v_j) <= velocity_target <= max(v_i, v_j):
+                    # target velocity is achievable, find the corresponding charge mass to get it.
+                    chamber_volume, _ = dekker(
+                        f=lambda x: f(x) - velocity_target,
+                        x_0=vol_i,
+                        x_1=vol_j,
+                        tol=acc * self.chamber_min_volume,
+                    )
+                    gun = get_gun_with_volume(chamber_volume=chamber_volume)
+
+                    logger.info(
+                        logging_preamble
+                        + f"-> CHAMBER {chamber_volume * 1e3:.3f} L, "
+                        + f"REDUCED BURN RATE {gun.charge.reduced_burnrate:.2e} s^-1"
+                    )
+                    return gun
+                else:
+                    return None
+
+            logger.info(logging_preamble + "END")
+
+            return (
+                g(vol_i=vol_min, vol_j=vol_opt, v_i=v_min_vol, v_j=v_opt),
+                None,
+                g(vol_i=vol_opt, vol_j=vol_max, v_i=v_opt, v_j=v_max_vol),
             )
-
-        def g(vol_i: float, vol_j: float, dv_i: float, dv_j: float) -> Optional[Gun]:
-            if min(dv_i, dv_j) <= 0 <= max(dv_i, dv_j):
-                # target velocity is achievable, find the corresponding charge mass to get it.
-                chamber_volume, _ = dekker(
-                    f=f, x_0=vol_i, x_1=vol_j, tol=acc * self.chamber_min_volume
-                )
-                gun = self.get_gun_developing_pressure(
-                    charge_mass=self.charge_mass,
-                    chamber_volume=chamber_volume,
-                    pressure_target=pressure_target,
-                    n_intg=n_intg,
-                    acc=acc,
-                    logging_preamble=logging_preamble + "\t",
-                )
-
-                logger.info(
-                    logging_preamble
-                    + f"-> CHAMBER {chamber_volume * 1e3:.3f} L, "
-                    + f"REDUCED BURN RATE {gun.charge.reduced_burnrate:.2e} s^-1"
-                )
-                return gun
-            else:
-                return None
-
-        logger.info(logging_preamble + "END")
-
-        return (
-            g(vol_i=vol_min, vol_j=vol_opt, dv_i=dv_min_vol, dv_j=dv_opt),
-            g(vol_i=vol_opt, vol_j=vol_max, dv_i=dv_opt, dv_j=dv_max_vol),
-        )
+        else:
+            return (
+                get_gun_with_volume(chamber_volume=vol_min),
+                get_gun_with_volume(chamber_volume=vol_opt),
+                get_gun_with_volume(chamber_volume=vol_max),
+            )
