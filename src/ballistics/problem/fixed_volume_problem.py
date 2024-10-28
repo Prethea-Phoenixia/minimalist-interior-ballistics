@@ -5,12 +5,11 @@ from functools import cached_property
 from typing import Optional, Tuple
 
 from attrs import frozen
-
-from .. import Significance
-from ..gun import Gun
-from ..num import dekker, gss_max
-from .base_problem import BaseProblem
-from .pressure_target import PressureTarget
+from ballistics import Significance
+from ballistics.gun import Gun
+from ballistics.num import dekker, gss_max
+from ballistics.problem.base_problem import BaseProblem
+from ballistics.problem.pressure_target import PressureTarget
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +43,8 @@ class FixedVolumeProblem(BaseProblem):
         Parameters
         ----------
         pressure_target, acc: `ballistics.problem.pressure_target.PressureTarget`, float
-            see `FixedVolumeProblem.solve_reduced_burn_rate` for more information.
+            see `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`
+            for more information.
 
         Returns
         -------
@@ -108,7 +108,7 @@ class FixedVolumeProblem(BaseProblem):
         solves the reduced burn rate such that the peak pressure developed in bore
         matches the desired value. This is the outer, user facing function that validates
         the input by checking against the calcualted charge mass limits. Implementation
-        instead under `BaseProblem.get_gun_developing_pressure` method.
+        instead under `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure` method.
 
         Parameters
         ----------
@@ -135,7 +135,9 @@ class FixedVolumeProblem(BaseProblem):
         """
         logger.info(logging_preamble + f"MATCH PRESSURE PROBLEM {pressure_target.describe()} ->")
         min_mass, max_mass = self.get_charge_mass_limits(
-            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
+            pressure_target=pressure_target,
+            acc=acc,
+            logging_preamble=logging_preamble + "\t",
         )
 
         valid_range_prompt = f"valid range of charge mass: [{min_mass:.3f}, {max_mass:.3f}]"
@@ -178,7 +180,9 @@ class FixedVolumeProblem(BaseProblem):
             + f"{velocity_target:.1f} m/s, {pressure_target.describe()} ->"
         )
         mass_min, mass_max = self.get_charge_mass_limits(
-            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
+            pressure_target=pressure_target,
+            acc=acc,
+            logging_preamble=logging_preamble + "\t",
         )
 
         def get_gun_with_charge_mass(charge_mass: float) -> Gun:

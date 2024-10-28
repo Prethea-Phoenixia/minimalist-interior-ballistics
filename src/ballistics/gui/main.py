@@ -7,10 +7,12 @@ from tkinter import Menu, Tk, Toplevel
 from tkinter.ttk import Button, Entry, Frame, Label, Notebook, Style
 from typing import Callable
 
-from . import DEFAULT_ACC, DEFAULT_ENTRY_WIDTH, DEFAULT_PAD, DEFAULT_STEPS
-from .gun_window import GunFrame
-from .propellant_window import PropellantFrame
-from .themed_scrolled_text import ThemedScrolledText as ScrolledText
+from ballistics.gui import (DEFAULT_ACC, DEFAULT_ENTRY_WIDTH, DEFAULT_PAD,
+                            DEFAULT_STEPS)
+from ballistics.gui.gun_window import GunFrame
+from ballistics.gui.propellant_window import PropellantFrame
+from ballistics.gui.themed_scrolled_text import \
+    ThemedScrolledText as ScrolledText
 
 # from ttkthemes import ThemedTk
 # import sv_ttk

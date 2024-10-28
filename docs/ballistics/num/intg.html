@@ -57,110 +57,108 @@
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="k">def</span> <span class="nf">intg</span><span class="p">(</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>    <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span> <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">    Performs numerical integration of a single-variate function, a.la the HP-34C.</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="sd">    Returns both the integral and an error estimation.</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">    Parameters</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">    ----------</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="sd">    f: Callable[[float], float]</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="sd">        single variate function to be integrated.</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="sd">    l, u: float</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">        lower and upper bound of integration.</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">    tol: float</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">        convergence criteria, tolerance of the integral.</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    Returns</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">    -------</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    integral, error: float</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">        the computed integral, and an estimation of the error</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    Notes</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">    -----</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    To apply the quadrature procedure, first the problem is transformed on interval to:</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    ```</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">    u              1                        given:</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    ∫ f(x) dx -&gt; a ∫ f(ax+b) dx             a = (u - l) / 2</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">    l             -1                        b = (u + l) / 2</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    ```</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">    another transformation on the variable of integration eliminates the need to sample</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    at either end points, which makes it possible to evaluate improper integrals if the</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">    asymptotes is at either end point.</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    ```</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    1                                        1</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">    ∫ f(u) du -- let u = 1.5v-0.5v**3 -&gt; 1.5 ∫ f(1.5v-0.5v^3)*(1-v^2) dv</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    -1                                      -1</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">    ```</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">    as the weight (1-v^2) is exactly 0 on both end points. We then sample evenly along</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    v, take quadrature using the mid-point rule and doubling the number of nodes taken</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    for each pass. This helps with suppressing harmonics if the function integrated is</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">    periodic. In addition, all of the previously calcualted quadratures can be reused</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">    in the next round, after dividing by half. This is especially important when funct-</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">    ion calls are expensive. Specifically, for pass k (k&gt;=1 &amp; integer) we consider 2^k-1</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">    points (besides the end points):</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">    ```</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">    v(i) = -1 + 2^(1-k) * i as i increments from 1 to 2^k-1 (inclusive).</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">                                   2^k-1</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">    let I(k) =  2^(1-k) * 1.5 * a * Σ f(1.5v-0.5v^3)*(1-v^2)</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">                                   i=1</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">                                     2^k+1</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">    then I(k+1) = 2^(-k) * 1.5 * a * Σ f(1.5v-0.5v^3)*(1-v^2) for every odd i + I(k)/2</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">                                     i=1</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    ```</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    as a rough approximation, the error is simply taken to be the change in estimated value</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    between two successive evaluations:</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="k">def</span> <span class="nf">intg</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span> <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">    Performs numerical integration of a single-variate function, a.la the HP-34C.</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">    Returns both the integral and an error estimation.</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="sd">    Parameters</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">    ----------</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">    f: Callable[[float], float]</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">        single variate function to be integrated.</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="sd">    l, u: float</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="sd">        lower and upper bound of integration.</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="sd">    tol: float</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">        convergence criteria, tolerance of the integral.</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">    Returns</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">    -------</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    integral, error: float</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">        the computed integral, and an estimation of the error</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    Notes</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">    -----</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">    To apply the quadrature procedure, first the problem is transformed on interval to:</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">    ```</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    u              1                        given:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    ∫ f(x) dx -&gt; a ∫ f(ax+b) dx             a = (u - l) / 2</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">    l             -1                        b = (u + l) / 2</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    ```</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">    another transformation on the variable of integration eliminates the need to sample</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    at either end points, which makes it possible to evaluate improper integrals if the</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">    asymptotes is at either end point.</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    ```</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">    1                                        1</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    ∫ f(u) du -- let u = 1.5v-0.5v**3 -&gt; 1.5 ∫ f(1.5v-0.5v^3)*(1-v^2) dv</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    -1                                      -1</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">    ```</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    as the weight (1-v^2) is exactly 0 on both end points. We then sample evenly along</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">    v, take quadrature using the mid-point rule and doubling the number of nodes taken</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">    for each pass. This helps with suppressing harmonics if the function integrated is</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    periodic. In addition, all of the previously calcualted quadratures can be reused</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    in the next round, after dividing by half. This is especially important when funct-</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">    ion calls are expensive. Specifically, for pass k (k&gt;=1 &amp; integer) we consider 2^k-1</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">    points (besides the end points):</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">    ```</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">    v(i) = -1 + 2^(1-k) * i as i increments from 1 to 2^k-1 (inclusive).</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">                                   2^k-1</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    let I(k) =  2^(1-k) * 1.5 * a * Σ f(1.5v-0.5v^3)*(1-v^2)</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">                                   i=1</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">                                     2^k+1</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">    then I(k+1) = 2^(-k) * 1.5 * a * Σ f(1.5v-0.5v^3)*(1-v^2) for every odd i + I(k)/2</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">                                     i=1</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">    ```</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">    as a rough approximation, the error is simply taken to be the change in estimated value</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    between two successive evaluations:</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    ```</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    ΔI(k) = I(k) - I(k-1)</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">    ```</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">    ΔI(k) = I(k) - I(k-1)</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">    ```</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">    if the quadrature procedure results in a converging result, then the error should dec-</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    rease faster than the increment in the result, speaking in absolute terms. Although</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">    this is no-way guaranteed, it is convenient to take the increment as an upper bound</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">    on error. Therefore we check for three consecutive increments smaller than the specified</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    tolerance before submitting the result as a good enough estimate for the integral.</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">    Since specifying a relative error does not work well for values extremely close to 0.</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    Instead we define a error as abs(x_true - x_ref) / (tolerance + abs(x_ref)) x 100%</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    References</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    ----------</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    - **[1]** &quot;Handheld Calculator Evaluates Integrals&quot;, William M.Kahan, Hewlett Packard</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    Journal, August 1980 Volume 31, number 8.</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">    if the quadrature procedure results in a converging result, then the error should dec-</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">    rease faster than the increment in the result, speaking in absolute terms. Although</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">    this is no-way guaranteed, it is convenient to take the increment as an upper bound</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    on error. Therefore we check for three consecutive increments smaller than the specified</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">    tolerance before submitting the result as a good enough estimate for the integral.</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    Since specifying a relative error does not work well for values extremely close to 0.</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    Instead we define a error as abs(x_true - x_ref) / (tolerance + abs(x_ref)) x 100%</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    References</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    ----------</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    - **[1]** &quot;Handheld Calculator Evaluates Integrals&quot;, William M.Kahan, Hewlett Packard</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    Journal, August 1980 Volume 31, number 8.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">l</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">u</span> <span class="o">+</span> <span class="n">l</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">l</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">u</span> <span class="o">+</span> <span class="n">l</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="n">tol</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tol</span><span class="p">)</span>  <span class="c1"># ensure positive</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">tol</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tol</span><span class="p">)</span>  <span class="c1"># ensure positive</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># iteration counter</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="n">I</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># integral counter</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># trend counter, No. of iterations with reducing delta.</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="k">while</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="n">dI</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># change to integral</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>            <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>            <span class="n">u</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">v</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">v</span><span class="o">**</span><span class="mi">3</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>            <span class="n">dI</span> <span class="o">+=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="n">dI</span> <span class="o">*=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">I1</span> <span class="o">=</span> <span class="n">I</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">dI</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="n">d</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">I1</span> <span class="o">-</span> <span class="n">I</span><span class="p">)</span>  <span class="c1"># delta, change per iteration</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="n">I</span> <span class="o">=</span> <span class="n">I1</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">tol</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="n">tol</span><span class="p">):</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>            <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    <span class="k">return</span> <span class="n">I</span><span class="p">,</span> <span class="n">d</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># iteration counter</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">I</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># integral counter</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># trend counter, No. of iterations with reducing delta.</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="k">while</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="n">dI</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># change to integral</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>            <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>            <span class="n">u</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">v</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">v</span><span class="o">**</span><span class="mi">3</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>            <span class="n">dI</span> <span class="o">+=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="n">dI</span> <span class="o">*=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="n">I1</span> <span class="o">=</span> <span class="n">I</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">dI</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="n">d</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">I1</span> <span class="o">-</span> <span class="n">I</span><span class="p">)</span>  <span class="c1"># delta, change per iteration</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">I</span> <span class="o">=</span> <span class="n">I1</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">tol</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="n">tol</span><span class="p">):</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>            <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="k">return</span> <span class="n">I</span><span class="p">,</span> <span class="n">d</span>
 </span></pre></div>
 
 
@@ -176,110 +174,108 @@
 
     </div>
     <a class="headerlink" href="#intg"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="intg-5"><a href="#intg-5"><span class="linenos">  5</span></a><span class="k">def</span> <span class="nf">intg</span><span class="p">(</span>
-</span><span id="intg-6"><a href="#intg-6"><span class="linenos">  6</span></a>    <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span> <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="intg-7"><a href="#intg-7"><span class="linenos">  7</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-</span><span id="intg-8"><a href="#intg-8"><span class="linenos">  8</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="intg-9"><a href="#intg-9"><span class="linenos">  9</span></a><span class="sd">    Performs numerical integration of a single-variate function, a.la the HP-34C.</span>
-</span><span id="intg-10"><a href="#intg-10"><span class="linenos"> 10</span></a><span class="sd">    Returns both the integral and an error estimation.</span>
-</span><span id="intg-11"><a href="#intg-11"><span class="linenos"> 11</span></a>
-</span><span id="intg-12"><a href="#intg-12"><span class="linenos"> 12</span></a><span class="sd">    Parameters</span>
-</span><span id="intg-13"><a href="#intg-13"><span class="linenos"> 13</span></a><span class="sd">    ----------</span>
-</span><span id="intg-14"><a href="#intg-14"><span class="linenos"> 14</span></a><span class="sd">    f: Callable[[float], float]</span>
-</span><span id="intg-15"><a href="#intg-15"><span class="linenos"> 15</span></a><span class="sd">        single variate function to be integrated.</span>
-</span><span id="intg-16"><a href="#intg-16"><span class="linenos"> 16</span></a><span class="sd">    l, u: float</span>
-</span><span id="intg-17"><a href="#intg-17"><span class="linenos"> 17</span></a><span class="sd">        lower and upper bound of integration.</span>
-</span><span id="intg-18"><a href="#intg-18"><span class="linenos"> 18</span></a><span class="sd">    tol: float</span>
-</span><span id="intg-19"><a href="#intg-19"><span class="linenos"> 19</span></a><span class="sd">        convergence criteria, tolerance of the integral.</span>
-</span><span id="intg-20"><a href="#intg-20"><span class="linenos"> 20</span></a>
-</span><span id="intg-21"><a href="#intg-21"><span class="linenos"> 21</span></a><span class="sd">    Returns</span>
-</span><span id="intg-22"><a href="#intg-22"><span class="linenos"> 22</span></a><span class="sd">    -------</span>
-</span><span id="intg-23"><a href="#intg-23"><span class="linenos"> 23</span></a><span class="sd">    integral, error: float</span>
-</span><span id="intg-24"><a href="#intg-24"><span class="linenos"> 24</span></a><span class="sd">        the computed integral, and an estimation of the error</span>
-</span><span id="intg-25"><a href="#intg-25"><span class="linenos"> 25</span></a>
-</span><span id="intg-26"><a href="#intg-26"><span class="linenos"> 26</span></a><span class="sd">    Notes</span>
-</span><span id="intg-27"><a href="#intg-27"><span class="linenos"> 27</span></a><span class="sd">    -----</span>
-</span><span id="intg-28"><a href="#intg-28"><span class="linenos"> 28</span></a>
-</span><span id="intg-29"><a href="#intg-29"><span class="linenos"> 29</span></a><span class="sd">    To apply the quadrature procedure, first the problem is transformed on interval to:</span>
-</span><span id="intg-30"><a href="#intg-30"><span class="linenos"> 30</span></a><span class="sd">    ```</span>
-</span><span id="intg-31"><a href="#intg-31"><span class="linenos"> 31</span></a><span class="sd">    u              1                        given:</span>
-</span><span id="intg-32"><a href="#intg-32"><span class="linenos"> 32</span></a><span class="sd">    ∫ f(x) dx -&gt; a ∫ f(ax+b) dx             a = (u - l) / 2</span>
-</span><span id="intg-33"><a href="#intg-33"><span class="linenos"> 33</span></a><span class="sd">    l             -1                        b = (u + l) / 2</span>
-</span><span id="intg-34"><a href="#intg-34"><span class="linenos"> 34</span></a><span class="sd">    ```</span>
-</span><span id="intg-35"><a href="#intg-35"><span class="linenos"> 35</span></a><span class="sd">    another transformation on the variable of integration eliminates the need to sample</span>
-</span><span id="intg-36"><a href="#intg-36"><span class="linenos"> 36</span></a><span class="sd">    at either end points, which makes it possible to evaluate improper integrals if the</span>
-</span><span id="intg-37"><a href="#intg-37"><span class="linenos"> 37</span></a><span class="sd">    asymptotes is at either end point.</span>
-</span><span id="intg-38"><a href="#intg-38"><span class="linenos"> 38</span></a><span class="sd">    ```</span>
-</span><span id="intg-39"><a href="#intg-39"><span class="linenos"> 39</span></a><span class="sd">    1                                        1</span>
-</span><span id="intg-40"><a href="#intg-40"><span class="linenos"> 40</span></a><span class="sd">    ∫ f(u) du -- let u = 1.5v-0.5v**3 -&gt; 1.5 ∫ f(1.5v-0.5v^3)*(1-v^2) dv</span>
-</span><span id="intg-41"><a href="#intg-41"><span class="linenos"> 41</span></a><span class="sd">    -1                                      -1</span>
-</span><span id="intg-42"><a href="#intg-42"><span class="linenos"> 42</span></a><span class="sd">    ```</span>
-</span><span id="intg-43"><a href="#intg-43"><span class="linenos"> 43</span></a><span class="sd">    as the weight (1-v^2) is exactly 0 on both end points. We then sample evenly along</span>
-</span><span id="intg-44"><a href="#intg-44"><span class="linenos"> 44</span></a><span class="sd">    v, take quadrature using the mid-point rule and doubling the number of nodes taken</span>
-</span><span id="intg-45"><a href="#intg-45"><span class="linenos"> 45</span></a><span class="sd">    for each pass. This helps with suppressing harmonics if the function integrated is</span>
-</span><span id="intg-46"><a href="#intg-46"><span class="linenos"> 46</span></a><span class="sd">    periodic. In addition, all of the previously calcualted quadratures can be reused</span>
-</span><span id="intg-47"><a href="#intg-47"><span class="linenos"> 47</span></a><span class="sd">    in the next round, after dividing by half. This is especially important when funct-</span>
-</span><span id="intg-48"><a href="#intg-48"><span class="linenos"> 48</span></a><span class="sd">    ion calls are expensive. Specifically, for pass k (k&gt;=1 &amp; integer) we consider 2^k-1</span>
-</span><span id="intg-49"><a href="#intg-49"><span class="linenos"> 49</span></a><span class="sd">    points (besides the end points):</span>
-</span><span id="intg-50"><a href="#intg-50"><span class="linenos"> 50</span></a><span class="sd">    ```</span>
-</span><span id="intg-51"><a href="#intg-51"><span class="linenos"> 51</span></a><span class="sd">    v(i) = -1 + 2^(1-k) * i as i increments from 1 to 2^k-1 (inclusive).</span>
-</span><span id="intg-52"><a href="#intg-52"><span class="linenos"> 52</span></a>
-</span><span id="intg-53"><a href="#intg-53"><span class="linenos"> 53</span></a><span class="sd">                                   2^k-1</span>
-</span><span id="intg-54"><a href="#intg-54"><span class="linenos"> 54</span></a><span class="sd">    let I(k) =  2^(1-k) * 1.5 * a * Σ f(1.5v-0.5v^3)*(1-v^2)</span>
-</span><span id="intg-55"><a href="#intg-55"><span class="linenos"> 55</span></a><span class="sd">                                   i=1</span>
-</span><span id="intg-56"><a href="#intg-56"><span class="linenos"> 56</span></a>
-</span><span id="intg-57"><a href="#intg-57"><span class="linenos"> 57</span></a><span class="sd">                                     2^k+1</span>
-</span><span id="intg-58"><a href="#intg-58"><span class="linenos"> 58</span></a><span class="sd">    then I(k+1) = 2^(-k) * 1.5 * a * Σ f(1.5v-0.5v^3)*(1-v^2) for every odd i + I(k)/2</span>
-</span><span id="intg-59"><a href="#intg-59"><span class="linenos"> 59</span></a><span class="sd">                                     i=1</span>
-</span><span id="intg-60"><a href="#intg-60"><span class="linenos"> 60</span></a><span class="sd">    ```</span>
-</span><span id="intg-61"><a href="#intg-61"><span class="linenos"> 61</span></a><span class="sd">    as a rough approximation, the error is simply taken to be the change in estimated value</span>
-</span><span id="intg-62"><a href="#intg-62"><span class="linenos"> 62</span></a><span class="sd">    between two successive evaluations:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="intg-5"><a href="#intg-5"><span class="linenos">  5</span></a><span class="k">def</span> <span class="nf">intg</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span> <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+</span><span id="intg-6"><a href="#intg-6"><span class="linenos">  6</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="intg-7"><a href="#intg-7"><span class="linenos">  7</span></a><span class="sd">    Performs numerical integration of a single-variate function, a.la the HP-34C.</span>
+</span><span id="intg-8"><a href="#intg-8"><span class="linenos">  8</span></a><span class="sd">    Returns both the integral and an error estimation.</span>
+</span><span id="intg-9"><a href="#intg-9"><span class="linenos">  9</span></a>
+</span><span id="intg-10"><a href="#intg-10"><span class="linenos"> 10</span></a><span class="sd">    Parameters</span>
+</span><span id="intg-11"><a href="#intg-11"><span class="linenos"> 11</span></a><span class="sd">    ----------</span>
+</span><span id="intg-12"><a href="#intg-12"><span class="linenos"> 12</span></a><span class="sd">    f: Callable[[float], float]</span>
+</span><span id="intg-13"><a href="#intg-13"><span class="linenos"> 13</span></a><span class="sd">        single variate function to be integrated.</span>
+</span><span id="intg-14"><a href="#intg-14"><span class="linenos"> 14</span></a><span class="sd">    l, u: float</span>
+</span><span id="intg-15"><a href="#intg-15"><span class="linenos"> 15</span></a><span class="sd">        lower and upper bound of integration.</span>
+</span><span id="intg-16"><a href="#intg-16"><span class="linenos"> 16</span></a><span class="sd">    tol: float</span>
+</span><span id="intg-17"><a href="#intg-17"><span class="linenos"> 17</span></a><span class="sd">        convergence criteria, tolerance of the integral.</span>
+</span><span id="intg-18"><a href="#intg-18"><span class="linenos"> 18</span></a>
+</span><span id="intg-19"><a href="#intg-19"><span class="linenos"> 19</span></a><span class="sd">    Returns</span>
+</span><span id="intg-20"><a href="#intg-20"><span class="linenos"> 20</span></a><span class="sd">    -------</span>
+</span><span id="intg-21"><a href="#intg-21"><span class="linenos"> 21</span></a><span class="sd">    integral, error: float</span>
+</span><span id="intg-22"><a href="#intg-22"><span class="linenos"> 22</span></a><span class="sd">        the computed integral, and an estimation of the error</span>
+</span><span id="intg-23"><a href="#intg-23"><span class="linenos"> 23</span></a>
+</span><span id="intg-24"><a href="#intg-24"><span class="linenos"> 24</span></a><span class="sd">    Notes</span>
+</span><span id="intg-25"><a href="#intg-25"><span class="linenos"> 25</span></a><span class="sd">    -----</span>
+</span><span id="intg-26"><a href="#intg-26"><span class="linenos"> 26</span></a>
+</span><span id="intg-27"><a href="#intg-27"><span class="linenos"> 27</span></a><span class="sd">    To apply the quadrature procedure, first the problem is transformed on interval to:</span>
+</span><span id="intg-28"><a href="#intg-28"><span class="linenos"> 28</span></a><span class="sd">    ```</span>
+</span><span id="intg-29"><a href="#intg-29"><span class="linenos"> 29</span></a><span class="sd">    u              1                        given:</span>
+</span><span id="intg-30"><a href="#intg-30"><span class="linenos"> 30</span></a><span class="sd">    ∫ f(x) dx -&gt; a ∫ f(ax+b) dx             a = (u - l) / 2</span>
+</span><span id="intg-31"><a href="#intg-31"><span class="linenos"> 31</span></a><span class="sd">    l             -1                        b = (u + l) / 2</span>
+</span><span id="intg-32"><a href="#intg-32"><span class="linenos"> 32</span></a><span class="sd">    ```</span>
+</span><span id="intg-33"><a href="#intg-33"><span class="linenos"> 33</span></a><span class="sd">    another transformation on the variable of integration eliminates the need to sample</span>
+</span><span id="intg-34"><a href="#intg-34"><span class="linenos"> 34</span></a><span class="sd">    at either end points, which makes it possible to evaluate improper integrals if the</span>
+</span><span id="intg-35"><a href="#intg-35"><span class="linenos"> 35</span></a><span class="sd">    asymptotes is at either end point.</span>
+</span><span id="intg-36"><a href="#intg-36"><span class="linenos"> 36</span></a><span class="sd">    ```</span>
+</span><span id="intg-37"><a href="#intg-37"><span class="linenos"> 37</span></a><span class="sd">    1                                        1</span>
+</span><span id="intg-38"><a href="#intg-38"><span class="linenos"> 38</span></a><span class="sd">    ∫ f(u) du -- let u = 1.5v-0.5v**3 -&gt; 1.5 ∫ f(1.5v-0.5v^3)*(1-v^2) dv</span>
+</span><span id="intg-39"><a href="#intg-39"><span class="linenos"> 39</span></a><span class="sd">    -1                                      -1</span>
+</span><span id="intg-40"><a href="#intg-40"><span class="linenos"> 40</span></a><span class="sd">    ```</span>
+</span><span id="intg-41"><a href="#intg-41"><span class="linenos"> 41</span></a><span class="sd">    as the weight (1-v^2) is exactly 0 on both end points. We then sample evenly along</span>
+</span><span id="intg-42"><a href="#intg-42"><span class="linenos"> 42</span></a><span class="sd">    v, take quadrature using the mid-point rule and doubling the number of nodes taken</span>
+</span><span id="intg-43"><a href="#intg-43"><span class="linenos"> 43</span></a><span class="sd">    for each pass. This helps with suppressing harmonics if the function integrated is</span>
+</span><span id="intg-44"><a href="#intg-44"><span class="linenos"> 44</span></a><span class="sd">    periodic. In addition, all of the previously calcualted quadratures can be reused</span>
+</span><span id="intg-45"><a href="#intg-45"><span class="linenos"> 45</span></a><span class="sd">    in the next round, after dividing by half. This is especially important when funct-</span>
+</span><span id="intg-46"><a href="#intg-46"><span class="linenos"> 46</span></a><span class="sd">    ion calls are expensive. Specifically, for pass k (k&gt;=1 &amp; integer) we consider 2^k-1</span>
+</span><span id="intg-47"><a href="#intg-47"><span class="linenos"> 47</span></a><span class="sd">    points (besides the end points):</span>
+</span><span id="intg-48"><a href="#intg-48"><span class="linenos"> 48</span></a><span class="sd">    ```</span>
+</span><span id="intg-49"><a href="#intg-49"><span class="linenos"> 49</span></a><span class="sd">    v(i) = -1 + 2^(1-k) * i as i increments from 1 to 2^k-1 (inclusive).</span>
+</span><span id="intg-50"><a href="#intg-50"><span class="linenos"> 50</span></a>
+</span><span id="intg-51"><a href="#intg-51"><span class="linenos"> 51</span></a><span class="sd">                                   2^k-1</span>
+</span><span id="intg-52"><a href="#intg-52"><span class="linenos"> 52</span></a><span class="sd">    let I(k) =  2^(1-k) * 1.5 * a * Σ f(1.5v-0.5v^3)*(1-v^2)</span>
+</span><span id="intg-53"><a href="#intg-53"><span class="linenos"> 53</span></a><span class="sd">                                   i=1</span>
+</span><span id="intg-54"><a href="#intg-54"><span class="linenos"> 54</span></a>
+</span><span id="intg-55"><a href="#intg-55"><span class="linenos"> 55</span></a><span class="sd">                                     2^k+1</span>
+</span><span id="intg-56"><a href="#intg-56"><span class="linenos"> 56</span></a><span class="sd">    then I(k+1) = 2^(-k) * 1.5 * a * Σ f(1.5v-0.5v^3)*(1-v^2) for every odd i + I(k)/2</span>
+</span><span id="intg-57"><a href="#intg-57"><span class="linenos"> 57</span></a><span class="sd">                                     i=1</span>
+</span><span id="intg-58"><a href="#intg-58"><span class="linenos"> 58</span></a><span class="sd">    ```</span>
+</span><span id="intg-59"><a href="#intg-59"><span class="linenos"> 59</span></a><span class="sd">    as a rough approximation, the error is simply taken to be the change in estimated value</span>
+</span><span id="intg-60"><a href="#intg-60"><span class="linenos"> 60</span></a><span class="sd">    between two successive evaluations:</span>
+</span><span id="intg-61"><a href="#intg-61"><span class="linenos"> 61</span></a><span class="sd">    ```</span>
+</span><span id="intg-62"><a href="#intg-62"><span class="linenos"> 62</span></a><span class="sd">    ΔI(k) = I(k) - I(k-1)</span>
 </span><span id="intg-63"><a href="#intg-63"><span class="linenos"> 63</span></a><span class="sd">    ```</span>
-</span><span id="intg-64"><a href="#intg-64"><span class="linenos"> 64</span></a><span class="sd">    ΔI(k) = I(k) - I(k-1)</span>
-</span><span id="intg-65"><a href="#intg-65"><span class="linenos"> 65</span></a><span class="sd">    ```</span>
-</span><span id="intg-66"><a href="#intg-66"><span class="linenos"> 66</span></a><span class="sd">    if the quadrature procedure results in a converging result, then the error should dec-</span>
-</span><span id="intg-67"><a href="#intg-67"><span class="linenos"> 67</span></a><span class="sd">    rease faster than the increment in the result, speaking in absolute terms. Although</span>
-</span><span id="intg-68"><a href="#intg-68"><span class="linenos"> 68</span></a><span class="sd">    this is no-way guaranteed, it is convenient to take the increment as an upper bound</span>
-</span><span id="intg-69"><a href="#intg-69"><span class="linenos"> 69</span></a><span class="sd">    on error. Therefore we check for three consecutive increments smaller than the specified</span>
-</span><span id="intg-70"><a href="#intg-70"><span class="linenos"> 70</span></a><span class="sd">    tolerance before submitting the result as a good enough estimate for the integral.</span>
-</span><span id="intg-71"><a href="#intg-71"><span class="linenos"> 71</span></a>
-</span><span id="intg-72"><a href="#intg-72"><span class="linenos"> 72</span></a><span class="sd">    Since specifying a relative error does not work well for values extremely close to 0.</span>
-</span><span id="intg-73"><a href="#intg-73"><span class="linenos"> 73</span></a><span class="sd">    Instead we define a error as abs(x_true - x_ref) / (tolerance + abs(x_ref)) x 100%</span>
-</span><span id="intg-74"><a href="#intg-74"><span class="linenos"> 74</span></a>
-</span><span id="intg-75"><a href="#intg-75"><span class="linenos"> 75</span></a><span class="sd">    References</span>
-</span><span id="intg-76"><a href="#intg-76"><span class="linenos"> 76</span></a><span class="sd">    ----------</span>
-</span><span id="intg-77"><a href="#intg-77"><span class="linenos"> 77</span></a><span class="sd">    - **[1]** &quot;Handheld Calculator Evaluates Integrals&quot;, William M.Kahan, Hewlett Packard</span>
-</span><span id="intg-78"><a href="#intg-78"><span class="linenos"> 78</span></a><span class="sd">    Journal, August 1980 Volume 31, number 8.</span>
+</span><span id="intg-64"><a href="#intg-64"><span class="linenos"> 64</span></a><span class="sd">    if the quadrature procedure results in a converging result, then the error should dec-</span>
+</span><span id="intg-65"><a href="#intg-65"><span class="linenos"> 65</span></a><span class="sd">    rease faster than the increment in the result, speaking in absolute terms. Although</span>
+</span><span id="intg-66"><a href="#intg-66"><span class="linenos"> 66</span></a><span class="sd">    this is no-way guaranteed, it is convenient to take the increment as an upper bound</span>
+</span><span id="intg-67"><a href="#intg-67"><span class="linenos"> 67</span></a><span class="sd">    on error. Therefore we check for three consecutive increments smaller than the specified</span>
+</span><span id="intg-68"><a href="#intg-68"><span class="linenos"> 68</span></a><span class="sd">    tolerance before submitting the result as a good enough estimate for the integral.</span>
+</span><span id="intg-69"><a href="#intg-69"><span class="linenos"> 69</span></a>
+</span><span id="intg-70"><a href="#intg-70"><span class="linenos"> 70</span></a><span class="sd">    Since specifying a relative error does not work well for values extremely close to 0.</span>
+</span><span id="intg-71"><a href="#intg-71"><span class="linenos"> 71</span></a><span class="sd">    Instead we define a error as abs(x_true - x_ref) / (tolerance + abs(x_ref)) x 100%</span>
+</span><span id="intg-72"><a href="#intg-72"><span class="linenos"> 72</span></a>
+</span><span id="intg-73"><a href="#intg-73"><span class="linenos"> 73</span></a><span class="sd">    References</span>
+</span><span id="intg-74"><a href="#intg-74"><span class="linenos"> 74</span></a><span class="sd">    ----------</span>
+</span><span id="intg-75"><a href="#intg-75"><span class="linenos"> 75</span></a><span class="sd">    - **[1]** &quot;Handheld Calculator Evaluates Integrals&quot;, William M.Kahan, Hewlett Packard</span>
+</span><span id="intg-76"><a href="#intg-76"><span class="linenos"> 76</span></a><span class="sd">    Journal, August 1980 Volume 31, number 8.</span>
+</span><span id="intg-77"><a href="#intg-77"><span class="linenos"> 77</span></a>
+</span><span id="intg-78"><a href="#intg-78"><span class="linenos"> 78</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="intg-79"><a href="#intg-79"><span class="linenos"> 79</span></a>
-</span><span id="intg-80"><a href="#intg-80"><span class="linenos"> 80</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="intg-80"><a href="#intg-80"><span class="linenos"> 80</span></a>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">l</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">u</span> <span class="o">+</span> <span class="n">l</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 </span><span id="intg-81"><a href="#intg-81"><span class="linenos"> 81</span></a>
-</span><span id="intg-82"><a href="#intg-82"><span class="linenos"> 82</span></a>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">l</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">u</span> <span class="o">+</span> <span class="n">l</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+</span><span id="intg-82"><a href="#intg-82"><span class="linenos"> 82</span></a>    <span class="n">tol</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tol</span><span class="p">)</span>  <span class="c1"># ensure positive</span>
 </span><span id="intg-83"><a href="#intg-83"><span class="linenos"> 83</span></a>
-</span><span id="intg-84"><a href="#intg-84"><span class="linenos"> 84</span></a>    <span class="n">tol</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tol</span><span class="p">)</span>  <span class="c1"># ensure positive</span>
-</span><span id="intg-85"><a href="#intg-85"><span class="linenos"> 85</span></a>
-</span><span id="intg-86"><a href="#intg-86"><span class="linenos"> 86</span></a>    <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># iteration counter</span>
-</span><span id="intg-87"><a href="#intg-87"><span class="linenos"> 87</span></a>    <span class="n">I</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># integral counter</span>
-</span><span id="intg-88"><a href="#intg-88"><span class="linenos"> 88</span></a>    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># trend counter, No. of iterations with reducing delta.</span>
-</span><span id="intg-89"><a href="#intg-89"><span class="linenos"> 89</span></a>
-</span><span id="intg-90"><a href="#intg-90"><span class="linenos"> 90</span></a>    <span class="k">while</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-</span><span id="intg-91"><a href="#intg-91"><span class="linenos"> 91</span></a>        <span class="n">dI</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># change to integral</span>
-</span><span id="intg-92"><a href="#intg-92"><span class="linenos"> 92</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-</span><span id="intg-93"><a href="#intg-93"><span class="linenos"> 93</span></a>            <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
-</span><span id="intg-94"><a href="#intg-94"><span class="linenos"> 94</span></a>            <span class="n">u</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">v</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">v</span><span class="o">**</span><span class="mi">3</span>
-</span><span id="intg-95"><a href="#intg-95"><span class="linenos"> 95</span></a>            <span class="n">dI</span> <span class="o">+=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-</span><span id="intg-96"><a href="#intg-96"><span class="linenos"> 96</span></a>
-</span><span id="intg-97"><a href="#intg-97"><span class="linenos"> 97</span></a>        <span class="n">dI</span> <span class="o">*=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span>
-</span><span id="intg-98"><a href="#intg-98"><span class="linenos"> 98</span></a>        <span class="n">I1</span> <span class="o">=</span> <span class="n">I</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">dI</span>
-</span><span id="intg-99"><a href="#intg-99"><span class="linenos"> 99</span></a>        <span class="n">d</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">I1</span> <span class="o">-</span> <span class="n">I</span><span class="p">)</span>  <span class="c1"># delta, change per iteration</span>
-</span><span id="intg-100"><a href="#intg-100"><span class="linenos">100</span></a>        <span class="n">I</span> <span class="o">=</span> <span class="n">I1</span>
-</span><span id="intg-101"><a href="#intg-101"><span class="linenos">101</span></a>        <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="intg-102"><a href="#intg-102"><span class="linenos">102</span></a>
-</span><span id="intg-103"><a href="#intg-103"><span class="linenos">103</span></a>        <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">tol</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="n">tol</span><span class="p">):</span>
-</span><span id="intg-104"><a href="#intg-104"><span class="linenos">104</span></a>            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="intg-105"><a href="#intg-105"><span class="linenos">105</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="intg-106"><a href="#intg-106"><span class="linenos">106</span></a>            <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="intg-107"><a href="#intg-107"><span class="linenos">107</span></a>
-</span><span id="intg-108"><a href="#intg-108"><span class="linenos">108</span></a>    <span class="k">return</span> <span class="n">I</span><span class="p">,</span> <span class="n">d</span>
+</span><span id="intg-84"><a href="#intg-84"><span class="linenos"> 84</span></a>    <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># iteration counter</span>
+</span><span id="intg-85"><a href="#intg-85"><span class="linenos"> 85</span></a>    <span class="n">I</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># integral counter</span>
+</span><span id="intg-86"><a href="#intg-86"><span class="linenos"> 86</span></a>    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># trend counter, No. of iterations with reducing delta.</span>
+</span><span id="intg-87"><a href="#intg-87"><span class="linenos"> 87</span></a>
+</span><span id="intg-88"><a href="#intg-88"><span class="linenos"> 88</span></a>    <span class="k">while</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+</span><span id="intg-89"><a href="#intg-89"><span class="linenos"> 89</span></a>        <span class="n">dI</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># change to integral</span>
+</span><span id="intg-90"><a href="#intg-90"><span class="linenos"> 90</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+</span><span id="intg-91"><a href="#intg-91"><span class="linenos"> 91</span></a>            <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
+</span><span id="intg-92"><a href="#intg-92"><span class="linenos"> 92</span></a>            <span class="n">u</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">v</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">v</span><span class="o">**</span><span class="mi">3</span>
+</span><span id="intg-93"><a href="#intg-93"><span class="linenos"> 93</span></a>            <span class="n">dI</span> <span class="o">+=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="intg-94"><a href="#intg-94"><span class="linenos"> 94</span></a>
+</span><span id="intg-95"><a href="#intg-95"><span class="linenos"> 95</span></a>        <span class="n">dI</span> <span class="o">*=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="intg-96"><a href="#intg-96"><span class="linenos"> 96</span></a>        <span class="n">I1</span> <span class="o">=</span> <span class="n">I</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">dI</span>
+</span><span id="intg-97"><a href="#intg-97"><span class="linenos"> 97</span></a>        <span class="n">d</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">I1</span> <span class="o">-</span> <span class="n">I</span><span class="p">)</span>  <span class="c1"># delta, change per iteration</span>
+</span><span id="intg-98"><a href="#intg-98"><span class="linenos"> 98</span></a>        <span class="n">I</span> <span class="o">=</span> <span class="n">I1</span>
+</span><span id="intg-99"><a href="#intg-99"><span class="linenos"> 99</span></a>        <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="intg-100"><a href="#intg-100"><span class="linenos">100</span></a>
+</span><span id="intg-101"><a href="#intg-101"><span class="linenos">101</span></a>        <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">tol</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="n">tol</span><span class="p">):</span>
+</span><span id="intg-102"><a href="#intg-102"><span class="linenos">102</span></a>            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="intg-103"><a href="#intg-103"><span class="linenos">103</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="intg-104"><a href="#intg-104"><span class="linenos">104</span></a>            <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="intg-105"><a href="#intg-105"><span class="linenos">105</span></a>
+</span><span id="intg-106"><a href="#intg-106"><span class="linenos">106</span></a>    <span class="k">return</span> <span class="n">I</span><span class="p">,</span> <span class="n">d</span>
 </span></pre></div>
 
 

@@ -7,13 +7,15 @@ from tkinter.ttk import (Button, Combobox, Frame, LabelFrame, Notebook,
                          Scrollbar, Treeview)
 from typing import Callable, Dict, Optional, Tuple
 
-from ..charge import Charge, Propellant
-from ..form_function import FormFunction, MultiPerfShape
-from ..gun import Gun
-from ..state import State
-from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
-from .misc import add_frame_group, add_label_entry_label_group, tree_selected
-from .themed_scrolled_text import ThemedScrolledText as ScrolledText
+from ballistics.charge import Charge, Propellant
+from ballistics.form_function import FormFunction, MultiPerfShape
+from ballistics.gui import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
+from ballistics.gui.misc import (add_frame_group, add_label_entry_label_group,
+                                 tree_selected)
+from ballistics.gui.themed_scrolled_text import \
+    ThemedScrolledText as ScrolledText
+from ballistics.gun import Gun
+from ballistics.state import State
 
 logger = logging.getLogger(__name__)
 
@@ -41,12 +43,28 @@ class DefineGunWindow(Toplevel):
             for i, v in enumerate(
                 [
                     ("Name", "", basis.name + " (copy)" if basis else None),
-                    ("Cross Section", "dm²", basis.cross_section * 1e2 if basis else None),
+                    (
+                        "Cross Section",
+                        "dm²",
+                        basis.cross_section * 1e2 if basis else None,
+                    ),
                     ("Shot Mass", "kg", basis.shot_mass if basis else None),
                     ("Charge Mass", "kg", basis.charge_mass if basis else None),
-                    ("Chamber Volume", "L", basis.chamber_volume * 1e3 if basis else None),
-                    ("Loss Fraction", "%", basis.loss_fraction * 1e2 if basis else None),
-                    ("Start Pressure", "MPa", basis.start_pressure * 1e-6 if basis else None),
+                    (
+                        "Chamber Volume",
+                        "L",
+                        basis.chamber_volume * 1e3 if basis else None,
+                    ),
+                    (
+                        "Loss Fraction",
+                        "%",
+                        basis.loss_fraction * 1e2 if basis else None,
+                    ),
+                    (
+                        "Start Pressure",
+                        "MPa",
+                        basis.start_pressure * 1e-6 if basis else None,
+                    ),
                     (
                         "Reduced Burn Rate",
                         "/ns",
@@ -59,7 +77,11 @@ class DefineGunWindow(Toplevel):
 
         prop_frame = LabelFrame(self, text="Propellant")
         prop_frame.grid(
-            row=len(self.value_entries), column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+            row=len(self.value_entries),
+            column=0,
+            columnspan=3,
+            sticky="nsew",
+            **DEFAULT_PAD,
         )
         prop_frame.columnconfigure(0, weight=1)
 
@@ -71,23 +93,38 @@ class DefineGunWindow(Toplevel):
 
         self.form_function_frame = FormFunctionFrame(self)
         self.form_function_frame.grid(
-            row=len(self.value_entries) + 1, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+            row=len(self.value_entries) + 1,
+            column=0,
+            columnspan=3,
+            sticky="nsew",
+            **DEFAULT_PAD,
         )
 
         button = Button(self, text="Confirm", command=self.define_gun)
         button.grid(
-            row=len(self.value_entries) + 2, column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+            row=len(self.value_entries) + 2,
+            column=0,
+            columnspan=3,
+            sticky="nsew",
+            **DEFAULT_PAD,
         )
 
         description_frame = LabelFrame(self, text="Description")
         description_frame.grid(
-            row=0, column=3, rowspan=len(self.value_entries) + 3, sticky="nsew", **DEFAULT_PAD
+            row=0,
+            column=3,
+            rowspan=len(self.value_entries) + 3,
+            sticky="nsew",
+            **DEFAULT_PAD,
         )
         description_frame.columnconfigure(0, weight=1)
         description_frame.rowconfigure(0, weight=1)
 
         self.text = ScrolledText(
-            description_frame, width=DEFAULT_TEXT_WIDTH, height=DEFAULT_TEXT_HEIGHT, wrap="none"
+            description_frame,
+            width=DEFAULT_TEXT_WIDTH,
+            height=DEFAULT_TEXT_HEIGHT,
+            wrap="none",
         )
         self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
         self.text.insert("end", basis.description if basis else "")
@@ -207,7 +244,8 @@ class GunFrame(Frame):
         self.overview_text.grid(row=0, column=0, rowspan=2, sticky="nsew", **DEFAULT_PAD)
 
         ov_top_frame, self.ov_top_params = add_frame_group(
-            overview_frame, ((v, "", None, True) for v in ("Charge Name", "Charge Desc."))
+            overview_frame,
+            ((v, "", None, True) for v in ("Charge Name", "Charge Desc.")),
         )
         ov_top_frame.grid(row=0, column=1, columnspan=3, sticky="nsew", **DEFAULT_PAD)
 
@@ -278,7 +316,12 @@ class GunFrame(Frame):
             sv.set(v_str)
 
         for v_flt, sv in zip(
-            (gun.cross_section * 1e2, gun.shot_mass, gun.charge_mass, gun.chamber_volume * 1e3),
+            (
+                gun.cross_section * 1e2,
+                gun.shot_mass,
+                gun.charge_mass,
+                gun.chamber_volume * 1e3,
+            ),
             self.ov_left_params,
         ):
             sv.set(f"{v_flt:.3f}")
@@ -322,7 +365,9 @@ class GunFrame(Frame):
     @tree_selected()
     def add_edit_gun(self, tvid):
         dgw = DefineGunWindow(
-            self, basis=self.guns[tvid] if tvid else None, get_props_func=self.get_props_func
+            self,
+            basis=self.guns[tvid] if tvid else None,
+            get_props_func=self.get_props_func,
         )
         self.wait_window(dgw)
         gun = dgw.gun
@@ -331,14 +376,18 @@ class GunFrame(Frame):
 
     def save_guns(self):
         fn = askopenfilename(
-            parent=self, title="Save To File", filetypes=[("JavaScript Object Notation", ".json")]
+            parent=self,
+            title="Save To File",
+            filetypes=[("JavaScript Object Notation", ".json")],
         )
         if fn:
             Gun.to_file(guns=self.guns.values(), filename=fn)
 
     def load_guns(self):
         fn = askopenfilename(
-            parent=self, title="Load From File", filetypes=[("JavaScript Object Notation", ".json")]
+            parent=self,
+            title="Load From File",
+            filetypes=[("JavaScript Object Notation", ".json")],
         )
         if fn:
             for gun in Gun.from_file(filename=fn):

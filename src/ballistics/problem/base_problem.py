@@ -4,16 +4,15 @@ import logging
 from typing import TYPE_CHECKING
 
 from attrs import field, frozen
-
-from .. import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
-                REDUCED_BURN_RATE_INITIAL_GUESS, Significance)
-from ..charge import Charge, Propellant
-from ..gun import Gun
-from ..num import dekker
-from .pressure_target import PressureTarget
+from ballistics import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
+                        REDUCED_BURN_RATE_INITIAL_GUESS, Significance)
+from ballistics.charge import Charge, Propellant
+from ballistics.gun import Gun
+from ballistics.num import dekker
+from ballistics.problem.pressure_target import PressureTarget
 
 if TYPE_CHECKING:
-    from ..form_function import FormFunction
+    from ballistics.form_function import FormFunction
 
 logger = logging.getLogger(__name__)
 

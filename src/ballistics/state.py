@@ -7,12 +7,11 @@ from math import inf
 from typing import TYPE_CHECKING, Iterable, Optional
 
 from attrs import field, frozen
+from ballistics import Significance
 from tabulate import tabulate
 
-from . import Significance
-
 if TYPE_CHECKING:
-    from .gun import Gun
+    from ballistics.gun import Gun
 
 
 @frozen(kw_only=True)

@@ -5,11 +5,12 @@ from tkinter import Toplevel, filedialog
 from tkinter.ttk import Button, Frame, LabelFrame, Scrollbar, Treeview
 from typing import Optional, Tuple
 
-from ..charge import Propellant
-from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
-from .misc import add_label_entry_label_group, tree_selected
+from ballistics.charge import Propellant
+from ballistics.gui import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
+from ballistics.gui.misc import add_label_entry_label_group, tree_selected
 # from tkinter.scrolledtext import ScrolledText
-from .themed_scrolled_text import ThemedScrolledText as ScrolledText
+from ballistics.gui.themed_scrolled_text import \
+    ThemedScrolledText as ScrolledText
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,11 @@ class DefinePropellantWindow(Toplevel):
                     ("Name", "", basis.name + " (copy)" if basis else None),
                     ("Density", "g/cm³", basis.density * 1e-3 if basis else None),
                     ("Force", "J/g", basis.force * 1e-3 if basis else None),
-                    ("Pressure Exponent", "", basis.pressure_exponent if basis else None),
+                    (
+                        "Pressure Exponent",
+                        "",
+                        basis.pressure_exponent if basis else None,
+                    ),
                     ("Covolume", "cm³/g", basis.covolume * 1e3 if basis else None),
                     ("Adiabatic Index", "", basis.adiabatic_index if basis else None),
                     (
@@ -49,20 +54,31 @@ class DefinePropellantWindow(Toplevel):
 
         description_frame = LabelFrame(self, text="Description")
         description_frame.grid(
-            row=0, column=3, rowspan=len(self.value_entries) + 1, sticky="nsew", **DEFAULT_PAD
+            row=0,
+            column=3,
+            rowspan=len(self.value_entries) + 1,
+            sticky="nsew",
+            **DEFAULT_PAD,
         )
         description_frame.columnconfigure(0, weight=1)
         description_frame.rowconfigure(0, weight=1)
 
         self.text = ScrolledText(
-            description_frame, width=DEFAULT_TEXT_WIDTH, height=DEFAULT_TEXT_HEIGHT, wrap="none"
+            description_frame,
+            width=DEFAULT_TEXT_WIDTH,
+            height=DEFAULT_TEXT_HEIGHT,
+            wrap="none",
         )
         self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
         self.text.insert("end", basis.description if basis else "")
 
         button = Button(self, text="Confirm", command=self.define_prop)
         button.grid(
-            row=len(self.value_entries), column=0, columnspan=3, sticky="nsew", **DEFAULT_PAD
+            row=len(self.value_entries),
+            column=0,
+            columnspan=3,
+            sticky="nsew",
+            **DEFAULT_PAD,
         )
 
         self.prop = None
@@ -150,7 +166,11 @@ class PropellantFrame(Frame):
                 f"{prop.pressure_exponent:.3f}",
                 f"{prop.covolume * 1e3:.3f}",
                 f"{prop.adiabatic_index:.3f}",
-                f"{prop.burn_rate_coefficient * 1e9:.3g}" if prop.burn_rate_coefficient else "N/A",
+                (
+                    f"{prop.burn_rate_coefficient * 1e9:.3g}"
+                    if prop.burn_rate_coefficient
+                    else "N/A"
+                ),
             ),
         )
         self.props[tvid] = prop

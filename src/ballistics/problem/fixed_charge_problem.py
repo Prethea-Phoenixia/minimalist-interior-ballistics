@@ -5,12 +5,11 @@ from functools import cached_property
 from typing import Optional, Tuple
 
 from attrs import frozen
-
-from .. import Significance
-from ..gun import Gun
-from ..num import dekker, gss_max
-from .base_problem import BaseProblem
-from .pressure_target import PressureTarget
+from ballistics import Significance
+from ballistics.gun import Gun
+from ballistics.num import dekker, gss_max
+from ballistics.problem.base_problem import BaseProblem
+from ballistics.problem.pressure_target import PressureTarget
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +38,8 @@ class FixedChargeProblem(BaseProblem):
         Parameters
         ----------
         pressure_target, acc: `ballistics.problem.pressure_target.PressureTarget`, float
-            see `FixedVolumeProblem.solve_reduced_burn_rate` for more information.
+            see `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.solve_reduced_burn_rate`
+            for more information.
 
         Returns
         -------
@@ -104,7 +104,8 @@ class FixedChargeProblem(BaseProblem):
         solves the reduced burn rate such that the peak pressure developed in bore
         matches the desired value. This is the outer, user facing function that validates
         the input by checking against the calculated chamber volume limits. Implementation
-        is instead under `BaseProblem.get_gun_developing_pressure` method.
+        is instead under `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`
+        method.
 
         Parameters
         ----------
@@ -133,7 +134,9 @@ class FixedChargeProblem(BaseProblem):
             logging_preamble + "MATCH PRESSURE PROBLEM " + f"{pressure_target.describe()} ->"
         )
         min_vol, max_vol = self.get_chamber_volume_limits(
-            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
+            pressure_target=pressure_target,
+            acc=acc,
+            logging_preamble=logging_preamble + "\t",
         )
 
         valid_range_prompt = (
@@ -179,7 +182,9 @@ class FixedChargeProblem(BaseProblem):
             + f"{velocity_target:.1f} m/s, {pressure_target.describe()} ->"
         )
         vol_min, vol_max = self.get_chamber_volume_limits(
-            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
+            pressure_target=pressure_target,
+            acc=acc,
+            logging_preamble=logging_preamble + "\t",
         )
 
         def get_gun_with_volume(chamber_volume: float) -> Gun:

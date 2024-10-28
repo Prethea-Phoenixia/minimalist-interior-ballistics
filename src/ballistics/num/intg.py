@@ -1,9 +1,7 @@
 from typing import Callable, Tuple
 
 
-def intg(
-    f: Callable[[float], str], l: float, u: float, tol: float
-) -> Tuple[float, float]:
+def intg(f: Callable[[float], str], l: float, u: float, tol: float) -> Tuple[float, float]:
     """
     Performs numerical integration of a single-variate function, a.la the HP-34C.
     Returns both the integral and an error estimation.

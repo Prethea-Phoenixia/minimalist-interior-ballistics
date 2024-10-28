@@ -1,10 +1,10 @@
 import logging
 
-from ballistics.charge import Propellant
-from ballistics.form_function import FormFunction, MultiPerfShape
-from ballistics.gun import Gun
-from ballistics.problem import (FixedChargeProblem, FixedVolumeProblem,
-                                PressureTarget)
+from src.ballistics.charge import Propellant
+from src.ballistics.form_function import FormFunction, MultiPerfShape
+from src.ballistics.gun import Gun
+from src.ballistics.problem import (FixedChargeProblem, FixedVolumeProblem,
+                                    PressureTarget)
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ if __name__ in {"__main__", "__mp_main__"}:
     #     acc=1e-4,
     # )
 
-    g = p.solve_charge_mass_at_velocity_and_pressure(
+    g = p.solve_charge_mass_at_pressure_for_velocity(
         pressure_target=PressureTarget.average_pressure(value=268e6),
         velocity_target=650,
         n_intg=10,
@@ -82,18 +82,12 @@ if __name__ in {"__main__", "__mp_main__"}:
         acc=1e-3,
     )
 
-    print(
-        q.solve_chamber_volume_at_velocity_and_pressure(
-            pressure_target=PressureTarget.average_pressure(value=268e6),
-            velocity_target=680,
-            n_intg=10,
-            acc=1e-3,
-        )
+    q.solve_chamber_volume_at_pressure_for_velocity(
+        pressure_target=PressureTarget.average_pressure(value=268e6),
+        velocity_target=680,
+        n_intg=10,
+        acc=1e-3,
     )
-
-    # Gun.to_file([g, g], "test.json")
-
-    # Gun.from_file(filename="test.json")
 
     logger.info("ended")
 

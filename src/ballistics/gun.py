@@ -8,13 +8,12 @@ from math import inf
 from typing import Dict, Iterable, Optional, Tuple
 
 from attrs import field, frozen
+from ballistics import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
+                        MAX_DT, Significance)
+from ballistics.charge import Charge
+from ballistics.num import dekker, gss_max
+from ballistics.state import Delta, State, StateList
 from cattrs import Converter
-
-from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
-               Significance)
-from .charge import Charge
-from .num import dekker, gss_max
-from .state import Delta, State, StateList
 
 logger = logging.getLogger(__name__)
 
@@ -340,7 +339,12 @@ class Gun:
         return self.mark_max_pressure(states, acc=acc, logging_preamble=logging_preamble)
 
     def to_travel(
-        self, travel: Optional[float] = None, *, n_intg: int, acc: float, logging_preamble: str = ""
+        self,
+        travel: Optional[float] = None,
+        *,
+        n_intg: int,
+        acc: float,
+        logging_preamble: str = "",
     ) -> StateList:
         """
         Conducts integration up to the desired shot-travel using time-wise ODE, if
@@ -431,7 +435,14 @@ class Gun:
                 return p_t
 
             time_pmax = (
-                sum(gss_max(f=time_pressure, x_0=s_i.time, x_1=s_k.time, tol=acc * total_time))
+                sum(
+                    gss_max(
+                        f=time_pressure,
+                        x_0=s_i.time,
+                        x_1=s_k.time,
+                        tol=acc * total_time,
+                    )
+                )
                 * 0.5
             )
             s_pmax = self.propagate_rk4(
