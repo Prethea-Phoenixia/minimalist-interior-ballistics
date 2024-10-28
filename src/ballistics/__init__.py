@@ -3,9 +3,10 @@ This package is written to provide the user with a "minimalist" set of tools for
 calculating and solving interior ballistic problems.
 """
 
+import datetime
 from enum import Enum
 
-__version__ = "0.0.1"
+__version__ = datetime.datetime.now().strftime("%Y.%m.%d")
 
 
 class Significance(Enum):

@@ -3,8 +3,8 @@ requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-version="0.0.1"
 name = "ballistics"
+dynamic = ["version"]
 authors = [
   { name="Jinpeng Zhai", email="914962409@qq.com" },
 ]
@@ -30,3 +30,6 @@ ballistics-gui = "ballistics.gui.main:main"
 [project.urls]
 Homepage = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics"
 Issues = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics/issues"
+
+[tool.setuptools.dynamic]
+version = {attr = "ballistics.__version__"}
