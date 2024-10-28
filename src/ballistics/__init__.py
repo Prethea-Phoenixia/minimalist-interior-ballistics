@@ -5,6 +5,8 @@ calculating and solving interior ballistic problems.
 
 from enum import Enum
 
+__version__ = "0.0.1"
+
 
 class Significance(Enum):
     IGNITION = "ignition"

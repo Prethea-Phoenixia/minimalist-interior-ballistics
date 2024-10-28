@@ -121,7 +121,7 @@
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">        Parameters</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">        ----------</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">        pressure_target, acc: `ballistics.problem.pressure_target.PressureTarget`, float</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">            see `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.solve_reduced_burn_rate`</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">            see `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">            for more information.</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">        Returns</span>
@@ -137,7 +137,7 @@
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">        rate if it were to be used.</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        For more explanation of the rationale, reference</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">        `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limit`.</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">        `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limits`.</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
@@ -391,7 +391,7 @@
 </span><span id="FixedChargeProblem-39"><a href="#FixedChargeProblem-39"><span class="linenos"> 39</span></a><span class="sd">        Parameters</span>
 </span><span id="FixedChargeProblem-40"><a href="#FixedChargeProblem-40"><span class="linenos"> 40</span></a><span class="sd">        ----------</span>
 </span><span id="FixedChargeProblem-41"><a href="#FixedChargeProblem-41"><span class="linenos"> 41</span></a><span class="sd">        pressure_target, acc: `ballistics.problem.pressure_target.PressureTarget`, float</span>
-</span><span id="FixedChargeProblem-42"><a href="#FixedChargeProblem-42"><span class="linenos"> 42</span></a><span class="sd">            see `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.solve_reduced_burn_rate`</span>
+</span><span id="FixedChargeProblem-42"><a href="#FixedChargeProblem-42"><span class="linenos"> 42</span></a><span class="sd">            see `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`</span>
 </span><span id="FixedChargeProblem-43"><a href="#FixedChargeProblem-43"><span class="linenos"> 43</span></a><span class="sd">            for more information.</span>
 </span><span id="FixedChargeProblem-44"><a href="#FixedChargeProblem-44"><span class="linenos"> 44</span></a>
 </span><span id="FixedChargeProblem-45"><a href="#FixedChargeProblem-45"><span class="linenos"> 45</span></a><span class="sd">        Returns</span>
@@ -407,7 +407,7 @@
 </span><span id="FixedChargeProblem-55"><a href="#FixedChargeProblem-55"><span class="linenos"> 55</span></a><span class="sd">        rate if it were to be used.</span>
 </span><span id="FixedChargeProblem-56"><a href="#FixedChargeProblem-56"><span class="linenos"> 56</span></a>
 </span><span id="FixedChargeProblem-57"><a href="#FixedChargeProblem-57"><span class="linenos"> 57</span></a><span class="sd">        For more explanation of the rationale, reference</span>
-</span><span id="FixedChargeProblem-58"><a href="#FixedChargeProblem-58"><span class="linenos"> 58</span></a><span class="sd">        `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limit`.</span>
+</span><span id="FixedChargeProblem-58"><a href="#FixedChargeProblem-58"><span class="linenos"> 58</span></a><span class="sd">        `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limits`.</span>
 </span><span id="FixedChargeProblem-59"><a href="#FixedChargeProblem-59"><span class="linenos"> 59</span></a>
 </span><span id="FixedChargeProblem-60"><a href="#FixedChargeProblem-60"><span class="linenos"> 60</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FixedChargeProblem-61"><a href="#FixedChargeProblem-61"><span class="linenos"> 61</span></a>
@@ -711,7 +711,7 @@
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-39"><a href="#FixedChargeProblem.get_chamber_volume_limits-39"><span class="linenos">39</span></a><span class="sd">        Parameters</span>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-40"><a href="#FixedChargeProblem.get_chamber_volume_limits-40"><span class="linenos">40</span></a><span class="sd">        ----------</span>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-41"><a href="#FixedChargeProblem.get_chamber_volume_limits-41"><span class="linenos">41</span></a><span class="sd">        pressure_target, acc: `ballistics.problem.pressure_target.PressureTarget`, float</span>
-</span><span id="FixedChargeProblem.get_chamber_volume_limits-42"><a href="#FixedChargeProblem.get_chamber_volume_limits-42"><span class="linenos">42</span></a><span class="sd">            see `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.solve_reduced_burn_rate`</span>
+</span><span id="FixedChargeProblem.get_chamber_volume_limits-42"><a href="#FixedChargeProblem.get_chamber_volume_limits-42"><span class="linenos">42</span></a><span class="sd">            see `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`</span>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-43"><a href="#FixedChargeProblem.get_chamber_volume_limits-43"><span class="linenos">43</span></a><span class="sd">            for more information.</span>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-44"><a href="#FixedChargeProblem.get_chamber_volume_limits-44"><span class="linenos">44</span></a>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-45"><a href="#FixedChargeProblem.get_chamber_volume_limits-45"><span class="linenos">45</span></a><span class="sd">        Returns</span>
@@ -727,7 +727,7 @@
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-55"><a href="#FixedChargeProblem.get_chamber_volume_limits-55"><span class="linenos">55</span></a><span class="sd">        rate if it were to be used.</span>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-56"><a href="#FixedChargeProblem.get_chamber_volume_limits-56"><span class="linenos">56</span></a>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-57"><a href="#FixedChargeProblem.get_chamber_volume_limits-57"><span class="linenos">57</span></a><span class="sd">        For more explanation of the rationale, reference</span>
-</span><span id="FixedChargeProblem.get_chamber_volume_limits-58"><a href="#FixedChargeProblem.get_chamber_volume_limits-58"><span class="linenos">58</span></a><span class="sd">        `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limit`.</span>
+</span><span id="FixedChargeProblem.get_chamber_volume_limits-58"><a href="#FixedChargeProblem.get_chamber_volume_limits-58"><span class="linenos">58</span></a><span class="sd">        `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limits`.</span>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-59"><a href="#FixedChargeProblem.get_chamber_volume_limits-59"><span class="linenos">59</span></a>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-60"><a href="#FixedChargeProblem.get_chamber_volume_limits-60"><span class="linenos">60</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FixedChargeProblem.get_chamber_volume_limits-61"><a href="#FixedChargeProblem.get_chamber_volume_limits-61"><span class="linenos">61</span></a>
@@ -771,7 +771,7 @@
 
 <ul>
 <li><strong>pressure_target, acc</strong> (<code><a href="pressure_target.html#PressureTarget">ballistics.problem.pressure_target.PressureTarget</a></code>, float):
-see <code>ballistics.problem.fixed_volume_problem.FixedVolumeProblem.solve_reduced_burn_rate</code>
+see <code><a href="base_problem.html#BaseProblem.get_gun_developing_pressure">ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure</a></code>
 for more information.</li>
 </ul>
 
@@ -790,7 +790,7 @@ bomb case. Choice of the more conservative solution ensures valid (finite) burn
 rate if it were to be used.</p>
 
 <p>For more explanation of the rationale, reference
-<code>ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limit</code>.</p>
+<code><a href="fixed_volume_problem.html#FixedVolumeProblem.get_charge_mass_limits">ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limits</a></code>.</p>
 </div>
 
 

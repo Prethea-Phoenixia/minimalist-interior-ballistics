@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 version="0.0.1"
-name = "minimalist-interior-ballistics"
+name = "ballistics"
 authors = [
   { name="Jinpeng Zhai", email="914962409@qq.com" },
 ]
@@ -25,7 +25,7 @@ classifiers = [
 ]
 
 [project.gui-scripts]
-design_gun = "ballistics:design_gun"
+ballistics-gui = "ballistics.gui.main:main"
 
 [project.urls]
 Homepage = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics"

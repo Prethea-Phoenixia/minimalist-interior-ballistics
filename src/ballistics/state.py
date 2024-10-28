@@ -184,8 +184,8 @@ class StateList(BaseList):
 
         Parameters
         ----------
-        states: list of `State`
-            the list of `State` to be pretty-printed.
+        states: list of `ballistics.state.State`
+            the list of `ballistics.state.State` to be pretty-printed.
         headers: tuple[str]
             argument passed to `tabulate.tabulate()` to generate a header for the
             table.

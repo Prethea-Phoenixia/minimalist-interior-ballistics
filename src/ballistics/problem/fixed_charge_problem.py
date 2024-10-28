@@ -38,7 +38,7 @@ class FixedChargeProblem(BaseProblem):
         Parameters
         ----------
         pressure_target, acc: `ballistics.problem.pressure_target.PressureTarget`, float
-            see `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.solve_reduced_burn_rate`
+            see `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`
             for more information.
 
         Returns
@@ -54,7 +54,7 @@ class FixedChargeProblem(BaseProblem):
         rate if it were to be used.
 
         For more explanation of the rationale, reference
-        `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limit`.
+        `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limits`.
 
         """
 
