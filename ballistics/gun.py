@@ -442,8 +442,8 @@ class Gun:
 
             logger.info(
                 logging_preamble
-                + f"GUN INTEGRATED -> P. avg. max. {s_pmax.average_pressure * 1e-6:.3f} MPa"
-                + f" at {s_pmax.time * 1e3:.3f} ms "
+                + f"GUN -> PMAX {s_pmax.average_pressure * 1e-6:.3f} MPa"
+                + f" AT {s_pmax.time * 1e3:.3f} ms "
             )
 
         return states

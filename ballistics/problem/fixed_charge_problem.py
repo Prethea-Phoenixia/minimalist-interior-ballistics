@@ -86,7 +86,7 @@ class FixedChargeProblem(BaseProblem):
         logger.info(
             logging_preamble
             + f"VOLUME LIMIT {pressure_target.describe()} "
-            + f"-> chamber from {lower_limit * 1e3:.3f} L to {upper_limit * 1e3:.3f} L END"
+            + f"-> {lower_limit * 1e3:.3f} L TO {upper_limit * 1e3:.3f} L END"
         )
         return lower_limit, upper_limit
 
@@ -104,7 +104,7 @@ class FixedChargeProblem(BaseProblem):
         solves the reduced burn rate such that the peak pressure developed in bore
         matches the desired value. This is the outer, user facing function that validates
         the input by checking against the calculated chamber volume limits. Implementation
-        is instead under `BaseProblem.solve_reduced_burn_rate_at_pressure` method.
+        is instead under `BaseProblem.get_gun_developing_pressure` method.
 
         Parameters
         ----------
@@ -129,8 +129,9 @@ class FixedChargeProblem(BaseProblem):
             the gun corresponding to this solution.
 
         """
-        logger.info(logging_preamble + "MATCH PRESSURE PROBLEM")
-        logger.info(logging_preamble + f"{pressure_target.describe()} ->")
+        logger.info(
+            logging_preamble + "MATCH PRESSURE PROBLEM " + f"{pressure_target.describe()} ->"
+        )
         min_vol, max_vol = self.get_chamber_volume_limits(
             pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
@@ -150,7 +151,7 @@ class FixedChargeProblem(BaseProblem):
                 + valid_range_prompt
             )
 
-        gun = self.solve_reduced_burn_rate_at_pressure(
+        gun = self.get_gun_developing_pressure(
             charge_mass=self.charge_mass,
             chamber_volume=chamber_volume,
             pressure_target=pressure_target,
@@ -158,7 +159,9 @@ class FixedChargeProblem(BaseProblem):
             acc=acc,
             logging_preamble=logging_preamble + "\t",
         )
-        logger.info(logging_preamble + f"-> GUN r.b.r {gun.charge.reduced_burnrate:.2e} s^-1 END")
+        logger.info(
+            logging_preamble + f"-> REDUCED BURN RATE {gun.charge.reduced_burnrate:.2e} s^-1 END"
+        )
         return gun
 
     def solve_chamber_volume_at_velocity_and_pressure(
@@ -170,17 +173,17 @@ class FixedChargeProblem(BaseProblem):
         acc: float,
         logging_preamble: str = "",
     ) -> Tuple[Optional[Gun], Optional[Gun]]:
-        logger.info(logging_preamble + "MATCH VELOCITY AND PRESSURE PROBLEM")
         logger.info(
             logging_preamble
-            + f"velocity of {velocity_target:.1f} m/s, {pressure_target.describe()} ->"
+            + "MATCH VELOCITY AND PRESSURE PROBLEM "
+            + f"{velocity_target:.1f} m/s, {pressure_target.describe()} ->"
         )
         vol_min, vol_max = self.get_chamber_volume_limits(
             pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
 
         def f(chamber_volume: float) -> float:
-            gun = self.solve_reduced_burn_rate_at_pressure(
+            gun = self.get_gun_developing_pressure(
                 charge_mass=self.charge_mass,
                 chamber_volume=chamber_volume,
                 pressure_target=pressure_target,
@@ -209,8 +212,8 @@ class FixedChargeProblem(BaseProblem):
 
         logger.info(
             logging_preamble
-            + f"VELOCITY RANGE -> velocity from {velocity_target + dv_min:.3f} "
-            + f"to {velocity_target + dv_opt:.3f} m/s"
+            + f"-> VELOCITY RANGE {velocity_target + dv_min:.3f} "
+            + f"TO {velocity_target + dv_opt:.3f} m/s"
         )
         if not dv_min < 0 < dv_opt:
             raise ValueError(
@@ -223,7 +226,7 @@ class FixedChargeProblem(BaseProblem):
                 chamber_volume, _ = dekker(
                     f=f, x_0=vol_i, x_1=vol_j, tol=acc * self.chamber_min_volume
                 )
-                gun = self.solve_reduced_burn_rate_at_pressure(
+                gun = self.get_gun_developing_pressure(
                     charge_mass=self.charge_mass,
                     chamber_volume=chamber_volume,
                     pressure_target=pressure_target,
@@ -234,8 +237,8 @@ class FixedChargeProblem(BaseProblem):
 
                 logger.info(
                     logging_preamble
-                    + f"-> GUN chamber {chamber_volume * 1e3:.3f} L, "
-                    + f"r.b.r {gun.charge.reduced_burnrate:.2e} s^-1"
+                    + f"-> CHAMBER {chamber_volume * 1e3:.3f} L, "
+                    + f"REDUCED BURN RATE {gun.charge.reduced_burnrate:.2e} s^-1"
                 )
                 return gun
             else:

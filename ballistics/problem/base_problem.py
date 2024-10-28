@@ -49,7 +49,7 @@ class BaseProblem:
             start_pressure=self.start_pressure,
         )
 
-    def solve_reduced_burn_rate_at_pressure(
+    def get_gun_developing_pressure(
         self,
         *,
         charge_mass: float,
