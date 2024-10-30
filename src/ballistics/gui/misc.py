@@ -2,7 +2,7 @@ from tkinter import StringVar, Toplevel
 from tkinter.ttk import Entry, Frame, Label
 from typing import Optional, Tuple, Union
 
-from ballistics.gui import DEFAULT_ENTRY_WIDTH, DEFAULT_PAD
+from . import DEFAULT_ENTRY_WIDTH, DEFAULT_PAD
 
 
 def tree_selected(treeattr: str = "tree"):

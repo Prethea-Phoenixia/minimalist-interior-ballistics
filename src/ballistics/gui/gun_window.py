@@ -7,15 +7,13 @@ from tkinter.ttk import (Button, Combobox, Frame, LabelFrame, Notebook,
                          Scrollbar, Treeview)
 from typing import Callable, Dict, Optional, Tuple
 
-from ballistics.charge import Charge, Propellant
-from ballistics.form_function import FormFunction, MultiPerfShape
-from ballistics.gui import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
-from ballistics.gui.misc import (add_frame_group, add_label_entry_label_group,
-                                 tree_selected)
-from ballistics.gui.themed_scrolled_text import \
-    ThemedScrolledText as ScrolledText
-from ballistics.gun import Gun
-from ballistics.state import State
+from ..charge import Charge, Propellant
+from ..form_function import FormFunction, MultiPerfShape
+from ..gun import Gun
+from ..state import State
+from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
+from .misc import add_frame_group, add_label_entry_label_group, tree_selected
+from .themed_scrolled_text import ThemedScrolledText as ScrolledText
 
 logger = logging.getLogger(__name__)
 

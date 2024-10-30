@@ -7,8 +7,9 @@ from functools import cached_property
 from typing import Optional, Tuple
 
 from attrs import field, frozen
-from ballistics import AMBIENT_PRESSURE
-from ballistics.form_function import FormFunction
+
+from . import AMBIENT_PRESSURE
+from .form_function import FormFunction
 
 logger = logging.getLogger(__name__)
 
@@ -159,6 +160,7 @@ class Charge(Propellant):
     @classmethod
     def from_propellant(
         cls,
+        *,
         reduced_burnrate: float,
         propellant: Propellant,
         form_function: FormFunction,
@@ -178,6 +180,12 @@ class Charge(Propellant):
             `ballistics.form_function.FormFunction` object that describes the geometry of this
             propellant.
 
+        Notes
+        -----
+        For convenience, functions to estimate the reduced burn rate has been provided, as
+        `Charge.estimate_reduced_from_coefficient_and_arch` and
+        `Charge.estimate_reduced_from_unitary_and_arch`, and their use is strongly encouraged.
+
         """
 
         return cls(
@@ -192,40 +200,31 @@ class Charge(Propellant):
             form_function=form_function,
         )
 
-    @classmethod
-    def from_propellant_and_geometry(
-        cls,
-        arch_width: float,
-        burn_rate_coefficient: float,
-        propellant: Propellant,
-        form_function: FormFunction,
-    ) -> Charge:
+    @staticmethod
+    def estimate_reduced_from_coefficient_and_arch(
+        *, arch_width: float, burn_rate_coefficient: float
+    ) -> float:
         """
-        defines a charge using the measurement of arch thickness in conjunction with
-        burn rate coefficient data.
-
         Parameters
         ----------
         arch_width: float
             twice the propellant's "web", or the minimum depth the propellant's
             burn surface must recede to achieve a "burnthrough".
-            see documentation of `ballistics.form_function.FormFunction` for more
+            See documentation of `ballistics.form_function.FormFunction` for more
             information.
         burn_rate_coefficient: float
-            coefficient used in de Saint Robert's burn rate law. See documentation for
-            `Charge` for more information.
-        propellant: `Propellant`
-            base propellant of this charge.
-        form_function:
-            `ballistics.form_function.FormFunction` object that describes the geometry of this
-            propellant.
+            coefficient used in de Saint Robert's burn rate law.
+            See documentation for `Charge` for more information.
 
+        Notes
+        -----
+        Tabulating the propellant's burn rate this way is particularly common with Western sources
+        and more recent work fromChina.
         """
-        return cls.from_propellant(
-            reduced_burnrate=2 * burn_rate_coefficient / arch_width,
-            propellant=propellant,
-            form_function=form_function,
-        )
+        return 2 * burn_rate_coefficient / arch_width
+
+    def get_coefficient_from_arch(self, arch_width: float) -> float:
+        return self.reduced_burnrate * arch_width / 2
 
     @cached_property
     def Z_k(self) -> float:

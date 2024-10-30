@@ -1,3 +1,3 @@
-from ballistics.problem.fixed_charge_problem import FixedChargeProblem
-from ballistics.problem.fixed_volume_problem import FixedVolumeProblem
-from ballistics.problem.pressure_target import PressureTarget
+from .fixed_charge_problem import FixedChargeProblem
+from .fixed_volume_problem import FixedVolumeProblem
+from .pressure_target import PressureTarget

@@ -8,12 +8,13 @@ from math import inf
 from typing import Dict, Iterable, Optional, Tuple
 
 from attrs import field, frozen
-from ballistics import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
-                        MAX_DT, Significance)
-from ballistics.charge import Charge
-from ballistics.num import dekker, gss_max
-from ballistics.state import Delta, State, StateList
 from cattrs import Converter
+
+from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
+               Significance)
+from .charge import Charge
+from .num import dekker, gss_max
+from .state import Delta, State, StateList
 
 logger = logging.getLogger(__name__)
 

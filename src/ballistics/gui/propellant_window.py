@@ -5,12 +5,11 @@ from tkinter import Toplevel, filedialog
 from tkinter.ttk import Button, Frame, LabelFrame, Scrollbar, Treeview
 from typing import Optional, Tuple
 
-from ballistics.charge import Propellant
-from ballistics.gui import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
-from ballistics.gui.misc import add_label_entry_label_group, tree_selected
+from ..charge import Propellant
+from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
+from .misc import add_label_entry_label_group, tree_selected
 # from tkinter.scrolledtext import ScrolledText
-from ballistics.gui.themed_scrolled_text import \
-    ThemedScrolledText as ScrolledText
+from .themed_scrolled_text import ThemedScrolledText as ScrolledText
 
 logger = logging.getLogger(__name__)
 
