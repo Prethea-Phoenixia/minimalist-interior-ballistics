@@ -1,0 +1,92 @@
+[
+	{
+		"name": "Type 1954 76mm Cannon (WB022P HE-Frag) (ZiS-3)",
+		"description": "Type 1954 76mm Cannon is the domestic designation for the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U).\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"cross_section": 0.00469,
+		"shot_mass": 6.2,
+		"charge_mass": 1.08,
+		"chamber_volume": 0.001484,
+		"loss_fraction": 0.03,
+		"start_pressure": 30000000.0,
+		"travel": 2.6870000000000003,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "0.0 / 7 (d = 0.0) - 0.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 1012200,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 3.3827570274237724e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "0.0 / 7 (d = 0.0) - 0.0 mm",
+				"chi": 0.7145664992356408,
+				"labda": 0.2212713936430318,
+				"mu": -0.024449877750611245,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "Type 1944 100mm Cannon (WB004P HE-Frag) (BS-3)",
+		"description": "Type 1944 100mm cannon is the domestic designation for the Soviet 100mm field gun M1944 (BS-3).\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"cross_section": 0.00818,
+		"shot_mass": 15.6,
+		"charge_mass": 5.6,
+		"chamber_volume": 0.0079,
+		"loss_fraction": 0.03,
+		"start_pressure": 30000000.0,
+		"travel": 4.738,
+		"charge": {
+			"name": "双芳-3 tube",
+			"description": "1.7 / 1 - 260.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1560.0,
+			"force": 1001400,
+			"pressure_exponent": 0.81,
+			"covolume": 0.00102561,
+			"adiabatic_index": 1.2663,
+			"reduced_burnrate": 2.2038518689719354e-05,
+			"form_function": {
+				"name": "tube",
+				"description": "1.7 / 1 - 260.0 mm",
+				"chi": 1.0065384615384616,
+				"labda": -0.00649598777225831,
+				"mu": 0,
+				"Z_k": 1.0
+			}
+		}
+	},
+	{
+		"name": "Type 1931/37 122mm Cannon (WB013P HE-Frag) (A-19)",
+		"description": "Type 1931/1937 122mm cannon is the domestic designation for the Soviet 122mm corps gun M1931/1937 (A-19).\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"cross_section": 0.01188,
+		"shot_mass": 25,
+		"charge_mass": 6.847,
+		"chamber_volume": 0.009898,
+		"loss_fraction": 0.03,
+		"start_pressure": 30000000.0,
+		"travel": 4.755,
+		"charge": {
+			"name": "乙芳-3 tube",
+			"description": "1.8 / 1 - 225.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 986600,
+			"pressure_exponent": 0.81,
+			"covolume": 0.00104117,
+			"adiabatic_index": 1.2633,
+			"reduced_burnrate": 2.2012737522371817e-05,
+			"form_function": {
+				"name": "tube",
+				"description": "1.8 / 1 - 225.0 mm",
+				"chi": 1.0077777777777779,
+				"labda": -0.007717750826901873,
+				"mu": 0,
+				"Z_k": 1.0
+			}
+		}
+	}
+]
