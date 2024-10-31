@@ -1,0 +1,32 @@
+[
+	{
+		"name": "Type 1944 100mm Cannon (WB004P HE-Frag)",
+		"description": "Type 1944 100mm cannon is the domestic designation for the Soviet 100mm field gun M1944 (BS-3).\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"cross_section": 0.00818,
+		"shot_mass": 15.6,
+		"charge_mass": 5.6,
+		"chamber_volume": 0.0079,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 4.738,
+		"charge": {
+			"name": "双芳-3 tube",
+			"description": "1.7 / 1 - 260.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 980980.0,
+			"pressure_exponent": 0.81,
+			"covolume": 0.001,
+			"adiabatic_index": 1.2,
+			"reduced_burnrate": 2.1333109861433018e-05,
+			"form_function": {
+				"name": "tube",
+				"description": "1.7 / 1 - 260.0 mm",
+				"chi": 1.0065384615384616,
+				"labda": -0.00649598777225831,
+				"mu": 0,
+				"Z_k": 1.0
+			}
+		}
+	}
+]

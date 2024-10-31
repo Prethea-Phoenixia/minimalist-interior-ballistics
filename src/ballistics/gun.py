@@ -10,8 +10,8 @@ from typing import Dict, Iterable, Optional, Tuple
 from attrs import field, frozen
 from cattrs import Converter
 
-from . import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION, MAX_DT,
-               Significance)
+from . import (DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION,
+               DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, MAX_DT, Significance)
 from .charge import Charge
 from .num import dekker, gss_max
 from .state import Delta, State, StateList
@@ -32,7 +32,7 @@ class Gun:
     shot_mass: float
     charge_mass: float
     chamber_volume: float
-    loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
+    loss_fraction: float = DEFAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
     travel: float
 
@@ -179,7 +179,7 @@ class Gun:
         k4 = df(s_i(d=k3 * dx, **{**generate_dargs(dx), **intermediate}))
         return s_i(d=(k1 + k2 * 2 + k3 * 2 + k4) * dx / 6, **generate_dargs(dx), marker=marker)
 
-    def to_start(self, *, n_intg: int, acc: float) -> StateList:
+    def to_start(self, *, n_intg: int = DEFAULT_STEPS, acc: float = DEFAULT_ACC) -> StateList:
         # sanity check: maximum possible pressure developed is higher than start:
         if self.get_bomb_state().average_pressure < self.start_pressure:
             raise ValueError(
@@ -247,8 +247,8 @@ class Gun:
     def to_burnout(
         self,
         *,
-        n_intg: int,
-        acc: float,
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
         abort_velocity: float = inf,
         abort_travel: float = inf,
         logging_preamble: str = "",
@@ -343,8 +343,8 @@ class Gun:
         self,
         travel: Optional[float] = None,
         *,
-        n_intg: int,
-        acc: float,
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
     ) -> StateList:
         """
@@ -401,7 +401,7 @@ class Gun:
         return self.mark_max_pressure(states, acc=acc, logging_preamble=logging_preamble)
 
     def mark_max_pressure(
-        self, states: StateList, *, acc: float, logging_preamble: str = ""
+        self, states: StateList, *, acc: float = DEFAULT_ACC, logging_preamble: str = ""
     ) -> StateList:
         """
         Finds the maximum pressure point and insert it into a list of

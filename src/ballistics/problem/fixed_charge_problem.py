@@ -6,7 +6,7 @@ from typing import Optional, Tuple
 
 from attrs import frozen
 
-from .. import Significance
+from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
 from ..gun import Gun
 from ..num import dekker, gss_max
 from .base_problem import BaseProblem
@@ -31,7 +31,11 @@ class FixedChargeProblem(BaseProblem):
         return self.charge_mass / self.propellant.density
 
     def get_chamber_volume_limits(
-        self, pressure_target: PressureTarget, *, acc: float, logging_preamble: str = ""
+        self,
+        pressure_target: PressureTarget,
+        *,
+        acc: float = DEFAULT_ACC,
+        logging_preamble: str = "",
     ) -> Tuple[float, float]:
         """
         find the range of valid chamber volume
@@ -96,8 +100,8 @@ class FixedChargeProblem(BaseProblem):
         chamber_volume: float,
         pressure_target: PressureTarget,
         *,
-        n_intg: int,
-        acc: float,
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
         **kwargs,
     ) -> Gun:
@@ -173,8 +177,8 @@ class FixedChargeProblem(BaseProblem):
         pressure_target: PressureTarget,
         *,
         velocity_target: Optional[float] = None,
-        n_intg: int,
-        acc: float,
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
     ) -> Tuple[Optional[Gun], Optional[Gun], Optional[Gun]]:
         logger.info(

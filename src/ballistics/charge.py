@@ -164,8 +164,8 @@ class Charge(Propellant):
         reduced_burnrate: float,
         propellant: Propellant,
         form_function: FormFunction,
-        description: str = "",
-        name: str = "",
+        description: Optional[str] = None,
+        name: Optional[str] = None,
     ) -> Charge:
         """
         defines a charge with propellant and reduced burn rate.
@@ -189,8 +189,8 @@ class Charge(Propellant):
         """
 
         return cls(
-            name=name,
-            description=description,
+            name=" ".join((propellant.name, form_function.name)) if name is None else name,
+            description=form_function.description if description is None else description,
             density=propellant.density,
             force=propellant.force,
             pressure_exponent=propellant.pressure_exponent,

@@ -66,7 +66,7 @@ class DefinePropellantWindow(Toplevel):
             description_frame,
             width=DEFAULT_TEXT_WIDTH,
             height=DEFAULT_TEXT_HEIGHT,
-            wrap="none",
+            # wrap="none",
         )
         self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
         self.text.insert("end", basis.description if basis else "")
@@ -139,7 +139,7 @@ class PropellantFrame(Frame):
             state="disabled",
             width=DEFAULT_TEXT_WIDTH,
             height=DEFAULT_TEXT_HEIGHT,
-            wrap="none",
+            # wrap="none",
         )
         self.overview_text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
 

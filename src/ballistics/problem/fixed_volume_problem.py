@@ -6,7 +6,7 @@ from typing import Optional, Tuple
 
 from attrs import frozen
 
-from .. import Significance
+from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
 from ..gun import Gun
 from ..num import dekker, gss_max
 from .base_problem import BaseProblem
@@ -36,7 +36,11 @@ class FixedVolumeProblem(BaseProblem):
         return self.chamber_volume * self.propellant.density
 
     def get_charge_mass_limits(
-        self, pressure_target: PressureTarget, *, acc: float, logging_preamble: str = ""
+        self,
+        pressure_target: PressureTarget,
+        *,
+        acc: float = DEFAULT_ACC,
+        logging_preamble: str = "",
     ) -> Tuple[float, float]:
         """
         Find the maximum and minimum valid charge mass value for the outlined gun design
@@ -100,8 +104,8 @@ class FixedVolumeProblem(BaseProblem):
         charge_mass: float,
         pressure_target: PressureTarget,
         *,
-        n_intg: int,
-        acc: float,
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
         **kwargs,
     ) -> Gun:

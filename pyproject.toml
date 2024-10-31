@@ -24,6 +24,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[tool.setuptools.package-data]
+ballistics = ["py.typed"]
+
 [project.gui-scripts]
 ballistics-gui = "ballistics.gui.main:main"
 

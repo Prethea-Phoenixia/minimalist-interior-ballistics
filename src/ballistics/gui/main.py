@@ -4,10 +4,11 @@ import logging
 from ctypes import windll
 from tkinter import Menu, Tk, Toplevel
 # from tkinter.scrolledtext import ScrolledText
-from tkinter.ttk import Button, Entry, Frame, Label, Notebook, Style
+from tkinter.ttk import Button, Entry, Frame, Label, Notebook
 from typing import Callable
 
-from . import DEFAULT_ACC, DEFAULT_ENTRY_WIDTH, DEFAULT_PAD, DEFAULT_STEPS
+from .. import DEFAULT_ACC, DEFAULT_STEPS
+from . import DEFAULT_ENTRY_WIDTH, DEFAULT_PAD
 from .gun_window import GunFrame
 from .propellant_window import PropellantFrame
 from .themed_scrolled_text import ThemedScrolledText as ScrolledText

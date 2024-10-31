@@ -122,7 +122,7 @@ class DefineGunWindow(Toplevel):
             description_frame,
             width=DEFAULT_TEXT_WIDTH,
             height=DEFAULT_TEXT_HEIGHT,
-            wrap="none",
+            # wrap="none",
         )
         self.text.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
         self.text.insert("end", basis.description if basis else "")
@@ -203,8 +203,8 @@ class GunFrame(Frame):
         super().__init__(parent, *args, **kwargs)
 
         self.rowconfigure(2, weight=1)
-        self.columnconfigure(0, weight=2)
-        self.columnconfigure(3, weight=8)
+        self.columnconfigure(0, weight=8)
+        self.columnconfigure(3, weight=2)
 
         self.tree = Treeview(self, show="tree", selectmode="browse")
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
@@ -237,7 +237,7 @@ class GunFrame(Frame):
             state="disabled",
             width=DEFAULT_TEXT_WIDTH,
             height=DEFAULT_TEXT_HEIGHT,
-            wrap="none",
+            # wrap="none",
         )
         self.overview_text.grid(row=0, column=0, rowspan=2, sticky="nsew", **DEFAULT_PAD)
 

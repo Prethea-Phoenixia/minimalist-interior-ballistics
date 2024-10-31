@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING
 
 from attrs import field, frozen
 
-from .. import (DEFAULT_GUN_START_PRESSURE, DFEAULT_GUN_LOSS_FRACTION,
+from .. import (DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION,
+                DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS,
                 REDUCED_BURN_RATE_INITIAL_GUESS, Significance)
 from ..charge import Charge, Propellant
 from ..gun import Gun
@@ -28,7 +29,7 @@ class BaseProblem:
     cross_section: float
     shot_mass: float
     travel: float
-    loss_fraction: float = DFEAULT_GUN_LOSS_FRACTION
+    loss_fraction: float = DEFAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
 
     def get_gun(self, *, charge_mass: float, chamber_volume: float, reduced_burnrate: float) -> Gun:
@@ -55,8 +56,8 @@ class BaseProblem:
         charge_mass: float,
         chamber_volume: float,
         pressure_target: PressureTarget,
-        n_intg: int,
-        acc: float,
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
     ) -> Gun:
 

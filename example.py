@@ -59,11 +59,10 @@ are fired.",
         n_intg=100,
         acc=1e-3,
     )
-    print(bs_3)
-    print(bs_3.charge)
-    print(bs_3.charge.get_coefficient_from_arch(arch_width=0.85e-3 * 2))
-    print(StateList.tabulate(bs_3.to_travel(n_intg=10, acc=1e-3)))
 
+    print(tr3)
+    print(eighteen_one)
+    print(bs_3)
 
 """
 kgf s   9.8 kg m    s           kg
