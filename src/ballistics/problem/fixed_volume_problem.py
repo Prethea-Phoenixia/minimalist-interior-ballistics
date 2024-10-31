@@ -175,8 +175,8 @@ class FixedVolumeProblem(BaseProblem):
         pressure_target: PressureTarget,
         *,
         velocity_target: Optional[float] = None,
-        n_intg: int,
-        acc: float,
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
     ) -> Tuple[Optional[Gun], Optional[Gun], Optional[Gun]]:
         logger.info(
