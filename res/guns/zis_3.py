@@ -1,3 +1,5 @@
+from statistics import mean
+
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.problem import KnownGunProblem, PressureTarget
@@ -16,11 +18,13 @@ sb = Propellant(
     adiabatic_index=1.2381,
 )
 nine_seven = FormFunction.multi_perf(
-    arch_width=0.5e-3 * 2,
-    perforation_diameter=0.5e-3,
-    height=12.05e-3,
+    arch_width=mean((0.95, 1.10)),
+    perforation_diameter=mean((0.40, 0.60)),
+    height=mean((11.5, 12.6)),
     shape=MultiPerfShape.SEVEN_PERF_CYLINDER,
 )
+
+
 zis_3 = KnownGunProblem(
     name="Type 1954 76mm Cannon (WB022P HE-Frag) (ZiS-3)",
     description="Type 1954 76mm Cannon is the domestic designation for the Soviet 76.2mm \
@@ -36,9 +40,12 @@ divisional gun M1942 (ZiS-3, GRAU index 52-P-354U).\nReference:\n 《火炮内�
     propellant=sb,
     form_function=nine_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget(2380e2 * kgf_dm2, target=PressureTarget.AVERAGE),
+    pressure_target=PressureTarget(2617e2 * kgf_dm2, target=PressureTarget.AVERAGE),
 )
 if __name__ == "__main__":
     from ballistics.state import StateList
+
+    print(nine_seven)
+    print(nine_seven.labda_s, nine_seven.chi_s)
 
     print(StateList.tabulate(zis_3.to_travel(n_intg=10)))

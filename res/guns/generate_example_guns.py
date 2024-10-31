@@ -3,6 +3,7 @@ import logging
 from a_19 import a_19
 from ballistics.gun import Gun
 from bs_3 import bs_3
+from zis_2 import zis_2
 from zis_3 import zis_3
 
 logger = logging.getLogger(__name__)
@@ -20,7 +21,8 @@ if __name__ in {"__main__", "__mp_main__"}:
     logger.info("Started")
 
     guns = []
-    guns.append(zis_3)
+    # guns.append(zis_2)
+    # guns.append(zis_3)
     guns.append(bs_3)
     guns.append(a_19)
 

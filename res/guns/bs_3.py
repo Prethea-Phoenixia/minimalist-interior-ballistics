@@ -1,3 +1,5 @@
+from statistics import mean
+
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction
 from ballistics.problem import KnownGunProblem, PressureTarget
@@ -24,7 +26,7 @@ sf3 = Propellant(
     covolume=1.02561 * dm3_kg,
     adiabatic_index=1.2663,
 )
-eighteen_one = FormFunction.single_perf(arch_width=0.85 * 2, height=260)
+eighteen_one = FormFunction.single_perf(arch_width=mean((1.67, 1.77)), height=260)
 bs_3 = KnownGunProblem(
     name="Type 1944 100mm Cannon (WB004P HE-Frag) (BS-3)",
     description="Type 1944 100mm cannon is the domestic designation for the Soviet 100mm \

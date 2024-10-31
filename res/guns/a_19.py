@@ -1,3 +1,5 @@
+from statistics import mean
+
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction
 from ballistics.problem import KnownGunProblem, PressureTarget
@@ -23,7 +25,7 @@ yf3 = Propellant(
     covolume=1.04117 * dm3_kg,
     adiabatic_index=1.2633,
 )
-seventeen_one = FormFunction.single_perf(arch_width=0.875 * 2, height=225)
+seventeen_one = FormFunction.single_perf(arch_width=mean((1.70, 1.80)), height=225)
 a_19 = KnownGunProblem(
     name="Type 1931/37 122mm Cannon (WB013P HE-Frag) (A-19)",
     description="Type 1931/1937 122mm cannon is the domestic designation for the Soviet 122mm \
