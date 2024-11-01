@@ -2,14 +2,15 @@ from statistics import mean
 
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction
-from ballistics.problem import KnownGunProblem, PressureTarget
+from ballistics.problem import (FixedChargeProblem, KnownGunProblem,
+                                PressureTarget)
 from misc import (L, dm, dm2, dm3_kg, format_compo_string, kg_dm3, kgf_dm2,
                   kgfdm_kg)
 
 yf3 = Propellant(
     name="乙芳-3",
-    description="2504 K\n《火炸药手册 (增订本）第二分册》(1981)\
-, 《火炮内弹道计算手册》(1987)\n"
+    description="2504 K\n\
+《火炸药手册 (增订本）第二分册》(1981), 《火炮内弹道计算手册》(1987)\n"
     + format_compo_string(
         {
             "Nitrocellulose": 0.625,
@@ -29,8 +30,10 @@ seventeen_one = FormFunction.single_perf(arch_width=mean((1.70, 1.80)), height=2
 a_19 = KnownGunProblem(
     name="Type 1931/37 122mm Cannon (WB013P HE-Frag) (A-19)",
     description="Type 1931/1937 122mm cannon is the domestic designation for the Soviet 122mm \
-corps gun M1931/1937 (A-19).\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》\
-(1981).",
+corps gun M1931/1937 (A-19). Nominal velocity is 800m/s.\n\
+Reference:\n\
+ 《火炮内弹道计算手册》(1987)\n\
+ 《火炸药手册 (增订本）第二分册》(1981).",
     cross_section=1.188 * dm2,
     shot_mass=25,
     charge_mass=6.847,
@@ -43,8 +46,6 @@ corps gun M1931/1937 (A-19).\nReference:\n 《火炮内弹道计算手册》(198
 ).get_gun_developing_pressure(
     pressure_target=PressureTarget(2750e2 * kgf_dm2, target=PressureTarget.AVERAGE),
 )
-
-
 if __name__ == "__main__":
     from ballistics.state import StateList
 

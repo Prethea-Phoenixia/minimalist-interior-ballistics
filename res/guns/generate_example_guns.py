@@ -21,8 +21,7 @@ if __name__ in {"__main__", "__mp_main__"}:
     logger.info("Started")
 
     guns = []
-    # guns.append(zis_2)
-    # guns.append(zis_3)
+
     guns.append(bs_3)
     guns.append(a_19)
 
