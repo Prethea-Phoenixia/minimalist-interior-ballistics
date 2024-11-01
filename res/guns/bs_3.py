@@ -7,9 +7,10 @@ from prop_sf3 import sf3
 
 eighteen_one = FormFunction.single_perf(arch_width=mean((1.67, 1.77)), height=260)
 bs_3 = KnownGunProblem(
-    name="Type 1944 100mm Cannon (WB004P HE-Frag) (BS-3)",
+    name="Type 1944 100mm Cannon (BS-3) (WB004P HE-Frag)",
     description="Type 1944 100mm cannon is the domestic designation for the Soviet 100mm \
-field gun M1944 (BS-3). Nominal velocity is 900m/s.\n\
+field gun M1944 (BS-3). Nominal velocity is 900m/s. Pressure values are converted from \
+copper crusher gauge values, nominally 300,000 kgf/dm^2.\n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",

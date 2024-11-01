@@ -28,9 +28,10 @@ yf3 = Propellant(
 )
 seventeen_one = FormFunction.single_perf(arch_width=mean((1.70, 1.80)), height=225)
 a_19 = KnownGunProblem(
-    name="Type 1931/37 122mm Cannon (WB013P HE-Frag) (A-19)",
-    description="Type 1931/1937 122mm cannon is the domestic designation for the Soviet 122mm \
-corps gun M1931/1937 (A-19). Nominal velocity is 800m/s.\n\
+    name="Type 1931/37 122mm Cannon (A-19) (WB013P HE-Frag)",
+    description="Type 1931/1937 122mm cannon is the domestic designation for the \
+Soviet 122mm corps gun M1931/1937 (A-19). Nominal velocity is 800m/s. Pressure \
+values converted from copper crusher gauge values, nominally 275,000 kgf/dm^2. \n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
@@ -44,7 +45,7 @@ Reference:\n\
     propellant=yf3,
     form_function=seventeen_one,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget(2750e2 * kgf_dm2, target=PressureTarget.AVERAGE),
+    pressure_target=PressureTarget(2897e2 * kgf_dm2, target=PressureTarget.AVERAGE),
 )
 if __name__ == "__main__":
     from ballistics.state import StateList
