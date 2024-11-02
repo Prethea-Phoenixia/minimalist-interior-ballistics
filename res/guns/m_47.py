@@ -11,9 +11,11 @@ m_47_full = KnownGunProblem(
     name="Type 1959 152mm Cannon (M-47) (WB008P HE-Frag, Full Charge)",
     description="Type 1959 152mm cannon is the designation for domestically produced \
 variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable charge is \
-made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags\
-bring the full charge to 10.67 kg. Nominal velocity is 770 m/s. Peak pressure converted\
-from copper crusher value, nominally 235,000 kgf/dm^2. \n\
+made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags \
+bring the full charge to 10.67 kg. Nominal velocity is 770 m/s. Nominal pressure is 2350 \
+kgf/cm^2, converts to 2570 kgf/cm^2 actual.\n\
+For this entry, a value of 2480 kgf/cm^2 has been adopted, which allows both this and \
+the first reduced charge to better conform to nominal performance levels.\n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
@@ -27,15 +29,17 @@ Reference:\n\
     propellant=sf3,
     form_function=nineteen_one,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget(2570e2 * kgf_dm2, target=PressureTarget.AVERAGE),
+    pressure_target=PressureTarget(2480e2 * kgf_dm2, target=PressureTarget.AVERAGE),
 )
 
 m_47_one = Gun(
     name="Type 1959 152mm Cannon (M-47) (WB008P HE-Frag, No.1 Charge)",
     description="Type 1959 152mm cannon is the designation for domestically produced \
 variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable charge is \
-made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags\
+made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags \
 bring the full charge to 10.67 kg. Nominal velocity is 635 m/s.\n\
+This entry adopts the same properties of charge from the preceeding entry, with a reduced \
+charge mass. The calculated performance conforms to nominal values well.\n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",

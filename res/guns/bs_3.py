@@ -24,7 +24,7 @@ Reference:\n\
     propellant=sf3,
     form_function=eighteen_one,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget(3141e2 * kgf_dm2, target=PressureTarget.AVERAGE),
+    pressure_target=PressureTarget(3202e2 * kgf_dm2, target=PressureTarget.AVERAGE),
 )
 
 

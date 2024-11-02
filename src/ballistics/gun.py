@@ -110,6 +110,11 @@ class Gun:
             marker=Significance.BOMB,
         )
 
+    def get_start_state(self, *, n_intg: int = DEFAULT_STEPS, acc: float = DEFAULT_ACC) -> State:
+        return self.to_start(n_intg=n_intg, acc=acc).get_state_by_marker(
+            significance=Significance.START
+        )
+
     def gas_energy(self, *, psi: float, v: float) -> float:
         return (
             self.charge.force * self.charge_mass * psi
@@ -222,7 +227,7 @@ class Gun:
             tol=rough_ttb * acc,
         )[0]
 
-        s_start = state_at_time(time=start_time, marker=Significance.IGNITION)
+        s_start = state_at_time(time=start_time, marker=Significance.START)
         states.append(s_start)
 
         return states
@@ -295,8 +300,8 @@ class Gun:
         In either case, the result is passed through `Gun.mark_max_pressure` to mark
         the peak pressure point.
         """
-        pre_start_states = self.to_start(n_intg=n_intg, acc=acc)
-        Z_c0 = max(pre_start_states).burnup_fraction
+        start_state = self.get_start_state(n_intg=n_intg, acc=acc)
+        Z_c0 = start_state.burnup_fraction
 
         def burnout(state: State) -> int:
             return state.burnup_fraction > self.charge.Z_k

@@ -33,6 +33,7 @@ class KnownGunProblem(BaseProblem):
         logging_preamble: str = "",
         **kwargs,
     ) -> Gun:
+
         return super().get_gun_developing_pressure(
             charge_mass=self.charge_mass,
             chamber_volume=self.chamber_volume,

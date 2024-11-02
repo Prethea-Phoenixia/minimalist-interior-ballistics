@@ -45,7 +45,7 @@ Reference:\n\
     propellant=yf3,
     form_function=seventeen_one,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget(2897e2 * kgf_dm2, target=PressureTarget.AVERAGE),
+    pressure_target=PressureTarget(2838e2 * kgf_dm2, target=PressureTarget.AVERAGE),
 )
 if __name__ == "__main__":
     from ballistics.state import StateList

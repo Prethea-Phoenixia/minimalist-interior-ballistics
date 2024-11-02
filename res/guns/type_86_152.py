@@ -4,8 +4,7 @@ from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
-from misc import (L, dm, dm2, dm3_kg, format_compo_string, kg_dm3, kgf_dm2,
-                  kgfdm_kg)
+from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg
 from prop_9_7 import nine_seven, sb
 
 df = Propellant(
@@ -13,9 +12,9 @@ df = Propellant(
     description="Values for this propellant is provisional.\n《火炮内弹道计算手册》(1987)",
     density=1.6 * kg_dm3,
     covolume=1.0 * dm3_kg,
-    pressure_exponent=0.8,
-    force=950000 * kgfdm_kg,
-    adiabatic_index=1.2,
+    pressure_exponent=0.82,
+    force=930000 * kgfdm_kg,
+    adiabatic_index=1.24,
 )
 twentytwo_seven = FormFunction.multi_perf(
     arch_width=mean((2.1, 2.4)),
@@ -30,8 +29,10 @@ type_86_152_full = KnownGunProblem(
     description="Officially known as the Type 1986 152mm Cannon, earlier models were exported \
 under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced \
 Variable charge. This case represents firing with the Full Variable charge as issued. Nominal \
-velocity is 955m/s. Pressure values have been converted from copper crusher gauge, as 310,000 \
-kgf/dm^2.\n\
+velocity is 955m/s. Nominal pressure is 3100 kgf/cm^2 from copper crusher gauge, converts to \
+3282 kgf/cm^2 actual.\n\
+Since the 单芳-1 is completley undocumented, the thermalchemical properties of the charge is \
+manipulated until a reasonable match for the two Full Variable charge zones are found. \n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
@@ -45,7 +46,7 @@ Reference:\n\
     propellant=df,
     form_function=twentytwo_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget(3282e2 * kgf_dm2, target=PressureTarget.AVERAGE),
+    pressure_target=PressureTarget.average_pressure(3282e2 * kgf_dm2),
 )
 
 type_86_152_one = Gun(
@@ -54,6 +55,9 @@ type_86_152_one = Gun(
 under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced \
 Variable charge. This case represents firing with the Full Variable charge, in the reduced charge \
 configuration. Nominal velocity is 890m/s. \n\
+This entry adopts the same properties of charge from the preceeding entry, with a reduced \
+charge mass. Due to the circumstance documented above, no further adjustment is made for better \
+conformity.\n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
@@ -73,8 +77,11 @@ type_86_152_four = KnownGunProblem(
     description="Officially known as the Type 1986 152mm Cannon, earlier models were exported \
 under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced \
 Variable charge. This case represents firing with the lowest configuration from the Reduced Variable \
-charge. Nominal velocity is 540m/s. Pressure values have been converted from copper crusher \
-gauge, as 96,000 kgf/dm^2.\n\
+charge. Nominal velocity is 540m/s. Nominal pressure is >=960 kgf/cm^2 from copper crusher, converts \
+to 1054 kgf/cm^2 actual.\n\
+Given the Type 83/86 design is sparsely documented, although the results does not exactly \
+duplicated tabulated values, the match is considered reasonable enough such that no further \
+adjustments are made to improve conformity. \n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
@@ -82,13 +89,13 @@ Reference:\n\
     shot_mass=48,
     charge_mass=6.2,
     chamber_volume=30.57 * L,
-    loss_fraction=0.05,
+    loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
     travel=70.91 * dm,
     propellant=sb,
     form_function=nine_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget(1054e2 * kgf_dm2, target=PressureTarget.AVERAGE),
+    pressure_target=PressureTarget.average_pressure(1054e2 * kgf_dm2),
 )
 
 
@@ -98,6 +105,9 @@ type_86_152_three = Gun(
 under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced \
 Variable charge. This case represents firing with the medium configuration from the \
 Reduced Variable charge. Nominal velocity is 660m/s.\n\
+Given the Type 83/86 design is sparsely documented, although the results does not exactly \
+duplicated tabulated values, the match is considered reasonable enough such that no further \
+adjustments are made to improve conformity. \n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
@@ -117,6 +127,9 @@ type_86_152_two = Gun(
 under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced \
 Variable charge. This case rrepresents firing the Reduced Variable charge as issued. \
 Nominal velocity is 780m/s.\n\
+Given the Type 83/86 design is sparsely documented, although the results does not exactly \
+duplicated tabulated values, the match is considered reasonable enough such that no further \
+adjustments are made to improve conformity. \n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
@@ -133,8 +146,13 @@ Reference:\n\
 if __name__ == "__main__":
     from ballistics.state import StateList
 
+    print(type_86_152_full.name)
     print(StateList.tabulate(type_86_152_full.to_travel(n_intg=10)))
+    print(type_86_152_one.name)
     print(StateList.tabulate(type_86_152_one.to_travel(n_intg=10)))
+    print(type_86_152_two.name)
     print(StateList.tabulate(type_86_152_two.to_travel(n_intg=10)))
+    print(type_86_152_three.name)
     print(StateList.tabulate(type_86_152_three.to_travel(n_intg=10)))
+    print(type_86_152_four.name)
     print(StateList.tabulate(type_86_152_four.to_travel(n_intg=10)))

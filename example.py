@@ -52,10 +52,10 @@ are fired.",
         propellant=tr3,
         form_function=eighteen_one,
     )
-
+    print(PressureTarget.average_pressure.__name__)
     bs_3 = bs_3_fc.solve_reduced_burn_rate_for_volume_at_pressure(
         chamber_volume=7.9 * L,
-        pressure_target=PressureTarget(300000 * kgf_dm2, target=PressureTarget.AVERAGE),
+        pressure_target=PressureTarget.average_pressure(30000000000 * kgf_dm2),
         n_intg=100,
         acc=1e-3,
     )

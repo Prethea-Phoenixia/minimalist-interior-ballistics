@@ -82,14 +82,19 @@ class FixedVolumeProblem(BaseProblem):
             return test_gun.bomb_free_fraction - acc
 
         chamber_fill_mass = self.chamber_fill_mass
-
         upper_limit = min(dekker(f_ff, 0, chamber_fill_mass, tol=chamber_fill_mass * acc))
+
+        # up until this point execution is guaranteed.
 
         def f_p(charge_mass: float) -> float:
             # note this is defined on [0, chamber_fill_mass]
             test_gun = self.get_gun(charge_mass=charge_mass)
-            test_gun_bomb_pressure = pressure_target.retrieve_from(test_gun.get_bomb_state())
-            return test_gun_bomb_pressure - pressure_target.value
+            return pressure_target.get_difference(test_gun.get_bomb_state())
+
+        if f_p(upper_limit) <= 0:
+            raise ValueError(
+                "excessive pressure target does not permit solution at given accuracy."
+            )
 
         lower_limit = max(dekker(f_p, 0, upper_limit, tol=chamber_fill_mass * acc))
         logger.info(
@@ -113,7 +118,8 @@ class FixedVolumeProblem(BaseProblem):
         solves the reduced burn rate such that the peak pressure developed in bore
         matches the desired value. This is the outer, user facing function that validates
         the input by checking against the calcualted charge mass limits. Implementation
-        instead under `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure` method.
+        instead under `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`
+        method.
 
         Parameters
         ----------

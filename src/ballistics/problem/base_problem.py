@@ -61,6 +61,24 @@ class BaseProblem:
         logging_preamble: str = "",
     ) -> Gun:
 
+        # first, sanity check the pressure value is achievable:
+
+        unitary_gun = self.get_gun(
+            charge_mass=charge_mass,
+            chamber_volume=chamber_volume,
+            reduced_burnrate=1,
+        )
+        """exact burn rate doesn't matter here, so long as the equation can be propagated to
+        generate a `State` object with the correct `State.average_pressure` (within numeric 
+        accuracy), from which all the other conversions are deterministic."""
+
+        if pressure_target.get_difference(unitary_gun.get_bomb_state()) < 0:
+            raise ValueError("specified pressure is too high to achieve")
+        elif (
+            pressure_target.get_difference(unitary_gun.get_start_state(n_intg=n_intg, acc=acc)) > 0
+        ):
+            raise ValueError("specified pressure is less than the starting state.")
+
         def f(reduced_burnrate: float) -> float:
             test_gun = self.get_gun(
                 reduced_burnrate=reduced_burnrate,
@@ -74,11 +92,8 @@ class BaseProblem:
                 logging_preamble=logging_preamble + "\t",
             )
             # logger.info(states.tabulate())
-            delta_p = (
-                pressure_target.retrieve_from(
-                    states.get_state_by_marker(Significance.PEAK_PRESSURE)
-                )
-                - pressure_target.value
+            delta_p = pressure_target.get_difference(
+                states.get_state_by_marker(Significance.PEAK_PRESSURE)
             )
             return delta_p
 

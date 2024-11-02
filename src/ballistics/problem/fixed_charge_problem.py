@@ -70,7 +70,7 @@ class FixedChargeProblem(BaseProblem):
         chamber_min_volume = self.chamber_min_volume
 
         bound = chamber_min_volume
-        while f_ff(bound) < 0:
+        while f_ff(bound) <= 0:
             bound *= 2
 
         lower_limit = max(
@@ -79,11 +79,12 @@ class FixedChargeProblem(BaseProblem):
 
         def f_p(chamber_volume: float) -> float:
             test_gun = self.get_gun(chamber_volume=chamber_volume)
-            test_gun_bomb_pressure = pressure_target.retrieve_from(test_gun.get_bomb_state())
-            return test_gun_bomb_pressure - pressure_target.value
+            return pressure_target.get_difference(test_gun.get_bomb_state())
 
-        bound = lower_limit
-        while f_p(bound) > 0:
+        if f_p(lower_limit) <= 0:
+            raise ValueError("excessive pressure does not permit solution at given accuracy.")
+
+        while f_p(bound) >= 0:
             bound *= 2
 
         upper_limit = min(dekker(f=f_p, x_0=lower_limit, x_1=bound, tol=chamber_min_volume * acc))

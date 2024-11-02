@@ -155,6 +155,19 @@ class FormFunction:
 
         raise ValueError(f"sigma(Z) is defined in [0, {self.Z_k}]")
 
+    def pretty_print(self) -> str:
+        return "\n".join(
+            (
+                f"{self.name}",
+                f"{self.description}",
+                f"    chi {self.chi:.4f}",
+                f"  labda {self.labda:.4f}",
+                f"     mu {self.mu:.4f}",
+                f"  chi_s {self.chi_s:.4f}",
+                f"labda_s {self.labda_s:.4f}",
+            )
+        )
+
     @classmethod
     def non_perf(cls, length: float, width: float, height: float) -> FormFunction:
         """

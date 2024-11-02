@@ -1,7 +1,67 @@
 [
 	{
-		"name": "Type 1955 57mm Cannon (ZiS-2) (WB009 HE-Frag)",
-		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velcoity at 700 m/s. Pressure values have been converted from copper crusher gauge, at 180,000 kgf/dm^2.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"name": "Type 1955 57mm Cannon (ZiS-2) (BR-271P APCR)",
+		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of >1250 m/s. Nominal pressure at 3100 kgf/cm^2 in copper crusher gauge, converts to 3241 kgf/cm^2 actual.\nThe reference listed does not direclty refer to the shell type under consideration, the equivalent Soviet projectile is inferred from the weight used in calculation.\nIn view of the uncertainty involved with this entry, the calculated value not been adjusted to conform.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"cross_section": 0.002663,
+		"shot_mass": 1.79,
+		"charge_mass": 1.6,
+		"chamber_volume": 0.001875,
+		"loss_fraction": 0.05,
+		"start_pressure": 29400000.0,
+		"travel": 3.566,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 994798.0,
+			"pressure_exponent": 0.84,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.2953745345234078e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "Type 1955 57mm Cannon (ZiS-2) (BR-271M APCBC-T)",
+		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of 1040 m/s. Nominal pressure of 3100 kgf/cm^2 in copper crusher gauge, converts to 3352 kgf/cm^2 actual.\nThe reference listed does not direclty refer to the shell type under consideration, the equivalent Soviet projectile is inferred from the weight used in calculation.\nIn view of the uncertainty involved with this entry, the calculated value not been adjusted to conform.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"cross_section": 0.002663,
+		"shot_mass": 2.8,
+		"charge_mass": 1.47,
+		"chamber_volume": 0.001875,
+		"loss_fraction": 0.05,
+		"start_pressure": 29400000.0,
+		"travel": 3.566,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991074.0,
+			"pressure_exponent": 0.84,
+			"covolume": 0.00095576,
+			"adiabatic_index": 1.2391,
+			"reduced_burnrate": 2.204635304341931e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
+				"chi": 0.7178533997117778,
+				"labda": 0.20978670012547057,
+				"mu": -0.022772898368883316,
+				"Z_k": 1.4568363636363635
+			}
+		}
+	},
+	{
+		"name": "Type 1955 57mm Cannon (ZiS-2) (WB009P HE-Frag)",
+		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velcoity at 700 (-760) m/s. Nominal pressure is 1800 kgf/cm^2 from copper crusher gauge, converts to 2004 kgf/cm^2 actual.\nThe computed performance is in excess of the tabulated value for this cartridge per references. However, there are alternative sources (relating to UO-271U and UO-271UG, not listed) that do indicate muzzle velocity of up to 760m/s may have been the case. In view of this uncertainty, this entry has not been modified to conform to the tabulated performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.002663,
 		"shot_mass": 3.75,
 		"charge_mass": 0.98,
@@ -18,7 +78,7 @@
 			"pressure_exponent": 0.84,
 			"covolume": 0.00095576,
 			"adiabatic_index": 1.2391,
-			"reduced_burnrate": 2.3912345682437357e-05,
+			"reduced_burnrate": 2.3912300685394024e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
@@ -30,8 +90,8 @@
 		}
 	},
 	{
-		"name": "Type 1954 76mm Cannon (ZiS-3) (WB022P HE-Frag)",
-		"description": "Type 1954 76mm Cannon is the domestic designation for the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U). Nomianl velocity is 680 m/s. Pressure has been converted from copper crusher gauge values, at 238,000 kgf/dm^2.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"name": "Type 1954 76mm Cannon (ZiS-3)",
+		"description": "Type 1954 76mm Cannon is the domestic designation for the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U). Nomianl velocity is 680-700 m/s developed at 1.08 kg of charge. Nominal pressure is 2380 kgf/cm^2 from copper crusher gauge, converts to 2620 kgf/cm^2 actual. \nInterior ballistics wise, shells of all types issued for this gun is similar enough that separate entries per shell type is not necessary, although this example best describes HE-Frag shells, such as the Chinese WB022P HE-Frag.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.00469,
 		"shot_mass": 6.2,
 		"charge_mass": 1.08,
@@ -48,7 +108,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 3.5985571050141224e-05,
+			"reduced_burnrate": 3.600964825786591e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -78,7 +138,7 @@
 			"pressure_exponent": 0.81,
 			"covolume": 0.00102561,
 			"adiabatic_index": 1.2663,
-			"reduced_burnrate": 2.217606802917744e-05,
+			"reduced_burnrate": 2.244924480579219e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.7 / 1 - 260.0 mm",
@@ -108,7 +168,7 @@
 			"pressure_exponent": 0.81,
 			"covolume": 0.00104117,
 			"adiabatic_index": 1.2633,
-			"reduced_burnrate": 2.2909285818276382e-05,
+			"reduced_burnrate": 2.2607766903372443e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.8 / 1 - 225.0 mm",
@@ -121,7 +181,7 @@
 	},
 	{
 		"name": "Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, Full Charge)",
-		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Full Variable charge is supplied with a main charge bag of 11kg, and a supplementary charge bag of 1.9kg. This case represents when both are left in. Nominal velocity is 930m/s. Peak pressureconverted from copper crusher gauge, nominally 315,000 kgf/dm^2. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Full Variable charge is supplied with a main charge bag of 11kg, and a supplementary charge bag of 1.9kg. This case represents when firing the charge as issued. Nominal velocity is 930m/s. Nominal pressure is 3150 kgf/cm^2 in copper crusher gauge, converts to 3370 kgf/cm^2 actual. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01394,
 		"shot_mass": 33.4,
 		"charge_mass": 12.9,
@@ -151,10 +211,10 @@
 	},
 	{
 		"name": "Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.1 Charge)",
-		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Full Variable cahrge is supplied with a main charge bag of 11kg, and a supplementary charge bag of 1.9kg. This case represents the supplementary charge bag taken out. Nominal velocity is 810m/s.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Full Variable cahrge is supplied with a main charge bag of 11kg, and a supplementary charge bag of 1.9kg. This case represents the supplementary charge bag taken out. Nominal velocity is 810m/s. \nThis entry adopts the same properties of charge from the preceeding entry, with a reduced charge mass. Further, a minor (<3%) reduction of charge mass from 11 to 10.787 kg is adopted to conform with the tabulated performance. This is probably within the range of variation allowed for in charge manufacturing, given Serbian sources lists a charge load of 12.6 kg and 10.5 kg, respectively, for the same charge design. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01394,
 		"shot_mass": 33.4,
-		"charge_mass": 11,
+		"charge_mass": 10.787,
 		"chamber_volume": 0.01858,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -181,7 +241,7 @@
 	},
 	{
 		"name": "Type 1959 152mm Cannon (M-47) (WB008P HE-Frag, Full Charge)",
-		"description": "Type 1959 152mm cannon is the designation for domestically produced variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable charge is made up of various charge bags that adds up to 8.45kg. Further supplementary charge bagsbring the full charge to 10.67 kg. Nominal velocity is 770 m/s. Peak pressure convertedfrom copper crusher value, nominally 235,000 kgf/dm^2. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1959 152mm cannon is the designation for domestically produced variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable charge is made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags bring the full charge to 10.67 kg. Nominal velocity is 770 m/s. Nominal pressure is 2350 kgf/cm^2, converts to 2570 kgf/cm^2 actual.\nFor this entry, a value of 2480 kgf/cm^2 has been adopted, which allows both this and the first reduced charge to better conform to nominal performance levels.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01876,
 		"shot_mass": 43.56,
 		"charge_mass": 10.67,
@@ -198,7 +258,7 @@
 			"pressure_exponent": 0.81,
 			"covolume": 0.00102561,
 			"adiabatic_index": 1.2663,
-			"reduced_burnrate": 2.218780256676569e-05,
+			"reduced_burnrate": 2.1663251182500383e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.9 / 1 - 320.0 mm",
@@ -211,7 +271,7 @@
 	},
 	{
 		"name": "Type 1959 152mm Cannon (M-47) (WB008P HE-Frag, No.1 Charge)",
-		"description": "Type 1959 152mm cannon is the designation for domestically produced variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable charge is made up of various charge bags that adds up to 8.45kg. Further supplementary charge bagsbring the full charge to 10.67 kg. Nominal velocity is 635 m/s.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1959 152mm cannon is the designation for domestically produced variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable charge is made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags bring the full charge to 10.67 kg. Nominal velocity is 635 m/s.\nThis entry adopts the same properties of charge from the preceeding entry, with a reduced charge mass. The calculated performance conforms to nominal values well.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01876,
 		"shot_mass": 43.56,
 		"charge_mass": 8.45,
@@ -228,7 +288,7 @@
 			"pressure_exponent": 0.81,
 			"covolume": 0.00102561,
 			"adiabatic_index": 1.2663,
-			"reduced_burnrate": 2.218780256676569e-05,
+			"reduced_burnrate": 2.1663251182500383e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.9 / 1 - 320.0 mm",
@@ -241,7 +301,7 @@
 	},
 	{
 		"name": "Type 1983/86 152mm Cannon (WB028 HE-Frag, Full Charge)",
-		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the Full Variable charge as issued. Nominal velocity is 955m/s. Pressure values have been converted from copper crusher gauge, as 310,000 kgf/dm^2.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the Full Variable charge as issued. Nominal velocity is 955m/s. Nominal pressure is 3100 kgf/cm^2 from copper crusher gauge, converts to 3282 kgf/cm^2 actual.\nSince the 单芳-1 is completley undocumented, the thermalchemical properties of the charge is manipulated until a reasonable match for the two Full Variable charge zones are found. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.019045000000000003,
 		"shot_mass": 48,
 		"charge_mass": 21.09,
@@ -254,11 +314,11 @@
 			"description": "2.2 / 7 (d = 1.1) - 28.0 mm",
 			"burn_rate_coefficient": null,
 			"density": 1600.0,
-			"force": 931000.0,
-			"pressure_exponent": 0.8,
+			"force": 911400.0,
+			"pressure_exponent": 0.82,
 			"covolume": 0.001,
-			"adiabatic_index": 1.2,
-			"reduced_burnrate": 2.4348993797688417e-05,
+			"adiabatic_index": 1.24,
+			"reduced_burnrate": 1.714297324781642e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "2.2 / 7 (d = 1.1) - 28.0 mm",
@@ -271,7 +331,7 @@
 	},
 	{
 		"name": "Type 1983/86 152mm Cannon (WB028 HE-Frag, Charge No.1)",
-		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the Full Variable charge, in the reduced charge configuration. Nominal velocity is 890m/s. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the Full Variable charge, in the reduced charge configuration. Nominal velocity is 890m/s. \nThis entry adopts the same properties of charge from the preceeding entry, with a reduced charge mass. Due to the circumstance documented above, no further adjustment is made for better conformity.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.019045000000000003,
 		"shot_mass": 48,
 		"charge_mass": 18.8,
@@ -284,11 +344,11 @@
 			"description": "2.2 / 7 (d = 1.1) - 28.0 mm",
 			"burn_rate_coefficient": null,
 			"density": 1600.0,
-			"force": 931000.0,
-			"pressure_exponent": 0.8,
+			"force": 911400.0,
+			"pressure_exponent": 0.82,
 			"covolume": 0.001,
-			"adiabatic_index": 1.2,
-			"reduced_burnrate": 2.4348993797688417e-05,
+			"adiabatic_index": 1.24,
+			"reduced_burnrate": 1.714297324781642e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "2.2 / 7 (d = 1.1) - 28.0 mm",
@@ -301,7 +361,7 @@
 	},
 	{
 		"name": "Type 1983/86 152mm Cannon (WB028 HE-Frag, Charge No.2)",
-		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case rrepresents firing the Reduced Variable charge as issued. Nominal velocity is 780m/s.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case rrepresents firing the Reduced Variable charge as issued. Nominal velocity is 780m/s.\nGiven the Type 83/86 design is sparsely documented, although the results does not exactly duplicated tabulated values, the match is considered reasonable enough such that no further adjustments are made to improve conformity. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.019045000000000003,
 		"shot_mass": 48,
 		"charge_mass": 12,
@@ -318,7 +378,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.4273341160452488e-05,
+			"reduced_burnrate": 2.4498523677843566e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -331,7 +391,7 @@
 	},
 	{
 		"name": "Type 1983/86 152mm Cannon (WB028 HE-Frag, Charge No.3)",
-		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the medium configuration from the Reduced Variable charge. Nominal velocity is 660m/s.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the medium configuration from the Reduced Variable charge. Nominal velocity is 660m/s.\nGiven the Type 83/86 design is sparsely documented, although the results does not exactly duplicated tabulated values, the match is considered reasonable enough such that no further adjustments are made to improve conformity. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.019045000000000003,
 		"shot_mass": 48,
 		"charge_mass": 9.1,
@@ -348,7 +408,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.4273341160452488e-05,
+			"reduced_burnrate": 2.4498523677843566e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -361,12 +421,12 @@
 	},
 	{
 		"name": "Type 1983/86 152mm Cannon (WB028 HE-Frag, Charge No.4)",
-		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the lowest configuration from the Reduced Variable charge. Nominal velocity is 540m/s. Pressure values have been converted from copper crusher gauge, as 96,000 kgf/dm^2.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the lowest configuration from the Reduced Variable charge. Nominal velocity is 540m/s. Nominal pressure is >=960 kgf/cm^2 from copper crusher, converts to 1054 kgf/cm^2 actual.\nGiven the Type 83/86 design is sparsely documented, although the results does not exactly duplicated tabulated values, the match is considered reasonable enough such that no further adjustments are made to improve conformity. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.019045000000000003,
 		"shot_mass": 48,
 		"charge_mass": 6.2,
 		"chamber_volume": 0.03057,
-		"loss_fraction": 0.05,
+		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
 		"travel": 7.091,
 		"charge": {
@@ -378,7 +438,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.4273341160452488e-05,
+			"reduced_burnrate": 2.4498523677843566e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
