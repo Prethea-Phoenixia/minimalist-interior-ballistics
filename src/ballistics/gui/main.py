@@ -201,7 +201,7 @@ class MainFrame(Frame):
 
 def main():
 
-    windll.shcore.SetProcessDpiAwareness(1)
+    # windll.shcore.SetProcessDpiAwareness(1)
     root = Tk()
     root.option_add("*tearOff", False)
     main_frame = MainFrame(root)
