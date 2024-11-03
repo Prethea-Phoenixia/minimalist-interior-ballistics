@@ -10,6 +10,7 @@ from type_86_152 import (type_86_152_four, type_86_152_full, type_86_152_one,
                          type_86_152_three, type_86_152_two)
 from zis_2 import zis_2_apcbc, zis_2_apcr, zis_2_he_frag
 from zis_3 import zis_3
+from zis_s_53 import zis_s_53_full, zis_s_53_reduced
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,8 @@ if __name__ in {"__main__", "__mp_main__"}:
     logger.info("Started")
 
     guns = []
+
+    # __cannon__
     guns.append(zis_2_apcr)
     guns.append(zis_2_apcbc)
     guns.append(zis_2_he_frag)
@@ -56,6 +59,10 @@ if __name__ in {"__main__", "__mp_main__"}:
             type_86_152_four,
         )
     )
+
+    # __tank_guns__
+    guns.append(zis_s_53_full)
+    guns.append(zis_s_53_reduced)
 
     Gun.to_file(guns=guns, filename="example_guns.json")
     logger.info("Ended")

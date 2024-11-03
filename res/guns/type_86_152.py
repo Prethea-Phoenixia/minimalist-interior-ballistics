@@ -5,7 +5,7 @@ from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg
-from prop_9_7 import nine_seven, sb
+from prop_9_7 import nine_seven, sb_9_7
 
 df = Propellant(
     name="单芳-1",
@@ -92,7 +92,7 @@ Reference:\n\
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
     travel=70.91 * dm,
-    propellant=sb,
+    propellant=sb_9_7,
     form_function=nine_seven,
 ).get_gun_developing_pressure(
     pressure_target=PressureTarget.average_pressure(900e2 * kgf_dm2),

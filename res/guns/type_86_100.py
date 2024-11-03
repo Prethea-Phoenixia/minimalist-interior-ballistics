@@ -5,7 +5,6 @@ from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg
-from prop_9_7 import nine_seven, sb
 
 gdldjy = Propellant(
     name="高氮量单基药（可燃药筒）",

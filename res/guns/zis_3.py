@@ -1,6 +1,6 @@
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
-from prop_9_7 import nine_seven, sb
+from prop_9_7 import nine_seven, sb_9_7
 
 zis_3 = KnownGunProblem(
     name="Type 1954 76mm Cannon (ZiS-3)",
@@ -21,7 +21,7 @@ Reference:\n\
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
     travel=26.87 * dm,
-    propellant=sb,
+    propellant=sb_9_7,
     form_function=nine_seven,
 ).get_gun_developing_pressure(
     pressure_target=PressureTarget(2620e2 * kgf_dm2, target=PressureTarget.AVERAGE),

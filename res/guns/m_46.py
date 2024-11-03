@@ -4,7 +4,7 @@ from ballistics.form_function import FormFunction
 from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
-from prop_9_7 import nine_seven, sb
+from prop_9_7 import nine_seven, sb_9_7
 from prop_sf3 import sf3
 
 twentythree_one = FormFunction.single_perf(arch_width=mean((2.20, 2.35)), height=370)
@@ -77,7 +77,7 @@ Reference:\n\
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
     travel=59.52 * dm,
-    propellant=sb,
+    propellant=sb_9_7,
     form_function=nine_seven,
 ).get_gun_developing_pressure(
     pressure_target=PressureTarget.average_pressure(1020e2 * kgf_dm2),
