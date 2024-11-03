@@ -29,7 +29,7 @@ The nominal velocity is between 785 - 793 m/s, and nominal pressure of \
 2550 kgf/cm^2 from copper crusher gauge, converts to 2687 kgf/cm^2 \
 actual. \n\
 For simplicity, and in accordance with the treatment detailed in the \
-sources, the 18/1-42 bundle is treated as the equivalent of mass in \
+sources, the 18/1-42 bundle is treated as the equivalent in mass of \
 14/7, with reasonable accuracy.\n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
@@ -67,8 +67,8 @@ these has been consulted to produce the this example. \n\
 The nominal velocity is 655 m/s, and nominal pressure of \
 2350 kgf/cm^2 from copper crusher gauge. \n\
 For simplicity, and in accordance with the treatment detailed in the \
-sources, the 12/1 bundle is treated as the equivalent of mass in \
-7/7, with reasonable accuracy. A pressure of 2285 kgf/cm^2 has \
+sources, the 12/1 bundle is treated as the equivalent in mass of \
+7/7. A pressure of 2285 kgf/cm^2 has \
 been adopted to best match the tabulated performance. \n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
