@@ -14,7 +14,7 @@ variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable cha
 made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags \
 bring the full charge to 10.67 kg. Nominal velocity is 770 m/s. Nominal pressure is 2350 \
 kgf/cm^2, converts to 2570 kgf/cm^2 actual.\n\
-For this entry, a value of 2480 kgf/cm^2 has been adopted, which allows both this and \
+For this entry, a value of 2485 kgf/cm^2 has been adopted, which allows both this and \
 the first reduced charge to better conform to nominal performance levels.\n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
@@ -29,7 +29,7 @@ Reference:\n\
     propellant=sf3,
     form_function=nineteen_one,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget(2480e2 * kgf_dm2, target=PressureTarget.AVERAGE),
+    pressure_target=PressureTarget(2485e2 * kgf_dm2, target=PressureTarget.AVERAGE),
 )
 
 m_47_one = Gun(

@@ -150,6 +150,36 @@
 		}
 	},
 	{
+		"name": "Type 1986 100mm High Pressure Smooth Bore Anti Tank Gun (Tungsten APFSDS)",
+		"description": "Type 86 100 mm high pressure smooth bore anti tank gun is a further development of the domestic Type 73 100mm smoothbore anti tank gun, which was in turn a conversion of the Soviet BS-3 100mm field gun (and unrelated to the Soviet T-12 gun 2A19). The 0.9kg combustible cartridge loads 5.79 kg of highly nitrated single based propellant. Nominal velocity is 1610 m/s - 1640 m/s. Nominal pressure is 4800 kgf/cm^2 from copper crusher gauge, converts to 4643 kgf/cm^2 actual. \nAs the reference quoted was compiled using preliminary specification before type certification (in 1986), and as error has been identified in the source, more weight should be give to the commonly quoted, post type certification value of 1610 m/s, reflected by this entry. \nReference:\n 《火炮内弹道计算手册》(1987)",
+		"cross_section": 0.007854,
+		"shot_mass": 5.3,
+		"charge_mass": 6.69,
+		"chamber_volume": 0.0088,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 4.789000000000001,
+		"charge": {
+			"name": "高氮量单基药 19 perf rosette",
+			"description": "1.5 / 19 (d = 0.5) - 10.7 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 986860.0,
+			"pressure_exponent": 0.84,
+			"covolume": 0.00095,
+			"adiabatic_index": 1.2,
+			"reduced_burnrate": 2.2730067791825065e-05,
+			"form_function": {
+				"name": "19 perf rosette",
+				"description": "1.5 / 19 (d = 0.5) - 10.7 mm",
+				"chi": 0.6975181923950795,
+				"labda": 0.4259923064164076,
+				"mu": -0.07394080689948593,
+				"Z_k": 1.2027824324324323
+			}
+		}
+	},
+	{
 		"name": "Type 1931/37 122mm Cannon (A-19) (WB013P HE-Frag)",
 		"description": "Type 1931/1937 122mm cannon is the domestic designation for the Soviet 122mm corps gun M1931/1937 (A-19). Nominal velocity is 800m/s. Pressure values converted from copper crusher gauge values, nominally 275,000 kgf/dm^2. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01188,
@@ -331,7 +361,7 @@
 	},
 	{
 		"name": "Type 1959 152mm Cannon (M-47) (WB008P HE-Frag, Full Charge)",
-		"description": "Type 1959 152mm cannon is the designation for domestically produced variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable charge is made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags bring the full charge to 10.67 kg. Nominal velocity is 770 m/s. Nominal pressure is 2350 kgf/cm^2, converts to 2570 kgf/cm^2 actual.\nFor this entry, a value of 2480 kgf/cm^2 has been adopted, which allows both this and the first reduced charge to better conform to nominal performance levels.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1959 152mm cannon is the designation for domestically produced variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable charge is made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags bring the full charge to 10.67 kg. Nominal velocity is 770 m/s. Nominal pressure is 2350 kgf/cm^2, converts to 2570 kgf/cm^2 actual.\nFor this entry, a value of 2485 kgf/cm^2 has been adopted, which allows both this and the first reduced charge to better conform to nominal performance levels.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01876,
 		"shot_mass": 43.56,
 		"charge_mass": 10.67,
@@ -348,7 +378,7 @@
 			"pressure_exponent": 0.81,
 			"covolume": 0.00102561,
 			"adiabatic_index": 1.2663,
-			"reduced_burnrate": 2.1663251182500383e-05,
+			"reduced_burnrate": 2.1692640697938908e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.9 / 1 - 320.0 mm",
@@ -378,7 +408,7 @@
 			"pressure_exponent": 0.81,
 			"covolume": 0.00102561,
 			"adiabatic_index": 1.2663,
-			"reduced_burnrate": 2.1663251182500383e-05,
+			"reduced_burnrate": 2.1692640697938908e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.9 / 1 - 320.0 mm",
@@ -468,7 +498,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.4498523677843566e-05,
+			"reduced_burnrate": 2.4859056098689818e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -498,7 +528,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.4498523677843566e-05,
+			"reduced_burnrate": 2.4859056098689818e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -528,7 +558,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.4498523677843566e-05,
+			"reduced_burnrate": 2.4859056098689818e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",

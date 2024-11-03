@@ -95,7 +95,7 @@ Reference:\n\
     propellant=sb,
     form_function=nine_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget.average_pressure(1054e2 * kgf_dm2),
+    pressure_target=PressureTarget.average_pressure(900e2 * kgf_dm2),
 )
 
 
