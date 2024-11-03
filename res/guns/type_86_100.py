@@ -8,7 +8,7 @@ from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg
 from prop_9_7 import nine_seven, sb
 
 gdldjy = Propellant(
-    name="高氮量单基药",
+    name="高氮量单基药（可燃药筒）",
     description="《火炮内弹道计算手册》(1987)",
     density=1.6 * kg_dm3,
     covolume=0.95 * dm3_kg,
