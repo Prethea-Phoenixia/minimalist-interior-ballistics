@@ -105,6 +105,8 @@ type_86_152_three = Gun(
 under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced \
 Variable charge. This case represents firing with the medium configuration from the \
 Reduced Variable charge. Nominal velocity is 660m/s.\n\
+The charge characteristics of the No.4 charge zone has been used, with an increase in charge \
+mass. \
 Given the Type 83/86 design is sparsely documented, although the results does not exactly \
 duplicated tabulated values, the match is considered reasonable enough such that no further \
 adjustments are made to improve conformity. \n\
@@ -127,6 +129,8 @@ type_86_152_two = Gun(
 under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced \
 Variable charge. This case rrepresents firing the Reduced Variable charge as issued. \
 Nominal velocity is 780m/s.\n\
+The charge characteristics of the No.4 charge zone has been used, with an increase in charge \
+mass. \
 Given the Type 83/86 design is sparsely documented, although the results does not exactly \
 duplicated tabulated values, the match is considered reasonable enough such that no further \
 adjustments are made to improve conformity. \n\

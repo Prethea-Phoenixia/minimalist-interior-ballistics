@@ -240,6 +240,96 @@
 		}
 	},
 	{
+		"name": "Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.2 Charge)",
+		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. This case represents firing the charge as issued. Nominal velocity is 705 m/s. \nDue to limitations of this framework, the 7/1 charge has been treated as equivalent weight in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been used, with an increase in charge weight. An additional adjustment from 6.5 kg to 6.642 kg has been made to improve conformity with known performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"cross_section": 0.01394,
+		"shot_mass": 33.4,
+		"charge_mass": 6.642,
+		"chamber_volume": 0.01858,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.952000000000001,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.6023461578042492e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
+		"name": "Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.3 Charge)",
+		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. This case represents firing with one balanced increments removed, with 4.52 kg of 9/7. Nominal velocity is 620 m/s. \nDue to limitations of this framework, the 7/1 charge has been treated as equivalent weight in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been used, with an increase in charge weight. An additional adjustment from 5.22 kg to 5.31 kg has been made to improve conformity with known performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"cross_section": 0.01394,
+		"shot_mass": 33.4,
+		"charge_mass": 5.31,
+		"chamber_volume": 0.01858,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.952000000000001,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.6023461578042492e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
+		"name": "Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.4 Charge)",
+		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. This case represents firing with two balanced increments removed, with 3.22 kg of 9/7. Nominal velocity is 525m/s. Nominal pressure is <=1100 kgf/cm^2 in copper crusher gauge. \nDue to limitations of this framework, the 7/1 charge has been treated as equivalent weight in 9/7 for this entry, adjusting pressure to match the known performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"cross_section": 0.01394,
+		"shot_mass": 33.4,
+		"charge_mass": 3.92,
+		"chamber_volume": 0.01858,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.952000000000001,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.6023461578042492e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
 		"name": "Type 1959 152mm Cannon (M-47) (WB008P HE-Frag, Full Charge)",
 		"description": "Type 1959 152mm cannon is the designation for domestically produced variants of the Soviet 152mm towed field gun M1954 (M-47). The Full Variable charge is made up of various charge bags that adds up to 8.45kg. Further supplementary charge bags bring the full charge to 10.67 kg. Nominal velocity is 770 m/s. Nominal pressure is 2350 kgf/cm^2, converts to 2570 kgf/cm^2 actual.\nFor this entry, a value of 2480 kgf/cm^2 has been adopted, which allows both this and the first reduced charge to better conform to nominal performance levels.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01876,
@@ -361,7 +451,7 @@
 	},
 	{
 		"name": "Type 1983/86 152mm Cannon (WB028 HE-Frag, Charge No.2)",
-		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case rrepresents firing the Reduced Variable charge as issued. Nominal velocity is 780m/s.\nGiven the Type 83/86 design is sparsely documented, although the results does not exactly duplicated tabulated values, the match is considered reasonable enough such that no further adjustments are made to improve conformity. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case rrepresents firing the Reduced Variable charge as issued. Nominal velocity is 780m/s.\nThe charge characteristics of the No.4 charge zone has been used, with an increase in charge mass. Given the Type 83/86 design is sparsely documented, although the results does not exactly duplicated tabulated values, the match is considered reasonable enough such that no further adjustments are made to improve conformity. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.019045000000000003,
 		"shot_mass": 48,
 		"charge_mass": 12,
@@ -391,7 +481,7 @@
 	},
 	{
 		"name": "Type 1983/86 152mm Cannon (WB028 HE-Frag, Charge No.3)",
-		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the medium configuration from the Reduced Variable charge. Nominal velocity is 660m/s.\nGiven the Type 83/86 design is sparsely documented, although the results does not exactly duplicated tabulated values, the match is considered reasonable enough such that no further adjustments are made to improve conformity. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Officially known as the Type 1986 152mm Cannon, earlier models were exported under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced Variable charge. This case represents firing with the medium configuration from the Reduced Variable charge. Nominal velocity is 660m/s.\nThe charge characteristics of the No.4 charge zone has been used, with an increase in charge mass. Given the Type 83/86 design is sparsely documented, although the results does not exactly duplicated tabulated values, the match is considered reasonable enough such that no further adjustments are made to improve conformity. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.019045000000000003,
 		"shot_mass": 48,
 		"charge_mass": 9.1,

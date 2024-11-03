@@ -4,6 +4,7 @@ from ballistics.form_function import FormFunction
 from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
+from prop_9_7 import nine_seven, sb
 from prop_sf3 import sf3
 
 twentythree_one = FormFunction.single_perf(arch_width=mean((2.20, 2.35)), height=370)
@@ -57,8 +58,94 @@ Reference:\n\
 )
 
 
+m_46_four = KnownGunProblem(
+    name="Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.4 Charge)",
+    description="Type 1959 130mm cannon is the designation for domestically produced \
+variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge \
+is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. \
+This case represents firing with two balanced increments removed, with 3.22 kg of 9/7. \
+Nominal velocity is 525m/s. Nominal pressure is <=1100 kgf/cm^2 in copper crusher gauge. \n\
+Due to limitations of this framework, the 7/1 charge has been treated as equivalent weight \
+in 9/7 for this entry, adjusting pressure to match the known performance. \n\
+Reference:\n\
+ 《火炮内弹道计算手册》(1987)\n\
+ 《火炸药手册 (增订本）第二分册》(1981).",
+    cross_section=1.394 * dm2,
+    shot_mass=33.4,
+    charge_mass=3.92,
+    chamber_volume=18.58 * L,
+    loss_fraction=0.03,
+    start_pressure=300e2 * kgf_dm2,
+    travel=59.52 * dm,
+    propellant=sb,
+    form_function=nine_seven,
+).get_gun_developing_pressure(
+    pressure_target=PressureTarget.average_pressure(1020e2 * kgf_dm2),
+)
+
+
+m_46_three = Gun(
+    name="Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.3 Charge)",
+    description="Type 1959 130mm cannon is the designation for domestically produced \
+variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge \
+is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. \
+This case represents firing with one balanced increments removed, with 4.52 kg of 9/7. \
+Nominal velocity is 620 m/s. \n\
+Due to limitations of this framework, the 7/1 charge has been treated as equivalent weight \
+in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been \
+used, with an increase in charge weight. An additional adjustment from 5.22 kg to 5.31 kg \
+has been made to improve conformity with known performance. \n\
+Reference:\n\
+ 《火炮内弹道计算手册》(1987)\n\
+ 《火炸药手册 (增订本）第二分册》(1981).",
+    cross_section=1.394 * dm2,
+    shot_mass=33.4,
+    charge_mass=5.31,
+    chamber_volume=18.58 * L,
+    loss_fraction=0.03,
+    start_pressure=300e2 * kgf_dm2,
+    travel=59.52 * dm,
+    charge=m_46_four.charge,
+)
+
+m_46_two = Gun(
+    name="Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.2 Charge)",
+    description="Type 1959 130mm cannon is the designation for domestically produced \
+variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge \
+is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. \
+This case represents firing the charge as issued. Nominal velocity is 705 m/s. \n\
+Due to limitations of this framework, the 7/1 charge has been treated as equivalent weight \
+in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been \
+used, with an increase in charge weight. An additional adjustment from 6.5 kg to 6.642 kg \
+has been made to improve conformity with known performance. \n\
+Reference:\n\
+ 《火炮内弹道计算手册》(1987)\n\
+ 《火炸药手册 (增订本）第二分册》(1981).",
+    cross_section=1.394 * dm2,
+    shot_mass=33.4,
+    charge_mass=6.642,
+    chamber_volume=18.58 * L,
+    loss_fraction=0.03,
+    start_pressure=300e2 * kgf_dm2,
+    travel=59.52 * dm,
+    charge=m_46_four.charge,
+)
+
+
 if __name__ == "__main__":
     from ballistics.state import StateList
 
+    print(m_46_full.name)
     print(StateList.tabulate(m_46_full.to_travel(n_intg=10)))
+
+    print(m_46_one.name)
     print(StateList.tabulate(m_46_one.to_travel(n_intg=10)))
+
+    print(m_46_two.name)
+    print(StateList.tabulate(m_46_two.to_travel(n_intg=10)))
+
+    print(m_46_three.name)
+    print(StateList.tabulate(m_46_three.to_travel(n_intg=10)))
+
+    print(m_46_four.name)
+    print(StateList.tabulate(m_46_four.to_travel(n_intg=10)))

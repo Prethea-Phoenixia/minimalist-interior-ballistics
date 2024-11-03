@@ -3,7 +3,7 @@ import logging
 from a_19 import a_19
 from ballistics.gun import Gun
 from bs_3 import bs_3
-from m_46 import m_46_full, m_46_one
+from m_46 import m_46_four, m_46_full, m_46_one, m_46_three, m_46_two
 from m_47 import m_47_full, m_47_one
 from type_86_152 import (type_86_152_four, type_86_152_full, type_86_152_one,
                          type_86_152_three, type_86_152_two)
@@ -32,8 +32,12 @@ if __name__ in {"__main__", "__mp_main__"}:
 
     guns.append(bs_3)
     guns.append(a_19)
+
     guns.append(m_46_full)
     guns.append(m_46_one)
+    guns.append(m_46_two)
+    guns.append(m_46_three)
+    guns.append(m_46_four)
 
     guns.append(m_47_full)
     guns.append(m_47_one)
