@@ -50,4 +50,4 @@ Reference:\n\
 if __name__ == "__main__":
     from ballistics.state import StateList
 
-    print(StateList.tabulate(a_19.to_travel(n_intg=10)))
+    print(StateList.tabulate(a_19.to_travel()))

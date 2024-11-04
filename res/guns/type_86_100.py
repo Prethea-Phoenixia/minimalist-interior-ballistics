@@ -1,8 +1,5 @@
-from statistics import mean
-
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
-from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg
 

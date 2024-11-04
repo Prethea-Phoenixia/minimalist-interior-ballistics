@@ -203,8 +203,7 @@ class GunFrame(Frame):
         super().__init__(parent, *args, **kwargs)
 
         self.rowconfigure(2, weight=1)
-        self.columnconfigure(0, weight=8)
-        self.columnconfigure(3, weight=2)
+        self.columnconfigure(0, weight=1)
 
         self.tree = Treeview(self, show="tree", selectmode="browse")
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
@@ -217,7 +216,7 @@ class GunFrame(Frame):
         overview_frame.grid(row=0, column=2, columnspan=2, sticky="nsew", **DEFAULT_PAD)
 
         derived_frame = self.add_derived_frame()
-        derived_frame.grid(row=1, column=2, sticky="nsew", **DEFAULT_PAD)
+        derived_frame.grid(row=1, column=2, columnspan=2, sticky="nsew", **DEFAULT_PAD)
 
         self.states_frame = StatesFrame(self)
         self.states_frame.grid(row=2, column=2, columnspan=2, stick="nsew", **DEFAULT_PAD)

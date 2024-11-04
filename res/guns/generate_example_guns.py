@@ -2,15 +2,16 @@ import logging
 
 from a_19 import a_19
 from ballistics.gun import Gun
-from bs_3 import bs_3
+from bs_3 import bs_3_apbc, bs_3_he_frag
 from m_46 import m_46_four, m_46_full, m_46_one, m_46_three, m_46_two
-from m_47 import m_47_full, m_47_one
+from m_47 import m_47_full, m_47_one, m_47_three, m_47_two
 from type_86_100 import type_86_100_w_apfsds
 from type_86_152 import (type_86_152_four, type_86_152_full, type_86_152_one,
                          type_86_152_three, type_86_152_two)
 from zis_2 import zis_2_apcbc, zis_2_apcr, zis_2_he_frag
-from zis_3 import zis_3
-from zis_s_53 import zis_s_53_full, zis_s_53_reduced
+from zis_3 import zis_3_apcr, zis_3_he_frag
+from zis_s_53 import (zis_s_53_apcr, zis_s_53_full, zis_s_53_heat,
+                      zis_s_53_hesh, zis_s_53_reduced)
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +34,11 @@ if __name__ in {"__main__", "__mp_main__"}:
     guns.append(zis_2_apcbc)
     guns.append(zis_2_he_frag)
 
-    guns.append(zis_3)
+    guns.append(zis_3_he_frag)
+    guns.append(zis_3_apcr)
 
-    guns.append(bs_3)
+    guns.append(bs_3_apbc)
+    guns.append(bs_3_he_frag)
 
     guns.append(type_86_100_w_apfsds)
 
@@ -49,6 +52,8 @@ if __name__ in {"__main__", "__mp_main__"}:
 
     guns.append(m_47_full)
     guns.append(m_47_one)
+    guns.append(m_47_two)
+    guns.append(m_47_three)
 
     guns.extend(
         (
@@ -61,6 +66,9 @@ if __name__ in {"__main__", "__mp_main__"}:
     )
 
     # __tank_guns__
+    guns.append(zis_s_53_apcr)
+    guns.append(zis_s_53_heat)
+    guns.append(zis_s_53_hesh)
     guns.append(zis_s_53_full)
     guns.append(zis_s_53_reduced)
 

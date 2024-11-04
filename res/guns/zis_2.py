@@ -5,6 +5,7 @@ from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import (L, dm, dm2, dm3_kg, format_compo_string, kg_dm3, kgf_dm2,
                   kgfdm_kg)
+from prop_12_7 import sb_12_7, twelve_seven
 from prop_14_7 import fourteen_seven, sb_14_7
 
 
@@ -45,7 +46,7 @@ Reference:\n\
 # print(3100 * copper_correction(projectile_mass=2.8, charge_mass=1.47))
 
 zis_2_apcbc = KnownGunProblem(
-    name="Type 1955 57mm Cannon (ZiS-2) (BR-271M APCBC-T)",
+    name="Type 1955 57mm Cannon (ZiS-2) (BR-271M APBC-T)",
     description="Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm \
 anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of 1040 m/s. Nominal \
 pressure of 3100 kgf/cm^2 in copper crusher gauge, converts to 3352 kgf/cm^2 actual.\n\
@@ -71,25 +72,6 @@ Reference:\n\
     ),
 )
 
-sb = Propellant(
-    name="Single Base",
-    description="2822 K, Nitrated to 204-207.5 mL/g\n\
-《火炸药手册 (增订本）第二分册》(1981), 《火炮内弹道计算手册》(1987)\n"
-    + format_compo_string({"Nitrocellulose": 0.985, "Diphenylamin": 0.015}),
-    density=1.6 * kg_dm3,
-    force=1015100 * kgfdm_kg,
-    pressure_exponent=0.84,
-    covolume=0.95074 * dm3_kg,
-    adiabatic_index=1.2381,
-)
-
-twelve_seven = FormFunction.multi_perf(
-    arch_width=mean((1.10, 1.30)),
-    perforation_diameter=mean((0.50, 0.70)),
-    height=mean((13.5, 15.6)),
-    shape=MultiPerfShape.SEVEN_PERF_CYLINDER,
-)
-
 
 # print(3100 * copper_correction(projectile_mass=1.79, charge_mass=1.6))
 zis_2_apcr = KnownGunProblem(
@@ -111,7 +93,7 @@ Reference:\n\
     loss_fraction=0.05,
     start_pressure=300e2 * kgf_dm2,
     travel=35.66 * dm,
-    propellant=sb_14_7,
+    propellant=sb_12_7,
     form_function=twelve_seven,
 ).get_gun_developing_pressure(
     pressure_target=PressureTarget(
