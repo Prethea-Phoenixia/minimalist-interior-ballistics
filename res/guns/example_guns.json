@@ -120,7 +120,7 @@
 		}
 	},
 	{
-		"name": "Type 1954 76mm Cannon (ZiS-3) (BR-350SP APCR)",
+		"name": "Type 1954 76mm Cannon (ZiS-3) (BR-350SP APBC)",
 		"description": "Type 1954 76mm Cannon is the domestic designation for the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U). Nomianl velocity is 655 m/s developed at 1.08 kg of charge. Nominal pressure is 2400 kgf/cm^2 from copper crusher gauge. \nThe charge design of the WB022P has been used. The equivalent Soviet shell is inferred from projectile mass.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.00469,
 		"shot_mass": 6.5,
