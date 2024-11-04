@@ -64,9 +64,10 @@ m_46_four = KnownGunProblem(
 variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge \
 is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. \
 This case represents firing with two balanced increments removed, with 3.22 kg of 9/7. \
-Nominal velocity is 525m/s. Nominal pressure is <=1100 kgf/cm^2 in copper crusher gauge. \n\
+Nominal velocity is 525m/s. Nominal pressure is >=1100 kgf/cm^2 in copper crusher gauge. \n\
 Due to limitations of this framework, the 7/1 charge has been treated as equivalent weight \
-in 9/7 for this entry, adjusting pressure to match the known performance. \n\
+in 9/7 for this entry. A pressure of 1137 kgf/cm^2 has been adopted, taking conformity \
+of charge 2, 3 and 4 into account.\n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
@@ -80,7 +81,7 @@ Reference:\n\
     propellant=sb_9_7,
     form_function=nine_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget.average_pressure(1020e2 * kgf_dm2),
+    pressure_target=PressureTarget.average_pressure(1137e2 * kgf_dm2),
 )
 
 
@@ -93,14 +94,13 @@ This case represents firing with one balanced increments removed, with 4.52 kg o
 Nominal velocity is 620 m/s. \n\
 Due to limitations of this framework, the 7/1 charge has been treated as equivalent weight \
 in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been \
-used, with an increase in charge weight. An additional adjustment from 5.22 kg to 5.31 kg \
-has been made to improve conformity with known performance. \n\
+used, with an increase in charge weight. \n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
     cross_section=1.394 * dm2,
     shot_mass=33.4,
-    charge_mass=5.31,
+    charge_mass=5.22,
     chamber_volume=18.58 * L,
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
@@ -116,14 +116,13 @@ is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant
 This case represents firing the charge as issued. Nominal velocity is 705 m/s. \n\
 Due to limitations of this framework, the 7/1 charge has been treated as equivalent weight \
 in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been \
-used, with an increase in charge weight. An additional adjustment from 6.5 kg to 6.642 kg \
-has been made to improve conformity with known performance. \n\
+used, with an increase in charge weight.  \n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).",
     cross_section=1.394 * dm2,
     shot_mass=33.4,
-    charge_mass=6.642,
+    charge_mass=6.5,
     chamber_volume=18.58 * L,
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
