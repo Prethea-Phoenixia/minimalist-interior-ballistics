@@ -1,12 +1,12 @@
-from statistics import mean
-
-from ballistics.charge import Propellant
-from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.problem import KnownGunProblem, PressureTarget
-from misc import (L, dm, dm2, dm3_kg, format_compo_string, kg_dm3, kgf_dm2,
-                  kgfdm_kg)
+from misc import L, dm, dm2, kgf_dm2
 from prop_12_7 import sb_12_7, twelve_seven
 from prop_14_7 import fourteen_seven, sb_14_7
+
+ref = "Reference:\n\
+ 《火炮内弹道计算手册》(1987)\n\
+ 《火炸药手册 (增订本）第二分册》(1981).\n\
+ 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
 
 def copper_correction(projectile_mass: float, charge_mass: float):
@@ -19,18 +19,18 @@ def copper_correction(projectile_mass: float, charge_mass: float):
 zis_2_he_frag = KnownGunProblem(
     name="Type 1955 57mm Cannon (ZiS-2) (WB009P HE-Frag)",
     description="Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm \
-anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velcoity at 700 (-760) m/s. Nominal \
-pressure is 1800 kgf/cm^2 from copper crusher gauge, converts to 2004 kgf/cm^2 actual.\n\
-The computed performance is in excess of the tabulated value for this cartridge per references. \
-However, there are alternative sources (relating to UO-271U and UO-271UG, not listed) that do \
-indicate muzzle velocity of up to 760m/s may have been the case. In view of this uncertainty, \
-this entry has not been modified to conform to the tabulated performance. \n\
-Reference:\n\
- 《火炮内弹道计算手册》(1987)\n\
- 《火炸药手册 (增订本）第二分册》(1981).",
+anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velcoity at 700/706 m/s. Nominal \
+pressure is 1700/1800 kgf/cm^2 from copper crusher gauge.\n\
+The different tabulated values for muzzle velocity realtes to the difference in construction \
+of the driving band (s) -- single driving band projectiles develops 1700 kgf/cm^2 of pressure, \
+and achieves a velocity of 700 m/s, while double driving band projectiles develops 1800 \
+kgf/cm^2 of pressure. \n\
+A major reduction in charge mass, from the nominal value of 0.98 kg, to 0.75kg, is required \
+to match the tabulated performance. The significance of this is currently not well understood.\n"
+    + ref,
     cross_section=0.2663 * dm2,
     shot_mass=3.75,
-    charge_mass=0.98,
+    charge_mass=(w := 0.75),
     chamber_volume=1.875 * L,
     loss_fraction=0.05,
     start_pressure=300e2 * kgf_dm2,
@@ -38,9 +38,7 @@ Reference:\n\
     propellant=sb_14_7,
     form_function=fourteen_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget.average_pressure(
-        1800e2 * kgf_dm2 * copper_correction(3.75, 0.98)
-    )
+    pressure_target=PressureTarget.average_pressure(1800e2 * kgf_dm2 * copper_correction(3.75, w))
 )
 
 # print(3100 * copper_correction(projectile_mass=2.8, charge_mass=1.47))
@@ -49,17 +47,15 @@ zis_2_apcbc = KnownGunProblem(
     name="Type 1955 57mm Cannon (ZiS-2) (BR-271M APBC-T)",
     description="Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm \
 anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of 1040 m/s. Nominal \
-pressure of 3100 kgf/cm^2 in copper crusher gauge, converts to 3352 kgf/cm^2 actual.\n\
+pressure of 3100 kgf/cm^2 in copper crusher gauge.\n\
 The reference listed does not direclty refer to the shell type under consideration, the \
 equivalent Soviet projectile is inferred from the weight used in calculation.\n\
-In view of the uncertainty involved with this entry, the calculated value not been adjusted \
-to conform.\n\
-Reference:\n\
- 《火炮内弹道计算手册》(1987)\n\
- 《火炸药手册 (增订本）第二分册》(1981).",
+A major reduction in charge mass, from the nominal value of 1.47 kg, to 1.3 kg, is required \
+to match the tabulated performance. The significance of this is currently not well understood. \n"
+    + ref,
     cross_section=0.2663 * dm2,
     shot_mass=2.8,
-    charge_mass=1.47,
+    charge_mass=(w := 1.3),
     chamber_volume=1.875 * L,
     loss_fraction=0.05,
     start_pressure=300e2 * kgf_dm2,
@@ -67,9 +63,7 @@ Reference:\n\
     propellant=sb_14_7,
     form_function=fourteen_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget.average_pressure(
-        3100e2 * kgf_dm2 * copper_correction(projectile_mass=2.8, charge_mass=1.47)
-    ),
+    pressure_target=PressureTarget.average_pressure(3100e2 * kgf_dm2 * copper_correction(2.8, w)),
 )
 
 
@@ -78,17 +72,15 @@ zis_2_apcr = KnownGunProblem(
     name="Type 1955 57mm Cannon (ZiS-2) (BR-271P APCR)",
     description="Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm \
 anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of >1250 m/s. Nominal pressure \
-at 3100 kgf/cm^2 in copper crusher gauge, converts to 3241 kgf/cm^2 actual.\n\
+at 3100 kgf/cm^2 in copper crusher gauge.\n\
 The reference listed does not direclty refer to the shell type under consideration, the \
 equivalent Soviet projectile is inferred from the weight used in calculation.\n\
-In view of the uncertainty involved with this entry, the calculated value not been adjusted \
-to conform.\n\
-Reference:\n\
- 《火炮内弹道计算手册》(1987)\n\
- 《火炸药手册 (增订本）第二分册》(1981).",
+A major reduction in charge mass, from the nominal value of 1.6 kg, to 1.28 kg, is required \
+to match the tabulated performance. The significance of this is currently not well understood.\n"
+    + ref,
     cross_section=0.2663 * dm2,
     shot_mass=1.79,
-    charge_mass=1.6,
+    charge_mass=(w := 1.28),
     chamber_volume=1.875 * L,
     loss_fraction=0.05,
     start_pressure=300e2 * kgf_dm2,
@@ -96,21 +88,15 @@ Reference:\n\
     propellant=sb_12_7,
     form_function=twelve_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget(
-        3100e2 * kgf_dm2 * copper_correction(projectile_mass=1.79, charge_mass=1.6),
-        target=PressureTarget.AVERAGE,
-    ),
+    pressure_target=PressureTarget.average_pressure(3100e2 * kgf_dm2 * copper_correction(1.79, w))
 )
 
+
+all_guns = [zis_2_apcr, zis_2_apcbc, zis_2_he_frag]
 
 if __name__ == "__main__":
     from ballistics.state import StateList
 
-    print(zis_2_he_frag.name)
-    print(StateList.tabulate(zis_2_he_frag.to_travel(n_intg=10)))
-
-    print(zis_2_apcbc.name)
-    print(StateList.tabulate(zis_2_apcbc.to_travel(n_intg=10)))
-
-    print(zis_2_apcbc.name)
-    print(StateList.tabulate(zis_2_apcr.to_travel(n_intg=10)))
+    for gun in all_guns:
+        print(gun.name)
+        print(StateList.tabulate(gun.to_travel()))
