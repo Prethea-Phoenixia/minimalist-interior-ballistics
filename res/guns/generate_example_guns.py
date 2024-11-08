@@ -8,8 +8,6 @@ from m_47 import m_47_full, m_47_one, m_47_three, m_47_two
 from type_86_100 import type_86_100_w_apfsds
 from type_86_152 import (type_86_152_four, type_86_152_full, type_86_152_one,
                          type_86_152_three, type_86_152_two)
-from zis_2 import zis_2_apcbc, zis_2_apcr, zis_2_he_frag
-from zis_3 import zis_3_apcr, zis_3_he_frag
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +63,7 @@ if __name__ in {"__main__", "__mp_main__"}:
         )
     )
 
-    from zis_s_53 import all_guns
+    from family85mm import all_guns
 
     guns.extend(all_guns)
     Gun.to_file(guns=guns, filename="example_guns.json")

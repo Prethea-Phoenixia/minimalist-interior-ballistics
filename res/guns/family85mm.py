@@ -6,11 +6,12 @@ from prop_9_7 import nine_seven, sb_9_7
 from prop_11_7 import eleven_seven, sb_11_7
 from prop_14_7 import fourteen_seven, sb_14_7
 
-gun_intro = "Type 1963 85mm tank gun is a domestically produced variant of the Soviet 85mm tank \
-gun ZiS-S-53 , with mechanical improvements. Ammunition is of fixed charge type. Munition is \
-interchangeable with the Soviet 85mm divisional gun D-44 (including its domestically produced \
+gun_intro = "The 85mm family consists of fixed charge munitions issued \
+to the Soviet tank gun ZiS-S-53 (domestically known as the 85mm tank gun), \
+the Soviet 85mm divisional gun D-44 (including its domestically produced \
 variant, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K) \
-(domestically known as the Type 1939 85mm anti-air gun). The AP, APBC, and APCR projectiles shares \
+(domestically known as the Type 1939 85mm anti-air gun).\n\
+The AP, APBC, and APCR projectiles shares \
 the same charge as the full charge for the HE-Frag shells. The HE-Frag shells are also \
 issued with an reduced charge of similar construction. APCR shells are issued with an alternative \
 charge. Finally, the HEAT-FS and HESH projectiles share a charge design, with the HESH projectile \
@@ -24,7 +25,7 @@ Reference:\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
 zis_s_53_full = KnownGunProblem(
-    name="Type 1963 85mm Tank Gun (ZiS-S-53) (WB014P, WB024P HE-Frag, Full)",
+    name="85 mm High Explosive Fragmentation WB014P, WB024P, Full Charge",
     description="\n".join(
         [
             gun_intro,
@@ -51,7 +52,7 @@ by varying charge mass.",
 )
 
 zis_s_53_reduced = KnownGunProblem(
-    name="Type 1963 85mm Tank Gun (ZiS-S-53) (WB014P, WB024P HE-Frag, Reduced)",
+    name="85mm High Explosive Fragmentation WB014P, WB024P, Reduced Charge",
     description="\n".join(
         [
             gun_intro,
@@ -78,7 +79,7 @@ Matching to established performance by varying charge mass.",
 )
 
 zis_s_53_ap = Gun(
-    name="Type 1963 85mm Tank Gun (ZiS-S-53) (WB101P AP-T)",
+    name="85mm Armor Piercing (Tracer) WB101P",
     description="\n".join(
         [
             gun_intro,
@@ -102,7 +103,7 @@ Matching to established performance by varying charge mass.",
 )
 
 zis_s_53_apbc = Gun(
-    name="Type 1963 85mm Tank Gun (ZiS-S-53) (WB114P APBC-T)",
+    name="85mm Armor Piercing Ballistic Capped (Tracer) WB114P",
     description="\n".join(
         [
             gun_intro,
@@ -127,7 +128,7 @@ Matching to established performance by varying charge mass.",
 
 
 zis_s_53_apcr = KnownGunProblem(
-    name="Type 1963 85mm Tank Gun (ZiS-S-53) (WB102P APCR-T)",
+    name="85mm Armor Piercing Composite Rigid (Tracer) WB102P",
     description="\n".join(
         [
             gun_intro,
@@ -154,7 +155,7 @@ is 2800 kgf/cm^2. Matching to established performance by varying charge mass.",
 
 
 zis_s_53_heat = KnownGunProblem(
-    name="Type 1963 85mm Tank Gun (ZiS-S-53) (WB109AP HEAT-FS)",
+    name="85mm High Explosive Anti Tank-Fin Stabilized WB109AP",
     description="\n".join(
         [
             gun_intro,
@@ -180,7 +181,7 @@ is 2643 kgf/cm^2. Matching to established performance by varying charge mass.",
 )
 
 zis_s_53_hesh = Gun(
-    name="Type 1963 85mm Tank Gun (ZiS-S-53) (WB128P HESH)",
+    name="85mm High Explosive Squash Head WB128P",
     description="\n".join(
         [
             gun_intro,

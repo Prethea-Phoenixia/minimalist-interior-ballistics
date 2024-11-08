@@ -1,10 +1,10 @@
 [
 	{
 		"name": "Type 1955 57mm Cannon (ZiS-2) (BR-271P APCR)",
-		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of >1250 m/s. Nominal pressure at 3100 kgf/cm^2 in copper crusher gauge, converts to 3241 kgf/cm^2 actual.\nThe reference listed does not direclty refer to the shell type under consideration, the equivalent Soviet projectile is inferred from the weight used in calculation.\nIn view of the uncertainty involved with this entry, the calculated value not been adjusted to conform.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of >1250 m/s. Nominal pressure at 3100 kgf/cm^2 in copper crusher gauge.\nThe reference listed does not direclty refer to the shell type under consideration, the equivalent Soviet projectile is inferred from the weight used in calculation.\nA major reduction in charge mass, from the nominal value of 1.6 kg, to 1.28 kg, is required to match the tabulated performance. The significance of this is currently not well understood.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.002663,
 		"shot_mass": 1.79,
-		"charge_mass": 1.6,
+		"charge_mass": 1.28,
 		"chamber_volume": 0.001875,
 		"loss_fraction": 0.05,
 		"start_pressure": 29400000.0,
@@ -18,7 +18,7 @@
 			"pressure_exponent": 0.84,
 			"covolume": 0.00095074,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.295242250644348e-05,
+			"reduced_burnrate": 3.1578012795131425e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
@@ -31,10 +31,10 @@
 	},
 	{
 		"name": "Type 1955 57mm Cannon (ZiS-2) (BR-271M APBC-T)",
-		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of 1040 m/s. Nominal pressure of 3100 kgf/cm^2 in copper crusher gauge, converts to 3352 kgf/cm^2 actual.\nThe reference listed does not direclty refer to the shell type under consideration, the equivalent Soviet projectile is inferred from the weight used in calculation.\nIn view of the uncertainty involved with this entry, the calculated value not been adjusted to conform.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of 1040 m/s. Nominal pressure of 3100 kgf/cm^2 in copper crusher gauge.\nThe reference listed does not direclty refer to the shell type under consideration, the equivalent Soviet projectile is inferred from the weight used in calculation.\nA major reduction in charge mass, from the nominal value of 1.47 kg, to 1.3 kg, is required to match the tabulated performance. The significance of this is currently not well understood. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.002663,
 		"shot_mass": 2.8,
-		"charge_mass": 1.47,
+		"charge_mass": 1.3,
 		"chamber_volume": 0.001875,
 		"loss_fraction": 0.05,
 		"start_pressure": 29400000.0,
@@ -48,7 +48,7 @@
 			"pressure_exponent": 0.84,
 			"covolume": 0.00095576,
 			"adiabatic_index": 1.2391,
-			"reduced_burnrate": 2.204556565183031e-05,
+			"reduced_burnrate": 2.604437670516523e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
@@ -61,10 +61,10 @@
 	},
 	{
 		"name": "Type 1955 57mm Cannon (ZiS-2) (WB009P HE-Frag)",
-		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velcoity at 700 (-760) m/s. Nominal pressure is 1800 kgf/cm^2 from copper crusher gauge, converts to 2004 kgf/cm^2 actual.\nThe computed performance is in excess of the tabulated value for this cartridge per references. However, there are alternative sources (relating to UO-271U and UO-271UG, not listed) that do indicate muzzle velocity of up to 760m/s may have been the case. In view of this uncertainty, this entry has not been modified to conform to the tabulated performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velcoity at 700/706 m/s. Nominal pressure is 1700/1800 kgf/cm^2 from copper crusher gauge.\nThe different tabulated values for muzzle velocity realtes to the difference in construction of the driving band (s) -- single driving band projectiles develops 1700 kgf/cm^2 of pressure, and achieves a velocity of 700 m/s, while double driving band projectiles develops 1800 kgf/cm^2 of pressure. \nA major reduction in charge mass, from the nominal value of 0.98 kg, to 0.75kg, is required to match the tabulated performance. The significance of this is currently not well understood.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.002663,
 		"shot_mass": 3.75,
-		"charge_mass": 0.98,
+		"charge_mass": 0.75,
 		"chamber_volume": 0.001875,
 		"loss_fraction": 0.05,
 		"start_pressure": 29400000.0,
@@ -78,7 +78,7 @@
 			"pressure_exponent": 0.84,
 			"covolume": 0.00095576,
 			"adiabatic_index": 1.2391,
-			"reduced_burnrate": 2.3911868774418293e-05,
+			"reduced_burnrate": 3.208921530124453e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
@@ -90,11 +90,11 @@
 		}
 	},
 	{
-		"name": "Type 1954 76mm Cannon (ZiS-3) (WB022P HE-Frag)",
-		"description": "Type 1954 76mm Cannon is the domestic designation for the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U). Nomianl velocity is 680-700 m/s developed at 1.08 kg of charge. Nominal pressure is 2380 kgf/cm^2 from copper crusher gauge, converts to 2617 kgf/cm^2 actual. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"name": "Type 1954 76mm Cannon (ZiS-3) (BR-350SP APBC)",
+		"description": "Type 1954 76mm Cannon is the domestic designation for the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U). Nomianl velocity is 655 m/s developed at 1.08 kg of charge. Nominal pressure is 2400 kgf/cm^2 from copper crusher gauge. \nThe charge characteristics of the WB022P has been used, with a slightly reduced charge to 0.94kg has been adopted. The equivalent Soviet shell is inferred from projectile mass.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.00469,
-		"shot_mass": 6.2,
-		"charge_mass": 1.08,
+		"shot_mass": 6.5,
+		"charge_mass": 0.94,
 		"chamber_volume": 0.001484,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -108,7 +108,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 3.598319537023698e-05,
+			"reduced_burnrate": 4.0674653140286054e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -120,11 +120,11 @@
 		}
 	},
 	{
-		"name": "Type 1954 76mm Cannon (ZiS-3) (BR-350SP APBC)",
-		"description": "Type 1954 76mm Cannon is the domestic designation for the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U). Nomianl velocity is 655 m/s developed at 1.08 kg of charge. Nominal pressure is 2400 kgf/cm^2 from copper crusher gauge. \nThe charge design of the WB022P has been used. The equivalent Soviet shell is inferred from projectile mass.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"name": "Type 1954 76mm Cannon (ZiS-3) (WB022P HE-Frag)",
+		"description": "Type 1954 76mm Cannon is the domestic designation for the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U). Nomianl velocity is 680 m/s developed at 1.08 kg of charge. Nominal pressure is 2380 kgf/cm^2 from copper crusher gauge. The adopted computational mean pressure level is 2620 kgf/cm^2. \nA slightly reduced charge to 0.98kg has been adopted to improve conformity with tabulated performance levels.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.00469,
-		"shot_mass": 6.5,
-		"charge_mass": 1.08,
+		"shot_mass": 6.2,
+		"charge_mass": 0.98,
 		"chamber_volume": 0.001484,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -138,7 +138,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 3.598319537023698e-05,
+			"reduced_burnrate": 4.0674653140286054e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -151,10 +151,10 @@
 	},
 	{
 		"name": "Type 1944 100mm Cannon (BS-3) (WB116P APBC)",
-		"description": "Type 1944 100mm cannon is the domestic designation for the Soviet 100mm field gun M1944 (BS-3). Nominal velocity is 902.5m/s. Nominal pressure value is 3000 kgf/cm^2, from copper crusher gauge.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1944 100mm cannon is the domestic designation for the Soviet 100mm field gun M1944 (BS-3). Nominal velocity is given as either 887 m/s or 902.5m/s. Nominal pressure value is 3000 kgf/cm^2, from copper crusher gauge.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.00818,
 		"shot_mass": 15.88,
-		"charge_mass": 5.6,
+		"charge_mass": 5.5,
 		"chamber_volume": 0.0079,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -168,7 +168,7 @@
 			"pressure_exponent": 0.81,
 			"covolume": 0.00102561,
 			"adiabatic_index": 1.2663,
-			"reduced_burnrate": 2.217556707030064e-05,
+			"reduced_burnrate": 2.349443252443252e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.7 / 1 - 260.0 mm",
@@ -181,10 +181,10 @@
 	},
 	{
 		"name": "Type 1944 100mm Cannon (BS-3) (WB004P HE-Frag)",
-		"description": "Type 1944 100mm cannon is the domestic designation for the Soviet 100mm field gun M1944 (BS-3). Nominal velocity is 900m/s. Nominal pressure value is 3000 kgf/cm^2, from copper crusher gauge, converts to 3141 kgf/cm^2 actual.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1944 100mm cannon is the domestic designation for the Soviet 100mm field gun M1944 (BS-3). Nominal velocity is 900m/s. Nominal pressure value is 3000 kgf/cm^2, from copper crusher gauge. The adopted computational average pressure is 3100 kgf/cm^2.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.00818,
 		"shot_mass": 15.6,
-		"charge_mass": 5.6,
+		"charge_mass": 5.5,
 		"chamber_volume": 0.0079,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -198,7 +198,7 @@
 			"pressure_exponent": 0.81,
 			"covolume": 0.00102561,
 			"adiabatic_index": 1.2663,
-			"reduced_burnrate": 2.217556707030064e-05,
+			"reduced_burnrate": 2.349443252443252e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.7 / 1 - 260.0 mm",
@@ -331,10 +331,10 @@
 	},
 	{
 		"name": "Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.2 Charge)",
-		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. This case represents firing the charge as issued. Nominal velocity is 705 m/s. \nDue to limitations of this framework, the 7/1 charge has been treated as equivalent weight in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been used, with an increase in charge weight. An additional adjustment from 6.5 kg to 6.642 kg has been made to improve conformity with known performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. This case represents firing the charge as issued. Nominal velocity is 705 m/s. \nDue to limitations of this framework, the 7/1 charge has been treated as equivalent weight in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been used, with an increase in charge weight.  \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01394,
 		"shot_mass": 33.4,
-		"charge_mass": 6.642,
+		"charge_mass": 6.5,
 		"chamber_volume": 0.01858,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -348,7 +348,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.6023528014539252e-05,
+			"reduced_burnrate": 2.81467791035414e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -361,10 +361,10 @@
 	},
 	{
 		"name": "Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.3 Charge)",
-		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. This case represents firing with one balanced increments removed, with 4.52 kg of 9/7. Nominal velocity is 620 m/s. \nDue to limitations of this framework, the 7/1 charge has been treated as equivalent weight in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been used, with an increase in charge weight. An additional adjustment from 5.22 kg to 5.31 kg has been made to improve conformity with known performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. This case represents firing with one balanced increments removed, with 4.52 kg of 9/7. Nominal velocity is 620 m/s. \nDue to limitations of this framework, the 7/1 charge has been treated as equivalent weight in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been used, with an increase in charge weight. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01394,
 		"shot_mass": 33.4,
-		"charge_mass": 5.31,
+		"charge_mass": 5.22,
 		"chamber_volume": 0.01858,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -378,7 +378,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.6023528014539252e-05,
+			"reduced_burnrate": 2.81467791035414e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -391,7 +391,7 @@
 	},
 	{
 		"name": "Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.4 Charge)",
-		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. This case represents firing with two balanced increments removed, with 3.22 kg of 9/7. Nominal velocity is 525m/s. Nominal pressure is <=1100 kgf/cm^2 in copper crusher gauge. \nDue to limitations of this framework, the 7/1 charge has been treated as equivalent weight in 9/7 for this entry, adjusting pressure to match the known performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"description": "Type 1959 130mm cannon is the designation for domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. This case represents firing with two balanced increments removed, with 3.22 kg of 9/7. Nominal velocity is 525m/s. Nominal pressure is >=1100 kgf/cm^2 in copper crusher gauge. \nDue to limitations of this framework, the 7/1 charge has been treated as equivalent weight in 9/7 for this entry. A pressure of 1137 kgf/cm^2 has been adopted, taking conformity of charge 2, 3 and 4 into account.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
 		"cross_section": 0.01394,
 		"shot_mass": 33.4,
 		"charge_mass": 3.92,
@@ -408,7 +408,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 2.6023528014539252e-05,
+			"reduced_burnrate": 2.81467791035414e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -690,11 +690,11 @@
 		}
 	},
 	{
-		"name": "Type 1963 85mm Tank Gun (ZiS-S-53) (WB102P APCR-T)",
-		"description": "Type 1963 85mm tank gun is a domestic produced variant of the Soviet 85mm tank gun ZiS-S-53 , with mechanical improvements including the addition of fume extractor, and modifications to the trunnion to be compatible with stabilizers. Cartridges employ a fixed charge design, which loads 0.26kg of 12/1-32 grains bundled together and placed diagonally in the cartridge, and 9/7 grains placed loosely, bringing the charge mass to 2.5 kg. \nAdditionally, note that the interior ballistics of the ZiS-S-53 is identical to that of the Soviet 85mm divisional gun D-44 (including its domestic equivalent, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K). Consequently, data from these has been consulted to produce the this example. \nThe nominal velocity is between 1050 m/s, and nominal pressure of 2550 kgf/cm^2 from copper crusher gauge. \nFor simplicity, and in accordance with the treatment detailed in the sources, the 12/1-32 bundle is treated as the equivalent in mass of 9/7. A pressure of 2590 kgf/cm^2 has been adopted to best match the tabulated performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"name": "85mm Armor Piercing Composite Rrigid (Tracer) WB102P",
+		"description": "The 85mm family consists of fixed charge munitions issued to the Soviet tank gun ZiS-S-53 (domestically known as the 85mm tank gun), the Soviet 85mm divisional gun D-44 (including its domestically produced variant, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K) (domestically known as the Type 1939 85mm anti-air gun).\nThe AP, APBC, and APCR projectiles shares the same charge as the full charge for the HE-Frag shells. The HE-Frag shells are also issued with an reduced charge of similar construction. APCR shells are issued with an alternative charge. Finally, the HEAT-FS and HESH projectiles share a charge design, with the HESH projectile using a reduced charge.\nThis example illustrates firing the WB102P armor piercing composite rigid (tracer) projectile with its specific charge, which loads a central bundle of 12/1-32, and loose grains of 9/7 brings the total mass to 2.5-2.76 kg. The nominal velocity is 1050m/s, with a nominal pressure of 2550 kgf/cm^2 from copper crusher gauge. The adopted computational average pressure is 2800 kgf/cm^2. Matching to established performance by varying charge mass.\nFor simplicity, and in accordance with the treatment detailed in the sources, the bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.00582,
 		"shot_mass": 4.99,
-		"charge_mass": 2.5,
+		"charge_mass": 2.345,
 		"chamber_volume": 0.00412,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -708,7 +708,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 3.5215699332379076e-05,
+			"reduced_burnrate": 3.9693370698386776e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -720,11 +720,11 @@
 		}
 	},
 	{
-		"name": "Type 1963 85mm Tank Gun (ZiS-S-53) (WB109AP HEAT-FS)",
-		"description": "Type 1963 85mm tank gun is a domestic produced variant of the Soviet 85mm tank gun ZiS-S-53 , with mechanical improvements including the addition of fume extractor, and modifications to the trunnion to be compatible with stabilizers. Cartridge is of fixed charge type, loads loose 11/7 grains to 2.236 kg. \nAdditionally, note that the interior ballistics of the ZiS-S-53 is identical to that of the Soviet 85mm divisional gun D-44 (including its domestic equivalent, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K). Consequently, data from these has been consulted to produce the this example. \nThe nominal velocity is between 845 m/s, and nominal pressure of <=2350 kgf/cm^2 from copper crusher gauge. \nA pressure of 2204 kgf/cm^2 has been adopted to best match the tabulated performance, considering the case for WB128P. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"name": "85mm High Explosive Anti Tank-Fin Stabilized WB109AP",
+		"description": "The 85mm family consists of fixed charge munitions issued to the Soviet tank gun ZiS-S-53 (domestically known as the 85mm tank gun), the Soviet 85mm divisional gun D-44 (including its domestically produced variant, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K) (domestically known as the Type 1939 85mm anti-air gun).\nThe AP, APBC, and APCR projectiles shares the same charge as the full charge for the HE-Frag shells. The HE-Frag shells are also issued with an reduced charge of similar construction. APCR shells are issued with an alternative charge. Finally, the HEAT-FS and HESH projectiles share a charge design, with the HESH projectile using a reduced charge.\nThis example illustrates the WB109AP fin stabilized high explosive anti tank projectile, fired with the full alternative charge, which loads loose grains of 11/7 up to 2.236 kg. The nominal velocity is 845 m/s, with a nominal pressure of 2350 kgf/cm^2 from copper crusher gauge. The adopted computational average pressure is 2643 kgf/cm^2. Matching to established performance by varying charge mass.\nFor simplicity, and in accordance with the treatment detailed in the sources, the bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.00582,
 		"shot_mass": 7,
-		"charge_mass": 2.236,
+		"charge_mass": 1.898,
 		"chamber_volume": 0.003628,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -738,7 +738,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.00095206,
 			"adiabatic_index": 1.238,
-			"reduced_burnrate": 2.9189033637919115e-05,
+			"reduced_burnrate": 3.9169300595792754e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.1 / 7 (d = 0.6) - 13.5 mm",
@@ -750,41 +750,71 @@
 		}
 	},
 	{
-		"name": "Type 1963 85mm Tank Gun (ZiS-S-53) (WB128P HESH)",
-		"description": "Type 1963 85mm tank gun is a domestic produced variant of the Soviet 85mm tank gun ZiS-S-53 , with mechanical improvements including the addition of fume extractor, and modifications to the trunnion to be compatible with stabilizers. Cartridge is of fixed charge type, loads loose 11/7 grains to 1.9 kg. \nAdditionally, note that the interior ballistics of the ZiS-S-53 is identical to that of the Soviet 85mm divisional gun D-44 (including its domestic equivalent, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K). Consequently, data from these has been consulted to produce the this example. \nThe nominal velocity is between 730 m/s, and nominal pressure of 1685 kgf/cm^2 from copper crusher gauge. \nThe charge characteristics of the WB109AP HEAT-FS is used, except for the reduction in charge mass. The result matches the nominal value well.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"name": "85mm Armor Piercing Tracer WB101P",
+		"description": "The 85mm family consists of fixed charge munitions issued to the Soviet tank gun ZiS-S-53 (domestically known as the 85mm tank gun), the Soviet 85mm divisional gun D-44 (including its domestically produced variant, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K) (domestically known as the Type 1939 85mm anti-air gun).\nThe AP, APBC, and APCR projectiles shares the same charge as the full charge for the HE-Frag shells. The HE-Frag shells are also issued with an reduced charge of similar construction. APCR shells are issued with an alternative charge. Finally, the HEAT-FS and HESH projectiles share a charge design, with the HESH projectile using a reduced charge.\nThis example illustrates WB101P armor piercing (tracer) projectile, fired with the full charge, which loads a central bundle of 18/1-42, and loose grains of 14/7 brings the total mass to 2.48-2.63 kg. The nominal velocity is 800 m/s, with a nominal pressure of 2550 kgf/cm^2 from copper crusher gauge. The adopted computational average pressure is 2800 kgf/cm^2. Same charge characteristics used as the HE-Frag w/full charge. Matching to established performance by varying charge mass.\nFor simplicity, and in accordance with the treatment detailed in the sources, the bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.00582,
-		"shot_mass": 7,
-		"charge_mass": 1.9,
-		"chamber_volume": 0.004019999999999999,
+		"shot_mass": 9.342,
+		"charge_mass": 2.4,
+		"chamber_volume": 0.003985,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
-		"travel": 3.507,
+		"travel": 3.5460000000000003,
 		"charge": {
 			"name": "Single Base 7 perf cylinder",
-			"description": "1.1 / 7 (d = 0.6) - 13.5 mm",
+			"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
 			"burn_rate_coefficient": null,
 			"density": 1600.0,
-			"force": 990388.0,
-			"pressure_exponent": 0.83,
-			"covolume": 0.00095206,
-			"adiabatic_index": 1.238,
-			"reduced_burnrate": 2.9189033637919115e-05,
+			"force": 991074.0,
+			"pressure_exponent": 0.84,
+			"covolume": 0.00095576,
+			"adiabatic_index": 1.2391,
+			"reduced_burnrate": 2.388599339762115e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
-				"description": "1.1 / 7 (d = 0.6) - 13.5 mm",
-				"chi": 0.7126475055497138,
-				"labda": 0.2215787971868338,
-				"mu": -0.023276600030212993,
-				"Z_k": 1.4468372093023254
+				"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
+				"chi": 0.7178533997117778,
+				"labda": 0.20978670012547057,
+				"mu": -0.022772898368883316,
+				"Z_k": 1.4568363636363635
 			}
 		}
 	},
 	{
-		"name": "Type 1963 85mm Tank Gun (ZiS-S-53) (WB014P, WB024P HE-Frag, Full)",
-		"description": "Type 1963 85mm tank gun is a domestic produced variant of the Soviet 85mm tank gun ZiS-S-53 , with mechanical improvements including the addition of fume extractor, and modifications to the trunnion to be compatible with stabilizers. Cartridges employ a fixed charge design, though the HE-Frag round can be issued with either a Full and a Reduced charge. The Full charge is loaded with a central bundle of 18/1-42, and loose grains of 14/7, up to a total mass of 2.48-2.63 kg. \nThis example illustrates the case for the normal HE-Frag shell WB014P, or the nodular cast iron shell WB024P, with Full charge. \nAdditionally, note that the interior ballistics of the ZiS-S-53 is identical to that of the Soviet 85mm divisional gun D-44 (including its domestic equivalent, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K). Consequently, data from these has been consulted to produce the this example. \nThe nominal velocity is between 785 - 793 m/s, and nominal pressure of 2550 kgf/cm^2 from copper crusher gauge, converts to 2687 kgf/cm^2 actual. \nFor simplicity, and in accordance with the treatment detailed in the sources, the 18/1-42 bundle is treated as the equivalent in mass of 14/7, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"name": "85mm Armor Piercing Ballistic Capped (Tracer) WB114P",
+		"description": "The 85mm family consists of fixed charge munitions issued to the Soviet tank gun ZiS-S-53 (domestically known as the 85mm tank gun), the Soviet 85mm divisional gun D-44 (including its domestically produced variant, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K) (domestically known as the Type 1939 85mm anti-air gun).\nThe AP, APBC, and APCR projectiles shares the same charge as the full charge for the HE-Frag shells. The HE-Frag shells are also issued with an reduced charge of similar construction. APCR shells are issued with an alternative charge. Finally, the HEAT-FS and HESH projectiles share a charge design, with the HESH projectile using a reduced charge.\nThis example illustrates WB114P armor piercing ballistic capped (tracer) projectile, fired with the full charge, which loads a central bundle of 18/1-42, and loose grains of 14/7 brings the total mass to 2.48-2.63 kg. The nominal velocity is 805 m/s, with a nominal pressure of 2550 kgf/cm^2 from copper crusher gauge. The adopted computational average pressure is 2800 kgf/cm^2. Same charge characteristics used as the HE-Frag w/full charge. Matching to established performance by varying charge mass.\nFor simplicity, and in accordance with the treatment detailed in the sources, the bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"cross_section": 0.00582,
+		"shot_mass": 9.2,
+		"charge_mass": 2.41,
+		"chamber_volume": 0.004,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.5460000000000003,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991074.0,
+			"pressure_exponent": 0.84,
+			"covolume": 0.00095576,
+			"adiabatic_index": 1.2391,
+			"reduced_burnrate": 2.388599339762115e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
+				"chi": 0.7178533997117778,
+				"labda": 0.20978670012547057,
+				"mu": -0.022772898368883316,
+				"Z_k": 1.4568363636363635
+			}
+		}
+	},
+	{
+		"name": "85 mm HE-Frag WB014P, WB024P, Full Charge",
+		"description": "The 85mm family consists of fixed charge munitions issued to the Soviet tank gun ZiS-S-53 (domestically known as the 85mm tank gun), the Soviet 85mm divisional gun D-44 (including its domestically produced variant, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K) (domestically known as the Type 1939 85mm anti-air gun).\nThe AP, APBC, and APCR projectiles shares the same charge as the full charge for the HE-Frag shells. The HE-Frag shells are also issued with an reduced charge of similar construction. APCR shells are issued with an alternative charge. Finally, the HEAT-FS and HESH projectiles share a charge design, with the HESH projectile using a reduced charge.\nThis example illustrates the normal HE-Frag shell WB014P, or the nodular cast iron shell WB024P, fired with the full charge, which loads a central bundle of 18/1-42, and loose grains of 14/7 brings the total mass of 2.48-2.63 kg. The nominal velocity is between 785 - 793 m/s, with a nominal pressure of 2550 kgf/cm^2 from copper crusher gauge. The adopted computational average pressure is 2850 kgf/cm^2. Matching to established performance by varying charge mass.\nFor simplicity, and in accordance with the treatment detailed in the sources, the bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.00582,
 		"shot_mass": 9.54,
-		"charge_mass": 2.48,
+		"charge_mass": 2.37,
 		"chamber_volume": 0.00394,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -798,7 +828,7 @@
 			"pressure_exponent": 0.84,
 			"covolume": 0.00095576,
 			"adiabatic_index": 1.2391,
-			"reduced_burnrate": 2.190715594223655e-05,
+			"reduced_burnrate": 2.388599339762115e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.4 / 7 (d = 0.8) - 17.0 mm",
@@ -810,11 +840,11 @@
 		}
 	},
 	{
-		"name": "Type 1963 85mm Tank Gun (ZiS-S-53) (WB014P, WB024P HE-Frag, Reduced)",
-		"description": "Type 1963 85mm tank gun is a domestic produced variant of the Soviet 85mm tank gun ZiS-S-53 , with mechanical improvements including the addition of fume extractor, and modifications to the trunnion to be compatible with stabilizers. Cartridges employ a fixed charge design, though the HE-Frag round can be issued with either a Full and a Reduced charge. The Reduced charge is loaded with a central bundle of 12/1, and loose grains of 7/7, up to a total mass of 1.50 kg. \nThis example illustrates the case for the normal HE-Frag shell WB014P, or the nodular cast iron shell WB024P, with Reduced charge. \nAdditionally, note that the interior ballistics of the ZiS-S-53 is identical to that of the Soviet 85mm divisional gun D-44 (including its domestic equivalent, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K). Consequently, data from these has been consulted to produce the this example. \nThe nominal velocity is 655 m/s, and nominal pressure of 2350 kgf/cm^2 from copper crusher gauge. \nFor simplicity, and in accordance with the treatment detailed in the sources, the 12/1 bundle is treated as the equivalent in mass of 7/7. A pressure of 2285 kgf/cm^2 has been adopted to best match the tabulated performance. \nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).",
+		"name": "85mm HE-Frag WB014P, WB024P, Reduced Charge",
+		"description": "The 85mm family consists of fixed charge munitions issued to the Soviet tank gun ZiS-S-53 (domestically known as the 85mm tank gun), the Soviet 85mm divisional gun D-44 (including its domestically produced variant, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K) (domestically known as the Type 1939 85mm anti-air gun).\nThe AP, APBC, and APCR projectiles shares the same charge as the full charge for the HE-Frag shells. The HE-Frag shells are also issued with an reduced charge of similar construction. APCR shells are issued with an alternative charge. Finally, the HEAT-FS and HESH projectiles share a charge design, with the HESH projectile using a reduced charge.\nThis example illustrates the normal HE-Frag shell WB014P, or the nodular cast iron shell WB024P, fired with the reduced charge, which loads a central bundle of 12/1, and loose grains of 7/7 brings the total mass of 1.50 kg. The nominal velocity is around 655 m/s, with a nominal pressure of 2350 kgf/cm^2 from copper crusher gauge. The adopted computational average pressure is 2650 kgf/cm^2. No adjustment is necessary.Matching to established performance by varying charge mass.\nFor simplicity, and in accordance with the treatment detailed in the sources, the bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"cross_section": 0.00582,
 		"shot_mass": 9.54,
-		"charge_mass": 1.5,
+		"charge_mass": 1.45,
 		"chamber_volume": 0.00394,
 		"loss_fraction": 0.03,
 		"start_pressure": 29400000.0,
@@ -828,7 +858,7 @@
 			"pressure_exponent": 0.83,
 			"covolume": 0.00094763,
 			"adiabatic_index": 1.2374,
-			"reduced_burnrate": 4.1803555596077784e-05,
+			"reduced_burnrate": 4.890100539954971e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "0.8 / 7 (d = 0.4) - 9.0 mm",
@@ -836,6 +866,36 @@
 				"labda": 0.22282468140511713,
 				"mu": -0.025710540162128894,
 				"Z_k": 1.4386322580645161
+			}
+		}
+	},
+	{
+		"name": "85mm High Explosive Squash Head WB128P",
+		"description": "The 85mm family consists of fixed charge munitions issued to the Soviet tank gun ZiS-S-53 (domestically known as the 85mm tank gun), the Soviet 85mm divisional gun D-44 (including its domestically produced variant, Type 1956 85mm cannon), and with the Soviet 85mm air defense gun M1939 (52-K) (domestically known as the Type 1939 85mm anti-air gun).\nThe AP, APBC, and APCR projectiles shares the same charge as the full charge for the HE-Frag shells. The HE-Frag shells are also issued with an reduced charge of similar construction. APCR shells are issued with an alternative charge. Finally, the HEAT-FS and HESH projectiles share a charge design, with the HESH projectile using a reduced charge.\nThis example illustrates the WB128P high explosive squashed head projectile, fired with the reduced alternative charge, which loads loose grains of 11/7 up to 1.9 kg. The nominal velocity is 730 m/s, with a nominal pressure of 1685 kgf/cm^2 from copper crusher gauge. The adopted computational average pressure is 1900 kgf/cm^2. Matching to established performance by varying charge mass.\nFor simplicity, and in accordance with the treatment detailed in the sources, the bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"cross_section": 0.00582,
+		"shot_mass": 7,
+		"charge_mass": 1.573,
+		"chamber_volume": 0.004019999999999999,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.507,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.1 / 7 (d = 0.6) - 13.5 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 990388.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.00095206,
+			"adiabatic_index": 1.238,
+			"reduced_burnrate": 3.9169300595792754e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.1 / 7 (d = 0.6) - 13.5 mm",
+				"chi": 0.7126475055497138,
+				"labda": 0.2215787971868338,
+				"mu": -0.023276600030212993,
+				"Z_k": 1.4468372093023254
 			}
 		}
 	}
