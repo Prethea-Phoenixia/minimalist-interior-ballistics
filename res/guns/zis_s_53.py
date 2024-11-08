@@ -59,13 +59,14 @@ zis_s_53_reduced = KnownGunProblem(
 shell WB024P, fired with the reduced charge, which loads a central bundle \
 of 12/1, and loose grains of 7/7 brings the total mass of 1.50 kg. The nominal velocity \
 is around 655 m/s, with a nominal pressure of 2350 kgf/cm^2 from copper crusher gauge. \
-The adopted computational average pressure is 2650 kgf/cm^2. No adjustment is necessary.",
+The adopted computational average pressure is 2650 kgf/cm^2. No adjustment is necessary.\
+Matching to established performance by varying charge mass.",
             gun_outro,
         ]
     ),
     cross_section=0.582 * dm2,
     shot_mass=9.54,
-    charge_mass=1.5,
+    charge_mass=1.45,
     chamber_volume=3.94 * L,
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
