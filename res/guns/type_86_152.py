@@ -76,9 +76,9 @@ type_86_152_four = KnownGunProblem(
     name="Type 1983/86 152mm Cannon (WB028 HE-Frag, Charge No.4)",
     description="Officially known as the Type 1986 152mm Cannon, earlier models were exported \
 under the designation of Type 1983. The gun is provided with both a Full Variable and a Reduced \
-Variable charge. This case represents firing with the lowest configuration from the Reduced Variable \
-charge. Nominal velocity is 540m/s. Nominal pressure is >=960 kgf/cm^2 from copper crusher, converts \
-to 1054 kgf/cm^2 actual.\n\
+Variable charge. This case represents firing with the lowest configuration from the Reduced \
+Variable charge. Nominal velocity is 540m/s. Nominal pressure is >=960 kgf/cm^2 from copper \
+crusher, converts to 1054 kgf/cm^2 actual.\n\
 Given the Type 83/86 design is sparsely documented, although the results does not exactly \
 duplicated tabulated values, the match is considered reasonable enough such that no further \
 adjustments are made to improve conformity. \n\
