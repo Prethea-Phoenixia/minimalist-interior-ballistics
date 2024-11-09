@@ -53,15 +53,14 @@ for this example.",
 
 
 apbc = Gun(
-    name="100mm Armor Piercing Ballistic Capped WB116P",
+    name="100mm Armor Piercing Ballistic Capped (Tracer) WB116P",
     description="\n".join(
         [
             gun_intro,
-            "This example illustrate the WB116P armor piercing ballistic capped \
-projectile with the full charge, \
-which loads 5.5 or 5.66 kg of 18/1-26 long tubular grains, for copper and steel cartridges, \
-respectively. Nominal velocity is given as 902.5m/s, or less commonly 887 m/s. Nominal \
-pressure value is 3000 kgf/cm^2, from copper crusher gauge.\n\
+            "This example illustrate the WB116P armor piercing ballistic capped tracer \
+projectile with the full charge, which loads 5.5 or 5.66 kg of 18/1-26 long tubular \
+grains, for copper and steel cartridges, respectively. Nominal velocity is given as 902.5m/s, \
+or less commonly 887 m/s. Nominal pressure value is 3000 kgf/cm^2, from copper crusher gauge.\n\
 The charge mass and characteristics of the WB004P full charge case has been used. Increase in \
 velocity despite increased projectile weight is explained by longer obturated travel in bore, \
 due to the more rearward positioning of the driving band.",
