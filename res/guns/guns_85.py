@@ -25,7 +25,7 @@ Reference:\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
 zis_s_53_full = KnownGunProblem(
-    name="85 mm High Explosive Fragmentation WB014P, WB024P, Full Charge",
+    name="85 mm HE-Frag WB014P, WB024P, Full Charge",
     description="\n".join(
         [
             gun_intro,
@@ -52,7 +52,7 @@ by varying charge mass.",
 )
 
 zis_s_53_reduced = KnownGunProblem(
-    name="85mm High Explosive Fragmentation WB014P, WB024P, Reduced Charge",
+    name="85mm HE-Frag WB014P, WB024P, Reduced Charge",
     description="\n".join(
         [
             gun_intro,
@@ -79,7 +79,7 @@ Matching to established performance by varying charge mass.",
 )
 
 zis_s_53_ap = Gun(
-    name="85mm Armor Piercing (Tracer) WB101P",
+    name="85mm AP(T) WB101P",
     description="\n".join(
         [
             gun_intro,
@@ -103,7 +103,7 @@ Matching to established performance by varying charge mass.",
 )
 
 zis_s_53_apbc = Gun(
-    name="85mm Armor Piercing Ballistic Capped (Tracer) WB114P",
+    name="85mm APBC(T) WB114P",
     description="\n".join(
         [
             gun_intro,
@@ -128,7 +128,7 @@ Matching to established performance by varying charge mass.",
 
 
 zis_s_53_apcr = KnownGunProblem(
-    name="85mm Armor Piercing Composite Rigid (Tracer) WB102P",
+    name="85mm APCR(T) WB102P",
     description="\n".join(
         [
             gun_intro,
@@ -155,7 +155,7 @@ is 2800 kgf/cm^2. Matching to established performance by varying charge mass.",
 
 
 zis_s_53_heat = KnownGunProblem(
-    name="85mm High Explosive Anti Tank-Fin Stabilized WB109AP",
+    name="85mm HEAT-FS WB109AP",
     description="\n".join(
         [
             gun_intro,
@@ -181,7 +181,7 @@ is 2643 kgf/cm^2. Matching to established performance by varying charge mass.",
 )
 
 zis_s_53_hesh = Gun(
-    name="85mm High Explosive Squash Head WB128P",
+    name="85mm HESH WB128P",
     description="\n".join(
         [
             gun_intro,

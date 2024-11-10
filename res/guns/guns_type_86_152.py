@@ -147,16 +147,13 @@ Reference:\n\
     charge=type_86_152_four.charge,
 )
 
+all_guns = [type_86_152_full, type_86_152_one, type_86_152_two, type_86_152_three, type_86_152_four]
+
 if __name__ == "__main__":
     from ballistics.state import StateList
+    from ballistics.state import StateList
 
-    print(type_86_152_full.name)
-    print(StateList.tabulate(type_86_152_full.to_travel(n_intg=10)))
-    print(type_86_152_one.name)
-    print(StateList.tabulate(type_86_152_one.to_travel(n_intg=10)))
-    print(type_86_152_two.name)
-    print(StateList.tabulate(type_86_152_two.to_travel(n_intg=10)))
-    print(type_86_152_three.name)
-    print(StateList.tabulate(type_86_152_three.to_travel(n_intg=10)))
-    print(type_86_152_four.name)
-    print(StateList.tabulate(type_86_152_four.to_travel(n_intg=10)))
+    for gun in all_guns:
+        print(gun.name)
+        print(gun.description)
+        print(StateList.tabulate(gun.to_travel()))

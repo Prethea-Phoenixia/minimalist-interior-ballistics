@@ -51,5 +51,7 @@ Reference:\n\
 if __name__ == "__main__":
     from ballistics.state import StateList
 
-    print(type_86_100_w_apfsds.name)
-    print(StateList.tabulate(type_86_100_w_apfsds.to_travel(n_intg=10)))
+    for gun in all_guns:
+        print(gun.name)
+        print(gun.description)
+        print(StateList.tabulate(gun.to_travel()))

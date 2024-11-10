@@ -108,9 +108,7 @@ Reference:\n\
 if __name__ == "__main__":
     from ballistics.state import StateList
 
-    print(StateList.tabulate(m_47_full.to_travel()))
-    print(StateList.tabulate(m_47_one.to_travel()))
-
-    print(StateList.tabulate(m_47_two.to_travel()))
-
-    print(StateList.tabulate(m_47_three.to_travel()))
+    for gun in all_guns:
+        print(gun.name)
+        print(gun.description)
+        print(StateList.tabulate(gun.to_travel()))

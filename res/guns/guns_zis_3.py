@@ -54,4 +54,5 @@ if __name__ == "__main__":
 
     for gun in all_guns:
         print(gun.name)
+        print(gun.description)
         print(StateList.tabulate(gun.to_travel()))

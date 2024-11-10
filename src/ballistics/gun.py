@@ -338,7 +338,11 @@ class Gun:
         end_time = max(dekker(f=time_end, x_0=s_now.time, x_1=s_next.time, tol=rough_ttb * acc))
 
         s_end = self.propagate_rk4(s_now, dt=end_time - s_now.time)
-        if burnout(s_end):
+
+        if abort(s_end):
+            # abort prioritized in case of both abort and burnout.
+            pass
+        elif burnout(s_end):
             s_burnout = State.remark(s_end, new_significance=Significance.BURNOUT)
             states.append(s_burnout)
 
