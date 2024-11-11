@@ -64,7 +64,7 @@ m_46_four = KnownGunProblem(
     name="Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.4 Charge)",
     description="Type 1959 130mm cannon is the designation for domestically produced \
 variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge \
-is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. \
+is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.82 kg of 9/7 propellant. \
 This case represents firing with two balanced increments removed, with 3.22 kg of 9/7. \
 Nominal velocity is 525m/s. Nominal pressure is >=1100 kgf/cm^2 in copper crusher gauge. \n\
 Due to limitations of this framework, the 7/1 charge has been treated as equivalent weight \
@@ -91,7 +91,7 @@ m_46_three = Gun(
     name="Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.3 Charge)",
     description="Type 1959 130mm cannon is the designation for domestically produced \
 variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge \
-is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. \
+is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.82 kg of 9/7 propellant. \
 This case represents firing with one balanced increments removed, with 4.52 kg of 9/7. \
 Nominal velocity is 620 m/s. \n\
 Due to limitations of this framework, the 7/1 charge has been treated as equivalent weight \
@@ -114,7 +114,7 @@ m_46_two = Gun(
     name="Type 1959 130mm Cannon (M-46) (WB005P HE-Frag, No.2 Charge)",
     description="Type 1959 130mm cannon is the designation for domestically produced \
 variants of the Soviet 130mm towed field gun M1954 (M-46). The Reduced Variable charge \
-is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.8 kg of 9/7 propellant. \
+is supplied with a 0.7 kg bundle of 7/1 propellant, and 5.82 kg of 9/7 propellant. \
 This case represents firing the charge as issued. Nominal velocity is 705 m/s. \n\
 Due to limitations of this framework, the 7/1 charge has been treated as equivalent weight \
 in 9/7 for this entry. As well, the charge characteristics of the No.4 charge has been \
@@ -124,7 +124,7 @@ Reference:\n\
  《火炸药手册 (增订本）第二分册》(1981).",
     cross_section=1.394 * dm2,
     shot_mass=33.4,
-    charge_mass=6.5,
+    charge_mass=6.52,
     chamber_volume=18.58 * L,
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
