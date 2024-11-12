@@ -24,7 +24,7 @@ Reference:\n\
  《火炸药手册 (增订本）第二分册》(1981).\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
-zis_s_53_full = KnownGunProblem(
+full = KnownGunProblem(
     name="85 mm HE-Frag WB014P, WB024P, Full Charge",
     description="\n".join(
         [
@@ -51,7 +51,7 @@ by varying charge mass.",
     pressure_target=PressureTarget.average_pressure(2850e2 * kgf_dm2),
 )
 
-zis_s_53_reduced = KnownGunProblem(
+reduced = KnownGunProblem(
     name="85mm HE-Frag WB014P, WB024P, Reduced Charge",
     description="\n".join(
         [
@@ -78,7 +78,7 @@ Matching to established performance by varying charge mass.",
     pressure_target=PressureTarget.average_pressure(2650e2 * kgf_dm2),
 )
 
-zis_s_53_ap = Gun(
+ap = Gun(
     name="85mm AP(T) WB101P",
     description="\n".join(
         [
@@ -99,10 +99,10 @@ Matching to established performance by varying charge mass.",
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
     travel=35.46 * dm,
-    charge=zis_s_53_full.charge,
+    charge=full.charge,
 )
 
-zis_s_53_apbc = Gun(
+apbc = Gun(
     name="85mm APBC(T) WB114P",
     description="\n".join(
         [
@@ -123,11 +123,10 @@ Matching to established performance by varying charge mass.",
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
     travel=35.46 * dm,
-    charge=zis_s_53_full.charge,
+    charge=full.charge,
 )
 
-
-zis_s_53_apcr = KnownGunProblem(
+apcr = KnownGunProblem(
     name="85mm APCR(T) WB102P",
     description="\n".join(
         [
@@ -154,7 +153,7 @@ is 2800 kgf/cm^2. Matching to established performance by varying charge mass.",
 )
 
 
-zis_s_53_heat = KnownGunProblem(
+heat = KnownGunProblem(
     name="85mm HEAT-FS WB109AP",
     description="\n".join(
         [
@@ -180,7 +179,7 @@ is 2643 kgf/cm^2. Matching to established performance by varying charge mass.",
     pressure_target=PressureTarget.average_pressure(2643e2 * kgf_dm2),
 )
 
-zis_s_53_hesh = Gun(
+hesh = Gun(
     name="85mm HESH WB128P",
     description="\n".join(
         [
@@ -200,19 +199,11 @@ Matching to established performance by varying charge mass.",
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
     travel=35.07 * dm,
-    charge=zis_s_53_heat.charge,
+    charge=heat.charge,
 )
 
 
-all_guns = [
-    zis_s_53_apcr,  # checked
-    zis_s_53_heat,
-    zis_s_53_ap,  # checked
-    zis_s_53_apbc,  # checked
-    zis_s_53_full,  # checked
-    zis_s_53_reduced,  # checked
-    zis_s_53_hesh,  # checked
-]
+all_guns = [apcr, heat, ap, apbc, full, reduced, hesh]
 
 
 if __name__ == "__main__":

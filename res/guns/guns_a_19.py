@@ -52,7 +52,9 @@ full = KnownGunProblem(
 Fired as issued, 800 m/s of nominal velocity is developed at 2750 kgf/cm^2 of average pressure, \
 measured from copper crusher gauge. Computational values of 2897 or 3000 kgf/cm^2 are known. \
 The former value is adopted for this example, which yields accurate result, with no entry worse \
-than 5 m/s off nominal.",
+than 5 m/s off nominal.\n\
+This entry is also representative of the APHE and APHEBC projectiles since these shares the same \
+interior ballistics.",
             gun_outro,
         ]
     ),
