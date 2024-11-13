@@ -25,7 +25,7 @@ Reference:\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
 full = KnownGunProblem(
-    name="85 mm HE-Frag WB014P, WB024P, Full Charge",
+    name="85 mm HE-Frag WB014P, WB024P (Full Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -52,7 +52,7 @@ by varying charge mass.",
 )
 
 reduced = KnownGunProblem(
-    name="85mm HE-Frag WB014P, WB024P, Reduced Charge",
+    name="85mm HE-Frag WB014P, WB024P (Reduced Charge)",
     description="\n".join(
         [
             gun_intro,

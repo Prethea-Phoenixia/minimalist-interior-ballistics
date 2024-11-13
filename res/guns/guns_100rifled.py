@@ -6,7 +6,7 @@ from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
 from prop_9_7 import nine_seven, sb_9_7
 from prop_13_7 import sb_13_7, thirteen_seven
-from prop_sf3 import sf3
+from prop_sf3 import eighteen_one, sf3
 
 gun_intro = "The 100mm (rifled) family consists of fixed charge munitions issued \
 to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), \
@@ -25,7 +25,7 @@ Reference:\n\
  《火炸药手册 (增订本）第二分册》(1981).\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
-eighteen_one = FormFunction.single_perf(arch_width=mean((1.67, 1.77)), height=260)
+
 he_frag = KnownGunProblem(
     name="100mm High Explosive Fragmentation WB004P (Full Charge)",
     description="\n".join(

@@ -1,16 +1,13 @@
-from statistics import mean
-
-from ballistics.form_function import FormFunction
 from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
 from prop_9_7 import nine_seven, sb_9_7
-from prop_sf3 import sf3
+from prop_sf3 import sf3, twentythree_one
 
 gun_intro = "The 130mm family of separately loaded, case charge munitions are issued to \
 the Type 1959 130mm cannon, domestically produced variants of the Soviet 130mm towed field gun \
-M1954 (M-46). The HE-Frag projectile can be issued with both a full variable and a reduced \
-variable charge. The APHE projectile is fired with the full charge as issued. \n\
+M1954 (M-46, GRAU Index 52-P-482). The HE-Frag projectile is issued with either a full variable \
+or a reduced variable charge. The APHE projectile is fired with the full charge as issued. \n\
 The full variable charge is supplied with various charge bags of 双芳-3 23/1 tubular grains, \
 totaling 12.9kg. This provides two velocity zones. \
 The reduced variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, \
@@ -24,9 +21,6 @@ Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
-
-
-twentythree_one = FormFunction.single_perf(arch_width=mean((2.20, 2.35)), height=370)
 
 
 full = KnownGunProblem(
@@ -78,7 +72,7 @@ full charge entry, with a reduction in charge mass. ",
 
 
 two = KnownGunProblem(
-    name="130mm Cannon WB005P HE-Frag (No.2 Charge)",
+    name="130mm WB005P HE-Frag (No.2 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -103,7 +97,7 @@ A computational value of 2365 kgf/cm^2 is adopted.",
 )
 
 three = Gun(
-    name="130mm Cannon WB005P HE-Frag (No.3 Charge)",
+    name="130mm WB005P HE-Frag (No.3 Charge)",
     description="\n".join(
         [
             gun_intro,

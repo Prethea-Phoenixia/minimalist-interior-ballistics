@@ -33,6 +33,5 @@ if __name__ in {"__main__", "__mp_main__"}:
             except AttributeError as e:
                 logger.warning(e)
 
-    guns.extend(guns)
     Gun.to_file(guns=guns, filename="example_guns.json")
     logger.info("Ended")

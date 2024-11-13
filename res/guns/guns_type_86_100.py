@@ -48,6 +48,8 @@ Reference:\n\
 )
 
 
+all_guns = [type_86_100_w_apfsds]
+
 if __name__ == "__main__":
     from ballistics.state import StateList
 

@@ -1,4 +1,7 @@
+from statistics import mean
+
 from ballistics.charge import Propellant
+from ballistics.form_function import FormFunction
 from misc import dm3_kg, format_compo_string, kg_dm3, kgfdm_kg
 
 sf3 = Propellant(
@@ -21,3 +24,9 @@ sf3 = Propellant(
     covolume=1.02561 * dm3_kg,
     adiabatic_index=1.2663,
 )
+
+
+twentythree_one = FormFunction.single_perf(arch_width=mean((2.20, 2.35)), height=370)
+
+nineteen_one = FormFunction.single_perf(arch_width=mean((1.90, 1.95)), height=320)
+eighteen_one = FormFunction.single_perf(arch_width=mean((1.67, 1.77)), height=260)
