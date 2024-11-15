@@ -1,6 +1,3 @@
-from statistics import mean
-
-from ballistics.form_function import FormFunction
 from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
@@ -19,7 +16,7 @@ The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projecti
 alternative charge."
 
 gun_outro = "For simplicity, bundled charge has been treated as the equivalent mass in loose \
-rains, with reasonable accuracy.\n\
+grains, with reasonable accuracy.\n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).\n\
@@ -105,12 +102,13 @@ due to the more rearward positioning of the driving band.",
 
 
 heat = KnownGunProblem(
-    name="100mm Universal HEAT-FS WB122P",
+    name="100mm Type 71 Universal HEAT-FS WB122P",
     description="\n".join(
         [
             gun_intro,
-            "The WB122P round is universal in the sense that it can be fired from both guns \
-of this family, as well as from Type 1973 smoothbore tank guns, Type 1973 smoothbore \
+            "\
+The Type 71 WB122P round is universal in the sense that it can be fired from both guns \
+of this family, as well as from Type 1969 smoothbore tank guns, Type 1971/1973 smoothbore \
 anti tank guns, and Type 1986 high pressure smoothbore anti tank guns. When fired from rifled \
 guns, combustion gas partially blow past the projectile through the lands of the rifling. \
 This is not well modelled, and consequently the calculated performance is only applicable \

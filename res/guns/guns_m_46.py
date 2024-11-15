@@ -16,7 +16,7 @@ zones.\
 "
 
 gun_outro = "For simplicity, bundled charge has been treated as the equivalent mass in loose \
-rains, with reasonable accuracy.\n\
+grains, with reasonable accuracy.\n\
 Reference:\n\
  《火炮内弹道计算手册》(1987)\n\
  《火炸药手册 (增订本）第二分册》(1981).\n\

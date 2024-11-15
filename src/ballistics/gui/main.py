@@ -99,8 +99,8 @@ class MainFrame(Frame):
         menubar.add_cascade(menu=edit_menu, label="Edit")
         menubar.add_cascade(menu=config_menu, label="Config")
 
-        self.acc: float = DEFAULT_ACC
-        self.steps: int = DEFAULT_STEPS
+        self.acc = DEFAULT_ACC
+        self.step = DEFAULT_STEPS
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
