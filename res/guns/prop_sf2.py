@@ -4,28 +4,26 @@ from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction
 from misc import dm3_kg, format_compo_string, kg_dm3, kgfdm_kg
 
-sf3 = Propellant(
-    name="双芳-3",
+sf2 = Propellant(
+    name="双芳-2",
     description="2580 K, nitration at 188-193.5 ml/g\n《火炸药手册 (增订本）第二分册》(1981)\
 , 《火炮内弹道计算手册》(1987)\n"
     + format_compo_string(
         {
             "Nitrocellulose": 0.56,
-            "Nitroglycerin": 0.265,
+            "Nitroglycerin": 0.25,
             "Dinitrotoluene": 0.09,
-            "Dibutyl phthalat": 0.045,
+            "Dibutyl phthalat": 0.06,
             "Ethyl/Methyl Centralite": 0.03,
             "Vaseline": 0.01,
         }
     ),
-    density=1.56 * kg_dm3,
-    force=1001400 * kgfdm_kg,
+    density=1.54 * kg_dm3,
+    force=96.09e4 * kgfdm_kg,
     pressure_exponent=0.81,
-    covolume=1.02561 * dm3_kg,
-    adiabatic_index=1.2663,
+    covolume=1.04785 * dm3_kg,
+    adiabatic_index=1.2706,
 )
 
 
-twentythree_one = FormFunction.single_perf(arch_width=mean((2.20, 2.35)), height=370)
-nineteen_one = FormFunction.single_perf(arch_width=mean((1.90, 1.95)), height=320)
-eighteen_one = FormFunction.single_perf(arch_width=mean((1.67, 1.77)), height=260)
+nineteen_one = FormFunction.single_perf(arch_width=mean((1.88, 1.98)), height=320)

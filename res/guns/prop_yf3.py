@@ -6,7 +6,7 @@ from misc import dm3_kg, format_compo_string, kg_dm3, kgfdm_kg
 
 yf3 = Propellant(
     name="乙芳-3",
-    description="2504 K\n\
+    description="2504 K, nitration at 188-193.5 ml/g\n\
 《火炸药手册 (增订本）第二分册》(1981), 《火炮内弹道计算手册》(1987)\n"
     + format_compo_string(
         {
