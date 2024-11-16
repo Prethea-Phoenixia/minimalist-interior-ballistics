@@ -102,12 +102,12 @@ due to the more rearward positioning of the driving band.",
 
 
 heat = KnownGunProblem(
-    name="100mm Type 71 Universal HEAT-FS WB122P",
+    name="100mm Universal HEAT-FS WB122P",
     description="\n".join(
         [
             gun_intro,
             "\
-The Type 71 WB122P round is universal in the sense that it can be fired from both guns \
+The WB122P round is universal in the sense that it can be fired from both guns \
 of this family, as well as from Type 1969 smoothbore tank guns, Type 1971/1973 smoothbore \
 anti tank guns, and Type 1986 high pressure smoothbore anti tank guns. When fired from rifled \
 guns, combustion gas partially blow past the projectile through the lands of the rifling. \

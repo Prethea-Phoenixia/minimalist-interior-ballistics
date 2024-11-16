@@ -2,6 +2,7 @@ from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg
+from prop_9_7 import nine_seven, sb_9_7
 from prop_20_1 import sb_20_1, twenty_one
 
 gdldjy = Propellant(
@@ -37,13 +38,13 @@ Reference:\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
 
-he_frag_71 = KnownGunProblem(
-    name="100mm Type 71 HE-Frag WB031P",
+he_frag_73 = KnownGunProblem(
+    name="100mm HE-Frag FS WB031P",
     description="\n".join(
         [
             gun_intro,
             "\
-The 100mm Type 71 HE-Frag (WB031P) is a fin-stabilized projectile, which loads 4.3kg of 20/1 \
+The 100mm Type 71/73 HE-Frag FS (WB031P) is issued with a charge that loads 4.3kg of 20/1 \
 tubular grains, bundled in the center. 0.75kg of 14/7 seven perforated loose grains fills the \
 the void around the folded fin mechanism, and 0.15kg of 10/1 Rosin Potassium tubular grains are \
 loaded as muzzle blast suppressant. \
@@ -64,13 +65,40 @@ computational value is 3128 kgf/cm^2.\
     form_function=twenty_one,
 ).get_gun_developing_pressure(pressure_target=PressureTarget.average_pressure(3128e2 * kgf_dm2))
 
-w_apfsds_86 = KnownGunProblem(
-    name="100mm Type 86 Tungsten APFSDS",
+apfsds_73 = KnownGunProblem(
+    name="100mm APFSDS(T) WB125P, Tungsten Cored APFSDS(T) WB132P",
     description="\n".join(
         [
             gun_intro,
             "\
-The 100mm Type 86 Tungsten APFSDS round for use on the Type 86 high pressure anti tank gun \
+The 100mm steel APFSDS(T) (WB125P) projectiles, and the tungsten cored APFSDS(T) (WB132P) \
+proejctiles are issued with a charge that loads 4.6kg of 9/7 seven perforated loose grains, \
+with 1.05kg of 18/1 tubular grains bundled in the center. \
+Nominal velocity is tabulated at 1505 m/s. Nominal pressure is <=3300 kgf/cm^2. The adopted \
+computational value is 3531 kgf/cm^2.\
+",
+            gun_outro,
+        ]
+    ),
+    cross_section=0.7854 * dm2,
+    shot_mass=4.7,
+    charge_mass=5.65,
+    chamber_volume=8 * L,
+    loss_fraction=0.03,
+    start_pressure=300e2 * kgf_dm2,
+    travel=47.33 * dm,
+    propellant=sb_9_7,
+    form_function=nine_seven,
+).get_gun_developing_pressure(pressure_target=PressureTarget.average_pressure(3531e2 * kgf_dm2))
+
+
+w_apfsds_86 = KnownGunProblem(
+    name="100mm Tungsten APFSDS(T) for Type 86",
+    description="\n".join(
+        [
+            gun_intro,
+            "\
+The 100mm Tungsten APFSDS(T) round for use on the Type 86 high pressure anti tank gun \
 is issued with 0.9kg combustible cartridge casings, of an energetic material (with a propellant \
 force of 730,000 kgf-dm/kg), loading 5.79 kg of highly nitrated single based propellant (1,050,000 \
 kgf-dm/kg), in loose grains of 19 perforated rosette grains. \
@@ -93,7 +121,8 @@ this example. \n\
     form_function=fourteen_nineteen,
 ).get_gun_developing_pressure(pressure_target=PressureTarget.average_pressure(4643e2 * kgf_dm2))
 
-all_guns = [he_frag_71, w_apfsds_86]
+
+all_guns = [he_frag_73, apfsds_73, w_apfsds_86]
 
 if __name__ == "__main__":
     from ballistics.state import StateList
