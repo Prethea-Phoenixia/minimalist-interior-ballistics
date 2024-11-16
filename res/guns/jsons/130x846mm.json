@@ -1,0 +1,157 @@
+[
+	{
+		"name": "WB005P HE-Frag (Full Charge)",
+		"description": "The 130mm family of separately loaded, case charge munitions are issued to the Type 1959 130mm cannon, domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46, GRAU Index 52-P-482). The HE-Frag projectile is issued with either a full variable or a reduced variable charge. The APHE projectile is fired with the full charge as issued. \nThe full variable charge is supplied with various charge bags of 双芳-3 23/1 tubular grains, totaling 12.9kg. This provides two velocity zones. The reduced variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and multiple bags of 9/7 loose grains totaling 5.82 kg. This provides three further velocity zones.\nThis case represents when firing the charge as issued. Nominal velocity is 930m/s. Nominal pressure is 3150 kgf/cm^2 in copper crusher gauge. Computational values of 3370 and 3465 kgf/cm^2 are attested in the source.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "130x846mm",
+		"cross_section": 0.01394,
+		"shot_mass": 33.4,
+		"charge_mass": 12.9,
+		"chamber_volume": 0.01858,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.952000000000001,
+		"charge": {
+			"name": "双芳-3 tube",
+			"description": "2.3 / 1 - 370.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1560.0,
+			"force": 981372.0,
+			"pressure_exponent": 0.81,
+			"covolume": 0.00102561,
+			"adiabatic_index": 1.2663,
+			"reduced_burnrate": 1.806602578188019e-05,
+			"form_function": {
+				"name": "tube",
+				"description": "2.3 / 1 - 370.0 mm",
+				"chi": 1.0061486486486486,
+				"labda": -0.006111073802968238,
+				"mu": 0,
+				"Z_k": 1.0
+			}
+		}
+	},
+	{
+		"name": "WB005P HE-Frag (No.1 Charge)",
+		"description": "The 130mm family of separately loaded, case charge munitions are issued to the Type 1959 130mm cannon, domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46, GRAU Index 52-P-482). The HE-Frag projectile is issued with either a full variable or a reduced variable charge. The APHE projectile is fired with the full charge as issued. \nThe full variable charge is supplied with various charge bags of 双芳-3 23/1 tubular grains, totaling 12.9kg. This provides two velocity zones. The reduced variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and multiple bags of 9/7 loose grains totaling 5.82 kg. This provides three further velocity zones.\nThis case represents firing the full variable charge with a supplementary charge bag of 1.9kg taken out. Nominal velocity is 810m/s. This entry adopts the same properties of charge from the full charge entry, with a reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "130x846mm",
+		"cross_section": 0.01394,
+		"shot_mass": 33.4,
+		"charge_mass": 11,
+		"chamber_volume": 0.01858,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.952000000000001,
+		"charge": {
+			"name": "双芳-3 tube",
+			"description": "2.3 / 1 - 370.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1560.0,
+			"force": 981372.0,
+			"pressure_exponent": 0.81,
+			"covolume": 0.00102561,
+			"adiabatic_index": 1.2663,
+			"reduced_burnrate": 1.806602578188019e-05,
+			"form_function": {
+				"name": "tube",
+				"description": "2.3 / 1 - 370.0 mm",
+				"chi": 1.0061486486486486,
+				"labda": -0.006111073802968238,
+				"mu": 0,
+				"Z_k": 1.0
+			}
+		}
+	},
+	{
+		"name": "WB005P HE-Frag (No.2 Charge)",
+		"description": "The 130mm family of separately loaded, case charge munitions are issued to the Type 1959 130mm cannon, domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46, GRAU Index 52-P-482). The HE-Frag projectile is issued with either a full variable or a reduced variable charge. The APHE projectile is fired with the full charge as issued. \nThe full variable charge is supplied with various charge bags of 双芳-3 23/1 tubular grains, totaling 12.9kg. This provides two velocity zones. The reduced variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and multiple bags of 9/7 loose grains totaling 5.82 kg. This provides three further velocity zones.\nThis case represents firing the reduced variable charge as issued. Nominal velocity is 705m/s. Nominal pressure is <=2700 kgf/cm^2 in copper crusher gauge. A computational value of 2365 kgf/cm^2 is adopted.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "130x846mm",
+		"cross_section": 0.01394,
+		"shot_mass": 33.4,
+		"charge_mass": 6.52,
+		"chamber_volume": 0.01858,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.952000000000001,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.7833022534246434e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
+		"name": "WB005P HE-Frag (No.3 Charge)",
+		"description": "The 130mm family of separately loaded, case charge munitions are issued to the Type 1959 130mm cannon, domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46, GRAU Index 52-P-482). The HE-Frag projectile is issued with either a full variable or a reduced variable charge. The APHE projectile is fired with the full charge as issued. \nThe full variable charge is supplied with various charge bags of 双芳-3 23/1 tubular grains, totaling 12.9kg. This provides two velocity zones. The reduced variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and multiple bags of 9/7 loose grains totaling 5.82 kg. This provides three further velocity zones.\nThis case represents firing with one balanced increments removed, Nominal velocity is 620 m/s. Characteristics of charge from the No.2 entry has been used with a reduction in charge mass.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "130x846mm",
+		"cross_section": 0.01394,
+		"shot_mass": 33.4,
+		"charge_mass": 5.22,
+		"chamber_volume": 0.01858,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.952000000000001,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.7833022534246434e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
+		"name": "WB005P HE-Frag (No.4 Charge)",
+		"description": "The 130mm family of separately loaded, case charge munitions are issued to the Type 1959 130mm cannon, domestically produced variants of the Soviet 130mm towed field gun M1954 (M-46, GRAU Index 52-P-482). The HE-Frag projectile is issued with either a full variable or a reduced variable charge. The APHE projectile is fired with the full charge as issued. \nThe full variable charge is supplied with various charge bags of 双芳-3 23/1 tubular grains, totaling 12.9kg. This provides two velocity zones. The reduced variable charge is supplied with a 0.7 kg bundle of 7/1 propellant, and multiple bags of 9/7 loose grains totaling 5.82 kg. This provides three further velocity zones.\nThis case represents firing the reduced variable charge with two balanced increments removed. Nominal velocity is 525m/s. Nominal pressure is >=1100 kgf/cm^2 in copper crusher gauge. This entry adopts the same properties of charge from the No.2 charge entry, with a reduction in charge mass.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "130x846mm",
+		"cross_section": 0.01394,
+		"shot_mass": 33.4,
+		"charge_mass": 3.92,
+		"chamber_volume": 0.01858,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.952000000000001,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.7833022534246434e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	}
+]

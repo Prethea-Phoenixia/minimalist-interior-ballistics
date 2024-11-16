@@ -1,4 +1,4 @@
-from ballistics.gun import Gun, GunFamily
+from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
 from prop_7_7 import sb_7_7, seven_seven
@@ -38,6 +38,7 @@ by varying charge mass.",
             gun_outro,
         ]
     ),
+    family="85x630mm",
     cross_section=0.582 * dm2,
     shot_mass=9.54,
     charge_mass=2.37,
@@ -65,6 +66,7 @@ Matching to established performance by varying charge mass.",
             gun_outro,
         ]
     ),
+    family="85x630mm",
     cross_section=0.582 * dm2,
     shot_mass=9.54,
     charge_mass=1.45,
@@ -92,6 +94,7 @@ Matching to established performance by varying charge mass.",
             gun_outro,
         ]
     ),
+    family="85x630mm",
     cross_section=0.582 * dm2,
     shot_mass=9.342,
     charge_mass=2.4,
@@ -116,6 +119,7 @@ Matching to established performance by varying charge mass.",
             gun_outro,
         ]
     ),
+    family="85x630mm",
     cross_section=0.582 * dm2,
     shot_mass=9.2,
     charge_mass=2.41,
@@ -139,6 +143,7 @@ is 2800 kgf/cm^2. Matching to established performance by varying charge mass.",
             gun_outro,
         ]
     ),
+    family="85x630mm",
     cross_section=0.582 * dm2,
     shot_mass=4.99,
     charge_mass=2.345,
@@ -166,6 +171,7 @@ is 2643 kgf/cm^2. Matching to established performance by varying charge mass.",
             gun_outro,
         ]
     ),
+    family="85x630mm",
     cross_section=0.582 * dm2,
     shot_mass=7,
     charge_mass=1.898,
@@ -192,6 +198,7 @@ Matching to established performance by varying charge mass.",
             gun_outro,
         ]
     ),
+    family="85x630mm",
     cross_section=0.582 * dm2,
     shot_mass=7,
     charge_mass=1.573,
@@ -204,9 +211,7 @@ Matching to established performance by varying charge mass.",
 
 
 all_guns = [apcr, heat, ap, apbc, full, reduced, hesh]
-family = GunFamily(name="85x630mm Rifled")
-for gun in all_guns:
-    family.add_gun(gun)
+
 
 if __name__ == "__main__":
     from ballistics.state import StateList

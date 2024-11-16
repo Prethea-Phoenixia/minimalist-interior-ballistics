@@ -23,6 +23,8 @@ logger = logging.getLogger(__name__)
 class BaseProblem:
     name: str = field(default="")
     description: str = field(default="")
+    family: str = field(default="")
+
     propellant: Propellant
     form_function: FormFunction
 
@@ -36,6 +38,7 @@ class BaseProblem:
         return Gun(
             name=self.name,
             description=self.description,
+            family=self.family,
             cross_section=self.cross_section,
             shot_mass=self.shot_mass,
             charge_mass=charge_mass,

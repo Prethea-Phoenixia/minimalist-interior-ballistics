@@ -1,6 +1,5 @@
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
-from ballistics.gun import GunFamily
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg
 from prop_9_7 import nine_seven, sb_9_7
@@ -55,6 +54,7 @@ computational value is 3128 kgf/cm^2.\
             gun_outro,
         ]
     ),
+    family="100x697mm",
     cross_section=0.7854 * dm2,
     shot_mass=15,
     charge_mass=5.2,
@@ -81,6 +81,7 @@ computational value is 3531 kgf/cm^2.\
             gun_outro,
         ]
     ),
+    family="100x697mm",
     cross_section=0.7854 * dm2,
     shot_mass=4.7,
     charge_mass=5.65,
@@ -111,6 +112,7 @@ this example. \n\
             gun_outro,
         ]
     ),
+    family="100x697mm",
     cross_section=0.7854 * dm2,
     shot_mass=5.3,
     charge_mass=6.69,
@@ -124,9 +126,7 @@ this example. \n\
 
 
 all_guns = [he_frag_73, apfsds_73, w_apfsds_86]
-family = GunFamily(name="100x697mm Smoothbore")
-for gun in all_guns:
-    family.add_gun(gun)
+
 
 if __name__ == "__main__":
     from ballistics.state import StateList

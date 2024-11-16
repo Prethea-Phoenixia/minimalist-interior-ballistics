@@ -1,4 +1,4 @@
-from ballistics.gun import Gun, GunFamily
+from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
 from prop_9_7 import nine_seven, sb_9_7
@@ -8,9 +8,9 @@ from prop_sf3 import eighteen_one, sf3
 gun_intro = "The 100mm (rifled) family consists of fixed charge munitions issued \
 to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), \
 and the Type 1959 100mm anti air gun (domestically produced variant of the Soviet anti air gun \
-KS-19M2), and the Soviet field gun M1944 (BS-3) (domestically known as the Type 1944 cannon, \
-domestically produced variant known as Type 1959). Cartridges were produced with metallic \
-casings, in steel and copper, as well with semi-combustible casings for tank guns.\n\
+KS-19M2), and the Type 1959 100mm field gun (domestically produced variants of the Soviet field \
+gun M1944 (BS-3)). Cartridges were produced with metallic casings, in steel and copper, as well \
+with semi-combustible casings for tank guns.\n\
 The APBC, HE-Frag, and the Airburst-Fragmentation projectiles shares the same propelling charge. \
 The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projectile employs an \
 alternative charge."
@@ -37,6 +37,7 @@ for this example.",
             gun_outro,
         ]
     ),
+    family="100x697mm",
     cross_section=0.818 * dm2,
     shot_mass=15.6,
     charge_mass=5.5,
@@ -62,6 +63,7 @@ computational value of 1300 kgf/cm^2 has been adopted.",
             gun_outro,
         ]
     ),
+    family="100x697mm",
     cross_section=0.818 * dm2,
     shot_mass=15.6,
     charge_mass=2.39,
@@ -90,6 +92,7 @@ due to the more rearward positioning of the driving band.",
             gun_outro,
         ]
     ),
+    family="100x697mm",
     cross_section=0.818 * dm2,
     shot_mass=15.88,
     charge_mass=5.5,
@@ -107,10 +110,12 @@ heat = KnownGunProblem(
         [
             gun_intro,
             "\
-The WB122P round is universal in the sense that it can be fired from both guns \
-of this family, as well as from Type 1969 smoothbore tank guns, Type 1971/1973 smoothbore \
-anti tank guns, and Type 1986 high pressure smoothbore anti tank guns. When fired from rifled \
-guns, combustion gas partially blow past the projectile through the lands of the rifling. \
+The WB122P round is universal in the sense that it can be fired from the rifled 100 mm\
+family, including the Type 1959 100mm tank gun, anti-air gun, and towed field gun, \
+as well as the smoothbore 100mm family, \
+including the Type 1969 smoothbore tank guns, Type 1971/1973 smoothbore anti tank guns, \
+and Type 1986 high pressure smoothbore anti tank guns. When fired from rifled guns, \
+combustion gas partially blow past the projectile through the lands of the rifling. \
 This is not well modelled, and consequently the calculated performance is only applicable \
 to smoothbore barrels.\n\
 This example illustrate the WB122P universal fin stabilized high explosive anti tank round \
@@ -124,6 +129,7 @@ The adopted computational value is 2930 kgf/cm^2.",
             gun_outro,
         ]
     ),
+    family="100x697mm",
     cross_section=0.818 * dm2,
     shot_mass=10.05,
     charge_mass=4.8,
@@ -136,9 +142,6 @@ The adopted computational value is 2930 kgf/cm^2.",
 ).get_gun_developing_pressure(pressure_target=PressureTarget.average_pressure(2930e2 * kgf_dm2))
 
 all_guns = [heat, apbc, he_frag, he_frag_reduced]
-family = GunFamily(name="100x697mm Rifled")
-for gun in all_guns:
-    family.add_gun(gun)
 
 if __name__ == "__main__":
     from ballistics.state import StateList

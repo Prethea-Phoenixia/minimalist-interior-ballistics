@@ -20,7 +20,7 @@ Reference:\n\
 
 
 full = KnownGunProblem(
-    name="122mm WB013P HE-Frag (Full)",
+    name="WB013P HE-Frag (Full)",
     description="\n".join(
         [
             gun_intro,
@@ -34,6 +34,7 @@ interior ballistics.",
             gun_outro,
         ]
     ),
+    family="122x785mm",
     cross_section=1.188 * dm2,
     shot_mass=25,
     charge_mass=6.824,
@@ -48,7 +49,7 @@ interior ballistics.",
 )
 
 no_1 = Gun(
-    name="122mm WB013P HE-Frag (No.1 Charge)",
+    name="WB013P HE-Frag (No.1 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -59,6 +60,7 @@ entry.",
             gun_outro,
         ]
     ),
+    family="122x785mm",
     cross_section=1.188 * dm2,
     shot_mass=25,
     charge_mass=6.124,
@@ -70,7 +72,7 @@ entry.",
 )
 
 no_2 = Gun(
-    name="122mm WB013P HE-Frag (No.2 Charge)",
+    name="WB013P HE-Frag (No.2 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -81,6 +83,7 @@ this entry.",
             gun_outro,
         ]
     ),
+    family="122x785mm",
     cross_section=1.188 * dm2,
     shot_mass=25,
     charge_mass=5.424,
@@ -92,7 +95,7 @@ this entry.",
 )
 
 no_3 = Gun(
-    name="122mm WB013P HE-Frag (No.3 Charge)",
+    name="WB013P HE-Frag (No.3 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -104,6 +107,7 @@ entry.",
             gun_outro,
         ]
     ),
+    family="122x785mm",
     cross_section=1.188 * dm2,
     shot_mass=25,
     charge_mass=4.350,

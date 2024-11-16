@@ -19,32 +19,6 @@ from .state import Delta, State, StateList
 logger = logging.getLogger(__name__)
 
 
-@define
-class GunFamily:
-    name: str = field(default="")
-    guns: List[Gun] = field(factory=list)
-
-    def add_gun(self, gun: Gun):
-        self.guns.append(gun)
-
-    def pop_gun(self, gun: Gun):
-        self.guns.remove(gun)
-
-    def to_file(self, filename: str = ""):
-        if not filename:
-            filename = self.name.replace(" ", "_") + ".json"
-
-        converter = Converter()
-        with open(filename, mode="w", encoding="utf-8") as f:
-            json.dump(converter.unstructure(self), f, ensure_ascii=False, indent="\t")
-
-    @staticmethod
-    def from_file(filename: str) -> GunFamily:
-        converter = Converter()
-        with open(filename, mode="r", encoding="utf-8") as f:
-            return converter.structure(json.load(f), GunFamily)
-
-
 @frozen(kw_only=True)
 class Gun:
     """
@@ -54,6 +28,7 @@ class Gun:
 
     name: str = field(default="")
     description: str = field(default="")
+    family: str = field(default="")
     cross_section: float
     shot_mass: float
     charge_mass: float

@@ -24,7 +24,7 @@ Reference:\n\
 
 
 full = KnownGunProblem(
-    name="130mm WB005P HE-Frag (Full Charge)",
+    name="WB005P HE-Frag (Full Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -35,6 +35,7 @@ and 3465 kgf/cm^2 are attested in the source.",
             gun_outro,
         ]
     ),
+    family="130x846mm",
     cross_section=1.394 * dm2,
     shot_mass=33.4,
     charge_mass=12.9,
@@ -49,7 +50,7 @@ and 3465 kgf/cm^2 are attested in the source.",
 )
 
 one = Gun(
-    name="130mm WB005P HE-Frag (No.1 Charge)",
+    name="WB005P HE-Frag (No.1 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -60,6 +61,7 @@ full charge entry, with a reduction in charge mass. ",
             gun_outro,
         ]
     ),
+    family="130x846mm",
     cross_section=1.394 * dm2,
     shot_mass=33.4,
     charge_mass=11,
@@ -72,7 +74,7 @@ full charge entry, with a reduction in charge mass. ",
 
 
 two = KnownGunProblem(
-    name="130mm WB005P HE-Frag (No.2 Charge)",
+    name="WB005P HE-Frag (No.2 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -83,6 +85,7 @@ A computational value of 2365 kgf/cm^2 is adopted.",
             gun_outro,
         ]
     ),
+    family="130x846mm",
     cross_section=1.394 * dm2,
     shot_mass=33.4,
     charge_mass=6.520,
@@ -97,7 +100,7 @@ A computational value of 2365 kgf/cm^2 is adopted.",
 )
 
 three = Gun(
-    name="130mm WB005P HE-Frag (No.3 Charge)",
+    name="WB005P HE-Frag (No.3 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -108,6 +111,7 @@ in charge mass.",
             gun_outro,
         ]
     ),
+    family="130x846mm",
     cross_section=1.394 * dm2,
     shot_mass=33.4,
     charge_mass=5.220,
@@ -120,7 +124,7 @@ in charge mass.",
 
 
 four = Gun(
-    name="130mm WB005P HE-Frag (No.4 Charge)",
+    name="WB005P HE-Frag (No.4 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -132,6 +136,7 @@ in charge mass.",
             gun_outro,
         ]
     ),
+    family="130x846mm",
     cross_section=1.394 * dm2,
     shot_mass=33.4,
     charge_mass=3.920,

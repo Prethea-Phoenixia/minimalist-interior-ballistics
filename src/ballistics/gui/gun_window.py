@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import logging
+import os
 from tkinter import Toplevel
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 from tkinter.ttk import (Button, Combobox, Frame, LabelFrame, Notebook,
                          Scrollbar, Treeview)
 from typing import Callable, Dict, Optional, Tuple
@@ -41,6 +42,7 @@ class DefineGunWindow(Toplevel):
             for i, v in enumerate(
                 [
                     ("Name", "", basis.name + " (copy)" if basis else None),
+                    ("Family", "", basis.family if basis else None),
                     (
                         "Cross Section",
                         "dm²",
@@ -138,7 +140,7 @@ class DefineGunWindow(Toplevel):
 
     def define_gun(self):
         try:
-            name = self.value_entries[0].get()
+            name, family = (e.get() for e in self.value_entries[:2])
             (
                 cross_section,
                 shot_mass,
@@ -148,7 +150,7 @@ class DefineGunWindow(Toplevel):
                 start_pressure,
                 reduced_burnrate,
                 travel,
-            ) = (float(e.get()) for e in self.value_entries[1:])
+            ) = (float(e.get()) for e in self.value_entries[2:])
 
             cross_section *= 1e-2  # dm^2 to m^2
             chamber_volume *= 1e-3  # L to m^3
@@ -163,6 +165,7 @@ class DefineGunWindow(Toplevel):
             charge = Charge.from_propellant(
                 name=" ".join((prop.name, ff.name)),
                 description=ff.description,
+                family=family,
                 reduced_burnrate=reduced_burnrate,
                 propellant=prop,
                 form_function=ff,
@@ -205,12 +208,18 @@ class GunFrame(Frame):
         self.rowconfigure(2, weight=1)
         self.columnconfigure(0, weight=1)
 
-        self.tree = Treeview(self, show="tree", selectmode="browse")
+        cols = ("family",)
+        widths = (66,)
+        self.tree = Treeview(self, show="tree", selectmode="browse", columns=cols)
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
         vsb.grid(row=0, column=1, rowspan=3, sticky="nsew")
         self.tree.config(yscrollcommand=vsb.set)
         self.tree.grid(row=0, column=0, rowspan=3, sticky="nsew")
         self.tree.bind("<<TreeviewSelect>>", self.set_overview_and_states)
+
+        for width, col in zip(widths, self.tree["columns"]):
+            self.tree.heading(column=col, text=col, anchor="c")
+            self.tree.column(column=col, width=width, minwidth=width, stretch=True, anchor="c")
 
         overview_frame = self.add_overview_frame()
         overview_frame.grid(row=0, column=2, columnspan=2, sticky="nsew", **DEFAULT_PAD)
@@ -372,26 +381,40 @@ class GunFrame(Frame):
             self.add_gun(gun)
 
     def save_guns(self):
-        fn = askopenfilename(
+        fn = asksaveasfilename(
             parent=self,
-            title="Save To File",
+            title="Save To Single File",
             filetypes=[("JavaScript Object Notation", ".json")],
+            defaultextension=".json",
         )
         if fn:
             Gun.to_file(guns=self.guns.values(), filename=fn)
+
+    def save_by_family(self):
+        d = askdirectory(parent=self, title="Save By Family", mustexist=True)
+        family_dict = {}
+        for gun in self.guns.values():
+            if gun.family not in family_dict:
+                family_dict[gun.family] = [gun]
+            else:
+                family_dict[gun.family].append(gun)
+
+        for family, guns in family_dict.items():
+            Gun.to_file(guns, filename=os.path.join(d, f"{family.replace(' ', '_')}.json"))
 
     def load_guns(self):
         fn = askopenfilename(
             parent=self,
             title="Load From File",
             filetypes=[("JavaScript Object Notation", ".json")],
+            defaultextension=".json",
         )
         if fn:
             for gun in Gun.from_file(filename=fn):
                 self.add_gun(gun)
 
     def add_gun(self, gun: Gun):
-        gid = self.tree.insert("", "end", text=gun.name)
+        gid = self.tree.insert("", "end", text=gun.name, values=[gun.family])
         self.guns[gid] = gun
 
     @tree_selected()

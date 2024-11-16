@@ -25,7 +25,7 @@ Reference:\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
 m_47_full = KnownGunProblem(
-    name="152mm WB008P HE-Frag (Full Charge)",
+    name="WB008P HE-Frag (Full Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -37,6 +37,7 @@ The adopted computational values of 2570 or 2580 kgf/cm^2 have been attested to.
             gun_outro,
         ]
     ),
+    family="152x750mm",
     cross_section=1.876 * dm2,
     shot_mass=43.56,
     charge_mass=10.67,
@@ -51,7 +52,7 @@ The adopted computational values of 2570 or 2580 kgf/cm^2 have been attested to.
 )
 
 m_47_one = Gun(
-    name="152mm WB008P HE-Frag (No.1 Charge)",
+    name="WB008P HE-Frag (No.1 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -63,6 +64,7 @@ with an reduction in charge mass. ",
             gun_outro,
         ]
     ),
+    family="152x750mm",
     cross_section=1.876 * dm2,
     shot_mass=43.56,
     charge_mass=8.45,
@@ -75,7 +77,7 @@ with an reduction in charge mass. ",
 
 
 m_47_two = KnownGunProblem(
-    name="152mm WB008P HE-Frag (No.2 Charge)",
+    name="WB008P HE-Frag (No.2 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -87,6 +89,7 @@ gauge. Adopted computational value is 1550 kgf/cm^2 ",
             gun_outro,
         ]
     ),
+    family="152x750mm",
     cross_section=1.876 * dm2,
     shot_mass=43.56,
     charge_mass=3.715,
@@ -101,7 +104,7 @@ gauge. Adopted computational value is 1550 kgf/cm^2 ",
 )
 
 m_47_three = Gun(
-    name="152mm WB008P HE-Frag (No.3 Charge)",
+    name="WB008P HE-Frag (No.3 Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -114,6 +117,7 @@ charge mass.",
             gun_outro,
         ]
     ),
+    family="152x750mm",
     cross_section=1.876 * dm2,
     shot_mass=43.56,
     charge_mass=2.3,

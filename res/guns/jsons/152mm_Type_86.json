@@ -1,0 +1,157 @@
+[
+	{
+		"name": "WB028 HE-Frag (Full Charge)",
+		"description": "The 152mm family of separately loaded, case charge munitions are issued to the Type 1986 152mm cannon, earlier models of which were exported under the designation of Type 1983. The gun is provided with both a full variable and a reduced variable charge. Note that thermalchemical properties of the 单芳-1 propellant are notional.\nThis case represents firing with the full variable charge as issued. Nominal velocity is 955m/s. Nominal pressure is 3100 kgf/cm^2 from copper crusher gauge. Computational values of 3282 kgf/cm^2 is adopted.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152mm Type 86",
+		"cross_section": 0.019045000000000003,
+		"shot_mass": 48,
+		"charge_mass": 21.09,
+		"chamber_volume": 0.03057,
+		"loss_fraction": 0.05,
+		"start_pressure": 29400000.0,
+		"travel": 7.091,
+		"charge": {
+			"name": "单芳-1 7 perf cylinder",
+			"description": "2.2 / 7 (d = 1.1) - 28.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 931000.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.001,
+			"adiabatic_index": 1.24,
+			"reduced_burnrate": 1.685886753105295e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "2.2 / 7 (d = 1.1) - 28.0 mm",
+				"chi": 0.7090655052973448,
+				"labda": 0.2317893072275574,
+				"mu": -0.024351405817681127,
+				"Z_k": 1.4368311111111112
+			}
+		}
+	},
+	{
+		"name": "WB028 HE-Frag (Charge No.1)",
+		"description": "The 152mm family of separately loaded, case charge munitions are issued to the Type 1986 152mm cannon, earlier models of which were exported under the designation of Type 1983. The gun is provided with both a full variable and a reduced variable charge. Note that thermalchemical properties of the 单芳-1 propellant are notional.\nThis case represents firing with the full variable charge, with charge bag taken out. Nominal velocity is 890m/s. This entry adopts the same properties of charge from the full charge entry, with a reduced charge mass.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152mm Type 86",
+		"cross_section": 0.019045000000000003,
+		"shot_mass": 48,
+		"charge_mass": 18.8,
+		"chamber_volume": 0.03057,
+		"loss_fraction": 0.05,
+		"start_pressure": 29400000.0,
+		"travel": 7.091,
+		"charge": {
+			"name": "单芳-1 7 perf cylinder",
+			"description": "2.2 / 7 (d = 1.1) - 28.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 931000.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.001,
+			"adiabatic_index": 1.24,
+			"reduced_burnrate": 1.685886753105295e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "2.2 / 7 (d = 1.1) - 28.0 mm",
+				"chi": 0.7090655052973448,
+				"labda": 0.2317893072275574,
+				"mu": -0.024351405817681127,
+				"Z_k": 1.4368311111111112
+			}
+		}
+	},
+	{
+		"name": "WB028 HE-Frag (Charge No.2)",
+		"description": "The 152mm family of separately loaded, case charge munitions are issued to the Type 1986 152mm cannon, earlier models of which were exported under the designation of Type 1983. The gun is provided with both a full variable and a reduced variable charge. Note that thermalchemical properties of the 单芳-1 propellant are notional.\nThis case represents firing the reduced variable charge as issued. Nominal velocity is 780 m/s. Computational pressure of 2500 kgf/cm^2 has been adopted.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152mm Type 86",
+		"cross_section": 0.019045000000000003,
+		"shot_mass": 48,
+		"charge_mass": 12,
+		"chamber_volume": 0.03057,
+		"loss_fraction": 0.05,
+		"start_pressure": 29400000.0,
+		"travel": 7.091,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.2045371619586273e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
+		"name": "WB028 HE-Frag (Charge No.3)",
+		"description": "The 152mm family of separately loaded, case charge munitions are issued to the Type 1986 152mm cannon, earlier models of which were exported under the designation of Type 1983. The gun is provided with both a full variable and a reduced variable charge. Note that thermalchemical properties of the 单芳-1 propellant are notional.\nThis case represents firing the reduced variable charge as issued. Nominal velocity is 660 m/s. Charge characteristics of the No.2 charge has been adopted with a reduction in charge mass.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152mm Type 86",
+		"cross_section": 0.019045000000000003,
+		"shot_mass": 48,
+		"charge_mass": 9.1,
+		"chamber_volume": 0.03057,
+		"loss_fraction": 0.05,
+		"start_pressure": 29400000.0,
+		"travel": 7.091,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.2045371619586273e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
+		"name": "WB028 HE-Frag (Charge No.4)",
+		"description": "The 152mm family of separately loaded, case charge munitions are issued to the Type 1986 152mm cannon, earlier models of which were exported under the designation of Type 1983. The gun is provided with both a full variable and a reduced variable charge. Note that thermalchemical properties of the 单芳-1 propellant are notional.\nThis case represents firing the reduced variable charge as issued. Nominal velocity is 540 m/s. Nominal pressure of >=960 kgf/cm^2 from copper crusher gauge is attested. Charge characteristics of the No.2 charge has been adopted with a reduction in charge mass.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152mm Type 86",
+		"cross_section": 0.019045000000000003,
+		"shot_mass": 48,
+		"charge_mass": 6.2,
+		"chamber_volume": 0.03057,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 7.091,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.83,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 2.2045371619586273e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	}
+]

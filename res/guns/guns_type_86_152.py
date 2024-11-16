@@ -17,7 +17,7 @@ Reference:\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
 type_86_152_full = KnownGunProblem(
-    name="152mm WB028 HE-Frag (Full Charge)",
+    name="WB028 HE-Frag (Full Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -27,6 +27,7 @@ values of 3282 kgf/cm^2 is adopted.",
             gun_outro,
         ]
     ),
+    family="152mm Type 86",
     cross_section=1.9045 * dm2,
     shot_mass=48,
     charge_mass=21.09,
@@ -41,7 +42,7 @@ values of 3282 kgf/cm^2 is adopted.",
 )
 
 type_86_152_one = Gun(
-    name="152mm WB028 HE-Frag (Charge No.1)",
+    name="WB028 HE-Frag (Charge No.1)",
     description="\n".join(
         [
             gun_intro,
@@ -51,6 +52,7 @@ charge entry, with a reduced charge mass.",
             gun_outro,
         ]
     ),
+    family="152mm Type 86",
     cross_section=1.9045 * dm2,
     shot_mass=48,
     charge_mass=18.8,
@@ -62,7 +64,7 @@ charge entry, with a reduced charge mass.",
 )
 
 type_86_152_two = KnownGunProblem(
-    name="152mm WB028 HE-Frag (Charge No.2)",
+    name="WB028 HE-Frag (Charge No.2)",
     description="\n".join(
         [
             gun_intro,
@@ -71,6 +73,7 @@ velocity is 780 m/s. Computational pressure of 2500 kgf/cm^2 has been adopted.",
             gun_outro,
         ]
     ),
+    family="152mm Type 86",
     cross_section=1.9045 * dm2,
     shot_mass=48,
     charge_mass=12,
@@ -85,7 +88,7 @@ velocity is 780 m/s. Computational pressure of 2500 kgf/cm^2 has been adopted.",
 )
 
 type_86_152_three = Gun(
-    name="152mm WB028 HE-Frag (Charge No.3)",
+    name="WB028 HE-Frag (Charge No.3)",
     description="\n".join(
         [
             gun_intro,
@@ -95,6 +98,7 @@ reduction in charge mass.",
             gun_outro,
         ]
     ),
+    family="152mm Type 86",
     cross_section=1.9045 * dm2,
     shot_mass=48,
     charge_mass=9.10,
@@ -107,7 +111,7 @@ reduction in charge mass.",
 
 
 type_86_152_four = Gun(
-    name="152mm WB028 HE-Frag (Charge No.4)",
+    name="WB028 HE-Frag (Charge No.4)",
     description="\n".join(
         [
             gun_intro,
@@ -117,6 +121,7 @@ Charge characteristics of the No.2 charge has been adopted with a reduction in c
             gun_outro,
         ]
     ),
+    family="152mm Type 86",
     cross_section=1.9045 * dm2,
     shot_mass=48,
     charge_mass=6.2,

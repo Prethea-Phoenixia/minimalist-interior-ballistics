@@ -17,7 +17,7 @@ def copper_correction(projectile_mass: float, charge_mass: float):
 # print(1800 * copper_correction(projectile_mass=3.75, charge_mass=0.98))
 
 zis_2_he_frag = KnownGunProblem(
-    name="57mm WB009P HE-Frag",
+    name="WB009P HE-Frag",
     description="Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm \
 anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity at 700/706 m/s. Nominal \
 pressure is 1700/1800 kgf/cm^2 from copper crusher gauge.\n\
@@ -28,6 +28,7 @@ kgf/cm^2 of pressure. \n\
 A major reduction in charge mass, from the nominal value of 0.98 kg, to 0.75kg, is required \
 to match the tabulated performance. The significance of this is currently not well understood.\n"
     + ref,
+    family="57×480mm",
     cross_section=0.2663 * dm2,
     shot_mass=3.75,
     charge_mass=(w := 0.75),
@@ -44,7 +45,7 @@ to match the tabulated performance. The significance of this is currently not we
 # print(3100 * copper_correction(projectile_mass=2.8, charge_mass=1.47))
 
 zis_2_apcbc = KnownGunProblem(
-    name="57mm BR-271M APBC-T",
+    name="BR-271M APBC-T",
     description="Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm \
 anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of 1040 m/s. Nominal \
 pressure of 3100 kgf/cm^2 in copper crusher gauge.\n\
@@ -53,6 +54,7 @@ equivalent Soviet projectile is inferred from the weight used in calculation.\n\
 A major reduction in charge mass, from the nominal value of 1.47 kg, to 1.3 kg, is required \
 to match the tabulated performance. The significance of this is currently not well understood. \n"
     + ref,
+    family="57×480mm",
     cross_section=0.2663 * dm2,
     shot_mass=2.8,
     charge_mass=(w := 1.3),
@@ -69,7 +71,7 @@ to match the tabulated performance. The significance of this is currently not we
 
 # print(3100 * copper_correction(projectile_mass=1.79, charge_mass=1.6))
 zis_2_apcr = KnownGunProblem(
-    name="57mm BR-271P APCR",
+    name="BR-271P APCR",
     description="Type 1955 57mm Cannon is the domestic designation for the Soviet 57mm \
 anti-tank gun M1943 (ZiS-2, GRAU index 52-P-271). Nominal velocity of >1250 m/s. Nominal pressure \
 at 3100 kgf/cm^2 in copper crusher gauge.\n\
@@ -78,6 +80,7 @@ equivalent Soviet projectile is inferred from the weight used in calculation.\n\
 A major reduction in charge mass, from the nominal value of 1.6 kg, to 1.28 kg, is required \
 to match the tabulated performance. The significance of this is currently not well understood.\n"
     + ref,
+    family="57×480mm",
     cross_section=0.2663 * dm2,
     shot_mass=1.79,
     charge_mass=(w := 1.28),

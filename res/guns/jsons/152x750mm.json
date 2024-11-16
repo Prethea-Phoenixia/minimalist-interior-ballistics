@@ -1,0 +1,126 @@
+[
+	{
+		"name": "WB008P HE-Frag (Full Charge)",
+		"description": "The 152mm family of separately loaded, case charge munitions are issued to the Type 1959 152mm cannon, domestically produced variants of the Soviet 152mm towed field gun M1953 (M-47). The HE-Frag projectile is either issued with a full variable or a reduced variable charge. \nThe Full Variable charge consists of several charge bags of 双芳-3 19/1 tubular grains weighing 8.45kg, and supplementary charge bags of the same bringing the full charge to 10.67 kg. The Reduced Variable charge is of bundle-and-loose-grain construction, with 0.25kg of 12/1 for the central bundle, and 3.465 kg of loose 4/1 grains in charge bags. This provides two velocity zones for the full variable charge, and two additional zones for the reduced variable charge. An API projectile is also available, however the charge design for it is unknown at this time.\nThis example illustrates firing the WB008P HE-Frag projectile with the full variable charge as issued. Nominal velocity is 770 m/s. Nominal pressure is 2350 kgf/cm^2 from copper cursher gauge. The adopted computational values of 2570 or 2580 kgf/cm^2 have been attested to.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x750mm",
+		"cross_section": 0.01876,
+		"shot_mass": 43.56,
+		"charge_mass": 10.67,
+		"chamber_volume": 0.01727,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.577000000000001,
+		"charge": {
+			"name": "双芳-3 tube",
+			"description": "1.9 / 1 - 320.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1560.0,
+			"force": 981372.0,
+			"pressure_exponent": 0.81,
+			"covolume": 0.00102561,
+			"adiabatic_index": 1.2663,
+			"reduced_burnrate": 2.218756379335826e-05,
+			"form_function": {
+				"name": "tube",
+				"description": "1.9 / 1 - 320.0 mm",
+				"chi": 1.006015625,
+				"labda": -0.005979653646035566,
+				"mu": 0,
+				"Z_k": 1.0
+			}
+		}
+	},
+	{
+		"name": "WB008P HE-Frag (No.1 Charge)",
+		"description": "The 152mm family of separately loaded, case charge munitions are issued to the Type 1959 152mm cannon, domestically produced variants of the Soviet 152mm towed field gun M1953 (M-47). The HE-Frag projectile is either issued with a full variable or a reduced variable charge. \nThe Full Variable charge consists of several charge bags of 双芳-3 19/1 tubular grains weighing 8.45kg, and supplementary charge bags of the same bringing the full charge to 10.67 kg. The Reduced Variable charge is of bundle-and-loose-grain construction, with 0.25kg of 12/1 for the central bundle, and 3.465 kg of loose 4/1 grains in charge bags. This provides two velocity zones for the full variable charge, and two additional zones for the reduced variable charge. An API projectile is also available, however the charge design for it is unknown at this time.\nThis example illustrates firing the WB008P HE-Frag projectile with the full variable charge with the supplementary charge bag taken out. Nominal velocity is 635 m/s. Charge characteristics of the full charge has been adopted, with an reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x750mm",
+		"cross_section": 0.01876,
+		"shot_mass": 43.56,
+		"charge_mass": 8.45,
+		"chamber_volume": 0.01727,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.577000000000001,
+		"charge": {
+			"name": "双芳-3 tube",
+			"description": "1.9 / 1 - 320.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1560.0,
+			"force": 981372.0,
+			"pressure_exponent": 0.81,
+			"covolume": 0.00102561,
+			"adiabatic_index": 1.2663,
+			"reduced_burnrate": 2.218756379335826e-05,
+			"form_function": {
+				"name": "tube",
+				"description": "1.9 / 1 - 320.0 mm",
+				"chi": 1.006015625,
+				"labda": -0.005979653646035566,
+				"mu": 0,
+				"Z_k": 1.0
+			}
+		}
+	},
+	{
+		"name": "WB008P HE-Frag (No.2 Charge)",
+		"description": "The 152mm family of separately loaded, case charge munitions are issued to the Type 1959 152mm cannon, domestically produced variants of the Soviet 152mm towed field gun M1953 (M-47). The HE-Frag projectile is either issued with a full variable or a reduced variable charge. \nThe Full Variable charge consists of several charge bags of 双芳-3 19/1 tubular grains weighing 8.45kg, and supplementary charge bags of the same bringing the full charge to 10.67 kg. The Reduced Variable charge is of bundle-and-loose-grain construction, with 0.25kg of 12/1 for the central bundle, and 3.465 kg of loose 4/1 grains in charge bags. This provides two velocity zones for the full variable charge, and two additional zones for the reduced variable charge. An API projectile is also available, however the charge design for it is unknown at this time.\nThis example illustrates firing the WB008P HE-Frag projectile with the reduced variable charge as issued. Nominal velocity is 500 m/s. Nominal pressure is <= 2350 kgf/cm^2 from copper crusher gauge. Adopted computational value is 1550 kgf/cm^2 \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x750mm",
+		"cross_section": 0.01876,
+		"shot_mass": 43.56,
+		"charge_mass": 3.715,
+		"chamber_volume": 0.01727,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.577000000000001,
+		"charge": {
+			"name": "Single Base tube",
+			"description": "0.4 / 1 - 6.5 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 983145.7999999999,
+			"pressure_exponent": 0.85,
+			"covolume": 0.00093316,
+			"adiabatic_index": 1.2358,
+			"reduced_burnrate": 2.6626727400198105e-05,
+			"form_function": {
+				"name": "tube",
+				"description": "0.4 / 1 - 6.5 mm",
+				"chi": 1.0653846153846154,
+				"labda": -0.06137184115523466,
+				"mu": 0,
+				"Z_k": 1.0
+			}
+		}
+	},
+	{
+		"name": "WB008P HE-Frag (No.3 Charge)",
+		"description": "The 152mm family of separately loaded, case charge munitions are issued to the Type 1959 152mm cannon, domestically produced variants of the Soviet 152mm towed field gun M1953 (M-47). The HE-Frag projectile is either issued with a full variable or a reduced variable charge. \nThe Full Variable charge consists of several charge bags of 双芳-3 19/1 tubular grains weighing 8.45kg, and supplementary charge bags of the same bringing the full charge to 10.67 kg. The Reduced Variable charge is of bundle-and-loose-grain construction, with 0.25kg of 12/1 for the central bundle, and 3.465 kg of loose 4/1 grains in charge bags. This provides two velocity zones for the full variable charge, and two additional zones for the reduced variable charge. An API projectile is also available, however the charge design for it is unknown at this time.\nThis example illustrates firing the WB008P HE-Frag projectile with a charge bag removed from the reduced variable charge. Nominal velocity is 380 m/s. Nominal pressure is >=900 kgf/cm^2 from copper crusher gauge. Charge characteristics has been adopted from the No.2 charge entry, with an reduction in charge mass.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x750mm",
+		"cross_section": 0.01876,
+		"shot_mass": 43.56,
+		"charge_mass": 2.3,
+		"chamber_volume": 0.01727,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.577000000000001,
+		"charge": {
+			"name": "Single Base tube",
+			"description": "0.4 / 1 - 6.5 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 983145.7999999999,
+			"pressure_exponent": 0.85,
+			"covolume": 0.00093316,
+			"adiabatic_index": 1.2358,
+			"reduced_burnrate": 2.6626727400198105e-05,
+			"form_function": {
+				"name": "tube",
+				"description": "0.4 / 1 - 6.5 mm",
+				"chi": 1.0653846153846154,
+				"labda": -0.06137184115523466,
+				"mu": 0,
+				"Z_k": 1.0
+			}
+		}
+	}
+]
