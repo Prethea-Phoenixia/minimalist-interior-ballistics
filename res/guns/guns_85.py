@@ -1,4 +1,4 @@
-from ballistics.gun import Gun
+from ballistics.gun import Gun, GunFamily
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
 from prop_7_7 import sb_7_7, seven_seven
@@ -25,7 +25,7 @@ Reference:\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
 full = KnownGunProblem(
-    name="85 mm HE-Frag WB014P, WB024P (Full Charge)",
+    name="WB014P, WB024P HE-Frag (Full Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -52,7 +52,7 @@ by varying charge mass.",
 )
 
 reduced = KnownGunProblem(
-    name="85mm HE-Frag WB014P, WB024P (Reduced Charge)",
+    name="WB014P, WB024P HE-Frag (Reduced Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -79,7 +79,7 @@ Matching to established performance by varying charge mass.",
 )
 
 ap = Gun(
-    name="85mm AP(T) WB101P",
+    name="WB101P AP(T)",
     description="\n".join(
         [
             gun_intro,
@@ -103,7 +103,7 @@ Matching to established performance by varying charge mass.",
 )
 
 apbc = Gun(
-    name="85mm APBC(T) WB114P",
+    name="WB114P APBC(T) ",
     description="\n".join(
         [
             gun_intro,
@@ -127,7 +127,7 @@ Matching to established performance by varying charge mass.",
 )
 
 apcr = KnownGunProblem(
-    name="85mm APCR(T) WB102P",
+    name="WB102P APCR(T)",
     description="\n".join(
         [
             gun_intro,
@@ -154,7 +154,7 @@ is 2800 kgf/cm^2. Matching to established performance by varying charge mass.",
 
 
 heat = KnownGunProblem(
-    name="85mm HEAT-FS WB109AP",
+    name="WB109AP HEAT-FS",
     description="\n".join(
         [
             gun_intro,
@@ -180,7 +180,7 @@ is 2643 kgf/cm^2. Matching to established performance by varying charge mass.",
 )
 
 hesh = Gun(
-    name="85mm HESH WB128P",
+    name="WB128P HESH ",
     description="\n".join(
         [
             gun_intro,
@@ -204,7 +204,9 @@ Matching to established performance by varying charge mass.",
 
 
 all_guns = [apcr, heat, ap, apbc, full, reduced, hesh]
-
+family = GunFamily(name="85x630mm Rifled")
+for gun in all_guns:
+    family.add_gun(gun)
 
 if __name__ == "__main__":
     from ballistics.state import StateList

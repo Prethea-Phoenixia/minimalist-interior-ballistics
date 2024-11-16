@@ -1,4 +1,4 @@
-from ballistics.gun import Gun
+from ballistics.gun import Gun, GunFamily
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
 from prop_9_7 import nine_seven, sb_9_7
@@ -24,7 +24,7 @@ Reference:\n\
 
 
 he_frag = KnownGunProblem(
-    name="100mm High Explosive Fragmentation WB004P (Full Charge)",
+    name="WB004P HE-Frag (Full Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -51,7 +51,7 @@ for this example.",
 )
 
 he_frag_reduced = KnownGunProblem(
-    name="100mm High Explosive Fragmentation WB004P (Reduced Charge)",
+    name="WB004P HE-Frag (Reduced Charge)",
     description="\n".join(
         [
             gun_intro,
@@ -76,7 +76,7 @@ computational value of 1300 kgf/cm^2 has been adopted.",
 )
 
 apbc = Gun(
-    name="100mm Armor Piercing Ballistic Capped (Tracer) WB116P",
+    name="WB116P APBC(T)",
     description="\n".join(
         [
             gun_intro,
@@ -102,7 +102,7 @@ due to the more rearward positioning of the driving band.",
 
 
 heat = KnownGunProblem(
-    name="100mm Universal HEAT-FS WB122P",
+    name="WB122P Universal HEAT-FS ",
     description="\n".join(
         [
             gun_intro,
@@ -136,7 +136,9 @@ The adopted computational value is 2930 kgf/cm^2.",
 ).get_gun_developing_pressure(pressure_target=PressureTarget.average_pressure(2930e2 * kgf_dm2))
 
 all_guns = [heat, apbc, he_frag, he_frag_reduced]
-
+family = GunFamily(name="100x697mm Rifled")
+for gun in all_guns:
+    family.add_gun(gun)
 
 if __name__ == "__main__":
     from ballistics.state import StateList

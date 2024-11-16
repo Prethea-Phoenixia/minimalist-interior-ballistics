@@ -1,0 +1,125 @@
+{
+	"name": "100x697mm Rifled",
+	"guns": [
+		{
+			"name": "100mm WB122P Universal HEAT-FS ",
+			"description": "The 100mm (rifled) family consists of fixed charge munitions issued to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), and the Type 1959 100mm anti air gun (domestically produced variant of the Soviet anti air gun KS-19M2), and the Soviet field gun M1944 (BS-3) (domestically known as the Type 1944 cannon, domestically produced variant known as Type 1959). Cartridges were produced with metallic casings, in steel and copper, as well with semi-combustible casings for tank guns.\nThe APBC, HE-Frag, and the Airburst-Fragmentation projectiles shares the same propelling charge. The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projectile employs an alternative charge.\nThe WB122P round is universal in the sense that it can be fired from both guns of this family, as well as from Type 1969 smoothbore tank guns, Type 1971/1973 smoothbore anti tank guns, and Type 1986 high pressure smoothbore anti tank guns. When fired from rifled guns, combustion gas partially blow past the projectile through the lands of the rifling. This is not well modelled, and consequently the calculated performance is only applicable to smoothbore barrels.\nThis example illustrate the WB122P universal fin stabilized high explosive anti tank round fired from the rifled bore of this family, with its specific charge, which consists of 0.14 kg of 10/1 Rosin-Potassium tubular grains as flash suppressant, and 0.82 kg of 18/1 of tubular grains bundled together in the center, with 3.84 kg of 13/7 loose grains making up the rest. Nominal velocity is given as 1000 m/s when fired from rifled guns, although value as low as 955 m/s has been seen in domestic sources. Fired from smoothbore guns, velocity as high as 1070 m/s has been quoted. Nominal pressure value is 2530 kgf/cm^2, from copper crusher gauge. The adopted computational value is 2930 kgf/cm^2.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+			"cross_section": 0.00818,
+			"shot_mass": 10.05,
+			"charge_mass": 4.8,
+			"chamber_volume": 0.00783,
+			"loss_fraction": 0.03,
+			"start_pressure": 29400000.0,
+			"travel": 4.794,
+			"charge": {
+				"name": "Single Base 7 perf cylinder",
+				"description": "1.4 / 7 (d = 0.6) - 14.0 mm",
+				"burn_rate_coefficient": null,
+				"density": 1600.0,
+				"force": 996072.0,
+				"pressure_exponent": 0.84,
+				"covolume": 0.00094967,
+				"adiabatic_index": 1.2383,
+				"reduced_burnrate": 2.2038792509217205e-05,
+				"form_function": {
+					"name": "7 perf cylinder",
+					"description": "1.4 / 7 (d = 0.6) - 14.0 mm",
+					"chi": 0.7205161626694473,
+					"labda": 0.224194073591664,
+					"mu": -0.029672745034190817,
+					"Z_k": 1.426977777777778
+				}
+			}
+		},
+		{
+			"name": "100mm WB116P APBC(T)",
+			"description": "The 100mm (rifled) family consists of fixed charge munitions issued to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), and the Type 1959 100mm anti air gun (domestically produced variant of the Soviet anti air gun KS-19M2), and the Soviet field gun M1944 (BS-3) (domestically known as the Type 1944 cannon, domestically produced variant known as Type 1959). Cartridges were produced with metallic casings, in steel and copper, as well with semi-combustible casings for tank guns.\nThe APBC, HE-Frag, and the Airburst-Fragmentation projectiles shares the same propelling charge. The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projectile employs an alternative charge.\nThis example illustrate the WB116P armor piercing ballistic capped tracer projectile with the full charge, which loads 5.5 or 5.66 kg of 18/1-26 long tubular grains, for copper and steel cartridges, respectively. Nominal velocity is given as 902.5m/s, or less commonly 887 m/s. Nominal pressure value is 3000 kgf/cm^2, from copper crusher gauge.\nThe charge mass and characteristics of the WB004P full charge case has been used. Increase in velocity despite increased projectile weight is explained by longer obturated travel in bore, due to the more rearward positioning of the driving band.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+			"cross_section": 0.00818,
+			"shot_mass": 15.88,
+			"charge_mass": 5.5,
+			"chamber_volume": 0.007983,
+			"loss_fraction": 0.03,
+			"start_pressure": 29400000.0,
+			"travel": 4.9,
+			"charge": {
+				"name": "双芳-3 tube",
+				"description": "1.7 / 1 - 260.0 mm",
+				"burn_rate_coefficient": null,
+				"density": 1560.0,
+				"force": 981372.0,
+				"pressure_exponent": 0.81,
+				"covolume": 0.00102561,
+				"adiabatic_index": 1.2663,
+				"reduced_burnrate": 2.3292960708838708e-05,
+				"form_function": {
+					"name": "tube",
+					"description": "1.7 / 1 - 260.0 mm",
+					"chi": 1.0066153846153847,
+					"labda": -0.006571908910285801,
+					"mu": 0,
+					"Z_k": 1.0
+				}
+			}
+		},
+		{
+			"name": "100mm WB004P High Explosive Fragmentation (Full Charge)",
+			"description": "The 100mm (rifled) family consists of fixed charge munitions issued to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), and the Type 1959 100mm anti air gun (domestically produced variant of the Soviet anti air gun KS-19M2), and the Soviet field gun M1944 (BS-3) (domestically known as the Type 1944 cannon, domestically produced variant known as Type 1959). Cartridges were produced with metallic casings, in steel and copper, as well with semi-combustible casings for tank guns.\nThe APBC, HE-Frag, and the Airburst-Fragmentation projectiles shares the same propelling charge. The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projectile employs an alternative charge.\nThis example illustrate the WB004P HE-Frag shell fired with the full charge, which loads 5.5 or 5.66 kg of 18/1-26 long tubular grains, for copper and steel cartridges, respectively. The nominal velocity is 900 m/s, at a nomianl chamber pressure of 3000 kgf/cm^2 as measured from copper crusher gauges. Actual pressure used for computation has been variously reported as 3141 and 3300 kgf/cm^2. A value of 3206 kgf/cm^2 for a 5.5 kg charge has been adopted for this example.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+			"cross_section": 0.00818,
+			"shot_mass": 15.6,
+			"charge_mass": 5.5,
+			"chamber_volume": 0.007985,
+			"loss_fraction": 0.03,
+			"start_pressure": 29400000.0,
+			"travel": 4.743,
+			"charge": {
+				"name": "双芳-3 tube",
+				"description": "1.7 / 1 - 260.0 mm",
+				"burn_rate_coefficient": null,
+				"density": 1560.0,
+				"force": 981372.0,
+				"pressure_exponent": 0.81,
+				"covolume": 0.00102561,
+				"adiabatic_index": 1.2663,
+				"reduced_burnrate": 2.3292960708838708e-05,
+				"form_function": {
+					"name": "tube",
+					"description": "1.7 / 1 - 260.0 mm",
+					"chi": 1.0066153846153847,
+					"labda": -0.006571908910285801,
+					"mu": 0,
+					"Z_k": 1.0
+				}
+			}
+		},
+		{
+			"name": "100mm WB004P High Explosive Fragmentation (Reduced Charge)",
+			"description": "The 100mm (rifled) family consists of fixed charge munitions issued to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), and the Type 1959 100mm anti air gun (domestically produced variant of the Soviet anti air gun KS-19M2), and the Soviet field gun M1944 (BS-3) (domestically known as the Type 1944 cannon, domestically produced variant known as Type 1959). Cartridges were produced with metallic casings, in steel and copper, as well with semi-combustible casings for tank guns.\nThe APBC, HE-Frag, and the Airburst-Fragmentation projectiles shares the same propelling charge. The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projectile employs an alternative charge.\nThis example illustrate the WB004P HE-Frag shell fired with the reduced charge, which loads 12/1 tubular grains in a central bundle, with loose 9/7 grains bringing the total charge mass to 2.39 kg. Nominal velocity is 600 m/s. Nominal pressure is <= 2000 kgf/cm^2. A computational value of 1300 kgf/cm^2 has been adopted.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+			"cross_section": 0.00818,
+			"shot_mass": 15.6,
+			"charge_mass": 2.39,
+			"chamber_volume": 0.007985,
+			"loss_fraction": 0.03,
+			"start_pressure": 29400000.0,
+			"travel": 4.743,
+			"charge": {
+				"name": "Single Base 7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"burn_rate_coefficient": null,
+				"density": 1600.0,
+				"force": 991956.0,
+				"pressure_exponent": 0.83,
+				"covolume": 0.0009516,
+				"adiabatic_index": 1.2381,
+				"reduced_burnrate": 2.8856995615912948e-05,
+				"form_function": {
+					"name": "7 perf cylinder",
+					"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+					"chi": 0.715085881325839,
+					"labda": 0.22277237666720232,
+					"mu": -0.02532440141410895,
+					"Z_k": 1.4397951219512195
+				}
+			}
+		}
+	]
+}

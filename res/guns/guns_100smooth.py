@@ -1,5 +1,6 @@
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
+from ballistics.gun import GunFamily
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg
 from prop_9_7 import nine_seven, sb_9_7
@@ -39,7 +40,7 @@ Reference:\n\
 
 
 he_frag_73 = KnownGunProblem(
-    name="100mm HE-Frag FS WB031P",
+    name="WB031P HE-Frag FS",
     description="\n".join(
         [
             gun_intro,
@@ -66,7 +67,7 @@ computational value is 3128 kgf/cm^2.\
 ).get_gun_developing_pressure(pressure_target=PressureTarget.average_pressure(3128e2 * kgf_dm2))
 
 apfsds_73 = KnownGunProblem(
-    name="100mm APFSDS(T) WB125P, Tungsten Cored APFSDS(T) WB132P",
+    name="WB125P APFSDS(T), WB132P Tungsten Cored APFSDS(T)",
     description="\n".join(
         [
             gun_intro,
@@ -93,7 +94,7 @@ computational value is 3531 kgf/cm^2.\
 
 
 w_apfsds_86 = KnownGunProblem(
-    name="100mm Tungsten APFSDS(T) for Type 86",
+    name="Tungsten APFSDS(T) for Type 86",
     description="\n".join(
         [
             gun_intro,
@@ -123,6 +124,9 @@ this example. \n\
 
 
 all_guns = [he_frag_73, apfsds_73, w_apfsds_86]
+family = GunFamily(name="100x697mm Smoothbore")
+for gun in all_guns:
+    family.add_gun(gun)
 
 if __name__ == "__main__":
     from ballistics.state import StateList

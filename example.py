@@ -2,7 +2,7 @@ import logging
 
 from src.ballistics.charge import Charge, Propellant
 from src.ballistics.form_function import FormFunction, MultiPerfShape
-from src.ballistics.gun import Gun
+from src.ballistics.gun import Gun, GunFamily
 from src.ballistics.problem import (FixedChargeProblem, FixedVolumeProblem,
                                     PressureTarget)
 from src.ballistics.state import State, StateList
@@ -55,7 +55,7 @@ are fired.",
     print(PressureTarget.average_pressure.__name__)
     bs_3 = bs_3_fc.solve_reduced_burn_rate_for_volume_at_pressure(
         chamber_volume=7.9 * L,
-        pressure_target=PressureTarget.average_pressure(30000000000 * kgf_dm2),
+        pressure_target=PressureTarget.average_pressure(3000e2 * kgf_dm2),
         n_intg=100,
         acc=1e-3,
     )
@@ -63,6 +63,12 @@ are fired.",
     print(tr3)
     print(eighteen_one)
     print(bs_3)
+
+    bs_3_family = GunFamily(name="BS3")
+    bs_3_family.add_gun(bs_3)
+
+    bs_3_family.to_file("test.json")
+
 
 """
 kgf s   9.8 kg m    s           kg
