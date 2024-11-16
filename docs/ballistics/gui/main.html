@@ -85,7 +85,7 @@
                                 <a class="variable" href="#MainFrame.acc">acc</a>
                         </li>
                         <li>
-                                <a class="variable" href="#MainFrame.step">step</a>
+                                <a class="variable" href="#MainFrame.steps">steps</a>
                         </li>
                         <li>
                                 <a class="variable" href="#MainFrame.config_menu">config_menu</a>
@@ -225,7 +225,7 @@
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="n">menubar</span><span class="o">.</span><span class="n">add_cascade</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">config_menu</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Config&quot;</span><span class="p">)</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">acc</span> <span class="o">=</span> <span class="n">DEFAULT_ACC</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">DEFAULT_STEPS</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">DEFAULT_STEPS</span>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">rowconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">columnconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -933,7 +933,7 @@ use, visual, width.</p>
 </span><span id="MainFrame-101"><a href="#MainFrame-101"><span class="linenos">101</span></a>        <span class="n">menubar</span><span class="o">.</span><span class="n">add_cascade</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">config_menu</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Config&quot;</span><span class="p">)</span>
 </span><span id="MainFrame-102"><a href="#MainFrame-102"><span class="linenos">102</span></a>
 </span><span id="MainFrame-103"><a href="#MainFrame-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">acc</span> <span class="o">=</span> <span class="n">DEFAULT_ACC</span>
-</span><span id="MainFrame-104"><a href="#MainFrame-104"><span class="linenos">104</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">DEFAULT_STEPS</span>
+</span><span id="MainFrame-104"><a href="#MainFrame-104"><span class="linenos">104</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">DEFAULT_STEPS</span>
 </span><span id="MainFrame-105"><a href="#MainFrame-105"><span class="linenos">105</span></a>
 </span><span id="MainFrame-106"><a href="#MainFrame-106"><span class="linenos">106</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">rowconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span><span id="MainFrame-107"><a href="#MainFrame-107"><span class="linenos">107</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">columnconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -1063,7 +1063,7 @@ together.</p>
 </span><span id="MainFrame.__init__-101"><a href="#MainFrame.__init__-101"><span class="linenos">101</span></a>        <span class="n">menubar</span><span class="o">.</span><span class="n">add_cascade</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">config_menu</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Config&quot;</span><span class="p">)</span>
 </span><span id="MainFrame.__init__-102"><a href="#MainFrame.__init__-102"><span class="linenos">102</span></a>
 </span><span id="MainFrame.__init__-103"><a href="#MainFrame.__init__-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">acc</span> <span class="o">=</span> <span class="n">DEFAULT_ACC</span>
-</span><span id="MainFrame.__init__-104"><a href="#MainFrame.__init__-104"><span class="linenos">104</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">DEFAULT_STEPS</span>
+</span><span id="MainFrame.__init__-104"><a href="#MainFrame.__init__-104"><span class="linenos">104</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">DEFAULT_STEPS</span>
 </span><span id="MainFrame.__init__-105"><a href="#MainFrame.__init__-105"><span class="linenos">105</span></a>
 </span><span id="MainFrame.__init__-106"><a href="#MainFrame.__init__-106"><span class="linenos">106</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">rowconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span><span id="MainFrame.__init__-107"><a href="#MainFrame.__init__-107"><span class="linenos">107</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">columnconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -1161,13 +1161,13 @@ together.</p>
     
 
                             </div>
-                            <div id="MainFrame.step" class="classattr">
+                            <div id="MainFrame.steps" class="classattr">
                                 <div class="attr variable">
-            <span class="name">step</span>
+            <span class="name">steps</span>
 
         
     </div>
-    <a class="headerlink" href="#MainFrame.step"></a>
+    <a class="headerlink" href="#MainFrame.steps"></a>
     
     
 
