@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import logging
 import os
+from itertools import zip_longest
 from tkinter import Toplevel
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 from tkinter.ttk import (Button, Combobox, Entry, Frame, Label, LabelFrame,
                          Notebook, Scrollbar, Treeview)
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Dict, Optional, Tuple, Union
 
 from .. import Significance
 from ..charge import Charge, Propellant
@@ -68,8 +69,8 @@ class DefineGunWindow(Toplevel):
                     ),
                     (
                         "Reduced Burn Rate",
-                        "/ns",
-                        basis.charge.reduced_burnrate * 1e9 if basis else None,
+                        "/μs",
+                        basis.charge.reduced_burnrate * 1e6 if basis else None,
                     ),
                     ("Shot Travel", "dm", basis.travel * 10 if basis else None),
                 ]
@@ -157,7 +158,7 @@ class DefineGunWindow(Toplevel):
             chamber_volume *= 1e-3  # L to m^3
             start_pressure *= 1e6  # MPa to Pa
             loss_fraction *= 1e-2  # % to 1
-            reduced_burnrate *= 1e-9  # ns to s
+            reduced_burnrate *= 1e-6  # μs to s
             travel *= 1e-1
 
             prop = self.get_prop()
@@ -286,7 +287,7 @@ class GunFrame(Frame):
                 for v in (
                     ("Loss Fraction", "%"),
                     ("Start Pressure", "MPa"),
-                    ("Red. Burnrate", "/ns"),
+                    ("Red. Burnrate", "/us"),
                     ("Shot Travel", "dm"),
                 )
             ),
@@ -305,47 +306,27 @@ class GunFrame(Frame):
 
     def add_derived_frame(self) -> LabelFrame:
         derived_frame = LabelFrame(self, text="Derived")
-        derived_frame.columnconfigure(0, weight=1)
-        derived_frame.columnconfigure(1, weight=1)
-        derived_frame.columnconfigure(2, weight=1)
 
-        dv_left_frame, dv_left_params = add_frame_group(
-            derived_frame,
-            (
-                (*v, None, True)
-                for v in (
-                    ("Velocity Limit", "m/s"),
-                    ("Load Density", "g/cm³"),
-                )
-            ),
-        )
-        dv_left_frame.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+        derived_entry_unit_groups = [
+            ("Velocity Limit", "m/s"),
+            ("Load Density", "g/cm³"),
+            ("Ballistic Eff.", "%"),
+            ("Thermal Eff.", "%"),
+            ("Piezo. Eff.", "%"),
+            ("Burnout Pos.", "%"),
+            ("Peak Acc.", "g0"),
+        ]
+        self.dv_params = []
+        derived_iter = iter(derived_entry_unit_groups)
+        for i, v in enumerate(zip_longest(derived_iter, derived_iter)):
+            dv_frame, dv_params = add_frame_group(
+                derived_frame,
+                ((*val, None, True) for val in v if val),
+            )
+            dv_frame.grid(row=0, column=i, sticky="nsew", **DEFAULT_PAD)
+            derived_frame.columnconfigure(i, weight=1)
 
-        dv_mid_frame, dv_mid_params = add_frame_group(
-            derived_frame,
-            (
-                (*v, None, True)
-                for v in (
-                    ("Ballistic Eff.", "%"),
-                    ("Thermal Eff.", "%"),
-                )
-            ),
-        )
-        dv_mid_frame.grid(row=0, column=1, sticky="nsew", **DEFAULT_PAD)
-
-        dv_right_frame, dv_right_params = add_frame_group(
-            derived_frame,
-            (
-                (*v, None, True)
-                for v in (
-                    ("Burnout Point", "%"),
-                    # ("Thermal Eff.", "%"),
-                )
-            ),
-        )
-        dv_right_frame.grid(row=0, column=2, sticky="nsew", **DEFAULT_PAD)
-
-        self.dv_params = (*dv_left_params, *dv_mid_params, *dv_right_params)
+            self.dv_params.extend(dv_params)
 
         return derived_frame
 
@@ -366,7 +347,7 @@ class GunFrame(Frame):
                 gun.chamber_volume * 1e3,
                 gun.loss_fraction * 1e2,
                 gun.start_pressure * 1e-6,
-                gun.charge.reduced_burnrate * 1e9,
+                gun.charge.reduced_burnrate * 1e6,
                 gun.travel * 10,
                 ff.chi,
                 ff.labda,
@@ -382,22 +363,34 @@ class GunFrame(Frame):
             else:
                 raise ValueError()
 
+        be: Union[float, str] = "N/A"
+        te: Union[float, str] = "N/A"
+        pe: Union[float, str] = "N/A"
+        bop: Union[float, str] = "N/A"
+        acc: Union[float, str] = "N/A"
+
         if states:
-            muzzle = states.get_state_by_marker(Significance.MUZZLE)
-            mv = muzzle.velocity
-            bl = muzzle.travel
+            mv = states.muzzle_velocity
+            bl = states.travel
 
-            be = gun.get_ballistic_efficiency(mv)
-            te = gun.get_thermal_efficiency(mv)
+            be = gun.get_ballistic_efficiency(mv) * 100
+            te = gun.get_thermal_efficiency(mv) * 100
 
-            if states.has_state_with_marker(Significance.BURNOUT):
-                bop = states.get_state_by_marker(Significance.BURNOUT).travel / bl
+            pe = (
+                gun.get_piezoelectric_efficiency(
+                    velocity=mv, peak_average_pressure=states.peak_average_pressure
+                )
+                * 100
+            )
 
-        else:
-            be, te, bop = 0, 0, 0
+            acc = states.peak_shot_pressure * gun.cross_section / gun.shot_mass / 9.8
+            try:
+                bop = states.burnout_point / bl * 100
+            except ValueError:
+                bop = "UNCONTAINED"
 
         for v, sv in zip(
-            (gun.velocity_limit, gun.delta * 1e-3, be * 100, te * 100, bop * 100),
+            (gun.velocity_limit, gun.delta * 1e-3, be, te, pe, bop, acc),
             self.dv_params,
         ):
             if isinstance(v, float) or isinstance(v, int):

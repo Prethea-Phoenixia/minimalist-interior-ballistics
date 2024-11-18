@@ -3,12 +3,7 @@ from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
 from prop_9_7 import nine_seven, sb_9_7
 
-ref = "Reference:\n\
- 《火炮内弹道计算手册》(1987)\n\
- 《火炸药手册 (增订本）第二分册》(1981).\n\
- 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
-
-gun_intro = "The 76.2x385mm fixed ammunition family is issued to the Soviet 76.2mm \
+gun_intro = "The 76.2x385mm family of fixed charge ammunition is issued to the Soviet 76.2mm \
 divisional gun M1942 (ZiS-3, GRAU index 52-P-354U), domestically produced as Type 1954 \
 76mm cannon. The same ballistics applies to the D-56T rifled gun, mounted on the PT-76. \
 The HE-Frag and APBC projectiles share a charge of 9/7 7-perforated loose grains. \

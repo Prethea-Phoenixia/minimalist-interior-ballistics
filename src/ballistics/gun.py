@@ -99,6 +99,11 @@ class Gun:
     def get_ballistic_efficiency(self, velocity: float) -> float:
         return self.get_thermal_efficiency(velocity) / self.phi
 
+    def get_piezoelectric_efficiency(self, velocity: float, peak_average_pressure: float) -> float:
+        return (0.5 * self.phi * self.shot_mass * velocity**2) / (
+            self.cross_section * self.travel * peak_average_pressure
+        )
+
     def get_bomb_state(self) -> State:
         """
         Generate a special state that corresponds to the case where the gun is operated
