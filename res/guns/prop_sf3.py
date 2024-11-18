@@ -19,8 +19,8 @@ sf3 = Propellant(
         }
     ),
     density=1.56 * kg_dm3,
-    force=1001400 * kgfdm_kg,
-    pressure_exponent=0.81,
+    force=100.14e4 * kgfdm_kg,
+    # pressure_exponent=0.81,
     covolume=1.02561 * dm3_kg,
     adiabatic_index=1.2663,
 )

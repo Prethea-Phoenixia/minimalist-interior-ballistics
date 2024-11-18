@@ -1,0 +1,95 @@
+[
+	{
+		"name": "WB129P HEAT-FS",
+		"description": "The 120x790mm smoothbore family consists of fixed charge munitions issued to the 120mm smoothbore gun, provisionally fitted to the WZ-122 project. Charges are specific to each projectile type.\nThe WB129P HEAT-FS projectiles are fired with a fixed charge, with 6.431 kg of propellant. 1 kg of 18/1-33 single perforated tubular grain is bundled in the center. 13/7 7 perforated loose grains makes up the rest. The nominal pressure developed is <=2500 kgf/cm^2. The computational value of 2716 kgf/cm^2. has been adopted per source. Nominal velocity of 1000 m/s is developed.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "120x790mm",
+		"cross_section": 0.01131,
+		"shot_mass": 15,
+		"charge_mass": 6.431,
+		"chamber_volume": 0.010150000000000001,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.111000000000001,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.4 / 7 (d = 0.6) - 14.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 996072.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00094967,
+			"adiabatic_index": 1.2383,
+			"reduced_burnrate": 2.9724883850487636e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.4 / 7 (d = 0.6) - 14.0 mm",
+				"chi": 0.7205161626694473,
+				"labda": 0.224194073591664,
+				"mu": -0.029672745034190817,
+				"Z_k": 1.426977777777778
+			}
+		}
+	},
+	{
+		"name": "WB032P HE-Frag-FS",
+		"description": "The 120x790mm smoothbore family consists of fixed charge munitions issued to the 120mm smoothbore gun, provisionally fitted to the WZ-122 project. Charges are specific to each projectile type.\nThe WB129P HE-Frag-FS projectiles are fired with a fixed charge, with 6.4 kg of propellant. 1 kg of 18/1-33 single perforated tubular grain is bundled in the center. 15/7 seven perforated loose grains makes up the rest. The nominal pressure developed is <=2400 kgf/cm^2. The computational value of 2607 kgf/cm^2. has been adopted per source. Nominal velocity of 940 m/s is developed.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "120x790mm",
+		"cross_section": 0.01131,
+		"shot_mass": 16.5,
+		"charge_mass": 6.4,
+		"chamber_volume": 0.010150000000000001,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.111000000000001,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.6 / 7 (d = 0.8) - 17.0 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 996072.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00094967,
+			"adiabatic_index": 1.2383,
+			"reduced_burnrate": 2.801950523375949e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.6 / 7 (d = 0.8) - 17.0 mm",
+				"chi": 0.7279961914020233,
+				"labda": 0.20236588295182417,
+				"mu": -0.026759125018423032,
+				"Z_k": 1.4489425
+			}
+		}
+	},
+	{
+		"name": "APFSDS for Type 71",
+		"description": "The 120x790mm smoothbore family consists of fixed charge munitions issued to the 120mm smoothbore gun, provisionally fitted to the WZ-122 project. Charges are specific to each projectile type.\nThe APFSDS projectiles are fired with a fixed charge, with 8.4 kg of propellant. 1 kg of 18/1-33 single perforated tubular grain is bundled in the center. 9/7 7 perforated loose grains makes up the rest. The nominal pressure developed is <=3280 kgf/cm^2. The computational value of 3280 kgf/cm^2. has been adopted per source. Nominal velocity of >=1580 m/s is developed.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "120x790mm",
+		"cross_section": 0.01131,
+		"shot_mass": 6,
+		"charge_mass": 8.4,
+		"chamber_volume": 0.011779999999999999,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 5.0,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 3.7620504785351995e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	}
+]

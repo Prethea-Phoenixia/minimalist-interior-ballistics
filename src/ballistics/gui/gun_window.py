@@ -4,14 +4,15 @@ import logging
 import os
 from tkinter import Toplevel
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
-from tkinter.ttk import (Button, Combobox, Frame, LabelFrame, Notebook,
-                         Scrollbar, Treeview)
+from tkinter.ttk import (Button, Combobox, Entry, Frame, Label, LabelFrame,
+                         Notebook, Scrollbar, Treeview)
 from typing import Callable, Dict, Optional, Tuple
 
+from .. import Significance
 from ..charge import Charge, Propellant
 from ..form_function import FormFunction, MultiPerfShape
 from ..gun import Gun
-from ..state import State
+from ..state import State, StateList
 from . import DEFAULT_PAD, DEFAULT_TEXT_HEIGHT, DEFAULT_TEXT_WIDTH
 from .misc import add_frame_group, add_label_entry_label_group, tree_selected
 from .themed_scrolled_text import ThemedScrolledText as ScrolledText
@@ -208,14 +209,18 @@ class GunFrame(Frame):
         self.rowconfigure(2, weight=1)
         self.columnconfigure(0, weight=1)
 
-        cols = ("family",)
-        widths = (66,)
-        self.tree = Treeview(self, show="tree", selectmode="browse", columns=cols)
+        cols = ("case", "family")
+        widths = (250, 100)
+        self.tree = Treeview(self, show="headings", selectmode="browse", columns=cols)
         vsb = Scrollbar(self, orient="vertical", command=self.tree.yview)
         vsb.grid(row=0, column=1, rowspan=3, sticky="nsew")
         self.tree.config(yscrollcommand=vsb.set)
         self.tree.grid(row=0, column=0, rowspan=3, sticky="nsew")
         self.tree.bind("<<TreeviewSelect>>", self.set_overview_and_states)
+
+        hsb = Scrollbar(self, orient="horizontal", command=self.tree.xview)
+        self.tree.config(xscrollcommand=hsb.set)
+        hsb.grid(row=3, column=0, sticky="nsew")
 
         for width, col in zip(widths, self.tree["columns"]):
             self.tree.heading(column=col, text=col, anchor="c")
@@ -227,8 +232,13 @@ class GunFrame(Frame):
         derived_frame = self.add_derived_frame()
         derived_frame.grid(row=1, column=2, columnspan=2, sticky="nsew", **DEFAULT_PAD)
 
+        # guidance_frame = self.add_guidance_frame()
+        # guidance_frame.grid(row=1, column=3, sticky="nsew", **DEFAULT_PAD)
+
         self.states_frame = StatesFrame(self)
-        self.states_frame.grid(row=2, column=2, columnspan=2, stick="nsew", **DEFAULT_PAD)
+        self.states_frame.grid(
+            row=2, column=2, columnspan=2, rowspan=2, stick="nsew", **DEFAULT_PAD
+        )
 
         self.guns: Dict[str, Gun] = {}
 
@@ -249,13 +259,13 @@ class GunFrame(Frame):
         )
         self.overview_text.grid(row=0, column=0, rowspan=2, sticky="nsew", **DEFAULT_PAD)
 
-        ov_top_frame, self.ov_top_params = add_frame_group(
+        ov_top_frame, ov_top_params = add_frame_group(
             overview_frame,
             ((v, "", None, True) for v in ("Charge Name", "Charge Desc.")),
         )
         ov_top_frame.grid(row=0, column=1, columnspan=3, sticky="nsew", **DEFAULT_PAD)
 
-        ov_left_frame, self.ov_left_params = add_frame_group(
+        ov_left_frame, ov_left_params = add_frame_group(
             overview_frame,
             (
                 (*v, None, True)
@@ -269,7 +279,7 @@ class GunFrame(Frame):
         )
         ov_left_frame.grid(row=1, column=1, stick="nsew", **DEFAULT_PAD)
 
-        ov_mid_frame, self.ov_mid_params = add_frame_group(
+        ov_mid_frame, ov_mid_params = add_frame_group(
             overview_frame,
             (
                 (*v, None, True)
@@ -283,19 +293,23 @@ class GunFrame(Frame):
         )
         ov_mid_frame.grid(row=1, column=2, stick="nsew", **DEFAULT_PAD)
 
-        ov_right_frame, self.ov_right_params = add_frame_group(
+        ov_right_frame, ov_right_params = add_frame_group(
             overview_frame,
             ((*v, None, True) for v in (("χ", ""), ("λ", ""), ("μ", ""), ("Zₖ", ""))),
         )
         ov_right_frame.grid(row=1, column=3, stick="nsew", **DEFAULT_PAD)
+
+        self.ov_params = (*ov_top_params, *ov_left_params, *ov_mid_params, *ov_right_params)
 
         return overview_frame
 
     def add_derived_frame(self) -> LabelFrame:
         derived_frame = LabelFrame(self, text="Derived")
         derived_frame.columnconfigure(0, weight=1)
+        derived_frame.columnconfigure(1, weight=1)
+        derived_frame.columnconfigure(2, weight=1)
 
-        dv_frame, self.dv_params = add_frame_group(
+        dv_left_frame, dv_left_params = add_frame_group(
             derived_frame,
             (
                 (*v, None, True)
@@ -305,68 +319,111 @@ class GunFrame(Frame):
                 )
             ),
         )
-        dv_frame.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+        dv_left_frame.grid(row=0, column=0, sticky="nsew", **DEFAULT_PAD)
+
+        dv_mid_frame, dv_mid_params = add_frame_group(
+            derived_frame,
+            (
+                (*v, None, True)
+                for v in (
+                    ("Ballistic Eff.", "%"),
+                    ("Thermal Eff.", "%"),
+                )
+            ),
+        )
+        dv_mid_frame.grid(row=0, column=1, sticky="nsew", **DEFAULT_PAD)
+
+        dv_right_frame, dv_right_params = add_frame_group(
+            derived_frame,
+            (
+                (*v, None, True)
+                for v in (
+                    ("Burnout Point", "%"),
+                    # ("Thermal Eff.", "%"),
+                )
+            ),
+        )
+        dv_right_frame.grid(row=0, column=2, sticky="nsew", **DEFAULT_PAD)
+
+        self.dv_params = (*dv_left_params, *dv_mid_params, *dv_right_params)
 
         return derived_frame
 
-    def set_overview(self, gun: Gun) -> None:
+    def set_overview(self, gun: Gun, states: Optional[StateList]) -> None:
         self.overview_text.config(state="normal")
         self.overview_text.delete(1.0, "end")
-
         self.overview_text.insert("insert", gun.description)
+        self.overview_text.config(state="disabled")
 
-        for v_str, sv in zip(
-            (gun.charge.name, gun.charge.description),
-            self.ov_top_params,
-        ):
-            sv.set(v_str)
-
-        for v_flt, sv in zip(
+        ff = gun.charge.form_function
+        for v, sv in zip(
             (
+                gun.charge.name,
+                gun.charge.description,
                 gun.cross_section * 1e2,
                 gun.shot_mass,
                 gun.charge_mass,
                 gun.chamber_volume * 1e3,
+                gun.loss_fraction * 1e2,
+                gun.start_pressure * 1e-6,
+                gun.charge.reduced_burnrate * 1e9,
+                gun.travel * 10,
+                ff.chi,
+                ff.labda,
+                ff.mu,
+                ff.Z_k,
             ),
-            self.ov_left_params,
+            self.ov_params,
         ):
-            sv.set(f"{v_flt:.3f}")
+            if isinstance(v, float) or isinstance(v, int):
+                sv.set(f"{v:.3f}")
+            elif isinstance(v, str):
+                sv.set(v)
+            else:
+                raise ValueError()
 
-        # fmt: off
-        for v_flt, sv in zip(
-            (
-                gun.loss_fraction * 1e2, gun.start_pressure * 1e-6,
-                gun.charge.reduced_burnrate * 1e9, gun.travel * 10,
-            ),
-            self.ov_mid_params
+        if states:
+            muzzle = states.get_state_by_marker(Significance.MUZZLE)
+            mv = muzzle.velocity
+            bl = muzzle.travel
+
+            be = gun.get_ballistic_efficiency(mv)
+            te = gun.get_thermal_efficiency(mv)
+
+            if states.has_state_with_marker(Significance.BURNOUT):
+                bop = states.get_state_by_marker(Significance.BURNOUT).travel / bl
+
+        else:
+            be, te, bop = 0, 0, 0
+
+        for v, sv in zip(
+            (gun.velocity_limit, gun.delta * 1e-3, be * 100, te * 100, bop * 100),
+            self.dv_params,
         ):
-            sv.set(f"{v_flt:.3f}")
-        # fmt: on
+            if isinstance(v, float) or isinstance(v, int):
+                sv.set(f"{v:.3f}")
+            elif isinstance(v, str):
+                sv.set(v)
+            else:
+                raise ValueError()
 
-        ff = gun.charge.form_function
-        for v_flt, sv in zip((ff.chi, ff.labda, ff.mu, ff.Z_k), self.ov_right_params):
-            sv.set(f"{v_flt:.3f}")
-
-        for v_flt, sv in zip((gun.velocity_limit, gun.delta * 1e-3), self.dv_params):
-            sv.set(f"{v_flt:.3f}")
-
-        self.overview_text.config(state="disabled")
-
-    def set_states(self, gun: Gun) -> None:
+    def set_states(self, gun: Gun) -> Optional[StateList]:
         try:
             states = gun.to_travel(n_intg=self.get_steps_func(), acc=self.get_acc_func())
             self.states_frame.clear()
             for state in states:
                 self.states_frame.insert(state=state)
+            return states
         except ValueError as e:
             logger.error(e)
+            return None
 
     @tree_selected()
     def set_overview_and_states(self, *args, tvid: str, **kwargs):
         if tvid:
             gun = self.guns[tvid]
-            self.set_overview(gun=gun)
-            self.set_states(gun=gun)
+            states = self.set_states(gun=gun)
+            self.set_overview(gun=gun, states=states)
 
     @tree_selected()
     def add_edit_gun(self, tvid):
@@ -414,7 +471,7 @@ class GunFrame(Frame):
                 self.add_gun(gun)
 
     def add_gun(self, gun: Gun):
-        gid = self.tree.insert("", "end", text=gun.name, values=[gun.family])
+        gid = self.tree.insert("", "end", values=[gun.name, gun.family])
         self.guns[gid] = gun
 
     @tree_selected()
@@ -545,6 +602,10 @@ class StatesFrame(LabelFrame):
         vsb.grid(row=0, column=1, sticky="nsew")
         self.tree.config(yscrollcommand=vsb.set)
         self.tree.grid(row=0, column=0, sticky="nsew")
+
+        hsb = Scrollbar(self, orient="horizontal", command=self.tree.xview)
+        self.tree.config(xscrollcommand=hsb.set)
+        hsb.grid(row=1, column=0, sticky="nsew")
 
         for width, col in zip(widths, self.tree["columns"]):
             self.tree.heading(column=col, text=col, anchor="c")

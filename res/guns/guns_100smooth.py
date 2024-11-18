@@ -3,14 +3,13 @@ from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg
 from prop_9_7 import nine_seven, sb_9_7
-from prop_20_1 import sb_20_1, twenty_one
 
 gdldjy = Propellant(
     name="高氮量单基药（含可燃药筒）",
     description="《火炮内弹道计算手册》(1987)",
     density=1.6 * kg_dm3,
     covolume=0.95 * dm3_kg,
-    pressure_exponent=0.84,
+    # pressure_exponent=0.84,
     force=1007000 * kgfdm_kg,
     adiabatic_index=1.2,
 )
@@ -21,6 +20,17 @@ fourteen_nineteen = FormFunction.multi_perf(
     shape=MultiPerfShape.NINETEEN_PERF_ROSETTE,
 )
 
+sb_20_1 = Propellant(
+    name="Single Base",
+    description="values are imputed from 22/1 per《火炸药手册 (增订本）第二分册》(1981)",
+    density=1.6 * kg_dm3,
+    force=99.69e4 * kgfdm_kg,
+    # pressure_exponent=0.82,
+    covolume=0.97673 * dm3_kg,
+    adiabatic_index=1.2430,
+)
+
+twenty_one = FormFunction.single_perf(arch_width=2, height=408.15)
 
 gun_intro = "The 100 mm family of smoothbore munitions are issued to the Type 1969 tank gun and \
 the Type 1971/1973 100mm smoothbore anti tank gun, both of which a conversion of the Soviet BS-3 \
@@ -44,7 +54,7 @@ he_frag_73 = KnownGunProblem(
         [
             gun_intro,
             "\
-The 100mm Type 71/73 HE-Frag FS (WB031P) is issued with a charge that loads 4.3kg of 20/1 \
+The 100mm Type 71/73 HE-Frag FS (WB031P) is issued with a charge that loads 4.3kg of 20/1-40 \
 tubular grains, bundled in the center. 0.75kg of 14/7 seven perforated loose grains fills the \
 the void around the folded fin mechanism, and 0.15kg of 10/1 Rosin Potassium tubular grains are \
 loaded as muzzle blast suppressant. \

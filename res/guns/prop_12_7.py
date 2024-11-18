@@ -10,8 +10,8 @@ sb_12_7 = Propellant(
 《火炸药手册 (增订本）第二分册》(1981), 《火炮内弹道计算手册》(1987)\n"
     + format_compo_string({"Nitrocellulose": 0.985, "Diphenylamin": 0.015}),
     density=1.6 * kg_dm3,
-    force=1015100 * kgfdm_kg,
-    pressure_exponent=0.84,
+    force=101.51e4 * kgfdm_kg,
+    # pressure_exponent=0.84,
     covolume=0.95074 * dm3_kg,
     adiabatic_index=1.2381,
 )

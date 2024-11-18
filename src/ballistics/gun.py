@@ -93,6 +93,12 @@ class Gun:
             / (self.charge.theta * self.phi * self.shot_mass)
         ) ** 0.5
 
+    def get_thermal_efficiency(self, velocity: float) -> float:
+        return (velocity / self.velocity_limit) ** 2
+
+    def get_ballistic_efficiency(self, velocity: float) -> float:
+        return self.get_thermal_efficiency(velocity) / self.phi
+
     def get_bomb_state(self) -> State:
         """
         Generate a special state that corresponds to the case where the gun is operated

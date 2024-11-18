@@ -69,11 +69,11 @@ class Propellant:
     name: str = field(default="")
     description: str = field(default="")
     burn_rate_coefficient: Optional[float] = field(default=None)
-    density: float
+    density: float = field(default=1600)
     force: float
-    pressure_exponent: float
-    covolume: float
-    adiabatic_index: float
+    pressure_exponent: float = field(default=0.82)
+    covolume: float = field(default=1e-3)
+    adiabatic_index: float = field(default=1.2)
 
     @cached_property
     def theta(self) -> float:

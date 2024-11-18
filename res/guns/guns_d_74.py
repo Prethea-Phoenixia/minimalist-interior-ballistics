@@ -12,7 +12,8 @@ and a reduced variable charge. The full charge loads 9.8 kg of 双芳-2 19/1 tub
 while the reduced variable charge loads up to 5.83 kg of 13/7 loose grains, in various \
 charge bags. 0.7 kg of 12/1 Rosin-Potassium tubular charge is bundled in the center. \
 This provides 1 velocity zone for the full charge, and 3 velocity zones for the reduced \
-variable charge."
+variable charge. \
+The APBC(T) projectile is issued with a dedicated charge for firing."
 
 
 gun_outro = "\

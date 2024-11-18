@@ -24,13 +24,14 @@ Reference:\n\
 
 
 he_frag = KnownGunProblem(
-    name="WB004P HE-Frag (Full Charge)",
+    name="WB004P HE-Frag, WB016P, WB435P AB-Frag",
     description="\n".join(
         [
             gun_intro,
-            "This example illustrate the WB004P HE-Frag shell fired with the full charge, \
-which loads 5.5 or 5.66 kg of 18/1-26 long tubular grains, for copper and steel cartridges, \
-respectively. The nominal velocity is 900 m/s, at a nomianl chamber pressure of 3000 kgf/cm^2 \
+            "This example illustrate the WB004P HE-Frag shell, WB016P and WB435P proximity fuzed \
+airburst-fragmentation round fired with the full charge, which loads 5.5 or 5.66 kg of 18/1-26 \
+long tubular grains, for copper and steel cartridges, respectively. The nominal velocity is 900 \
+- 902.5 m/s , at a nomianl chamber pressure of 3000 kgf/cm^2 \
 as measured from copper crusher gauges. Actual pressure used for computation has been variously \
 reported as 3141 and 3300 kgf/cm^2. A value of 3206 kgf/cm^2 for a 5.5 kg charge has been adopted \
 for this example.",
@@ -50,6 +51,7 @@ for this example.",
 ).get_gun_developing_pressure(
     pressure_target=PressureTarget.average_pressure(3206e2 * kgf_dm2),
 )
+
 
 he_frag_reduced = KnownGunProblem(
     name="WB004P HE-Frag (Reduced Charge)",

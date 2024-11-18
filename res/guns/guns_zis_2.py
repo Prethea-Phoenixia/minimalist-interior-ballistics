@@ -24,14 +24,15 @@ pressure is 1700/1800 kgf/cm^2 from copper crusher gauge.\n\
 The different tabulated values for muzzle velocity realtes to the difference in construction \
 of the driving band (s) -- single driving band projectiles develops 1700 kgf/cm^2 of pressure, \
 and achieves a velocity of 700 m/s, while double driving band projectiles develops 1800 \
-kgf/cm^2 of pressure. \n\
-A major reduction in charge mass, from the nominal value of 0.98 kg, to 0.75kg, is required \
-to match the tabulated performance. The significance of this is currently not well understood.\n"
+kgf/cm^2 of pressure. A computational value of 2000 kgf/cm^2 has been adopted.\n\
+"
+    # A major reduction in charge mass, from the nominal value of 0.98 kg, to 0.75kg, is required \
+    # to match the tabulated performance. The significance of this is currently not well understood.\n"
     + ref,
     family="57×480mm",
     cross_section=0.2663 * dm2,
     shot_mass=3.75,
-    charge_mass=(w := 0.75),
+    charge_mass=(w := 0.98),
     chamber_volume=1.875 * L,
     loss_fraction=0.05,
     start_pressure=300e2 * kgf_dm2,
@@ -39,7 +40,7 @@ to match the tabulated performance. The significance of this is currently not we
     propellant=sb_14_7,
     form_function=fourteen_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget.average_pressure(1800e2 * kgf_dm2 * copper_correction(3.75, w))
+    pressure_target=PressureTarget.average_pressure(2000e2 * kgf_dm2 * copper_correction(3.75, w))
 )
 
 # print(3100 * copper_correction(projectile_mass=2.8, charge_mass=1.47))
@@ -95,8 +96,8 @@ to match the tabulated performance. The significance of this is currently not we
 )
 
 
-all_guns = [zis_2_apcr, zis_2_apcbc, zis_2_he_frag]
-
+# all_guns = [zis_2_apcr, zis_2_apcbc, zis_2_he_frag]
+# too many issues.
 if __name__ == "__main__":
     from ballistics.state import StateList
 
