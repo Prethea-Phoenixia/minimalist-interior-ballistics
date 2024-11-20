@@ -15,13 +15,6 @@ Reference:\n\
  《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)"
 
 
-# def copper_correction(projectile_mass: float, charge_mass: float):
-#     phi = 1.05 + charge_mass / projectile_mass / 3
-#     return 1.12 * phi / (1.02 * (1 + 0.4649 * charge_mass / projectile_mass))
-
-
-# print(1800 * copper_correction(projectile_mass=3.75, charge_mass=0.98))
-
 zis_2_he_frag = KnownGunProblem(
     name="WB009P HE-Frag",
     description="\n".join(
@@ -51,7 +44,6 @@ to match known performance.\n\
     form_function=fourteen_seven,
 ).get_gun_developing_pressure(pressure_target=PressureTarget.average_pressure(2000e2 * kgf_dm2))
 
-# print(3100 * copper_correction(projectile_mass=2.8, charge_mass=1.47))
 
 zis_2_apcbc = KnownGunProblem(
     name="BR-271M APBC-T",
@@ -82,7 +74,6 @@ Computational value of 3260 kgf/cm^2 has been adopted, with a charge mass of 1.3
 )
 
 
-# print(3100 * copper_correction(projectile_mass=1.79, charge_mass=1.6))
 zis_2_apcr = KnownGunProblem(
     name="BR-271P APCR",
     description="\n".join(

@@ -12,7 +12,6 @@ df1 = Propellant(
     description="Values for this propellant is provisional.\n《火炮内弹道计算手册》(1987)",
     density=1.6 * kg_dm3,
     covolume=1.0 * dm3_kg,
-    # pressure_exponent=0.82,
     force=95e4 * kgfdm_kg,
     adiabatic_index=1.24,
 )

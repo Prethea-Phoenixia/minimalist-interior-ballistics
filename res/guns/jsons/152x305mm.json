@@ -1,0 +1,281 @@
+[
+	{
+		"name": "WB006P HE-Frag (Full Charge)",
+		"description": "The 152x305mm family of separately loaded, case charge munitions are issued to the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer M1943 (D-1). The HE-Frag projectile is issued with a full variable charge. The full variable charge contains four equi-weight top charge bags of 12/7 7 perforated grains, each weigh 0.53kg, and four equai-weight bottom charge bags of 12/7 7 perforated grains, each weigh 0.215kg. A bundle of 0.64kg of 4/1 tubular propellant is set in the center. \nThis case represents firing the charge as issued. Nominal velocity is 508 m/s. Nominal pressure is 2250 kgf/cm^2 in copper crusher gauge. Computational values of 2550 and 2553 are attested in the source. For this example the final one has been adopted.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x305mm",
+		"cross_section": 0.018520000000000002,
+		"shot_mass": 40,
+		"charge_mass": 3.62,
+		"chamber_volume": 0.005707,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.2200000000000006,
+		"charge": {
+			"name": "Single Base (Low Force) 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 896798.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.426215665857596e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "WB006P HE-Frag (No.1 Charge)",
+		"description": "The 152x305mm family of separately loaded, case charge munitions are issued to the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer M1943 (D-1). The HE-Frag projectile is issued with a full variable charge. The full variable charge contains four equi-weight top charge bags of 12/7 7 perforated grains, each weigh 0.53kg, and four equai-weight bottom charge bags of 12/7 7 perforated grains, each weigh 0.215kg. A bundle of 0.64kg of 4/1 tubular propellant is set in the center. \nThis case represents firing the charge with one top charge bag removed. Nominal veloicty is 456 m/s. Charge characteristics of the full charge has been adopted, with a reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x305mm",
+		"cross_section": 0.018520000000000002,
+		"shot_mass": 40,
+		"charge_mass": 3.0900000000000003,
+		"chamber_volume": 0.005707,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.2200000000000006,
+		"charge": {
+			"name": "Single Base (Low Force) 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 896798.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.426215665857596e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "WB006P HE-Frag (No.2 Charge)",
+		"description": "The 152x305mm family of separately loaded, case charge munitions are issued to the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer M1943 (D-1). The HE-Frag projectile is issued with a full variable charge. The full variable charge contains four equi-weight top charge bags of 12/7 7 perforated grains, each weigh 0.53kg, and four equai-weight bottom charge bags of 12/7 7 perforated grains, each weigh 0.215kg. A bundle of 0.64kg of 4/1 tubular propellant is set in the center. \nThis case represents firing the charge with two top charge bag removed. Nominal veloicty is 403 m/s. Charge characteristics of the full charge has been adopted, with a reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x305mm",
+		"cross_section": 0.018520000000000002,
+		"shot_mass": 40,
+		"charge_mass": 2.56,
+		"chamber_volume": 0.005707,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.2200000000000006,
+		"charge": {
+			"name": "Single Base (Low Force) 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 896798.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.426215665857596e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "WB006P HE-Frag (No.3 Charge)",
+		"description": "The 152x305mm family of separately loaded, case charge munitions are issued to the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer M1943 (D-1). The HE-Frag projectile is issued with a full variable charge. The full variable charge contains four equi-weight top charge bags of 12/7 7 perforated grains, each weigh 0.53kg, and four equai-weight bottom charge bags of 12/7 7 perforated grains, each weigh 0.215kg. A bundle of 0.64kg of 4/1 tubular propellant is set in the center. \nThis case represents firing the charge with three top charge bag removed. Nominal veloicty is 351 m/s. Charge characteristics of the full charge has been adopted, with a reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x305mm",
+		"cross_section": 0.018520000000000002,
+		"shot_mass": 40,
+		"charge_mass": 2.0300000000000002,
+		"chamber_volume": 0.005707,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.2200000000000006,
+		"charge": {
+			"name": "Single Base (Low Force) 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 896798.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.426215665857596e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "WB006P HE-Frag (No.4 Charge)",
+		"description": "The 152x305mm family of separately loaded, case charge munitions are issued to the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer M1943 (D-1). The HE-Frag projectile is issued with a full variable charge. The full variable charge contains four equi-weight top charge bags of 12/7 7 perforated grains, each weigh 0.53kg, and four equai-weight bottom charge bags of 12/7 7 perforated grains, each weigh 0.215kg. A bundle of 0.64kg of 4/1 tubular propellant is set in the center. \nThis case represents firing the charge with all top charge bag removed. Nominal veloicty is 300 m/s. Charge characteristics of the full charge has been adopted, with a reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x305mm",
+		"cross_section": 0.018520000000000002,
+		"shot_mass": 40,
+		"charge_mass": 1.5,
+		"chamber_volume": 0.005707,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.2200000000000006,
+		"charge": {
+			"name": "Single Base (Low Force) 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 896798.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.426215665857596e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "WB006P HE-Frag (No.5 Charge)",
+		"description": "The 152x305mm family of separately loaded, case charge munitions are issued to the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer M1943 (D-1). The HE-Frag projectile is issued with a full variable charge. The full variable charge contains four equi-weight top charge bags of 12/7 7 perforated grains, each weigh 0.53kg, and four equai-weight bottom charge bags of 12/7 7 perforated grains, each weigh 0.215kg. A bundle of 0.64kg of 4/1 tubular propellant is set in the center. \nThis case represents firing the charge with all top and one bottom charge bags removed. Nominal veloicty is 279 m/s. Charge characteristics of the full charge has been adopted, with a reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x305mm",
+		"cross_section": 0.018520000000000002,
+		"shot_mass": 40,
+		"charge_mass": 1.2850000000000001,
+		"chamber_volume": 0.005707,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.2200000000000006,
+		"charge": {
+			"name": "Single Base (Low Force) 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 896798.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.426215665857596e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "WB006P HE-Frag (No.6 Charge)",
+		"description": "The 152x305mm family of separately loaded, case charge munitions are issued to the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer M1943 (D-1). The HE-Frag projectile is issued with a full variable charge. The full variable charge contains four equi-weight top charge bags of 12/7 7 perforated grains, each weigh 0.53kg, and four equai-weight bottom charge bags of 12/7 7 perforated grains, each weigh 0.215kg. A bundle of 0.64kg of 4/1 tubular propellant is set in the center. \nThis case represents firing the charge with all top and two bottom charge bags removed. Nominal veloicty is 258 m/s. Charge characteristics of the full charge has been adopted, with a reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x305mm",
+		"cross_section": 0.018520000000000002,
+		"shot_mass": 40,
+		"charge_mass": 1.07,
+		"chamber_volume": 0.005707,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.2200000000000006,
+		"charge": {
+			"name": "Single Base (Low Force) 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 896798.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.426215665857596e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "WB006P HE-Frag (No.7 Charge)",
+		"description": "The 152x305mm family of separately loaded, case charge munitions are issued to the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer M1943 (D-1). The HE-Frag projectile is issued with a full variable charge. The full variable charge contains four equi-weight top charge bags of 12/7 7 perforated grains, each weigh 0.53kg, and four equai-weight bottom charge bags of 12/7 7 perforated grains, each weigh 0.215kg. A bundle of 0.64kg of 4/1 tubular propellant is set in the center. \nThis case represents firing the charge with all top and three bottom charge bags removed. Nominal veloicty is 236 m/s. Charge characteristics of the full charge has been adopted, with a reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x305mm",
+		"cross_section": 0.018520000000000002,
+		"shot_mass": 40,
+		"charge_mass": 0.855,
+		"chamber_volume": 0.005707,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.2200000000000006,
+		"charge": {
+			"name": "Single Base (Low Force) 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 896798.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.426215665857596e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	},
+	{
+		"name": "WB006P HE-Frag (No.8 Charge)",
+		"description": "The 152x305mm family of separately loaded, case charge munitions are issued to the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer M1943 (D-1). The HE-Frag projectile is issued with a full variable charge. The full variable charge contains four equi-weight top charge bags of 12/7 7 perforated grains, each weigh 0.53kg, and four equai-weight bottom charge bags of 12/7 7 perforated grains, each weigh 0.215kg. A bundle of 0.64kg of 4/1 tubular propellant is set in the center. \nThis case represents firing the charge with all top and bottom charge bags removed. Nominal veloicty is 213 m/s. Charge characteristics of the full charge has been adopted, with a reduction in charge mass. \nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "152x305mm",
+		"cross_section": 0.018520000000000002,
+		"shot_mass": 40,
+		"charge_mass": 0.64,
+		"chamber_volume": 0.005707,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 3.2200000000000006,
+		"charge": {
+			"name": "Single Base (Low Force) 7 perf cylinder",
+			"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 896798.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.00095074,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.426215665857596e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.2 / 7 (d = 0.6) - 14.6 mm",
+				"chi": 0.7140531741725448,
+				"labda": 0.22188449848024316,
+				"mu": -0.024316109422492408,
+				"Z_k": 1.4434
+			}
+		}
+	}
+]

@@ -1,7 +1,7 @@
 [
 	{
 		"name": "WB013P HE-Frag (Full)",
-		"description": "The 122mm family of separately loaded, cased charge munitions are issued to the Soviet 122mm corps gun M1931/1937 (A-19), domestically designated the Type 1931/1937, as well as tank guns based on the ballistics of the A-19, including the A-19S, the D-25T and the D-25S guns.\nThe APHE, APHEBC and HE-Frag projectiles, all of equal weight, shares the same four stage variable charge, which loads 17/1 bundled tubular grains of 乙芳-3 propellant. The charge consists of a base charge of 4.35 kg, a central bundle on top of 1.077 kg, and two equal-weight bundles surrounding the central bundle, of 0.71kg each.\nFired as issued, 800 m/s of nominal velocity is developed at 2750 kgf/cm^2 of average pressure, measured from copper crusher gauge. Computational values of 2897 or 3000 kgf/cm^2 are known. The former value is adopted for this example, which yields accurate result, with no entry worse than 5 m/s off nominal.\nThis entry is also representative of the APHE and APHEBC projectiles since these shares the same interior ballistics.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"description": "The 122mm family of separately loaded, cased charge munitions are issued to the Soviet 122mm corps gun M1931/1937 (A-19), domestically designated the Type 1931/1937, as well as tank guns based on the ballistics of the A-19, including the A-19S, the D-25T and the D-25S guns.\nThe APHE, APHEBC and HE-Frag projectiles, all of equal weight, shares the same four stage variable charge, which loads 17/1 bundled tubular grains of 乙芳-3 propellant. The charge consists of a base charge of 4.35 kg, a central bundle on top of 1.077 kg, and two equal-weight bundles surrounding the central bundle, of 0.71kg each.\nFired as issued, 800 m/s of nominal velocity is developed at 2750 kgf/cm^2 of average pressure, measured from copper crusher gauge. Computational values of 2897 or 3000 kgf/cm^2 are known. The latter value is adopted for this example, which yields accurate result, with no entry worse than 15 m/s off nominal.\nThis entry is also representative of the APHE and APHEBC projectiles since these shares the same interior ballistics.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"family": "122x785mm",
 		"cross_section": 0.01188,
 		"shot_mass": 25,
@@ -19,7 +19,7 @@
 			"pressure_exponent": 0.82,
 			"covolume": 0.00104117,
 			"adiabatic_index": 1.2633,
-			"reduced_burnrate": 1.9043216790888867e-05,
+			"reduced_burnrate": 1.9467996314257334e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.8 / 1 - 225.0 mm",
@@ -50,7 +50,7 @@
 			"pressure_exponent": 0.82,
 			"covolume": 0.00104117,
 			"adiabatic_index": 1.2633,
-			"reduced_burnrate": 1.9043216790888867e-05,
+			"reduced_burnrate": 1.9467996314257334e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.8 / 1 - 225.0 mm",
@@ -81,7 +81,7 @@
 			"pressure_exponent": 0.82,
 			"covolume": 0.00104117,
 			"adiabatic_index": 1.2633,
-			"reduced_burnrate": 1.9043216790888867e-05,
+			"reduced_burnrate": 1.9467996314257334e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.8 / 1 - 225.0 mm",
@@ -112,7 +112,7 @@
 			"pressure_exponent": 0.82,
 			"covolume": 0.00104117,
 			"adiabatic_index": 1.2633,
-			"reduced_burnrate": 1.9043216790888867e-05,
+			"reduced_burnrate": 1.9467996314257334e-05,
 			"form_function": {
 				"name": "tube",
 				"description": "1.8 / 1 - 225.0 mm",

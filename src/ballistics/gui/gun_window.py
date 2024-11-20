@@ -310,15 +310,15 @@ class GunFrame(Frame):
         derived_entry_unit_groups = [
             ("Velocity Limit", "m/s"),
             ("Load Density", "g/cm³"),
+            ("Peak Acc.", "g0"),
             ("Ballistic Eff.", "%"),
             ("Thermal Eff.", "%"),
             ("Piezo. Eff.", "%"),
             ("Burnout Pos.", "%"),
-            ("Peak Acc.", "g0"),
         ]
         self.dv_params = []
         derived_iter = iter(derived_entry_unit_groups)
-        for i, v in enumerate(zip_longest(derived_iter, derived_iter)):
+        for i, v in enumerate(zip_longest(derived_iter, derived_iter, derived_iter)):
             dv_frame, dv_params = add_frame_group(
                 derived_frame,
                 ((*val, None, True) for val in v if val),
@@ -390,7 +390,7 @@ class GunFrame(Frame):
                 bop = "UNCONTAINED"
 
         for v, sv in zip(
-            (gun.velocity_limit, gun.delta * 1e-3, be, te, pe, bop, acc),
+            (gun.velocity_limit, gun.delta * 1e-3, acc, be, te, pe, bop),
             self.dv_params,
         ):
             if isinstance(v, float) or isinstance(v, int):
