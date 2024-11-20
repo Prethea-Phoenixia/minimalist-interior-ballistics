@@ -2,7 +2,7 @@ import logging
 
 from src.ballistics.charge import Charge, Propellant
 from src.ballistics.form_function import FormFunction, MultiPerfShape
-from src.ballistics.gun import Gun, GunFamily
+from src.ballistics.gun import Gun
 from src.ballistics.problem import (FixedChargeProblem, FixedVolumeProblem,
                                     PressureTarget)
 from src.ballistics.state import State, StateList

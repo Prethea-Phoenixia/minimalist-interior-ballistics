@@ -21,7 +21,7 @@ sb_9_7_low = Propellant(
 , 《火炮内弹道计算手册》(1987)\nForce adjusted to better reflect older production."
     + format_compo_string({"Nitrocellulose": 0.985, "Diphenylamin": 0.015}),
     density=1.6 * kg_dm3,
-    force=91.22e4 * kgfdm_kg,
+    force=sb_9_7.force * 0.9,
     covolume=0.95160 * dm3_kg,
     adiabatic_index=1.2381,
 )
