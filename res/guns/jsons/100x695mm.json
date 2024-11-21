@@ -2,7 +2,7 @@
 	{
 		"name": "WB122P Universal HEAT-FS ",
 		"description": "The 100mm (rifled) family consists of fixed charge munitions issued to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), and the Type 1959 100mm anti air gun (domestically produced variant of the Soviet anti air gun KS-19M2), and the Type 1959 100mm field gun (domestically produced variants of the Soviet field gun M1944 (BS-3)). Cartridges were produced with metallic casings, in steel and copper, as well with semi-combustible casings for tank guns.\nThe APBC, HE-Frag, and the Airburst-Fragmentation projectiles shares the same propelling charge. The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projectile employs an alternative charge.\nThe WB122P round is universal in the sense that it can be fired from the rifled 100 mmfamily, including the Type 1959 100mm tank gun, anti-air gun, and towed field gun, as well as the smoothbore 100mm family, including the Type 1969 smoothbore tank guns, Type 1971/1973 smoothbore anti tank guns, and Type 1986 high pressure smoothbore anti tank guns. When fired from rifled guns, combustion gas partially blow past the projectile through the lands of the rifling. This is not well modelled, and consequently the calculated performance is only applicable to smoothbore barrels.\nThis example illustrate the WB122P universal fin stabilized high explosive anti tank round fired from the rifled bore of this family, with its specific charge, which consists of 0.14 kg of 10/1 Rosin-Potassium tubular grains as flash suppressant, and 0.82 kg of 18/1 of tubular grains bundled together in the center, with 3.84 kg of 13/7 loose grains making up the rest. Nominal velocity is given as 1000 m/s when fired from rifled guns, although value as low as 955 m/s has been seen in domestic sources. Fired from smoothbore guns, velocity as high as 1070 m/s has been quoted. Nominal pressure value is 2530 kgf/cm^2, from copper crusher gauge. The adopted computational value is 2930 kgf/cm^2.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
-		"family": "100x697mm",
+		"family": "100x695mm",
 		"cross_section": 0.00818,
 		"shot_mass": 10.05,
 		"charge_mass": 4.8,
@@ -33,7 +33,7 @@
 	{
 		"name": "WB116P APBC(T)",
 		"description": "The 100mm (rifled) family consists of fixed charge munitions issued to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), and the Type 1959 100mm anti air gun (domestically produced variant of the Soviet anti air gun KS-19M2), and the Type 1959 100mm field gun (domestically produced variants of the Soviet field gun M1944 (BS-3)). Cartridges were produced with metallic casings, in steel and copper, as well with semi-combustible casings for tank guns.\nThe APBC, HE-Frag, and the Airburst-Fragmentation projectiles shares the same propelling charge. The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projectile employs an alternative charge.\nThis example illustrate the WB116P armor piercing ballistic capped tracer projectile with the full charge, which loads 5.5 or 5.66 kg of 18/1-26 long tubular grains, for copper and steel cartridges, respectively. Nominal velocity is given as 902.5m/s, or less commonly 887 m/s. Nominal pressure value is 3000 kgf/cm^2, from copper crusher gauge.\nThe charge mass and characteristics of the WB004P full charge case has been used. Increase in velocity despite increased projectile weight is explained by longer obturated travel in bore, due to the more rearward positioning of the driving band.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
-		"family": "100x697mm",
+		"family": "100x695mm",
 		"cross_section": 0.00818,
 		"shot_mass": 15.88,
 		"charge_mass": 5.5,
@@ -64,7 +64,7 @@
 	{
 		"name": "WB004P HE-Frag, WB016P, WB435P AB-Frag",
 		"description": "The 100mm (rifled) family consists of fixed charge munitions issued to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), and the Type 1959 100mm anti air gun (domestically produced variant of the Soviet anti air gun KS-19M2), and the Type 1959 100mm field gun (domestically produced variants of the Soviet field gun M1944 (BS-3)). Cartridges were produced with metallic casings, in steel and copper, as well with semi-combustible casings for tank guns.\nThe APBC, HE-Frag, and the Airburst-Fragmentation projectiles shares the same propelling charge. The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projectile employs an alternative charge.\nThis example illustrate the WB004P HE-Frag shell, WB016P and WB435P proximity fuzed airburst-fragmentation round fired with the full charge, which loads 5.5 or 5.66 kg of 18/1-26 long tubular grains, for copper and steel cartridges, respectively. The nominal velocity is 900 - 902.5 m/s , at a nomianl chamber pressure of 3000 kgf/cm^2 as measured from copper crusher gauges. Actual pressure used for computation has been variously reported as 3141 and 3300 kgf/cm^2. A value of 3206 kgf/cm^2 for a 5.5 kg charge has been adopted for this example.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
-		"family": "100x697mm",
+		"family": "100x695mm",
 		"cross_section": 0.00818,
 		"shot_mass": 15.6,
 		"charge_mass": 5.5,
@@ -95,7 +95,7 @@
 	{
 		"name": "WB004P HE-Frag (Reduced Charge)",
 		"description": "The 100mm (rifled) family consists of fixed charge munitions issued to the Type 1959 100mm tank gun (domestically produced variant of the Soviet tank gun D-10T), and the Type 1959 100mm anti air gun (domestically produced variant of the Soviet anti air gun KS-19M2), and the Type 1959 100mm field gun (domestically produced variants of the Soviet field gun M1944 (BS-3)). Cartridges were produced with metallic casings, in steel and copper, as well with semi-combustible casings for tank guns.\nThe APBC, HE-Frag, and the Airburst-Fragmentation projectiles shares the same propelling charge. The HE-Frag shell can also be issued with a reduced charge. The HEAT-FS projectile employs an alternative charge.\nThis example illustrate the WB004P HE-Frag shell fired with the reduced charge, which loads 12/1 tubular grains in a central bundle, with loose 9/7 grains bringing the total charge mass to 2.39 kg. Nominal velocity is 600 m/s. Nominal pressure is <= 2000 kgf/cm^2. A computational value of 1300 kgf/cm^2 has been adopted.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
-		"family": "100x697mm",
+		"family": "100x695mm",
 		"cross_section": 0.00818,
 		"shot_mass": 15.6,
 		"charge_mass": 2.39,
@@ -126,7 +126,7 @@
 	{
 		"name": "WB031P HE-Frag FS",
 		"description": "The 100 mm family of smoothbore munitions are issued to the Type 1969 tank gun and the Type 1971/1973 100mm smoothbore anti tank gun, both of which a conversion of the Soviet BS-3 100mm (rifled) field gun to smoothbore firing. Ammunition is further compatible with the Type 1986 100mm high pressure smoothbore anti tank gun, a further development of the former. Cartridges are issued with a fixed charge highly specific to each projectile, in copper or combustible casings.\nThe 100mm Type 71/73 HE-Frag FS (WB031P) is issued with a charge that loads 4.3kg of 20/1-40 tubular grains, bundled in the center. 0.75kg of 14/7 seven perforated loose grains fills the the void around the folded fin mechanism, and 0.15kg of 10/1 Rosin Potassium tubular grains are loaded as muzzle blast suppressant. Nominal velocity is tabulated at 900 m/s. Nominal pressure is <=3000 kgf/cm^2. The adopted computational value is 3128 kgf/cm^2.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, and combustible casings have been treated as loose grains of equivalent energy, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
-		"family": "100x697mm",
+		"family": "100x695mm",
 		"cross_section": 0.007854,
 		"shot_mass": 15,
 		"charge_mass": 5.2,
@@ -157,7 +157,7 @@
 	{
 		"name": "WB125P APFSDS(T), WB132P Tungsten Cored APFSDS(T)",
 		"description": "The 100 mm family of smoothbore munitions are issued to the Type 1969 tank gun and the Type 1971/1973 100mm smoothbore anti tank gun, both of which a conversion of the Soviet BS-3 100mm (rifled) field gun to smoothbore firing. Ammunition is further compatible with the Type 1986 100mm high pressure smoothbore anti tank gun, a further development of the former. Cartridges are issued with a fixed charge highly specific to each projectile, in copper or combustible casings.\nThe 100mm steel APFSDS(T) (WB125P) projectiles, and the tungsten cored APFSDS(T) (WB132P) proejctiles are issued with a charge that loads 4.6kg of 9/7 seven perforated loose grains, with 1.05kg of 18/1 tubular grains bundled in the center. Nominal velocity is tabulated at 1505 m/s. Nominal pressure is <=3300 kgf/cm^2. The adopted computational value is 3531 kgf/cm^2.\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, and combustible casings have been treated as loose grains of equivalent energy, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
-		"family": "100x697mm",
+		"family": "100x695mm",
 		"cross_section": 0.007854,
 		"shot_mass": 4.7,
 		"charge_mass": 5.65,
@@ -188,7 +188,7 @@
 	{
 		"name": "Tungsten APFSDS(T) for Type 86",
 		"description": "The 100 mm family of smoothbore munitions are issued to the Type 1969 tank gun and the Type 1971/1973 100mm smoothbore anti tank gun, both of which a conversion of the Soviet BS-3 100mm (rifled) field gun to smoothbore firing. Ammunition is further compatible with the Type 1986 100mm high pressure smoothbore anti tank gun, a further development of the former. Cartridges are issued with a fixed charge highly specific to each projectile, in copper or combustible casings.\nThe 100mm Tungsten APFSDS(T) round for use on the Type 86 high pressure anti tank gun is issued with 0.9kg combustible cartridge casings, of an energetic material (with a propellant force of 730,000 kgf-dm/kg), loading 5.79 kg of highly nitrated single based propellant (1,050,000 kgf-dm/kg), in loose grains of 19 perforated rosette grains. Nominal velocity is tabulated at 1640 m/s. Nominal pressure is 4800 kgf/cm^2 from copper crusher gauge, converts to 4643 kgf/cm^2 actual. Note that source reflects preliminary specification, the Type 86 as classified adopted a nominal velocity value of 1610 m/s, which is reflected in this example. \n\nFor simplicity, bundled charge has been treated as the equivalent mass in loose grains, and combustible casings have been treated as loose grains of equivalent energy, with reasonable accuracy.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
-		"family": "100x697mm",
+		"family": "100x695mm",
 		"cross_section": 0.007854,
 		"shot_mass": 5.3,
 		"charge_mass": 6.69,

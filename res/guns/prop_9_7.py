@@ -15,16 +15,16 @@ sb_9_7 = Propellant(
     adiabatic_index=1.2381,
 )
 
-sb_9_7_low = Propellant(
-    name="Single Base (Low Force)",
-    description="2811 K, Nitrated to 204-207.5 mL/g\n《火炸药手册 (增订本）第二分册》(1981)\
-, 《火炮内弹道计算手册》(1987)\nForce adjusted to better reflect older production."
-    + format_compo_string({"Nitrocellulose": 0.985, "Diphenylamin": 0.015}),
-    density=1.6 * kg_dm3,
-    force=sb_9_7.force * 0.9,
-    covolume=0.95160 * dm3_kg,
-    adiabatic_index=1.2381,
-)
+# sb_9_7_low = Propellant(
+#     name="Single Base (Low Force)",
+#     description="2811 K, Nitrated to 204-207.5 mL/g\n《火炸药手册 (增订本）第二分册》(1981)\
+# , 《火炮内弹道计算手册》(1987)\nForce adjusted to better reflect older production."
+#     + format_compo_string({"Nitrocellulose": 0.985, "Diphenylamin": 0.015}),
+#     density=1.6 * kg_dm3,
+#     force=sb_9_7.force * 0.9,
+#     covolume=0.95160 * dm3_kg,
+#     adiabatic_index=1.2381,
+# )
 
 nine_seven = FormFunction.multi_perf(
     arch_width=mean((0.95, 1.10)),

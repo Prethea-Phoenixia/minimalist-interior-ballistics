@@ -9,7 +9,6 @@ gdldjy = Propellant(
     description="《火炮内弹道计算手册》(1987)",
     density=1.6 * kg_dm3,
     covolume=0.95 * dm3_kg,
-    # pressure_exponent=0.84,
     force=1007000 * kgfdm_kg,
     adiabatic_index=1.2,
 )
@@ -25,7 +24,6 @@ sb_20_1 = Propellant(
     description="values are imputed from 22/1 per《火炸药手册 (增订本）第二分册》(1981)",
     density=1.6 * kg_dm3,
     force=99.69e4 * kgfdm_kg,
-    # pressure_exponent=0.82,
     covolume=0.97673 * dm3_kg,
     adiabatic_index=1.2430,
 )
@@ -64,7 +62,7 @@ computational value is 3128 kgf/cm^2.\
             gun_outro,
         ]
     ),
-    family="100x697mm",
+    family="100x695mm",
     cross_section=0.7854 * dm2,
     shot_mass=15,
     charge_mass=5.2,
@@ -91,7 +89,7 @@ computational value is 3531 kgf/cm^2.\
             gun_outro,
         ]
     ),
-    family="100x697mm",
+    family="100x695mm",
     cross_section=0.7854 * dm2,
     shot_mass=4.7,
     charge_mass=5.65,
@@ -122,7 +120,7 @@ this example. \n\
             gun_outro,
         ]
     ),
-    family="100x697mm",
+    family="100x695mm",
     cross_section=0.7854 * dm2,
     shot_mass=5.3,
     charge_mass=6.69,

@@ -19,7 +19,6 @@ yf3 = Propellant(
     ),
     density=1.6 * kg_dm3,
     force=98.66e4 * kgfdm_kg,
-    # pressure_exponent=0.81,
     covolume=1.04117 * dm3_kg,
     adiabatic_index=1.2633,
 )

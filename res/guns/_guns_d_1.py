@@ -1,7 +1,7 @@
 from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
-from prop_12_7 import sb_12_7_low, twelve_seven
+from prop_12_7 import sb_12_7, twelve_seven
 
 gun_intro = "The 152x305mm family of separately loaded, case charge munitions are issued to \
 the Type 1956 152mm howitzer, domestically produced variants of the Soviet 152mm howitzer \
@@ -43,7 +43,7 @@ are attested in the source. For this example the final one has been adopted.",
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
     travel=32.2 * dm,
-    propellant=sb_12_7_low,
+    propellant=sb_12_7,
     form_function=twelve_seven,
 ).get_gun_developing_pressure(
     pressure_target=PressureTarget.average_pressure(2553e2 * kgf_dm2),

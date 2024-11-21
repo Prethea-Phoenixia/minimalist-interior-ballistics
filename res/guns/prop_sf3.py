@@ -20,7 +20,6 @@ sf3 = Propellant(
     ),
     density=1.56 * kg_dm3,
     force=100.14e4 * kgfdm_kg,
-    # pressure_exponent=0.81,
     covolume=1.02561 * dm3_kg,
     adiabatic_index=1.2663,
 )
@@ -29,3 +28,4 @@ sf3 = Propellant(
 twentythree_one = FormFunction.single_perf(arch_width=mean((2.20, 2.35)), height=370)
 nineteen_one = FormFunction.single_perf(arch_width=mean((1.90, 1.95)), height=320)
 eighteen_one = FormFunction.single_perf(arch_width=mean((1.67, 1.77)), height=260)
+sixteen_one = FormFunction.single_perf(arch_width=mean((1.50, 1.63)), height=235)

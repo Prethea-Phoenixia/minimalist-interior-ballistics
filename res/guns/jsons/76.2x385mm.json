@@ -1,14 +1,14 @@
 [
 	{
-		"name": "BR-350B APBC",
-		"description": "The 76.2x385mm family of fixed charge ammunition is issued to the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U), domestically produced as Type 1954 76mm cannon. The same ballistics applies to the D-56T rifled gun, mounted on the PT-76. The HE-Frag and APBC projectiles share a charge of 9/7 7-perforated loose grains. \nNomianl velocity is 655 m/s developed with 1.07 or 1.08 kg of charge. Nominal pressure is 2400 kgf/cm^2 from copper crusher gauge.\nThe charge characteristics of the WB022P has been used, with a slight reduction in charge mass to 0.97kg to represent the deeper seated projectile.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"name": "WB022P HE-Frag",
+		"description": "The 76.2x385mm family of fixed charge ammunition is issued to the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U), domestically produced as Type 1954 76mm cannon. The same ballistics applies to the D-56T rifled gun, mounted on the PT-76. Charge loads 9/7 7-perforated loose grains, to various mass depending on the particular projectile. \nNomianl velocity is 680 m/s developed at 1.07 or 1.08 kg of charge. Nominal pressure is 2380 kgf/cm^2 from copper crusher gauge. Computational levels of 2500, 2617 and 2620 kgf/cm^2 has been tabulated. Match of tabulated performance established by reducing charge mass.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"family": "76.2x385mm",
 		"cross_section": 0.00469,
-		"shot_mass": 6.5,
-		"charge_mass": 0.97,
+		"shot_mass": 6.21,
+		"charge_mass": 0.977,
 		"chamber_volume": 0.001484,
 		"loss_fraction": 0.03,
-		"start_pressure": 49000000.0,
+		"start_pressure": 29400000.0,
 		"travel": 2.6870000000000003,
 		"charge": {
 			"name": "Single Base 7 perf cylinder",
@@ -19,7 +19,7 @@
 			"pressure_exponent": 0.82,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 4.5073995686618245e-05,
+			"reduced_burnrate": 4.923853687845737e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
@@ -31,15 +31,15 @@
 		}
 	},
 	{
-		"name": "WB022P HE-Frag",
-		"description": "The 76.2x385mm family of fixed charge ammunition is issued to the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U), domestically produced as Type 1954 76mm cannon. The same ballistics applies to the D-56T rifled gun, mounted on the PT-76. The HE-Frag and APBC projectiles share a charge of 9/7 7-perforated loose grains. \nNomianl velocity is 680 m/s developed at 1.07 or 1.08 kg of charge. Nominal pressure is 2380 kgf/cm^2 from copper crusher gauge. Computational levels of 2500, 2617 and 2620 kgf/cm^2 has been tabulated. The middle value with a charge mass of 1.01 kg has been adopted.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"name": "BR-350B APBC-HE",
+		"description": "The 76.2x385mm family of fixed charge ammunition is issued to the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U), domestically produced as Type 1954 76mm cannon. The same ballistics applies to the D-56T rifled gun, mounted on the PT-76. Charge loads 9/7 7-perforated loose grains, to various mass depending on the particular projectile. \nNomianl velocity is 655 m/s developed with 1.07 or 1.08 kg of charge. Nominal pressure is 2400 kgf/cm^2 from copper crusher gauge. Match of tabulated performance established by reducing charge mass.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
 		"family": "76.2x385mm",
 		"cross_section": 0.00469,
-		"shot_mass": 6.2,
-		"charge_mass": 1.01,
+		"shot_mass": 6.5,
+		"charge_mass": 0.945,
 		"chamber_volume": 0.001484,
 		"loss_fraction": 0.03,
-		"start_pressure": 49000000.0,
+		"start_pressure": 29400000.0,
 		"travel": 2.6870000000000003,
 		"charge": {
 			"name": "Single Base 7 perf cylinder",
@@ -50,7 +50,100 @@
 			"pressure_exponent": 0.82,
 			"covolume": 0.0009516,
 			"adiabatic_index": 1.2381,
-			"reduced_burnrate": 4.5073995686618245e-05,
+			"reduced_burnrate": 4.923853687845737e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
+		"name": "BR-354P APCR",
+		"description": "The 76.2x385mm family of fixed charge ammunition is issued to the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U), domestically produced as Type 1954 76mm cannon. The same ballistics applies to the D-56T rifled gun, mounted on the PT-76. Charge loads 9/7 7-perforated loose grains, to various mass depending on the particular projectile. \nNominal velocity of 950 m/s.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "76.2x385mm",
+		"cross_section": 0.00469,
+		"shot_mass": 3.02,
+		"charge_mass": 1.229,
+		"chamber_volume": 0.001484,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 2.6870000000000003,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.923853687845737e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
+		"name": "BR-354N APCR",
+		"description": "The 76.2x385mm family of fixed charge ammunition is issued to the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U), domestically produced as Type 1954 76mm cannon. The same ballistics applies to the D-56T rifled gun, mounted on the PT-76. Charge loads 9/7 7-perforated loose grains, to various mass depending on the particular projectile. \nNominal velocity of 950 m/s.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "76.2x385mm",
+		"cross_section": 0.00469,
+		"shot_mass": 3.3,
+		"charge_mass": 1.25,
+		"chamber_volume": 0.001484,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 2.6870000000000003,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.923853687845737e-05,
+			"form_function": {
+				"name": "7 perf cylinder",
+				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+				"chi": 0.715085881325839,
+				"labda": 0.22277237666720232,
+				"mu": -0.02532440141410895,
+				"Z_k": 1.4397951219512195
+			}
+		}
+	},
+	{
+		"name": "BK-354(M) HEAT-FS",
+		"description": "The 76.2x385mm family of fixed charge ammunition is issued to the Soviet 76.2mm divisional gun M1942 (ZiS-3, GRAU index 52-P-354U), domestically produced as Type 1954 76mm cannon. The same ballistics applies to the D-56T rifled gun, mounted on the PT-76. Charge loads 9/7 7-perforated loose grains, to various mass depending on the particular projectile. \nNominal velocity of 550 m/s.\nReference:\n 《火炮内弹道计算手册》(1987)\n 《火炸药手册 (增订本）第二分册》(1981).\n 《炮弹火箭弹手册：第二分册 陆军炮弹与火箭弹》(1984)",
+		"family": "76.2x385mm",
+		"cross_section": 0.00469,
+		"shot_mass": 7.027,
+		"charge_mass": 0.756,
+		"chamber_volume": 0.001484,
+		"loss_fraction": 0.03,
+		"start_pressure": 29400000.0,
+		"travel": 2.6870000000000003,
+		"charge": {
+			"name": "Single Base 7 perf cylinder",
+			"description": "1.0 / 7 (d = 0.5) - 12.1 mm",
+			"burn_rate_coefficient": null,
+			"density": 1600.0,
+			"force": 991956.0,
+			"pressure_exponent": 0.82,
+			"covolume": 0.0009516,
+			"adiabatic_index": 1.2381,
+			"reduced_burnrate": 4.923853687845737e-05,
 			"form_function": {
 				"name": "7 perf cylinder",
 				"description": "1.0 / 7 (d = 0.5) - 12.1 mm",

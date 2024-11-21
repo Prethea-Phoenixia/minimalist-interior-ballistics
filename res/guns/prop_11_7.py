@@ -11,7 +11,6 @@ sb_11_7 = Propellant(
     + format_compo_string({"Nitrocellulose": 0.985, "Diphenylamin": 0.015}),
     density=1.6 * kg_dm3,
     force=101.06e4 * kgfdm_kg,
-    # pressure_exponent=0.83,
     covolume=0.95206 * dm3_kg,
     adiabatic_index=1.2380,
 )

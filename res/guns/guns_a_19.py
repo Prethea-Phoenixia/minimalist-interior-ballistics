@@ -3,8 +3,8 @@ from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
 from prop_yf3 import seventeen_one, yf3
 
-gun_intro = "\
-The 122mm family of separately loaded, cased charge munitions are issued to the Soviet 122mm corps \
+gun_intro = "The 122x785mm family of separately loaded, cased charge munitions are \
+issued to the Soviet 122mm corps \
 gun M1931/1937 (A-19), domestically designated the Type 1931/1937, as well as tank guns based on \
 the ballistics of the A-19, including the A-19S, the D-25T and the D-25S guns.\n\
 The APHE, APHEBC and HE-Frag projectiles, all of equal weight, shares the same four stage variable \

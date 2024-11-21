@@ -9,7 +9,6 @@ sb_15_7 = Propellant(
     description="values are copied from 13/7 and is nominal.",
     density=1.6 * kg_dm3,
     force=101.64e4 * kgfdm_kg,
-    # pressure_exponent=0.84,
     covolume=0.94967 * dm3_kg,
     adiabatic_index=1.2383,
 )

@@ -1,7 +1,7 @@
 from ballistics.gun import Gun
 from ballistics.problem import KnownGunProblem, PressureTarget
 from misc import L, dm, dm2, kgf_dm2
-from prop_9_7 import nine_seven, sb_9_7_low
+from prop_9_7 import nine_seven, sb_9_7
 
 gun_intro = "The 122x285mm family of separately loaded, case charge munitions are issued to \
 the Type 1954 122mm howitzer, domestically produced variants of the Soviet 122mm howitzer \
@@ -44,10 +44,10 @@ been adopted.",
     loss_fraction=0.03,
     start_pressure=300e2 * kgf_dm2,
     travel=23.84 * dm,
-    propellant=sb_9_7_low,
+    propellant=sb_9_7,
     form_function=nine_seven,
 ).get_gun_developing_pressure(
-    pressure_target=PressureTarget.average_pressure(2665e2 * kgf_dm2),
+    pressure_target=PressureTarget.average_pressure(2350e2 * kgf_dm2),
 )
 
 
