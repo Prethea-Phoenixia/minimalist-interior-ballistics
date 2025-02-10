@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ballistics"
+dynamic = ["version"]
+authors = [
+  { name="Jinpeng Zhai", email="914962409@qq.com" },
+]
+dependencies = [
+  "tabulate~=0.9.0",
+  "attrs~=24.2.0"
+]
+requires-python = ">=3.8"
+readme = "README.md"
+description = "A minimalist package and GUI tool for the solution of interior ballistic system of equation and its variant problems, applicable to the design and verification of charge design of artillery pieces."
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "License :: OSI Approved :: The Unlicense (Unlicense)",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools.package-data]
+ballistics = ["py.typed"]
+
+[project.gui-scripts]
+ballistics-gui = "ballistics.gui.main:main"
+
+[project.urls]
+Homepage = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics"
+Issues = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics/issues"
+
+[tool.setuptools.dynamic]
+version = {attr = "ballistics.__version__"}
