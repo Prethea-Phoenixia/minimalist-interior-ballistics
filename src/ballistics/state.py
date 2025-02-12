@@ -47,16 +47,10 @@ class State:
     @cached_property
     def volume_burnup_fractions(self) -> tuple[float, ...]:
 
-        # return sum(
-        #     charge.psi(max(min(burnup_fraction, charge.Z_k), 0))
-        #     for (charge, charge_mass), burnup_fraction in zip(self.gun.charges.items(), self.burnup_fractions)
-        # )
-
         return tuple(
             charge.psi(max(min(burnup_fraction, charge.Z_k), 0))
             for charge, burnup_fraction in zip(self.gun.charges, self.burnup_fractions)
         )
-        # return self.gun.charge.psi(max(min(self.burnup_fraction, self.gun.charge.Z_k), 0))
 
     @cached_property
     def average_pressure(self) -> float:
@@ -84,7 +78,7 @@ class State:
         `average_pressure`.
         """
         return self.average_pressure / (
-            1 + self.gun.charge_mass / (3 * self.gun.shot_mass * (1 + self.gun.loss_fraction))
+            1 + self.gun.charge_mass_sum / (3 * self.gun.shot_mass * (1 + self.gun.loss_fraction))
         )
 
     @cached_property
@@ -92,7 +86,9 @@ class State:
         """the breech face pressure in the equivalent gun. For more info refer to
         `average_pressure`.
         """
-        return self.shot_pressure * (1 + self.gun.charge_mass / (2 * self.gun.shot_mass * (1 + self.gun.loss_fraction)))
+        return self.shot_pressure * (
+            1 + self.gun.charge_mass_sum / (2 * self.gun.shot_mass * (1 + self.gun.loss_fraction))
+        )
 
     @cached_property
     def is_burnout(self) -> bool:

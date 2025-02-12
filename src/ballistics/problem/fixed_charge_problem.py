@@ -2,40 +2,74 @@ from __future__ import annotations
 
 import logging
 from functools import cached_property
-from typing import Optional, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
 
 from attrs import frozen
 
 from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
-from ..gun import MonoChargeGun
+from ..gun import Gun
 from ..num import dekker, gss_max
 from .base_problem import BaseProblem
 from .pressure_target import PressureTarget
 
 logger = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    # these are required for pdoc
+    from ..charge import FormFunction, Propellant
+
 
 @frozen(kw_only=True)
 class FixedChargeProblem(BaseProblem):
-    charge_mass: float
 
-    def get_gun(self, *, chamber_volume: float, reduced_burnrate: float = 0, **kwargs) -> MonoChargeGun:
+    charge_mass: Optional[float] = None
+    charge_masses: tuple[float, ...] = tuple()
+
+    def __attrs_post_init__(self):
+
+        super().__attrs_post_init__()  # todo: test if this is needed.
+        if self.charge_mass:
+            object.__setattr__(self, "charge_masses", tuple([self.charge_mass]))
+
+        if self.charge_masses:
+            if len(self.charge_masses) != len(self.propellants):
+                raise ValueError("charge_masses must have the same dimension as self.propellants and form_functions")
+        else:
+            raise ValueError("invalid parameters")
+
+    def get_gun(
+        self,
+        *,
+        chamber_volume: float,
+        reduced_burnrate: Optional[float] = None,
+        reduced_burnrates: Optional[tuple[float, ...] | list[float]] = None,
+        **kwargs,
+    ) -> Gun:
+
+        if reduced_burnrate:
+            reduced_burnrates = tuple([reduced_burnrate])
+
+        if reduced_burnrates:
+            if len(self.charge_masses) != len(reduced_burnrates):
+                raise ValueError(
+                    "reduced_burnrates must have the same dimension as self.propellants, charge_masses, and form_functions"
+                )
+        else:
+            raise ValueError("invalid parameters.")
+
         return super().get_gun(
-            charge_mass=self.charge_mass,
-            chamber_volume=chamber_volume,
-            reduced_burnrate=reduced_burnrate,
+            charge_masses=self.charge_masses, chamber_volume=chamber_volume, reduced_burnrates=reduced_burnrates
         )
 
     @cached_property
     def chamber_min_volume(self) -> float:
-        return self.charge_mass / self.propellant.density
+        return sum(
+            charge_mass / propellant.density for charge_mass, propellant in zip(self.charge_masses, self.propellants)
+        )
+        # return self.charge_mass / self.propellant.density
 
     def get_chamber_volume_limits(
-        self,
-        pressure_target: PressureTarget,
-        *,
-        acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
+        self, pressure_target: PressureTarget, *, acc: float = DEFAULT_ACC, logging_preamble: str = ""
     ) -> Tuple[float, float]:
         """
         find the range of valid chamber volume
@@ -64,7 +98,7 @@ class FixedChargeProblem(BaseProblem):
         """
 
         def f_ff(chamber_volume: float) -> float:
-            test_gun = self.get_gun(chamber_volume=chamber_volume)
+            test_gun = self.get_gun(chamber_volume=chamber_volume, reduced_burnrates=tuple(0 for _ in self.propellants))
             return test_gun.bomb_free_fraction - acc
 
         chamber_min_volume = self.chamber_min_volume
@@ -76,7 +110,7 @@ class FixedChargeProblem(BaseProblem):
         lower_limit = max(dekker(f=f_ff, x_0=chamber_min_volume, x_1=bound, tol=chamber_min_volume * acc))
 
         def f_p(chamber_volume: float) -> float:
-            test_gun = self.get_gun(chamber_volume=chamber_volume)
+            test_gun = self.get_gun(chamber_volume=chamber_volume, reduced_burnrates=tuple(0 for _ in self.propellants))
             return pressure_target.get_difference(test_gun.get_bomb_state())
 
         if f_p(lower_limit) <= 0:
@@ -98,12 +132,12 @@ class FixedChargeProblem(BaseProblem):
         self,
         chamber_volume: float,
         pressure_target: PressureTarget,
-        *,
+        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
         **kwargs,
-    ) -> MonoChargeGun:
+    ) -> Gun:
         """
         solves the reduced burn rate such that the peak pressure developed in bore
         matches the desired value. This is the outer, user facing function that validates
@@ -134,11 +168,10 @@ class FixedChargeProblem(BaseProblem):
             the gun corresponding to this solution.
 
         """
+
         logger.info(logging_preamble + "MATCH PRESSURE PROBLEM " + f"{pressure_target.describe()} ->")
         min_vol, max_vol = self.get_chamber_volume_limits(
-            pressure_target=pressure_target,
-            acc=acc,
-            logging_preamble=logging_preamble + "\t",
+            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
 
         valid_range_prompt = f"valid range of chamber_volume: [{min_vol * 1e3:.3f} L, {max_vol * 1e3:.3f} L]"
@@ -154,39 +187,43 @@ class FixedChargeProblem(BaseProblem):
             )
 
         gun = self.get_gun_developing_pressure(
-            charge_mass=self.charge_mass,
+            charge_masses=self.charge_masses,
+            reduced_burnrate_ratios=reduced_burnrate_ratios,
             chamber_volume=chamber_volume,
             pressure_target=pressure_target,
             n_intg=n_intg,
             acc=acc,
             logging_preamble=logging_preamble + "\t",
         )
-        logger.info(logging_preamble + f"-> REDUCED BURN RATE {gun.charge.reduced_burnrate:.2e} s^-1 END")
+        logger.info(
+            logging_preamble
+            + f"-> REDUCED BURN RATES {",".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
+        )
         return gun
 
     def solve_chamber_volume_at_pressure_for_velocity(
         self,
         pressure_target: PressureTarget,
-        *,
+        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         velocity_target: Optional[float] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
-    ) -> Tuple[Optional[MonoChargeGun], Optional[MonoChargeGun], Optional[MonoChargeGun]]:
+    ) -> Tuple[Optional[Gun], Optional[Gun], Optional[Gun]]:
+
         logger.info(
             logging_preamble
             + "MATCH VELOCITY AND PRESSURE PROBLEM "
             + f"{velocity_target:.1f} m/s, {pressure_target.describe()} ->"
         )
         vol_min, vol_max = self.get_chamber_volume_limits(
-            pressure_target=pressure_target,
-            acc=acc,
-            logging_preamble=logging_preamble + "\t",
+            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
 
-        def get_gun_with_volume(chamber_volume: float) -> MonoChargeGun:
+        def get_gun_with_volume(chamber_volume: float) -> Gun:
             return self.get_gun_developing_pressure(
-                charge_mass=self.charge_mass,
+                charge_masses=self.charge_masses,
+                reduced_burnrate_ratios=reduced_burnrate_ratios,
                 chamber_volume=chamber_volume,
                 pressure_target=pressure_target,
                 n_intg=n_intg,
@@ -196,12 +233,7 @@ class FixedChargeProblem(BaseProblem):
 
         def f(chamber_volume: float) -> float:
             gun = get_gun_with_volume(chamber_volume=chamber_volume)
-            states = gun.to_travel(
-                travel=self.travel,
-                n_intg=n_intg,
-                acc=acc,
-                logging_preamble=logging_preamble + "\t",
-            )
+            states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc, logging_preamble=logging_preamble + "\t")
             muzzle_state = states.get_state_by_marker(significance=Significance.MUZZLE)
 
             return muzzle_state.velocity
@@ -220,21 +252,18 @@ class FixedChargeProblem(BaseProblem):
             if not v_min < velocity_target <= v_opt:
                 raise ValueError("targeted velocity is not achievable in the range of valid loading condition.")
 
-            def g(vol_i: float, vol_j: float, v_i: float, v_j: float) -> Optional[MonoChargeGun]:
+            def g(vol_i: float, vol_j: float, v_i: float, v_j: float) -> Optional[Gun]:
                 if min(v_i, v_j) <= velocity_target <= max(v_i, v_j):
                     # target velocity is achievable, find the corresponding charge mass to get it.
                     chamber_volume, _ = dekker(
-                        f=lambda x: f(x) - velocity_target,
-                        x_0=vol_i,
-                        x_1=vol_j,
-                        tol=acc * self.chamber_min_volume,
+                        f=lambda x: f(x) - velocity_target, x_0=vol_i, x_1=vol_j, tol=acc * self.chamber_min_volume
                     )
                     gun = get_gun_with_volume(chamber_volume=chamber_volume)
 
                     logger.info(
                         logging_preamble
                         + f"-> CHAMBER {chamber_volume * 1e3:.3f} L, "
-                        + f"REDUCED BURN RATE {gun.charge.reduced_burnrate:.2e} s^-1"
+                        + f"REDUCED BURN RATES {",".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
                     )
                     return gun
                 else:

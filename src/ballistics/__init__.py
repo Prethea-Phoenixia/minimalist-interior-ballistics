@@ -6,7 +6,7 @@ calculating and solving interior ballistic problems.
 import datetime
 from enum import Enum
 
-__version__ = datetime.datetime.now().strftime("%Y.%m.%d")
+__version__ = datetime.datetime.now().strftime("%Y.%m.%d.%H%M")  # calendar versioning.
 
 
 class Significance(Enum):
@@ -17,7 +17,7 @@ class Significance(Enum):
     BURNOUT = "burnout"
     MUZZLE = "muzzle"
     INTERMEDIATE = "x"
-    STEP = ""
+    STEP = "..."
     BOMB = "bomb"
     ADIABAT = "adiabat"
 

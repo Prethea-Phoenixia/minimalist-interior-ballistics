@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import field, frozen
 
@@ -9,7 +9,7 @@ from .. import (DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION,
                 DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS,
                 REDUCED_BURN_RATE_INITIAL_GUESS, Significance)
 from ..charge import Charge, Propellant
-from ..gun import MonoChargeGun
+from ..gun import Gun
 from ..num import dekker
 from .pressure_target import PressureTarget
 
@@ -25,8 +25,11 @@ class BaseProblem:
     description: str = field(default="")
     family: str = field(default="")
 
-    propellant: Propellant
-    form_function: FormFunction
+    propellant: Optional[Propellant] = None
+    propellants: tuple[Propellant, ...] = tuple()
+
+    form_function: Optional[FormFunction] = None
+    form_functions: tuple[FormFunction, ...] = tuple()
 
     cross_section: float
     shot_mass: float
@@ -34,19 +37,55 @@ class BaseProblem:
     loss_fraction: float = DEFAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
 
-    def get_gun(self, *, charge_mass: float, chamber_volume: float, reduced_burnrate: float) -> MonoChargeGun:
-        return MonoChargeGun(
+    def __attrs_post_init__(self):
+        if self.propellant and self.form_function:
+            object.__setattr__(self, "propellants", tuple([self.propellant]))
+            object.__setattr__(self, "form_functions", tuple([self.form_function]))
+
+        if self.propellants and self.form_functions:
+            if len(self.propellants) != len(self.form_functions):
+                raise ValueError("propellants and form_functions length mismatch")
+        else:
+            raise ValueError("invalid BaseProblem parameters")
+
+    def get_gun(
+        self,
+        *,
+        chamber_volume: float,
+        charge_mass: Optional[float] = None,
+        charge_masses: Optional[tuple[float, ...] | list[float]] = None,
+        reduced_burnrate: Optional[float] = None,
+        reduced_burnrates: Optional[tuple[float, ...] | list[float]] = None,
+    ) -> Gun:
+
+        if charge_mass and reduced_burnrate:
+            charge_masses = tuple([charge_mass])
+            reduced_burnrates = tuple([reduced_burnrate])
+
+        if charge_masses and reduced_burnrates:
+            if len(charge_masses) == len(reduced_burnrates) == len(self.propellants):
+                pass
+            else:
+                raise ValueError(
+                    "charge_masses and reduced_burnrates must have the same dimension as self.propellants and form_functions"
+                )
+        else:
+            raise ValueError("invalid parameters.")
+
+        return Gun(
             name=self.name,
             description=self.description,
             family=self.family,
             cross_section=self.cross_section,
             shot_mass=self.shot_mass,
-            charge_mass=charge_mass,
-            charge=Charge.from_propellant(
-                reduced_burnrate=reduced_burnrate,
-                propellant=self.propellant,
-                form_function=self.form_function,
-            ),
+            charges={
+                Charge.from_propellant(
+                    reduced_burnrate=reduced_burnrate, propellant=propellant, form_function=form_function
+                ): charge_mass
+                for propellant, form_function, charge_mass, reduced_burnrate in zip(
+                    self.propellants, self.form_functions, charge_masses, reduced_burnrates
+                )
+            },
             chamber_volume=chamber_volume,
             travel=self.travel,
             loss_fraction=self.loss_fraction,
@@ -56,20 +95,45 @@ class BaseProblem:
     def get_gun_developing_pressure(
         self,
         *,
-        charge_mass: float,
-        chamber_volume: float,
         pressure_target: PressureTarget,
+        chamber_volume: float,
+        charge_mass: Optional[float] = None,
+        charge_masses: Optional[tuple[float, ...] | list[float]] = None,
+        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
-    ) -> MonoChargeGun:
+    ) -> Gun:
+
+        if charge_mass:
+            charge_masses = tuple([charge_mass])
+
+        if not reduced_burnrate_ratios:
+            reduced_burnrate_ratios = tuple([1.0])
+
+        if charge_masses and reduced_burnrate_ratios:
+            if len(charge_masses) == len(reduced_burnrate_ratios) == len(self.propellants):
+                pass
+            else:
+                raise ValueError(
+                    "charge_masses and reduced_burnrate_ratios must have the same dimension as self.propellants and form_functions"
+                )
+        else:
+            raise ValueError("invalid parameters.")
 
         # first, sanity check the pressure value is achievable:
 
+        main_charge_index = charge_masses.index(max(charge_masses))
+        normalized_burn_rate_ratios = tuple(
+            reduced_burnrate_ratio / reduced_burnrate_ratios[main_charge_index]
+            for reduced_burnrate_ratio in reduced_burnrate_ratios
+        )
+
+        def get_burnrates(main_charge_redueced_burnrate: float) -> tuple[float, ...]:
+            return tuple(nrbr * main_charge_redueced_burnrate for nrbr in normalized_burn_rate_ratios)
+
         unitary_gun = self.get_gun(
-            charge_mass=charge_mass,
-            chamber_volume=chamber_volume,
-            reduced_burnrate=1,
+            charge_masses=charge_masses, chamber_volume=chamber_volume, reduced_burnrates=get_burnrates(1.0)
         )
         """exact burn rate doesn't matter here, so long as the equation can be propagated to
         generate a `State` object with the correct `State.average_pressure` (within numeric 
@@ -82,15 +146,12 @@ class BaseProblem:
 
         def f(reduced_burnrate: float) -> float:
             test_gun = self.get_gun(
-                reduced_burnrate=reduced_burnrate,
-                charge_mass=charge_mass,
+                reduced_burnrates=get_burnrates(reduced_burnrate),
+                charge_masses=charge_masses,
                 chamber_volume=chamber_volume,
             )
             states = test_gun.to_burnout(
-                n_intg=n_intg,
-                acc=acc,
-                abort_travel=self.travel,
-                logging_preamble=logging_preamble + "\t",
+                n_intg=n_intg, acc=acc, abort_travel=self.travel, logging_preamble=logging_preamble + "\t"
             )
             # logger.info(states.tabulate())
             delta_p = pressure_target.get_difference(states.get_state_by_marker(Significance.PEAK_PRESSURE))
@@ -123,8 +184,10 @@ class BaseProblem:
 
         logger.info(
             logging_preamble
-            + f"CHARGE {charge_mass:.3f} kg CHAMBER {chamber_volume * 1e3:.3f} L"
-            + f" -> REDUCED BURN RATE {est:.2e} s^-1 END"
+            + f"CHARGES {",".join(f"{charge_mass:.3f} kg" for charge_mass in charge_masses)} CHAMBER {chamber_volume * 1e3:.3f} L"
+            + f" -> MAIN CHARGE REDUCED BURN RATE {est:.2e} s^-1 END"
         )
 
-        return self.get_gun(reduced_burnrate=est, charge_mass=charge_mass, chamber_volume=chamber_volume)
+        return self.get_gun(
+            reduced_burnrates=get_burnrates(est), charge_masses=charge_masses, chamber_volume=chamber_volume
+        )

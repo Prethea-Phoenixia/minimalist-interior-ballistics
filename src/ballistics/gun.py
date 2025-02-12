@@ -33,10 +33,21 @@ class Gun:
     shot_mass: float
     charges: dict[Charge, float] = field(factory=dict)
 
+    charge: Optional[Charge] = None
+    charge_mass: Optional[float] = None
+
     chamber_volume: float
     loss_fraction: float = DEFAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
     travel: float
+
+    def __attrs_post_init__(self):
+        if self.charge and self.charge_mass:
+            object.__setattr__(self, "charges", {self.charge: self.charge_mass})
+        elif self.charges:
+            pass
+        else:
+            raise ValueError("invalid parameters.")
 
     def to_json(self):
         converter = Converter()
@@ -70,28 +81,26 @@ class Gun:
         return self.cross_section
 
     @cached_property
-    def charge_mass(self):
+    def charge_mass_sum(self):
         return sum(self.charges.values())
 
     @cached_property
     def delta(self) -> float:
-        return self.charge_mass / self.chamber_volume
+        return self.charge_mass_sum / self.chamber_volume
 
     @cached_property
     def charge_volume(self) -> float:
         return sum(charge_mass / charge.density for charge, charge_mass in self.charges.items())
-        # return self.charge_mass / self.charge.density
 
     @cached_property
     def phi(self) -> float:
-        return 1 + self.loss_fraction + self.charge_mass / (3 * self.shot_mass)
+        return 1 + self.loss_fraction + self.charge_mass_sum / (3 * self.shot_mass)
 
     @cached_property
     def bomb_free_fraction(self) -> float:
         return (
             1 - sum(charge.covolume * charge_mass for charge, charge_mass in self.charges.items()) / self.chamber_volume
         )
-        # return 1 - self.charge.covolume * self.charge_mass / self.chamber_volume
 
     @cached_property
     def theta(self) -> float:
@@ -102,7 +111,7 @@ class Gun:
         for charge, charge_mass in self.charges.items():
             if charge_mass == max_charge_mass:
                 break
-        return charge.adiabatic_index  # catchall.
+        return charge.adiabatic_index - 1  # catchall.
 
     @cached_property
     def velocity_limit(self) -> float:
@@ -479,13 +488,3 @@ class Gun:
             )
 
         return states
-
-
-@frozen(kw_only=True)
-class MonoChargeGun(Gun):
-
-    charge: Charge
-    charge_mass: float
-
-    def __attrs_post_init__(self):
-        object.__setattr__(self, "charges", {self.charge: self.charge_mass})
