@@ -383,7 +383,7 @@
 </span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tabulate</span><span class="p">(</span>
 </span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>        <span class="n">headers</span><span class="o">=</span><span class="p">(</span>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>        <span class="n">headers</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
 </span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>            <span class="s2">&quot;significance&quot;</span><span class="p">,</span>
 </span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>            <span class="s2">&quot;time</span><span class="se">\n</span><span class="s2">ms&quot;</span><span class="p">,</span>
 </span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>            <span class="s2">&quot;travel</span><span class="se">\n</span><span class="s2">m&quot;</span><span class="p">,</span>
@@ -391,52 +391,55 @@
 </span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>            <span class="s2">&quot;breech</span><span class="se">\n</span><span class="s2">pressure</span><span class="se">\n</span><span class="s2">MPa&quot;</span><span class="p">,</span>
 </span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>            <span class="s2">&quot;average</span><span class="se">\n</span><span class="s2">pressure</span><span class="se">\n</span><span class="s2">MPa&quot;</span><span class="p">,</span>
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>            <span class="s2">&quot;shot</span><span class="se">\n</span><span class="s2">pressure</span><span class="se">\n</span><span class="s2">MPa&quot;</span><span class="p">,</span>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>            <span class="s2">&quot;volume</span><span class="se">\n</span><span class="s2">burnup</span><span class="se">\n</span><span class="s2">fraction&quot;</span><span class="p">,</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>        <span class="p">),</span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">        Generates a plain, tabulated view of data for a list of</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="sd">        `State` objects.</span>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a><span class="sd">        Parameters</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a><span class="sd">        ----------</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="sd">        states: list of `ballistics.state.State`</span>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">            the list of `ballistics.state.State` to be pretty-printed.</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">        headers: tuple[str]</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">            argument passed to `tabulate.tabulate()` to generate a header for the</span>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">            table.</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">        *args, **kwargs:</span>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="sd">            other positional and named arguments to be passed to `tabulate.tabulate()`,</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="sd">            after the aforementioned once, respectively.</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a><span class="sd">        Returns</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="sd">        -------</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a><span class="sd">        str</span>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="sd">            generated using `tabulate.tabulate()`.</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="sd">        Notes</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="sd">        -----</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a><span class="sd">        see documentation for [tabulate.tabulate](https://pypi.org/project/tabulate/)</span>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">        for information on additional arguments.</span>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>        <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>            <span class="p">[</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>                <span class="p">(</span>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">marker</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">time</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span>
-</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span>
-</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span>
-</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">breech_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
-</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">average_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
-</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">shot_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">volume_burnup_fractions</span><span class="p">,</span>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>                <span class="p">)</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>            <span class="p">],</span>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>            <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="n">headers</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">},</span>  <span class="c1"># feeds additional arguments</span>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>        <span class="p">)</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>            <span class="s2">&quot;volume</span><span class="se">\n</span><span class="s2">burnup</span><span class="se">\n</span><span class="s2">fraction</span><span class="se">\n</span><span class="s2">[charge 1]&quot;</span><span class="p">,</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>            <span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">[charge 2]&quot;</span><span class="p">,</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>            <span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">[charge 3]&quot;</span><span class="p">,</span>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>        <span class="p">),</span>
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>        <span class="n">floatfmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.4g&quot;</span><span class="p">,</span>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a><span class="sd">        Generates a plain, tabulated view of data for a list of</span>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a><span class="sd">        `State` objects.</span>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">        Parameters</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">        ----------</span>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">        states: list of `ballistics.state.State`</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">            the list of `ballistics.state.State` to be pretty-printed.</span>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">        headers: tuple[str]</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="sd">            argument passed to `tabulate.tabulate()` to generate a header for the</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="sd">            table.</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a><span class="sd">        *args, **kwargs:</span>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a><span class="sd">            other positional and named arguments to be passed to `tabulate.tabulate()`,</span>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="sd">            after the aforementioned once, respectively.</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="sd">        Returns</span>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="sd">        -------</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="sd">        str</span>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="sd">            generated using `tabulate.tabulate()`.</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">        Notes</span>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a><span class="sd">        -----</span>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a><span class="sd">        see documentation for [tabulate.tabulate](https://pypi.org/project/tabulate/)</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a><span class="sd">        for information on additional arguments.</span>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>        <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>            <span class="p">[</span>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>                <span class="p">(</span>
+</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">marker</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">time</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span>
+</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span>
+</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span>
+</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">breech_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
+</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">average_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">shot_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
+</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>                    <span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">volume_burnup_fractions</span><span class="p">,</span>
+</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>                <span class="p">)</span>
+</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span>
+</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>            <span class="p">],</span>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>            <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="n">headers</span><span class="p">,</span> <span class="s2">&quot;floatfmt&quot;</span><span class="p">:</span> <span class="n">floatfmt</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">},</span>  <span class="c1"># feeds additional arguments</span>
+</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -1040,7 +1043,7 @@ concern in light-gas guns).</p>
 </span><span id="StateList-220"><a href="#StateList-220"><span class="linenos">220</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tabulate</span><span class="p">(</span>
 </span><span id="StateList-221"><a href="#StateList-221"><span class="linenos">221</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="StateList-222"><a href="#StateList-222"><span class="linenos">222</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-</span><span id="StateList-223"><a href="#StateList-223"><span class="linenos">223</span></a>        <span class="n">headers</span><span class="o">=</span><span class="p">(</span>
+</span><span id="StateList-223"><a href="#StateList-223"><span class="linenos">223</span></a>        <span class="n">headers</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
 </span><span id="StateList-224"><a href="#StateList-224"><span class="linenos">224</span></a>            <span class="s2">&quot;significance&quot;</span><span class="p">,</span>
 </span><span id="StateList-225"><a href="#StateList-225"><span class="linenos">225</span></a>            <span class="s2">&quot;time</span><span class="se">\n</span><span class="s2">ms&quot;</span><span class="p">,</span>
 </span><span id="StateList-226"><a href="#StateList-226"><span class="linenos">226</span></a>            <span class="s2">&quot;travel</span><span class="se">\n</span><span class="s2">m&quot;</span><span class="p">,</span>
@@ -1048,52 +1051,55 @@ concern in light-gas guns).</p>
 </span><span id="StateList-228"><a href="#StateList-228"><span class="linenos">228</span></a>            <span class="s2">&quot;breech</span><span class="se">\n</span><span class="s2">pressure</span><span class="se">\n</span><span class="s2">MPa&quot;</span><span class="p">,</span>
 </span><span id="StateList-229"><a href="#StateList-229"><span class="linenos">229</span></a>            <span class="s2">&quot;average</span><span class="se">\n</span><span class="s2">pressure</span><span class="se">\n</span><span class="s2">MPa&quot;</span><span class="p">,</span>
 </span><span id="StateList-230"><a href="#StateList-230"><span class="linenos">230</span></a>            <span class="s2">&quot;shot</span><span class="se">\n</span><span class="s2">pressure</span><span class="se">\n</span><span class="s2">MPa&quot;</span><span class="p">,</span>
-</span><span id="StateList-231"><a href="#StateList-231"><span class="linenos">231</span></a>            <span class="s2">&quot;volume</span><span class="se">\n</span><span class="s2">burnup</span><span class="se">\n</span><span class="s2">fraction&quot;</span><span class="p">,</span>
-</span><span id="StateList-232"><a href="#StateList-232"><span class="linenos">232</span></a>        <span class="p">),</span>
-</span><span id="StateList-233"><a href="#StateList-233"><span class="linenos">233</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="StateList-234"><a href="#StateList-234"><span class="linenos">234</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="StateList-235"><a href="#StateList-235"><span class="linenos">235</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateList-236"><a href="#StateList-236"><span class="linenos">236</span></a><span class="sd">        Generates a plain, tabulated view of data for a list of</span>
-</span><span id="StateList-237"><a href="#StateList-237"><span class="linenos">237</span></a><span class="sd">        `State` objects.</span>
-</span><span id="StateList-238"><a href="#StateList-238"><span class="linenos">238</span></a>
-</span><span id="StateList-239"><a href="#StateList-239"><span class="linenos">239</span></a><span class="sd">        Parameters</span>
-</span><span id="StateList-240"><a href="#StateList-240"><span class="linenos">240</span></a><span class="sd">        ----------</span>
-</span><span id="StateList-241"><a href="#StateList-241"><span class="linenos">241</span></a><span class="sd">        states: list of `ballistics.state.State`</span>
-</span><span id="StateList-242"><a href="#StateList-242"><span class="linenos">242</span></a><span class="sd">            the list of `ballistics.state.State` to be pretty-printed.</span>
-</span><span id="StateList-243"><a href="#StateList-243"><span class="linenos">243</span></a><span class="sd">        headers: tuple[str]</span>
-</span><span id="StateList-244"><a href="#StateList-244"><span class="linenos">244</span></a><span class="sd">            argument passed to `tabulate.tabulate()` to generate a header for the</span>
-</span><span id="StateList-245"><a href="#StateList-245"><span class="linenos">245</span></a><span class="sd">            table.</span>
-</span><span id="StateList-246"><a href="#StateList-246"><span class="linenos">246</span></a><span class="sd">        *args, **kwargs:</span>
-</span><span id="StateList-247"><a href="#StateList-247"><span class="linenos">247</span></a><span class="sd">            other positional and named arguments to be passed to `tabulate.tabulate()`,</span>
-</span><span id="StateList-248"><a href="#StateList-248"><span class="linenos">248</span></a><span class="sd">            after the aforementioned once, respectively.</span>
-</span><span id="StateList-249"><a href="#StateList-249"><span class="linenos">249</span></a>
-</span><span id="StateList-250"><a href="#StateList-250"><span class="linenos">250</span></a><span class="sd">        Returns</span>
-</span><span id="StateList-251"><a href="#StateList-251"><span class="linenos">251</span></a><span class="sd">        -------</span>
-</span><span id="StateList-252"><a href="#StateList-252"><span class="linenos">252</span></a><span class="sd">        str</span>
-</span><span id="StateList-253"><a href="#StateList-253"><span class="linenos">253</span></a><span class="sd">            generated using `tabulate.tabulate()`.</span>
-</span><span id="StateList-254"><a href="#StateList-254"><span class="linenos">254</span></a>
-</span><span id="StateList-255"><a href="#StateList-255"><span class="linenos">255</span></a><span class="sd">        Notes</span>
-</span><span id="StateList-256"><a href="#StateList-256"><span class="linenos">256</span></a><span class="sd">        -----</span>
-</span><span id="StateList-257"><a href="#StateList-257"><span class="linenos">257</span></a><span class="sd">        see documentation for [tabulate.tabulate](https://pypi.org/project/tabulate/)</span>
-</span><span id="StateList-258"><a href="#StateList-258"><span class="linenos">258</span></a><span class="sd">        for information on additional arguments.</span>
-</span><span id="StateList-259"><a href="#StateList-259"><span class="linenos">259</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateList-260"><a href="#StateList-260"><span class="linenos">260</span></a>        <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span>
-</span><span id="StateList-261"><a href="#StateList-261"><span class="linenos">261</span></a>            <span class="p">[</span>
-</span><span id="StateList-262"><a href="#StateList-262"><span class="linenos">262</span></a>                <span class="p">(</span>
-</span><span id="StateList-263"><a href="#StateList-263"><span class="linenos">263</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">marker</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="StateList-264"><a href="#StateList-264"><span class="linenos">264</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">time</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span>
-</span><span id="StateList-265"><a href="#StateList-265"><span class="linenos">265</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span>
-</span><span id="StateList-266"><a href="#StateList-266"><span class="linenos">266</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span>
-</span><span id="StateList-267"><a href="#StateList-267"><span class="linenos">267</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">breech_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
-</span><span id="StateList-268"><a href="#StateList-268"><span class="linenos">268</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">average_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
-</span><span id="StateList-269"><a href="#StateList-269"><span class="linenos">269</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">shot_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
-</span><span id="StateList-270"><a href="#StateList-270"><span class="linenos">270</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">volume_burnup_fractions</span><span class="p">,</span>
-</span><span id="StateList-271"><a href="#StateList-271"><span class="linenos">271</span></a>                <span class="p">)</span>
-</span><span id="StateList-272"><a href="#StateList-272"><span class="linenos">272</span></a>                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span>
-</span><span id="StateList-273"><a href="#StateList-273"><span class="linenos">273</span></a>            <span class="p">],</span>
-</span><span id="StateList-274"><a href="#StateList-274"><span class="linenos">274</span></a>            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-</span><span id="StateList-275"><a href="#StateList-275"><span class="linenos">275</span></a>            <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="n">headers</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">},</span>  <span class="c1"># feeds additional arguments</span>
-</span><span id="StateList-276"><a href="#StateList-276"><span class="linenos">276</span></a>        <span class="p">)</span>
+</span><span id="StateList-231"><a href="#StateList-231"><span class="linenos">231</span></a>            <span class="s2">&quot;volume</span><span class="se">\n</span><span class="s2">burnup</span><span class="se">\n</span><span class="s2">fraction</span><span class="se">\n</span><span class="s2">[charge 1]&quot;</span><span class="p">,</span>
+</span><span id="StateList-232"><a href="#StateList-232"><span class="linenos">232</span></a>            <span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">[charge 2]&quot;</span><span class="p">,</span>
+</span><span id="StateList-233"><a href="#StateList-233"><span class="linenos">233</span></a>            <span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">[charge 3]&quot;</span><span class="p">,</span>
+</span><span id="StateList-234"><a href="#StateList-234"><span class="linenos">234</span></a>        <span class="p">),</span>
+</span><span id="StateList-235"><a href="#StateList-235"><span class="linenos">235</span></a>        <span class="n">floatfmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.4g&quot;</span><span class="p">,</span>
+</span><span id="StateList-236"><a href="#StateList-236"><span class="linenos">236</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="StateList-237"><a href="#StateList-237"><span class="linenos">237</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="StateList-238"><a href="#StateList-238"><span class="linenos">238</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateList-239"><a href="#StateList-239"><span class="linenos">239</span></a><span class="sd">        Generates a plain, tabulated view of data for a list of</span>
+</span><span id="StateList-240"><a href="#StateList-240"><span class="linenos">240</span></a><span class="sd">        `State` objects.</span>
+</span><span id="StateList-241"><a href="#StateList-241"><span class="linenos">241</span></a>
+</span><span id="StateList-242"><a href="#StateList-242"><span class="linenos">242</span></a><span class="sd">        Parameters</span>
+</span><span id="StateList-243"><a href="#StateList-243"><span class="linenos">243</span></a><span class="sd">        ----------</span>
+</span><span id="StateList-244"><a href="#StateList-244"><span class="linenos">244</span></a><span class="sd">        states: list of `ballistics.state.State`</span>
+</span><span id="StateList-245"><a href="#StateList-245"><span class="linenos">245</span></a><span class="sd">            the list of `ballistics.state.State` to be pretty-printed.</span>
+</span><span id="StateList-246"><a href="#StateList-246"><span class="linenos">246</span></a><span class="sd">        headers: tuple[str]</span>
+</span><span id="StateList-247"><a href="#StateList-247"><span class="linenos">247</span></a><span class="sd">            argument passed to `tabulate.tabulate()` to generate a header for the</span>
+</span><span id="StateList-248"><a href="#StateList-248"><span class="linenos">248</span></a><span class="sd">            table.</span>
+</span><span id="StateList-249"><a href="#StateList-249"><span class="linenos">249</span></a><span class="sd">        *args, **kwargs:</span>
+</span><span id="StateList-250"><a href="#StateList-250"><span class="linenos">250</span></a><span class="sd">            other positional and named arguments to be passed to `tabulate.tabulate()`,</span>
+</span><span id="StateList-251"><a href="#StateList-251"><span class="linenos">251</span></a><span class="sd">            after the aforementioned once, respectively.</span>
+</span><span id="StateList-252"><a href="#StateList-252"><span class="linenos">252</span></a>
+</span><span id="StateList-253"><a href="#StateList-253"><span class="linenos">253</span></a><span class="sd">        Returns</span>
+</span><span id="StateList-254"><a href="#StateList-254"><span class="linenos">254</span></a><span class="sd">        -------</span>
+</span><span id="StateList-255"><a href="#StateList-255"><span class="linenos">255</span></a><span class="sd">        str</span>
+</span><span id="StateList-256"><a href="#StateList-256"><span class="linenos">256</span></a><span class="sd">            generated using `tabulate.tabulate()`.</span>
+</span><span id="StateList-257"><a href="#StateList-257"><span class="linenos">257</span></a>
+</span><span id="StateList-258"><a href="#StateList-258"><span class="linenos">258</span></a><span class="sd">        Notes</span>
+</span><span id="StateList-259"><a href="#StateList-259"><span class="linenos">259</span></a><span class="sd">        -----</span>
+</span><span id="StateList-260"><a href="#StateList-260"><span class="linenos">260</span></a><span class="sd">        see documentation for [tabulate.tabulate](https://pypi.org/project/tabulate/)</span>
+</span><span id="StateList-261"><a href="#StateList-261"><span class="linenos">261</span></a><span class="sd">        for information on additional arguments.</span>
+</span><span id="StateList-262"><a href="#StateList-262"><span class="linenos">262</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateList-263"><a href="#StateList-263"><span class="linenos">263</span></a>        <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span>
+</span><span id="StateList-264"><a href="#StateList-264"><span class="linenos">264</span></a>            <span class="p">[</span>
+</span><span id="StateList-265"><a href="#StateList-265"><span class="linenos">265</span></a>                <span class="p">(</span>
+</span><span id="StateList-266"><a href="#StateList-266"><span class="linenos">266</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">marker</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+</span><span id="StateList-267"><a href="#StateList-267"><span class="linenos">267</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">time</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span>
+</span><span id="StateList-268"><a href="#StateList-268"><span class="linenos">268</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span>
+</span><span id="StateList-269"><a href="#StateList-269"><span class="linenos">269</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span>
+</span><span id="StateList-270"><a href="#StateList-270"><span class="linenos">270</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">breech_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
+</span><span id="StateList-271"><a href="#StateList-271"><span class="linenos">271</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">average_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
+</span><span id="StateList-272"><a href="#StateList-272"><span class="linenos">272</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">shot_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
+</span><span id="StateList-273"><a href="#StateList-273"><span class="linenos">273</span></a>                    <span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">volume_burnup_fractions</span><span class="p">,</span>
+</span><span id="StateList-274"><a href="#StateList-274"><span class="linenos">274</span></a>                <span class="p">)</span>
+</span><span id="StateList-275"><a href="#StateList-275"><span class="linenos">275</span></a>                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span>
+</span><span id="StateList-276"><a href="#StateList-276"><span class="linenos">276</span></a>            <span class="p">],</span>
+</span><span id="StateList-277"><a href="#StateList-277"><span class="linenos">277</span></a>            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+</span><span id="StateList-278"><a href="#StateList-278"><span class="linenos">278</span></a>            <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="n">headers</span><span class="p">,</span> <span class="s2">&quot;floatfmt&quot;</span><span class="p">:</span> <span class="n">floatfmt</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">},</span>  <span class="c1"># feeds additional arguments</span>
+</span><span id="StateList-279"><a href="#StateList-279"><span class="linenos">279</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -1273,7 +1279,7 @@ concern in light-gas guns).</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">tabulate</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="o">*</span><span class="n">args</span>,</span><span class="param">	<span class="n">headers</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;significance&#39;</span><span class="p">,</span> <span class="s1">&#39;time</span><span class="se">\n</span><span class="s1">ms&#39;</span><span class="p">,</span> <span class="s1">&#39;travel</span><span class="se">\n</span><span class="s1">m&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity</span><span class="se">\n</span><span class="s1">m/s&#39;</span><span class="p">,</span> <span class="s1">&#39;breech</span><span class="se">\n</span><span class="s1">pressure</span><span class="se">\n</span><span class="s1">MPa&#39;</span><span class="p">,</span> <span class="s1">&#39;average</span><span class="se">\n</span><span class="s1">pressure</span><span class="se">\n</span><span class="s1">MPa&#39;</span><span class="p">,</span> <span class="s1">&#39;shot</span><span class="se">\n</span><span class="s1">pressure</span><span class="se">\n</span><span class="s1">MPa&#39;</span><span class="p">,</span> <span class="s1">&#39;volume</span><span class="se">\n</span><span class="s1">burnup</span><span class="se">\n</span><span class="s1">fraction&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">tabulate</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="o">*</span><span class="n">args</span>,</span><span class="param">	<span class="n">headers</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;significance&#39;</span><span class="p">,</span> <span class="s1">&#39;time</span><span class="se">\n</span><span class="s1">ms&#39;</span><span class="p">,</span> <span class="s1">&#39;travel</span><span class="se">\n</span><span class="s1">m&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity</span><span class="se">\n</span><span class="s1">m/s&#39;</span><span class="p">,</span> <span class="s1">&#39;breech</span><span class="se">\n</span><span class="s1">pressure</span><span class="se">\n</span><span class="s1">MPa&#39;</span><span class="p">,</span> <span class="s1">&#39;average</span><span class="se">\n</span><span class="s1">pressure</span><span class="se">\n</span><span class="s1">MPa&#39;</span><span class="p">,</span> <span class="s1">&#39;shot</span><span class="se">\n</span><span class="s1">pressure</span><span class="se">\n</span><span class="s1">MPa&#39;</span><span class="p">,</span> <span class="s1">&#39;volume</span><span class="se">\n</span><span class="s1">burnup</span><span class="se">\n</span><span class="s1">fraction</span><span class="se">\n</span><span class="s1">[charge 1]&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">[charge 2]&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">[charge 3]&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">floatfmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.4g&#39;</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="StateList.tabulate-view-source"><span>View Source</span></label>
 
@@ -1282,7 +1288,7 @@ concern in light-gas guns).</p>
             <div class="pdoc-code codehilite"><pre><span></span><span id="StateList.tabulate-220"><a href="#StateList.tabulate-220"><span class="linenos">220</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tabulate</span><span class="p">(</span>
 </span><span id="StateList.tabulate-221"><a href="#StateList.tabulate-221"><span class="linenos">221</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="StateList.tabulate-222"><a href="#StateList.tabulate-222"><span class="linenos">222</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-</span><span id="StateList.tabulate-223"><a href="#StateList.tabulate-223"><span class="linenos">223</span></a>        <span class="n">headers</span><span class="o">=</span><span class="p">(</span>
+</span><span id="StateList.tabulate-223"><a href="#StateList.tabulate-223"><span class="linenos">223</span></a>        <span class="n">headers</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
 </span><span id="StateList.tabulate-224"><a href="#StateList.tabulate-224"><span class="linenos">224</span></a>            <span class="s2">&quot;significance&quot;</span><span class="p">,</span>
 </span><span id="StateList.tabulate-225"><a href="#StateList.tabulate-225"><span class="linenos">225</span></a>            <span class="s2">&quot;time</span><span class="se">\n</span><span class="s2">ms&quot;</span><span class="p">,</span>
 </span><span id="StateList.tabulate-226"><a href="#StateList.tabulate-226"><span class="linenos">226</span></a>            <span class="s2">&quot;travel</span><span class="se">\n</span><span class="s2">m&quot;</span><span class="p">,</span>
@@ -1290,52 +1296,55 @@ concern in light-gas guns).</p>
 </span><span id="StateList.tabulate-228"><a href="#StateList.tabulate-228"><span class="linenos">228</span></a>            <span class="s2">&quot;breech</span><span class="se">\n</span><span class="s2">pressure</span><span class="se">\n</span><span class="s2">MPa&quot;</span><span class="p">,</span>
 </span><span id="StateList.tabulate-229"><a href="#StateList.tabulate-229"><span class="linenos">229</span></a>            <span class="s2">&quot;average</span><span class="se">\n</span><span class="s2">pressure</span><span class="se">\n</span><span class="s2">MPa&quot;</span><span class="p">,</span>
 </span><span id="StateList.tabulate-230"><a href="#StateList.tabulate-230"><span class="linenos">230</span></a>            <span class="s2">&quot;shot</span><span class="se">\n</span><span class="s2">pressure</span><span class="se">\n</span><span class="s2">MPa&quot;</span><span class="p">,</span>
-</span><span id="StateList.tabulate-231"><a href="#StateList.tabulate-231"><span class="linenos">231</span></a>            <span class="s2">&quot;volume</span><span class="se">\n</span><span class="s2">burnup</span><span class="se">\n</span><span class="s2">fraction&quot;</span><span class="p">,</span>
-</span><span id="StateList.tabulate-232"><a href="#StateList.tabulate-232"><span class="linenos">232</span></a>        <span class="p">),</span>
-</span><span id="StateList.tabulate-233"><a href="#StateList.tabulate-233"><span class="linenos">233</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="StateList.tabulate-234"><a href="#StateList.tabulate-234"><span class="linenos">234</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="StateList.tabulate-235"><a href="#StateList.tabulate-235"><span class="linenos">235</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateList.tabulate-236"><a href="#StateList.tabulate-236"><span class="linenos">236</span></a><span class="sd">        Generates a plain, tabulated view of data for a list of</span>
-</span><span id="StateList.tabulate-237"><a href="#StateList.tabulate-237"><span class="linenos">237</span></a><span class="sd">        `State` objects.</span>
-</span><span id="StateList.tabulate-238"><a href="#StateList.tabulate-238"><span class="linenos">238</span></a>
-</span><span id="StateList.tabulate-239"><a href="#StateList.tabulate-239"><span class="linenos">239</span></a><span class="sd">        Parameters</span>
-</span><span id="StateList.tabulate-240"><a href="#StateList.tabulate-240"><span class="linenos">240</span></a><span class="sd">        ----------</span>
-</span><span id="StateList.tabulate-241"><a href="#StateList.tabulate-241"><span class="linenos">241</span></a><span class="sd">        states: list of `ballistics.state.State`</span>
-</span><span id="StateList.tabulate-242"><a href="#StateList.tabulate-242"><span class="linenos">242</span></a><span class="sd">            the list of `ballistics.state.State` to be pretty-printed.</span>
-</span><span id="StateList.tabulate-243"><a href="#StateList.tabulate-243"><span class="linenos">243</span></a><span class="sd">        headers: tuple[str]</span>
-</span><span id="StateList.tabulate-244"><a href="#StateList.tabulate-244"><span class="linenos">244</span></a><span class="sd">            argument passed to `tabulate.tabulate()` to generate a header for the</span>
-</span><span id="StateList.tabulate-245"><a href="#StateList.tabulate-245"><span class="linenos">245</span></a><span class="sd">            table.</span>
-</span><span id="StateList.tabulate-246"><a href="#StateList.tabulate-246"><span class="linenos">246</span></a><span class="sd">        *args, **kwargs:</span>
-</span><span id="StateList.tabulate-247"><a href="#StateList.tabulate-247"><span class="linenos">247</span></a><span class="sd">            other positional and named arguments to be passed to `tabulate.tabulate()`,</span>
-</span><span id="StateList.tabulate-248"><a href="#StateList.tabulate-248"><span class="linenos">248</span></a><span class="sd">            after the aforementioned once, respectively.</span>
-</span><span id="StateList.tabulate-249"><a href="#StateList.tabulate-249"><span class="linenos">249</span></a>
-</span><span id="StateList.tabulate-250"><a href="#StateList.tabulate-250"><span class="linenos">250</span></a><span class="sd">        Returns</span>
-</span><span id="StateList.tabulate-251"><a href="#StateList.tabulate-251"><span class="linenos">251</span></a><span class="sd">        -------</span>
-</span><span id="StateList.tabulate-252"><a href="#StateList.tabulate-252"><span class="linenos">252</span></a><span class="sd">        str</span>
-</span><span id="StateList.tabulate-253"><a href="#StateList.tabulate-253"><span class="linenos">253</span></a><span class="sd">            generated using `tabulate.tabulate()`.</span>
-</span><span id="StateList.tabulate-254"><a href="#StateList.tabulate-254"><span class="linenos">254</span></a>
-</span><span id="StateList.tabulate-255"><a href="#StateList.tabulate-255"><span class="linenos">255</span></a><span class="sd">        Notes</span>
-</span><span id="StateList.tabulate-256"><a href="#StateList.tabulate-256"><span class="linenos">256</span></a><span class="sd">        -----</span>
-</span><span id="StateList.tabulate-257"><a href="#StateList.tabulate-257"><span class="linenos">257</span></a><span class="sd">        see documentation for [tabulate.tabulate](https://pypi.org/project/tabulate/)</span>
-</span><span id="StateList.tabulate-258"><a href="#StateList.tabulate-258"><span class="linenos">258</span></a><span class="sd">        for information on additional arguments.</span>
-</span><span id="StateList.tabulate-259"><a href="#StateList.tabulate-259"><span class="linenos">259</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateList.tabulate-260"><a href="#StateList.tabulate-260"><span class="linenos">260</span></a>        <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span>
-</span><span id="StateList.tabulate-261"><a href="#StateList.tabulate-261"><span class="linenos">261</span></a>            <span class="p">[</span>
-</span><span id="StateList.tabulate-262"><a href="#StateList.tabulate-262"><span class="linenos">262</span></a>                <span class="p">(</span>
-</span><span id="StateList.tabulate-263"><a href="#StateList.tabulate-263"><span class="linenos">263</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">marker</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="StateList.tabulate-264"><a href="#StateList.tabulate-264"><span class="linenos">264</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">time</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span>
-</span><span id="StateList.tabulate-265"><a href="#StateList.tabulate-265"><span class="linenos">265</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span>
-</span><span id="StateList.tabulate-266"><a href="#StateList.tabulate-266"><span class="linenos">266</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span>
-</span><span id="StateList.tabulate-267"><a href="#StateList.tabulate-267"><span class="linenos">267</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">breech_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
-</span><span id="StateList.tabulate-268"><a href="#StateList.tabulate-268"><span class="linenos">268</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">average_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
-</span><span id="StateList.tabulate-269"><a href="#StateList.tabulate-269"><span class="linenos">269</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">shot_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
-</span><span id="StateList.tabulate-270"><a href="#StateList.tabulate-270"><span class="linenos">270</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">volume_burnup_fractions</span><span class="p">,</span>
-</span><span id="StateList.tabulate-271"><a href="#StateList.tabulate-271"><span class="linenos">271</span></a>                <span class="p">)</span>
-</span><span id="StateList.tabulate-272"><a href="#StateList.tabulate-272"><span class="linenos">272</span></a>                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span>
-</span><span id="StateList.tabulate-273"><a href="#StateList.tabulate-273"><span class="linenos">273</span></a>            <span class="p">],</span>
-</span><span id="StateList.tabulate-274"><a href="#StateList.tabulate-274"><span class="linenos">274</span></a>            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-</span><span id="StateList.tabulate-275"><a href="#StateList.tabulate-275"><span class="linenos">275</span></a>            <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="n">headers</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">},</span>  <span class="c1"># feeds additional arguments</span>
-</span><span id="StateList.tabulate-276"><a href="#StateList.tabulate-276"><span class="linenos">276</span></a>        <span class="p">)</span>
+</span><span id="StateList.tabulate-231"><a href="#StateList.tabulate-231"><span class="linenos">231</span></a>            <span class="s2">&quot;volume</span><span class="se">\n</span><span class="s2">burnup</span><span class="se">\n</span><span class="s2">fraction</span><span class="se">\n</span><span class="s2">[charge 1]&quot;</span><span class="p">,</span>
+</span><span id="StateList.tabulate-232"><a href="#StateList.tabulate-232"><span class="linenos">232</span></a>            <span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">[charge 2]&quot;</span><span class="p">,</span>
+</span><span id="StateList.tabulate-233"><a href="#StateList.tabulate-233"><span class="linenos">233</span></a>            <span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">[charge 3]&quot;</span><span class="p">,</span>
+</span><span id="StateList.tabulate-234"><a href="#StateList.tabulate-234"><span class="linenos">234</span></a>        <span class="p">),</span>
+</span><span id="StateList.tabulate-235"><a href="#StateList.tabulate-235"><span class="linenos">235</span></a>        <span class="n">floatfmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.4g&quot;</span><span class="p">,</span>
+</span><span id="StateList.tabulate-236"><a href="#StateList.tabulate-236"><span class="linenos">236</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="StateList.tabulate-237"><a href="#StateList.tabulate-237"><span class="linenos">237</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="StateList.tabulate-238"><a href="#StateList.tabulate-238"><span class="linenos">238</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateList.tabulate-239"><a href="#StateList.tabulate-239"><span class="linenos">239</span></a><span class="sd">        Generates a plain, tabulated view of data for a list of</span>
+</span><span id="StateList.tabulate-240"><a href="#StateList.tabulate-240"><span class="linenos">240</span></a><span class="sd">        `State` objects.</span>
+</span><span id="StateList.tabulate-241"><a href="#StateList.tabulate-241"><span class="linenos">241</span></a>
+</span><span id="StateList.tabulate-242"><a href="#StateList.tabulate-242"><span class="linenos">242</span></a><span class="sd">        Parameters</span>
+</span><span id="StateList.tabulate-243"><a href="#StateList.tabulate-243"><span class="linenos">243</span></a><span class="sd">        ----------</span>
+</span><span id="StateList.tabulate-244"><a href="#StateList.tabulate-244"><span class="linenos">244</span></a><span class="sd">        states: list of `ballistics.state.State`</span>
+</span><span id="StateList.tabulate-245"><a href="#StateList.tabulate-245"><span class="linenos">245</span></a><span class="sd">            the list of `ballistics.state.State` to be pretty-printed.</span>
+</span><span id="StateList.tabulate-246"><a href="#StateList.tabulate-246"><span class="linenos">246</span></a><span class="sd">        headers: tuple[str]</span>
+</span><span id="StateList.tabulate-247"><a href="#StateList.tabulate-247"><span class="linenos">247</span></a><span class="sd">            argument passed to `tabulate.tabulate()` to generate a header for the</span>
+</span><span id="StateList.tabulate-248"><a href="#StateList.tabulate-248"><span class="linenos">248</span></a><span class="sd">            table.</span>
+</span><span id="StateList.tabulate-249"><a href="#StateList.tabulate-249"><span class="linenos">249</span></a><span class="sd">        *args, **kwargs:</span>
+</span><span id="StateList.tabulate-250"><a href="#StateList.tabulate-250"><span class="linenos">250</span></a><span class="sd">            other positional and named arguments to be passed to `tabulate.tabulate()`,</span>
+</span><span id="StateList.tabulate-251"><a href="#StateList.tabulate-251"><span class="linenos">251</span></a><span class="sd">            after the aforementioned once, respectively.</span>
+</span><span id="StateList.tabulate-252"><a href="#StateList.tabulate-252"><span class="linenos">252</span></a>
+</span><span id="StateList.tabulate-253"><a href="#StateList.tabulate-253"><span class="linenos">253</span></a><span class="sd">        Returns</span>
+</span><span id="StateList.tabulate-254"><a href="#StateList.tabulate-254"><span class="linenos">254</span></a><span class="sd">        -------</span>
+</span><span id="StateList.tabulate-255"><a href="#StateList.tabulate-255"><span class="linenos">255</span></a><span class="sd">        str</span>
+</span><span id="StateList.tabulate-256"><a href="#StateList.tabulate-256"><span class="linenos">256</span></a><span class="sd">            generated using `tabulate.tabulate()`.</span>
+</span><span id="StateList.tabulate-257"><a href="#StateList.tabulate-257"><span class="linenos">257</span></a>
+</span><span id="StateList.tabulate-258"><a href="#StateList.tabulate-258"><span class="linenos">258</span></a><span class="sd">        Notes</span>
+</span><span id="StateList.tabulate-259"><a href="#StateList.tabulate-259"><span class="linenos">259</span></a><span class="sd">        -----</span>
+</span><span id="StateList.tabulate-260"><a href="#StateList.tabulate-260"><span class="linenos">260</span></a><span class="sd">        see documentation for [tabulate.tabulate](https://pypi.org/project/tabulate/)</span>
+</span><span id="StateList.tabulate-261"><a href="#StateList.tabulate-261"><span class="linenos">261</span></a><span class="sd">        for information on additional arguments.</span>
+</span><span id="StateList.tabulate-262"><a href="#StateList.tabulate-262"><span class="linenos">262</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateList.tabulate-263"><a href="#StateList.tabulate-263"><span class="linenos">263</span></a>        <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span>
+</span><span id="StateList.tabulate-264"><a href="#StateList.tabulate-264"><span class="linenos">264</span></a>            <span class="p">[</span>
+</span><span id="StateList.tabulate-265"><a href="#StateList.tabulate-265"><span class="linenos">265</span></a>                <span class="p">(</span>
+</span><span id="StateList.tabulate-266"><a href="#StateList.tabulate-266"><span class="linenos">266</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">marker</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+</span><span id="StateList.tabulate-267"><a href="#StateList.tabulate-267"><span class="linenos">267</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">time</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span>
+</span><span id="StateList.tabulate-268"><a href="#StateList.tabulate-268"><span class="linenos">268</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">travel</span><span class="p">,</span>
+</span><span id="StateList.tabulate-269"><a href="#StateList.tabulate-269"><span class="linenos">269</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span>
+</span><span id="StateList.tabulate-270"><a href="#StateList.tabulate-270"><span class="linenos">270</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">breech_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
+</span><span id="StateList.tabulate-271"><a href="#StateList.tabulate-271"><span class="linenos">271</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">average_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
+</span><span id="StateList.tabulate-272"><a href="#StateList.tabulate-272"><span class="linenos">272</span></a>                    <span class="n">state</span><span class="o">.</span><span class="n">shot_pressure</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span>
+</span><span id="StateList.tabulate-273"><a href="#StateList.tabulate-273"><span class="linenos">273</span></a>                    <span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">volume_burnup_fractions</span><span class="p">,</span>
+</span><span id="StateList.tabulate-274"><a href="#StateList.tabulate-274"><span class="linenos">274</span></a>                <span class="p">)</span>
+</span><span id="StateList.tabulate-275"><a href="#StateList.tabulate-275"><span class="linenos">275</span></a>                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span>
+</span><span id="StateList.tabulate-276"><a href="#StateList.tabulate-276"><span class="linenos">276</span></a>            <span class="p">],</span>
+</span><span id="StateList.tabulate-277"><a href="#StateList.tabulate-277"><span class="linenos">277</span></a>            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+</span><span id="StateList.tabulate-278"><a href="#StateList.tabulate-278"><span class="linenos">278</span></a>            <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="n">headers</span><span class="p">,</span> <span class="s2">&quot;floatfmt&quot;</span><span class="p">:</span> <span class="n">floatfmt</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">},</span>  <span class="c1"># feeds additional arguments</span>
+</span><span id="StateList.tabulate-279"><a href="#StateList.tabulate-279"><span class="linenos">279</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 

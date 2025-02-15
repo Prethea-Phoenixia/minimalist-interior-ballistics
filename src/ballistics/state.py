@@ -219,7 +219,7 @@ class StateList(BaseList):
     def tabulate(
         self,
         *args,
-        headers=(
+        headers: Iterable[str] = (
             "significance",
             "time\nms",
             "travel\nm",
@@ -227,8 +227,11 @@ class StateList(BaseList):
             "breech\npressure\nMPa",
             "average\npressure\nMPa",
             "shot\npressure\nMPa",
-            "volume\nburnup\nfraction",
+            "volume\nburnup\nfraction\n[charge 1]",
+            "\n\n\n[charge 2]",
+            "\n\n\n[charge 3]",
         ),
+        floatfmt: str = ".4g",
         **kwargs,
     ) -> str:
         """
@@ -266,10 +269,10 @@ class StateList(BaseList):
                     state.breech_pressure * 1e-6,
                     state.average_pressure * 1e-6,
                     state.shot_pressure * 1e-6,
-                    state.volume_burnup_fractions,
+                    *state.volume_burnup_fractions,
                 )
                 for state in self
             ],
             *args,
-            **{**{"headers": headers}, **kwargs},  # feeds additional arguments
+            **{**{"headers": headers, "floatfmt": floatfmt}, **kwargs},  # feeds additional arguments
         )

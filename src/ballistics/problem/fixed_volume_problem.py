@@ -53,7 +53,7 @@ class FixedVolumeProblem(BaseProblem):
             raise ValueError("invalid parameters.")
 
         return super().get_gun(
-            reduced_burnrate=reduced_burnrate,
+            reduced_burnrates=reduced_burnrates,
             charge_masses=charge_masses,
             chamber_volume=self.chamber_volume,
         )
@@ -229,7 +229,7 @@ class FixedVolumeProblem(BaseProblem):
         )
         logger.info(
             logging_preamble
-            + f"->REDUCED BURN RATES {",".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
+            + f"->REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
         )
 
         return gun
@@ -317,7 +317,7 @@ class FixedVolumeProblem(BaseProblem):
                     logger.info(
                         logging_preamble
                         + f"-> CHARGE {charge_mass:.3f} kg, "
-                        + f"REDUCED BURN RATES {",".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
+                        + f"REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
                     )
                     return gun
                 else:

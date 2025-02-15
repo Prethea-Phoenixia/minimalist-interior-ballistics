@@ -220,7 +220,7 @@ class Charge(Propellant):
         return 2 * burn_rate_coefficient / arch_width
 
     def get_coefficient_from_arch(self, arch_width: float) -> float:
-        return self.reduced_burnrate * arch_width / 2
+        return 0.5 * self.reduced_burnrate * arch_width
 
     @cached_property
     def Z_k(self) -> float:

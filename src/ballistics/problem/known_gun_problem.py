@@ -22,20 +22,19 @@ class KnownGunProblem(BaseProblem):
     chamber_volume: float
 
     charge_mass: Optional[float] = None
-    charge_masses: Optional[list[float] | tuple[float, ...]] = None
+    charge_masses: list[float] | tuple[float, ...] = tuple()
 
     def __attrs_post_init__(self):
 
         super().__attrs_post_init__()  # todo: test if this is needed.
-        if self.propellant and self.form_function:
-            object.__setattr__(self, "propellants", tuple([self.propellant]))
-            object.__setattr__(self, "form_functions", tuple([self.form_function]))
+        if self.charge_mass:
+            object.__setattr__(self, "charge_masses", tuple([self.charge_mass]))
 
-        if self.propellants and self.form_functions:
-            if len(self.propellants) != len(self.form_functions):
-                raise ValueError("propellants and form_functions length mismatch")
+        if self.charge_masses:
+            if len(self.charge_masses) != len(self.propellants):
+                raise ValueError("charge_masses must have the same dimension as self.propellants and form_functions")
         else:
-            raise ValueError("invalid BaseProblem parameters")
+            raise ValueError("invalid parameters")
 
     def get_gun(
         self,
@@ -64,6 +63,7 @@ class KnownGunProblem(BaseProblem):
         self,
         *,
         pressure_target: PressureTarget,
+        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
@@ -73,6 +73,7 @@ class KnownGunProblem(BaseProblem):
         return super().get_gun_developing_pressure(
             charge_masses=self.charge_masses,
             chamber_volume=self.chamber_volume,
+            reduced_burnrate_ratios=reduced_burnrate_ratios,
             pressure_target=pressure_target,
             n_intg=n_intg,
             acc=acc,

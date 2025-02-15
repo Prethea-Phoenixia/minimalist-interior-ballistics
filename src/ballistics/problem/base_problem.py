@@ -26,10 +26,10 @@ class BaseProblem:
     family: str = field(default="")
 
     propellant: Optional[Propellant] = None
-    propellants: tuple[Propellant, ...] = tuple()
+    propellants: list[Propellant] | tuple[Propellant, ...] = tuple()
 
     form_function: Optional[FormFunction] = None
-    form_functions: tuple[FormFunction, ...] = tuple()
+    form_functions: list[FormFunction] | tuple[FormFunction, ...] = tuple()
 
     cross_section: float
     shot_mass: float
@@ -184,7 +184,7 @@ class BaseProblem:
 
         logger.info(
             logging_preamble
-            + f"CHARGES {",".join(f"{charge_mass:.3f} kg" for charge_mass in charge_masses)} CHAMBER {chamber_volume * 1e3:.3f} L"
+            + f"CHARGES {", ".join(f"{charge_mass:.3f} kg" for charge_mass in charge_masses)} CHAMBER {chamber_volume * 1e3:.3f} L"
             + f" -> MAIN CHARGE REDUCED BURN RATE {est:.2e} s^-1 END"
         )
 

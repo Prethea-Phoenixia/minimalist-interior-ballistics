@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 class FixedChargeProblem(BaseProblem):
 
     charge_mass: Optional[float] = None
-    charge_masses: tuple[float, ...] = tuple()
+    charge_masses: list[float] | tuple[float, ...] = tuple()
 
     def __attrs_post_init__(self):
 
@@ -197,7 +197,7 @@ class FixedChargeProblem(BaseProblem):
         )
         logger.info(
             logging_preamble
-            + f"-> REDUCED BURN RATES {",".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
+            + f"-> REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
         )
         return gun
 
@@ -263,7 +263,7 @@ class FixedChargeProblem(BaseProblem):
                     logger.info(
                         logging_preamble
                         + f"-> CHAMBER {chamber_volume * 1e3:.3f} L, "
-                        + f"REDUCED BURN RATES {",".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
+                        + f"REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
                     )
                     return gun
                 else:

@@ -6,7 +6,7 @@ calculating and solving interior ballistic problems.
 import datetime
 from enum import Enum
 
-__version__ = datetime.datetime.now().strftime("%Y.%m.%d.%H%M")  # calendar versioning.
+__version__ = datetime.datetime.now().strftime("%Y.%m.%d.%H")  # calendar versioning.
 
 
 class Significance(Enum):
