@@ -31,10 +31,12 @@ class Gun:
     family: str = field(factory=str)
     cross_section: float
     shot_mass: float
-    charges: dict[Charge, float] = field(factory=dict)
 
     charge: Optional[Charge] = None
+    charges: tuple[Charge, ...] | list[Charge] = tuple()
+
     charge_mass: Optional[float] = None
+    charge_masses: tuple[float, ...] | list[float] = tuple()
 
     chamber_volume: float
     loss_fraction: float = DEFAULT_GUN_LOSS_FRACTION
@@ -43,9 +45,12 @@ class Gun:
 
     def __attrs_post_init__(self):
         if self.charge and self.charge_mass:
-            object.__setattr__(self, "charges", {self.charge: self.charge_mass})
-        elif self.charges:
+            object.__setattr__(self, "charges", tuple([self.charge]))
+            object.__setattr__(self, "charge_masses", tuple([self.charge_mass]))
+
+        elif self.charges and self.charge_masses:
             pass
+
         else:
             raise ValueError("invalid parameters.")
 
@@ -82,7 +87,7 @@ class Gun:
 
     @cached_property
     def charge_mass_sum(self):
-        return sum(self.charges.values())
+        return sum(self.charge_masses)
 
     @cached_property
     def delta(self) -> float:
@@ -90,7 +95,7 @@ class Gun:
 
     @cached_property
     def charge_volume(self) -> float:
-        return sum(charge_mass / charge.density for charge, charge_mass in self.charges.items())
+        return sum(charge_mass / charge.density for charge, charge_mass in zip(self.charges, self.charge_masses))
 
     @cached_property
     def phi(self) -> float:
@@ -99,7 +104,9 @@ class Gun:
     @cached_property
     def bomb_free_fraction(self) -> float:
         return (
-            1 - sum(charge.covolume * charge_mass for charge, charge_mass in self.charges.items()) / self.chamber_volume
+            1
+            - sum(charge.covolume * charge_mass for charge, charge_mass in zip(self.charges, self.charge_masses))
+            / self.chamber_volume
         )
 
     @cached_property
@@ -107,16 +114,14 @@ class Gun:
         """
         The mixed gas's adiabatic index is assumed to equal that of the primary charge.
         """
-        max_charge_mass = max(self.charges.values())
-        for charge, charge_mass in self.charges.items():
-            if charge_mass == max_charge_mass:
-                break
+        max_charge_mass = max(self.charge_masses)
+        charge = self.charges[self.charge_masses.index(max_charge_mass)]
         return charge.adiabatic_index - 1  # catchall.
 
     @cached_property
     def velocity_limit(self) -> float:
         return (
-            (2 * sum(charge.force * charge_mass for charge, charge_mass in self.charges.items()))
+            (2 * sum(charge.force * charge_mass for charge, charge_mass in zip(self.charges, self.charge_masses)))
             / (self.theta * self.phi * self.shot_mass)
         ) ** 0.5
 
@@ -155,14 +160,14 @@ class Gun:
     def gas_energy(self, *, psis: tuple[float, ...], v: float) -> float:
 
         g_e = -0.5 * self.theta * self.phi * self.shot_mass * v**2
-        for (charge, charge_mass), psi in zip(self.charges.items(), psis):
+        for charge, charge_mass, psi in zip(self.charges, self.charge_masses, psis):
             g_e += charge.force * charge_mass * psi
 
         return g_e
 
     def incompressible_fraction(self, psis: tuple[float, ...]) -> float:
         incomp_frac = 0.0
-        for (charge, charge_mass), psi in zip(self.charges.items(), psis):
+        for charge, charge_mass, psi in zip(self.charges, self.charge_masses, psis):
             delta = charge_mass / self.chamber_volume
             incomp_frac += delta / charge.density * (1 - psi) + charge.covolume * delta * psi
 

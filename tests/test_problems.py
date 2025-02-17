@@ -26,6 +26,9 @@ dm_s = 0.1
 
 
 class TestProblems(unittest.TestCase):
+    """
+    values in the test case are notional to verify correctness of program.
+    """
 
     def setUp(self):
         logger.info("Started")

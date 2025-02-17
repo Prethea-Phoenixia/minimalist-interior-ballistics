@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from functools import cached_property
 from math import pi
-from typing import Tuple
+from typing import Optional, Tuple
 
 from attrs import field, frozen
 
@@ -15,13 +15,8 @@ class MultiPerfShape(Enum):
     FOURTEEN_PERF_ROSETTE = ("rosette", 14, 8 / 3, 47 / 3, 26 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
     NINETEEN_PERF_ROSETTE = ("rosette", 19, 3, 21, 36 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
     NINETEEN_PERF_CYLINDER = ("cylinder", 19, 1, 19, 0, (5, 12), (0, 0), 0.3559)
-    NINETEEN_PERF_HEXAGON = (
-        "hexagon", 19, 18 / pi, 19, 18 * (3 * 3**0.5 - 1) / pi, (1, 2), (1, 2), 0.1864,
-    )
-    NINETEEN_PERF_ROUNDED_HEXAGON = (
-        "rounded hexagon", 19, 3**0.5 + 12 / pi, 19, 3 - 3**0.5 + 12 * (4 * 3**0.5 - 1) / pi,
-        (1, 2), (1, 2), 0.1977
-    )
+    NINETEEN_PERF_HEXAGON = ("hexagon", 19, 18 / pi, 19, 18 * (3 * 3**0.5 - 1) / pi, (1, 2), (1, 2), 0.1864)
+    NINETEEN_PERF_ROUNDED_HEXAGON = ("rounded hexagon", 19, 3**0.5 + 12 / pi, 19, 3 - 3**0.5 + 12 * (4 * 3**0.5 - 1) / pi, (1, 2), (1, 2), 0.1977)
     # fmt: on
 
     def describe(self) -> str:
@@ -64,6 +59,9 @@ class FormFunction:
         or the web has been totally consumed. In that case, the slivers' combustion
         behavior is approximated with simple shapes of equivalent volume, and Z_k is
         extended accordingly to greater than unity.
+    e_1: float, optional
+        if a `FormFunction` object is instantiated with arch width, this variable is
+        assigned.
 
     Attributes
     ----------
@@ -114,6 +112,7 @@ class FormFunction:
 
     name: str = field(default="")
     description: str = field(default="")
+    e_1: Optional[float] = None
     chi: float
     labda: float
     mu: float
@@ -144,14 +143,6 @@ class FormFunction:
             return self.chi_s * Z * (1 + self.labda_s * Z)
 
         raise ValueError(f"psi(Z) is defined in [0, {self.Z_k}], but called with Z = {Z}")
-
-    def sigma(self, Z: float) -> float:
-        if 0 <= Z <= 1:  # pre-fracture
-            return self(Z) / self.chi
-        elif 1 < Z <= self.Z_k:  # post fracture
-            return self(Z) / self.chi_s
-
-        raise ValueError(f"sigma(Z) is defined in [0, {self.Z_k}]")
 
     def pretty_print(self) -> str:
         return "\n".join(
@@ -203,14 +194,15 @@ class FormFunction:
         chi = 1 + alpha + beta
         return cls(
             name="grain",
-            description=f"{e_1*2:.1f} x {b*2:.1f} x {c*2:.1f} mm",
+            description=f"{e_1*2 * 1e3:.1f}x{b*2 * 1e3:.1f}x{c*2 * 1e3:.1f} mm",
             chi=chi,
             labda=-(alpha + beta + alpha * beta) / chi,
             mu=alpha * beta / chi,
+            e_1=e_1,
         )
 
     @classmethod
-    def single_perf(cls, arch_width: float, height: float) -> FormFunction:
+    def single_perf(cls, arch_width: Optional[float] = None, height: Optional[float] = None) -> FormFunction:
         """
         form function that describes **right hollow cylinder** shaped propellants,
         colloquially referred to as tubular grains.
@@ -225,14 +217,23 @@ class FormFunction:
             the length of the propellant, or the distance between the two ends
         """
         # effectively the case for above where width = +inf
-        e_1, c = (0.5 * v for v in (arch_width, height))
-        beta = e_1 / c
+
+        e_1 = 0.5 * arch_width if arch_width else None
+        c = 0.5 * height if height else None
+
+        beta = e_1 / c if e_1 and c else 0
+
         return cls(
             name="tube",
-            description=f"{e_1*2:.1f} / 1 - {c*2:.1f} mm",
+            description=(
+                f"{e_1*2 * 1e3:.1f}/1-{c*2 * 1e3:.1f} mm"
+                if (e_1 and c)
+                else f"{e_1*2 * 1e3:.1f}/1 mm" if e_1 else "_/1"
+            ),
             chi=1 + beta,
             labda=-beta / (1 + beta),
             mu=0,
+            e_1=e_1,
         )
 
     @classmethod
@@ -274,17 +275,17 @@ class FormFunction:
         labda = beta * (n - 1 - 2 * Pi) / (Q + 2 * Pi)
         if labda < 0:
             raise ValueError(
-                "Short multi-perforated grains will combust regressively, this case is not well\
- modeled.",
+                "Short multi-perforated grains will combust regressively, this case is not well modeled.",
             )
 
         return cls(
             name=f"{n} perf {desc}",
-            description=f"{e_1*2:.1f} / {n} (d = {d_0:.1f}) - {c*2:.1f} mm",
+            description=f"{e_1*2 * 1e3:.1f}/{n}-{c*2 * 1e3:.1f} (d={d_0 * 1e3:.1f}) mm",
             chi=beta * (Q + 2 * Pi) / Q,
             labda=labda,
             mu=beta**2 * (1 - n) / (Q + 2 * Pi),
             Z_k=(e_1 + rho) / e_1,
+            e_1=e_1,
         )
 
 

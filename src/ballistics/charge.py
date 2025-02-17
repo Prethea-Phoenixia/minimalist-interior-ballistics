@@ -86,14 +86,7 @@ class Propellant:
             reader = csv.reader(file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             for row in reader:
                 try:
-                    (
-                        adiabatic_index,
-                        density,
-                        force,
-                        covolume,
-                        pressure_exponent,
-                        burn_rate_coefficient,
-                    ) = row[2:]
+                    (adiabatic_index, density, force, covolume, pressure_exponent, burn_rate_coefficient) = row[2:]
 
                     name, description = row[:2]
 
@@ -113,7 +106,6 @@ class Propellant:
                 except ValueError as e:
                     logger.warn("skipped line in propellant definition: " + str(e))
 
-                # print(", ".join(row))
         return tuple(prop_list)
 
 
@@ -125,7 +117,9 @@ class Charge(Propellant):
     ----------
     density, force, pressure_exponent, covolume, adiabatic_index: float
         see documentation for `Propellant`.
-    reduced_burnrate: float
+    form_function: `FormFunction`
+        form function that describes the shape of charge.
+    reduced_burnrate: float, optional
         the burn-rate coefficient is factored against the propellant's arch,
         to produce the `reduced burn rate`, defined as:
         ```
@@ -135,15 +129,27 @@ class Charge(Propellant):
         - a: burn rate coefficient, in m Pa^-n s^-1.
           - n: burn rate exponent, dimensionless.
         - 2e: width of the propellant arch.
-    form_function: `ballistics.form_function.FormFunction`
-        form function that describes the shape of charge.
+        If this is not supplied, this would be calculated from `FormFunction.e_1`
+        and `Propellant.burn_rate_coefficient`.
+
+    Raises
+    ------
+    ValueError
+        if the reduced burnrate is not supplied, and both the `FormFunction.e_1`
+        and the `Propellant.burnrate_coefficient` are None.
+
 
     Attributes
     ----------
     Z_k: float
-        cached value from `ballistics.form_function.FormFunction.Z_k`.
+        cached value from `FormFunction.Z_k`.
     theta: float
         see documentation for `Propellant`
+
+    Raises
+    ------
+    ValueError
+        if both the `Charge.reduced_burnrate` and the `FormFunction.e_1` are None.
 
     References
     ----------
@@ -152,14 +158,25 @@ class Charge(Propellant):
 
     """
 
-    reduced_burnrate: float  # u_1 / e_1
+    reduced_burnrate: float = 0.0
     form_function: FormFunction
+
+    def __attrs_post_init__(self):
+        if self.reduced_burnrate:
+            pass
+        elif self.form_function.e_1 and self.burn_rate_coefficient:
+            object.__setattr__(self, "reduced_burnrate", self.burn_rate_coefficient / self.form_function.e_1)
+        else:
+            raise ValueError(
+                "reduced_burnrate is either supplied as an argument, or derived from a valid \
+Charge.burn_rate_coefficient and FormFunction.e_1"
+            )
 
     @classmethod
     def from_propellant(
         cls,
         *,
-        reduced_burnrate: float,
+        reduced_burnrate: float = 0.0,
         propellant: Propellant,
         form_function: FormFunction,
         description: Optional[str] = None,
@@ -171,12 +188,11 @@ class Charge(Propellant):
         Parameters
         ----------
         reduced_burnrate: float
-            see documentation of `ballistics.form_function.FormFunction` for more information.
+            see documentation of `FormFunction` for more information.
         propellant: `Propellant`
             base propellant of this charge.
         form_function:
-            `ballistics.form_function.FormFunction` object that describes the geometry of this
-            propellant.
+            `FormFunction` object that describes the geometry of this propellant.
 
         Notes
         -----
@@ -194,32 +210,57 @@ class Charge(Propellant):
             pressure_exponent=propellant.pressure_exponent,
             covolume=propellant.covolume,
             adiabatic_index=propellant.adiabatic_index,
+            burn_rate_coefficient=propellant.burn_rate_coefficient,
             reduced_burnrate=reduced_burnrate,
             form_function=form_function,
         )
 
     @staticmethod
-    def estimate_reduced_from_coefficient_and_arch(*, arch_width: float, burn_rate_coefficient: float) -> float:
+    def estimate_reduced_from_arch_and_coefficient(arch_width: float, burn_rate_coefficient: float) -> float:
         """
         Parameters
         ----------
         arch_width: float
-            twice the propellant's "web", or the minimum depth the propellant's
-            burn surface must recede to achieve a "burnthrough".
-            See documentation of `ballistics.form_function.FormFunction` for more
-            information.
+            the minimum depth the propellant's burn surface must recede to burnthrough.
+            See documentation of `FormFunction` for more information.
         burn_rate_coefficient: float
-            coefficient used in de Saint Robert's burn rate law.
-            See documentation for `Charge` for more information.
+            coefficient used in de Saint Robert's burn rate law. See documentation for
+            `Charge` for more information.
+
+        Notes
+        -----
+        Tabulating the propellant's burn rate this way is particularly common with Western sources
+        and more recent work from China.
+        """
+        return 2 * burn_rate_coefficient / arch_width
+
+    def get_coefficient_from_arch(self, arch_width: Optional[float] = None) -> float:
+        """
+        Parameters
+        ----------
+        arch_width: float, optional.
+            the minimum depth the propellant's burn surface must recede to burnthrough.
+            See documentation of `FormFunction` for more information.
+            If this parameter is not supplied, then the value set for `FormFunction.e_1` is used.
+
+        Raises
+        ------
+        ValueError
+            if both `arch_width` and `FormFunction.e_1` are None.
 
         Notes
         -----
         Tabulating the propellant's burn rate this way is particularly common with Western sources
         and more recent work fromChina.
-        """
-        return 2 * burn_rate_coefficient / arch_width
 
-    def get_coefficient_from_arch(self, arch_width: float) -> float:
+        """
+        if arch_width:
+            pass
+        elif self.form_function.e_1:
+            arch_width = 2 * self.form_function.e_1
+        else:
+            raise ValueError("arch width must be supplied either as an argument or when instantiating FormFunction.")
+
         return 0.5 * self.reduced_burnrate * arch_width
 
     @cached_property

@@ -78,14 +78,15 @@ class BaseProblem:
             family=self.family,
             cross_section=self.cross_section,
             shot_mass=self.shot_mass,
-            charges={
+            charges=tuple(
                 Charge.from_propellant(
                     reduced_burnrate=reduced_burnrate, propellant=propellant, form_function=form_function
-                ): charge_mass
-                for propellant, form_function, charge_mass, reduced_burnrate in zip(
-                    self.propellants, self.form_functions, charge_masses, reduced_burnrates
                 )
-            },
+                for propellant, form_function, reduced_burnrate in zip(
+                    self.propellants, self.form_functions, reduced_burnrates
+                )
+            ),
+            charge_masses=charge_masses,
             chamber_volume=chamber_volume,
             travel=self.travel,
             loss_fraction=self.loss_fraction,
