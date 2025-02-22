@@ -14,7 +14,7 @@ from . import (DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION,
                DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, MAX_DT, Significance)
 from .charge import Charge
 from .num import dekker, gss_max
-from .state import Delta, State, StateList
+from .state import State, StateList, StateVector
 
 logger = logging.getLogger(__name__)
 
@@ -147,10 +147,12 @@ class Gun:
         """
         return State(
             gun=self,
-            time=0,
-            travel=0,
-            velocity=0,
-            burnup_fractions=tuple(charge.Z_k for charge in self.charges),
+            sv=StateVector(
+                time=0,
+                travel=0,
+                velocity=0,
+                burnup_fractions=tuple(charge.Z_k for charge in self.charges),
+            ),
             marker=Significance.BOMB,
         )
 
@@ -173,17 +175,17 @@ class Gun:
 
         return incomp_frac
 
-    def dt(self, state: State) -> Delta:
+    def dt(self, state: State) -> StateVector:
         P = state.average_pressure
         dZs = tuple(charge.dZdt(P) for charge in self.charges)
-        return Delta(
-            d_time=1,
-            d_travel=state.velocity if state.is_started else 0,
-            d_velocity=(self.S * P / (self.phi * self.shot_mass) if state.is_started else 0),
-            d_burnup_fractions=dZs,
+        return StateVector(
+            time=1,
+            travel=state.velocity if state.is_started else 0,
+            velocity=(self.S * P / (self.phi * self.shot_mass) if state.is_started else 0),
+            burnup_fractions=dZs,
         )
 
-    def dl(self, state: State) -> Delta:
+    def dl(self, state: State) -> StateVector:
         # d/dl = d/dt * dt/dl
         # dt / dl = 1/v
         v = state.velocity
@@ -191,10 +193,10 @@ class Gun:
 
         return dt / v
 
-    def dv(self, state: State) -> Delta:
+    def dv(self, state: State) -> StateVector:
         # d / dv = d/dt * dt/dv
         dt = self.dt(state)
-        return dt / dt.d_velocity
+        return dt / dt.velocity
 
     def propagate_rk4_in_time(self, state: State, dt: float, marker: Significance = Significance.STEP) -> State:
         return self.propagate_rk4(state=state, s_i=state.increment_time, df=self.dt, dx=dt, marker=marker)
@@ -208,8 +210,8 @@ class Gun:
     def propagate_rk4(
         self,
         state: State,
-        s_i: Callable[[Delta, float, Significance], State],
-        df: Callable[[State], Delta],
+        s_i: Callable[[StateVector, float, Significance], State],
+        df: Callable[[State], StateVector],
         dx: float,
         marker: Significance,
     ) -> State:
@@ -231,10 +233,7 @@ class Gun:
 
         initial_state = State(
             gun=self,
-            time=0,
-            travel=0,
-            velocity=0,
-            burnup_fractions=tuple(0 for _ in self.charges),
+            sv=StateVector(time=0.0, travel=0.0, velocity=0.0, burnup_fractions=tuple(0 for _ in self.charges)),
             marker=Significance.IGNITION,
             is_started=False,
         )
@@ -354,7 +353,9 @@ class Gun:
                 delta_t = rough_ttb / n_intg
             states = StateList()
             s_next = State(
-                gun=self, time=0.0, travel=0.0, velocity=0.0, burnup_fractions=Z_c0s, marker=Significance.START
+                gun=self,
+                sv=StateVector(time=0.0, travel=0.0, velocity=0.0, burnup_fractions=Z_c0s),
+                marker=Significance.START,
             )
 
             while not (s_next.is_burnout or abort(s_next)):

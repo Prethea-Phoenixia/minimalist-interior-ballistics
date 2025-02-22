@@ -14,10 +14,6 @@ from .pressure_target import PressureTarget
 
 logger = logging.getLogger(__name__)
 
-if TYPE_CHECKING:
-    # these are required for pdoc
-    from ..charge import FormFunction, Propellant
-
 
 @frozen(kw_only=True)
 class FixedChargeProblem(BaseProblem):
@@ -98,7 +94,9 @@ class FixedChargeProblem(BaseProblem):
         """
 
         def f_ff(chamber_volume: float) -> float:
-            test_gun = self.get_gun(chamber_volume=chamber_volume, reduced_burnrates=tuple(0 for _ in self.propellants))
+            test_gun = self.get_gun(
+                chamber_volume=chamber_volume, reduced_burnrates=tuple(1.0 for _ in self.propellants)
+            )
             return test_gun.bomb_free_fraction - acc
 
         chamber_min_volume = self.chamber_min_volume
@@ -110,7 +108,9 @@ class FixedChargeProblem(BaseProblem):
         lower_limit = max(dekker(f=f_ff, x_0=chamber_min_volume, x_1=bound, tol=chamber_min_volume * acc))
 
         def f_p(chamber_volume: float) -> float:
-            test_gun = self.get_gun(chamber_volume=chamber_volume, reduced_burnrates=tuple(0 for _ in self.propellants))
+            test_gun = self.get_gun(
+                chamber_volume=chamber_volume, reduced_burnrates=tuple(1.0 for _ in self.propellants)
+            )
             return pressure_target.get_difference(test_gun.get_bomb_state())
 
         if f_p(lower_limit) <= 0:

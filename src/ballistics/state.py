@@ -22,10 +22,7 @@ class State:
     """
 
     gun: Gun = field(repr=False)
-    time: float
-    travel: float
-    velocity: float
-    burnup_fractions: tuple[float, ...] = field(factory=tuple)
+    sv: StateVector
     marker: Significance
     is_started: bool = True
 
@@ -33,14 +30,32 @@ class State:
         # this enables sorting and bisect operation with array of `ballistics.state.State`.
         return self.time < other.time
 
+    @cached_property
+    def time(self) -> float:
+        return self.sv.time
+
+    @cached_property
+    def travel(self) -> float:
+        return self.sv.travel
+
+    @cached_property
+    def velocity(self) -> float:
+        return self.sv.velocity
+
+    @cached_property
+    def burnup_fractions(self) -> tuple[float, ...]:
+        return self.sv.burnup_fractions
+
     @staticmethod
     def remark(old_state: State, new_significance: Significance) -> State:
         return State(
             gun=old_state.gun,
-            time=old_state.time,
-            travel=old_state.travel,
-            velocity=old_state.velocity,
-            burnup_fractions=old_state.burnup_fractions,
+            sv=StateVector(
+                time=old_state.time,
+                travel=old_state.travel,
+                velocity=old_state.velocity,
+                burnup_fractions=old_state.burnup_fractions,
+            ),
             marker=new_significance,
         )
 
@@ -94,67 +109,73 @@ class State:
     def is_burnout(self) -> bool:
         return all(Z > charge.Z_k for charge, Z in zip(self.gun.charges, self.burnup_fractions))
 
-    def increment_time(self, d: Delta, dt: float, marker: Significance) -> State:
+    def increment_time(self, d: StateVector, dt: float, marker: Significance) -> State:
         return State(
             gun=self.gun,
-            time=self.time + dt,
-            travel=self.travel + d.d_travel,
-            velocity=self.velocity + d.d_velocity,
-            burnup_fractions=tuple(v + w for v, w in zip(self.burnup_fractions, d.d_burnup_fractions)),
+            sv=StateVector(
+                time=self.time + dt,
+                travel=self.travel + d.travel,
+                velocity=self.velocity + d.velocity,
+                burnup_fractions=tuple(v + w for v, w in zip(self.burnup_fractions, d.burnup_fractions)),
+            ),
             marker=marker,
             is_started=self.is_started,
         )
 
-    def increment_travel(self, d: Delta, dl: float, marker: Significance) -> State:
+    def increment_travel(self, d: StateVector, dl: float, marker: Significance) -> State:
         return State(
             gun=self.gun,
-            time=self.time + d.d_time,
-            travel=self.travel + dl,
-            velocity=self.velocity + d.d_velocity,
-            burnup_fractions=tuple(v + w for v, w in zip(self.burnup_fractions, d.d_burnup_fractions)),
+            sv=StateVector(
+                time=self.time + d.time,
+                travel=self.travel + dl,
+                velocity=self.velocity + d.velocity,
+                burnup_fractions=tuple(v + w for v, w in zip(self.burnup_fractions, d.burnup_fractions)),
+            ),
             marker=marker,
             is_started=self.is_started,
         )
 
-    def increment_velocity(self, d: Delta, dv: float, marker: Significance) -> State:
+    def increment_velocity(self, d: StateVector, dv: float, marker: Significance) -> State:
         return State(
             gun=self.gun,
-            time=self.time + d.d_time,
-            travel=self.travel + d.d_travel,
-            velocity=self.velocity + dv,
-            burnup_fractions=tuple(v + w for v, w in zip(self.burnup_fractions, d.d_burnup_fractions)),
+            sv=StateVector(
+                time=self.time + d.time,
+                travel=self.travel + d.travel,
+                velocity=self.velocity + dv,
+                burnup_fractions=tuple(v + w for v, w in zip(self.burnup_fractions, d.burnup_fractions)),
+            ),
             marker=marker,
             is_started=self.is_started,
         )
 
 
 @frozen(kw_only=True)
-class Delta:
-    d_time: float
-    d_travel: float
-    d_velocity: float
-    d_burnup_fractions: tuple[float, ...]
+class StateVector:
+    time: float
+    travel: float
+    velocity: float
+    burnup_fractions: tuple[float, ...]
 
-    def __mul__(self, scalar: float) -> Delta:
-        return Delta(
-            d_time=self.d_time * scalar,
-            d_travel=self.d_travel * scalar,
-            d_velocity=self.d_velocity * scalar,
-            d_burnup_fractions=tuple(d_burnup_fraction * scalar for d_burnup_fraction in self.d_burnup_fractions),
+    def __mul__(self, scalar: float) -> StateVector:
+        return StateVector(
+            time=self.time * scalar,
+            travel=self.travel * scalar,
+            velocity=self.velocity * scalar,
+            burnup_fractions=tuple(burnup_fraction * scalar for burnup_fraction in self.burnup_fractions),
         )
 
-    def __add__(self, other: Delta) -> Delta:
-        return Delta(
-            d_time=self.d_time + other.d_time,
-            d_travel=self.d_travel + other.d_travel,
-            d_velocity=self.d_velocity + other.d_velocity,
-            d_burnup_fractions=tuple(w + v for w, v in zip(self.d_burnup_fractions, other.d_burnup_fractions)),
+    def __add__(self, other: StateVector) -> StateVector:
+        return StateVector(
+            time=self.time + other.time,
+            travel=self.travel + other.travel,
+            velocity=self.velocity + other.velocity,
+            burnup_fractions=tuple(w + v for w, v in zip(self.burnup_fractions, other.burnup_fractions)),
         )
 
-    def __rmul__(self, scalar: float) -> Delta:
+    def __rmul__(self, scalar: float) -> StateVector:
         return self * scalar
 
-    def __truediv__(self, scalar: float) -> Delta:
+    def __truediv__(self, scalar: float) -> StateVector:
         return self * (1 / scalar)
 
 

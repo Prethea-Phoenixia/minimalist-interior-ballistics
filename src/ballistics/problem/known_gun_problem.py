@@ -12,11 +12,6 @@ if TYPE_CHECKING:
     from .pressure_target import PressureTarget
 
 
-if TYPE_CHECKING:
-    # these are required for pdoc
-    from ..charge import FormFunction, Propellant
-
-
 @frozen(kw_only=True)
 class KnownGunProblem(BaseProblem):
     chamber_volume: float

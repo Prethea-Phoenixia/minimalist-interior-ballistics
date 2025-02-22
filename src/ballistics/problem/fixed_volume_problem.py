@@ -12,10 +12,6 @@ from ..num import dekker, gss_max
 from .base_problem import BaseProblem
 from .pressure_target import PressureTarget
 
-if TYPE_CHECKING:
-    # these are required for pdoc
-    from ..charge import FormFunction, Propellant
-
 logger = logging.getLogger(__name__)
 
 
@@ -124,7 +120,7 @@ class FixedVolumeProblem(BaseProblem):
 
         def f_ff(charge_mass: float) -> float:
             test_gun = self.get_gun(
-                charge_masses=get_masses(charge_mass), reduced_burnrates=tuple(0 for _ in self.propellants)
+                charge_masses=get_masses(charge_mass), reduced_burnrates=tuple(1.0 for _ in self.propellants)
             )
             return test_gun.bomb_free_fraction - acc
 
@@ -136,7 +132,7 @@ class FixedVolumeProblem(BaseProblem):
         def f_p(charge_mass: float) -> float:
             # note this is defined on [0, chamber_fill_mass]
             test_gun = self.get_gun(
-                charge_masses=get_masses(charge_mass), reduced_burnrates=tuple(0 for _ in self.propellants)
+                charge_masses=get_masses(charge_mass), reduced_burnrates=tuple(1.0 for _ in self.propellants)
             )
             return pressure_target.get_difference(test_gun.get_bomb_state())
 
