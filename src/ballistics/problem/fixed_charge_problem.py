@@ -65,7 +65,7 @@ class FixedChargeProblem(BaseProblem):
         # return self.charge_mass / self.propellant.density
 
     def get_chamber_volume_limits(
-        self, pressure_target: PressureTarget, *, acc: float = DEFAULT_ACC, logging_preamble: str = ""
+        self, pressure_target: PressureTarget, acc: float = DEFAULT_ACC, logging_preamble: str = ""
     ) -> Tuple[float, float]:
         """
         find the range of valid chamber volume
@@ -214,7 +214,8 @@ class FixedChargeProblem(BaseProblem):
         logger.info(
             logging_preamble
             + "MATCH VELOCITY AND PRESSURE PROBLEM "
-            + f"{velocity_target:.1f} m/s, {pressure_target.describe()} ->"
+            + (f"{velocity_target:.1f} m/s," if velocity_target else "UNSPECIFIED VELOCITY")
+            + f" {pressure_target.describe()} ->",
         )
         vol_min, vol_max = self.get_chamber_volume_limits(
             pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"

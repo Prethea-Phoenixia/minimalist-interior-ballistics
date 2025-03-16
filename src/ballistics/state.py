@@ -68,6 +68,15 @@ class State:
         )
 
     @cached_property
+    def gross_volume_burnup_fraction(self) -> float:
+        # mass weighted fraction of the above
+
+        return (
+            sum(m * psi for m, psi in zip(self.gun.charge_masses, self.volume_burnup_fractions))
+            / self.gun.gross_charge_mass
+        )
+
+    @cached_property
     def average_pressure(self) -> float:
         """the length-averaged pressure in the equivalent gun, under the Lagrange
         gradient of 0-dimensional interior ballistics.
@@ -93,7 +102,7 @@ class State:
         `average_pressure`.
         """
         return self.average_pressure / (
-            1 + self.gun.charge_mass_sum / (3 * self.gun.shot_mass * (1 + self.gun.loss_fraction))
+            1 + self.gun.gross_charge_mass / (3 * self.gun.shot_mass * (1 + self.gun.loss_fraction))
         )
 
     @cached_property
@@ -102,7 +111,7 @@ class State:
         `average_pressure`.
         """
         return self.shot_pressure * (
-            1 + self.gun.charge_mass_sum / (2 * self.gun.shot_mass * (1 + self.gun.loss_fraction))
+            1 + self.gun.gross_charge_mass / (2 * self.gun.shot_mass * (1 + self.gun.loss_fraction))
         )
 
     @cached_property
@@ -253,6 +262,7 @@ class StateList(BaseList):
             "\n\n\n[charge 3]",
         ),
         floatfmt: str = ".4g",
+        concise: bool = True,
         **kwargs,
     ) -> str:
         """
@@ -293,6 +303,7 @@ class StateList(BaseList):
                     *state.volume_burnup_fractions,
                 )
                 for state in self
+                if ((concise and state.marker != Significance.STEP) or (not concise))
             ],
             *args,
             **{**{"headers": headers, "floatfmt": floatfmt}, **kwargs},  # feeds additional arguments

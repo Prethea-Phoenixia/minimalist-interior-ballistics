@@ -95,7 +95,6 @@ class BaseProblem:
 
     def get_gun_developing_pressure(
         self,
-        *,
         pressure_target: PressureTarget,
         chamber_volume: float,
         charge_mass: Optional[float] = None,

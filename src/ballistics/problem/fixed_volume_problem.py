@@ -243,7 +243,8 @@ class FixedVolumeProblem(BaseProblem):
         logger.info(
             logging_preamble
             + "MATCH VELOCITY AND PRESSURE PROBLEM "
-            + f"{velocity_target:.1f} m/s, {pressure_target.describe()} ->"
+            + (f"{velocity_target:.1f} m/s," if velocity_target else "UNSPECIFIED VELOCITY")
+            + f" {pressure_target.describe()} ->",
         )
         mass_min, mass_max = self.get_charge_mass_limits(
             pressure_target=pressure_target,
@@ -303,7 +304,7 @@ class FixedVolumeProblem(BaseProblem):
                 raise ValueError("targeted velocity is not achievable in the range of valid loading condition.")
 
             def g(mass_i: float, mass_j: float, v_i: float, v_j: float) -> Optional[Gun]:
-                if v_i - velocity_target <= 0 <= v_j - velocity_target:
+                if min(v_i, v_j) <= velocity_target <= max(v_i, v_j):
                     # target velocity is achievable, find the corresponding charge mass to get it.
                     charge_mass, _ = dekker(
                         f=lambda x: f(x) - velocity_target, x_0=mass_i, x_1=mass_j, tol=acc * chamber_fill_mass

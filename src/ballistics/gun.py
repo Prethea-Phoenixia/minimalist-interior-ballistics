@@ -86,12 +86,12 @@ class Gun:
         return self.cross_section
 
     @cached_property
-    def charge_mass_sum(self):
+    def gross_charge_mass(self):
         return sum(self.charge_masses)
 
     @cached_property
     def delta(self) -> float:
-        return self.charge_mass_sum / self.chamber_volume
+        return self.gross_charge_mass / self.chamber_volume
 
     @cached_property
     def charge_volume(self) -> float:
@@ -99,7 +99,7 @@ class Gun:
 
     @cached_property
     def phi(self) -> float:
-        return 1 + self.loss_fraction + self.charge_mass_sum / (3 * self.shot_mass)
+        return 1 + self.loss_fraction + self.gross_charge_mass / (3 * self.shot_mass)
 
     @cached_property
     def bomb_free_fraction(self) -> float:

@@ -22,7 +22,7 @@ class Significance(Enum):
     ADIABAT = "adiabat"
 
 
-MAX_DT = 10e-3  # 10ms
+MAX_DT = 1e-3  # 1ms
 
 DEFAULT_GUN_START_PRESSURE = 30e6
 DEFAULT_GUN_LOSS_FRACTION = 0.05
