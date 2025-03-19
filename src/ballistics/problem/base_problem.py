@@ -48,6 +48,10 @@ class BaseProblem:
         else:
             raise ValueError("invalid BaseProblem parameters")
 
+    @classmethod
+    def from_base_problem(cls, base_problem: BaseProblem, *args, **kwargs) -> BaseProblem:
+        raise NotImplementedError("from_base_problem is undefined for BaseProblem")
+
     def get_gun(
         self,
         *,
@@ -96,13 +100,14 @@ class BaseProblem:
     def get_gun_developing_pressure(
         self,
         pressure_target: PressureTarget,
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
+        logging_preamble: str = "",
+        *,
         chamber_volume: float,
         charge_mass: Optional[float] = None,
         charge_masses: Optional[tuple[float, ...] | list[float]] = None,
         reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
-        n_intg: int = DEFAULT_STEPS,
-        acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
     ) -> Gun:
 
         if charge_mass:

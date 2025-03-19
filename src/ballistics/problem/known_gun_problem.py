@@ -15,12 +15,10 @@ if TYPE_CHECKING:
 @frozen(kw_only=True)
 class KnownGunProblem(BaseProblem):
     chamber_volume: float
-
     charge_mass: Optional[float] = None
     charge_masses: list[float] | tuple[float, ...] = tuple()
 
     def __attrs_post_init__(self):
-
         super().__attrs_post_init__()  # todo: test if this is needed.
         if self.charge_mass:
             object.__setattr__(self, "charge_masses", tuple([self.charge_mass]))
@@ -30,6 +28,32 @@ class KnownGunProblem(BaseProblem):
                 raise ValueError("charge_masses must have the same dimension as self.propellants and form_functions")
         else:
             raise ValueError("invalid parameters")
+
+    @classmethod
+    def from_base_problem(
+        cls,
+        base_problem: BaseProblem,
+        chamber_volume: float,
+        charge_mass: Optional[float] = None,
+        charge_masses: list[float] | tuple[float, ...] = tuple(),
+    ) -> KnownGunProblem:
+        return cls(
+            name=base_problem.name,
+            description=base_problem.description,
+            family=base_problem.family,
+            propellant=base_problem.propellant,
+            propellants=base_problem.propellants,
+            form_function=base_problem.form_function,
+            form_functions=base_problem.form_functions,
+            cross_section=base_problem.cross_section,
+            shot_mass=base_problem.shot_mass,
+            travel=base_problem.travel,
+            loss_fraction=base_problem.loss_fraction,
+            start_pressure=base_problem.start_pressure,
+            chamber_volume=chamber_volume,
+            charge_mass=charge_mass,
+            charge_masses=charge_masses,
+        )
 
     def get_gun(
         self,
@@ -56,12 +80,12 @@ class KnownGunProblem(BaseProblem):
 
     def get_gun_developing_pressure(
         self,
-        *,
         pressure_target: PressureTarget,
-        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
+        *,
+        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         **kwargs,
     ) -> Gun:
 

@@ -33,6 +33,30 @@ class FixedChargeProblem(BaseProblem):
         else:
             raise ValueError("invalid parameters")
 
+    @classmethod
+    def from_base_problem(
+        cls,
+        base_problem: BaseProblem,
+        charge_mass: Optional[float] = None,
+        charge_masses: list[float] | tuple[float, ...] = tuple(),
+    ) -> FixedChargeProblem:
+        return cls(
+            name=base_problem.name,
+            description=base_problem.description,
+            family=base_problem.family,
+            propellant=base_problem.propellant,
+            propellants=base_problem.propellants,
+            form_function=base_problem.form_function,
+            form_functions=base_problem.form_functions,
+            cross_section=base_problem.cross_section,
+            shot_mass=base_problem.shot_mass,
+            travel=base_problem.travel,
+            loss_fraction=base_problem.loss_fraction,
+            start_pressure=base_problem.start_pressure,
+            charge_mass=charge_mass,
+            charge_masses=charge_masses,
+        )
+
     def get_gun(
         self,
         *,
