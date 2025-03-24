@@ -213,38 +213,23 @@ class StateList(BaseList):
 
     @property
     def muzzle_velocity(self) -> float:
-        if self.has_state_with_marker(Significance.MUZZLE):
-            return self.get_state_by_marker(Significance.MUZZLE).velocity
-        else:
-            raise ValueError("StateList does no contain a muzzle state")
+        return self.get_state_by_marker(Significance.MUZZLE).velocity
 
     @property
     def travel(self) -> float:
-        if self.has_state_with_marker(Significance.MUZZLE):
-            return self.get_state_by_marker(Significance.MUZZLE).travel
-        else:
-            raise ValueError("StateList does no contain a muzzle state")
+        return self.get_state_by_marker(Significance.MUZZLE).travel
 
     @property
     def burnout_point(self) -> float:
-        if self.has_state_with_marker(Significance.BURNOUT):
-            return self.get_state_by_marker(Significance.BURNOUT).travel
-        else:
-            raise ValueError("StateList does no contain a burnout state")
+        return self.get_state_by_marker(Significance.BURNOUT).travel
 
     @property
     def peak_shot_pressure(self) -> float:
-        if self.has_state_with_marker(Significance.PEAK_PRESSURE):
-            return self.get_state_by_marker(Significance.PEAK_PRESSURE).shot_pressure
-        else:
-            raise ValueError("StateList does no contain a peak pressure state")
+        return self.get_state_by_marker(Significance.PEAK_PRESSURE).shot_pressure
 
     @property
     def peak_average_pressure(self) -> float:
-        if self.has_state_with_marker(Significance.PEAK_PRESSURE):
-            return self.get_state_by_marker(Significance.PEAK_PRESSURE).average_pressure
-        else:
-            raise ValueError("StateList does no contain a peak pressure state")
+        return self.get_state_by_marker(Significance.PEAK_PRESSURE).average_pressure
 
     def tabulate(
         self,

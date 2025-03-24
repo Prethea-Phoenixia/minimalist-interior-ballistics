@@ -89,7 +89,7 @@ class FixedChargeProblem(BaseProblem):
         # return self.charge_mass / self.propellant.density
 
     def get_chamber_volume_limits(
-        self, pressure_target: PressureTarget, acc: float = DEFAULT_ACC, logging_preamble: str = ""
+        self, pressure_target: PressureTarget, acc: float = DEFAULT_ACC
     ) -> Tuple[float, float]:
         """
         find the range of valid chamber volume
@@ -116,6 +116,7 @@ class FixedChargeProblem(BaseProblem):
         `ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limits`.
 
         """
+        logger.info("get chamber volume limits")
 
         def f_ff(chamber_volume: float) -> float:
             test_gun = self.get_gun(
@@ -146,9 +147,8 @@ class FixedChargeProblem(BaseProblem):
         upper_limit = min(dekker(f=f_p, x_0=lower_limit, x_1=bound, tol=chamber_min_volume * acc))
 
         logger.info(
-            logging_preamble
-            + f"VOLUME LIMIT {pressure_target.describe()} "
-            + f"-> {lower_limit * 1e3:.3f} L TO {upper_limit * 1e3:.3f} L END"
+            f"chamber volume limit for {pressure_target.describe()} solved to be "
+            + f"{lower_limit * 1e3:.3f} L to {upper_limit * 1e3:.3f} L"
         )
         return lower_limit, upper_limit
 
@@ -159,7 +159,6 @@ class FixedChargeProblem(BaseProblem):
         reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
         **kwargs,
     ) -> Gun:
         """
@@ -193,16 +192,13 @@ class FixedChargeProblem(BaseProblem):
 
         """
 
-        logger.info(logging_preamble + "MATCH PRESSURE PROBLEM " + f"{pressure_target.describe()} ->")
-        min_vol, max_vol = self.get_chamber_volume_limits(
-            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
-        )
+        logger.info(f"solve reduced burn rate for {pressure_target.describe()}")
+        min_vol, max_vol = self.get_chamber_volume_limits(pressure_target=pressure_target, acc=acc)
 
         valid_range_prompt = f"valid range of chamber_volume: [{min_vol * 1e3:.3f} L, {max_vol * 1e3:.3f} L]"
         if chamber_volume < min_vol:
             raise ValueError(
-                "specified chamber volume too small to accomodate charge incompressibility"
-                + " at bomb state.\n"
+                "specified chamber volume too small to accomodate charge incompressibility at bomb state.\n"
                 + valid_range_prompt
             )
         elif chamber_volume > max_vol:
@@ -217,11 +213,9 @@ class FixedChargeProblem(BaseProblem):
             pressure_target=pressure_target,
             n_intg=n_intg,
             acc=acc,
-            logging_preamble=logging_preamble + "\t",
         )
         logger.info(
-            logging_preamble
-            + f"-> REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
+            f"reduced burn rates solved to {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} "
         )
         return gun
 
@@ -231,12 +225,11 @@ class FixedChargeProblem(BaseProblem):
         reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
     ) -> tuple[Gun, Gun, Gun]:
 
-        vol_min, vol_max = self.get_chamber_volume_limits(
-            pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
-        )
+        logger.info("getting limiting cases for" + f" {pressure_target.describe()}")
+
+        vol_min, vol_max = self.get_chamber_volume_limits(pressure_target=pressure_target, acc=acc)
 
         def get_gun_with_volume(chamber_volume: float) -> Gun:
             return self.get_gun_developing_pressure(
@@ -246,23 +239,26 @@ class FixedChargeProblem(BaseProblem):
                 pressure_target=pressure_target,
                 n_intg=n_intg,
                 acc=acc,
-                logging_preamble=logging_preamble + "\t",
             )
 
         def f(chamber_volume: float) -> float:
             gun = get_gun_with_volume(chamber_volume=chamber_volume)
-            states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc, logging_preamble=logging_preamble + "\t")
+            states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
             muzzle_state = states.get_state_by_marker(significance=Significance.MUZZLE)
 
             return muzzle_state.velocity
 
         vol_opt = sum(gss_max(f, x_0=vol_min, x_1=vol_max, tol=self.chamber_min_volume * acc)) * 0.5
 
-        return (
+        results = (
             get_gun_with_volume(chamber_volume=vol_min),
             get_gun_with_volume(chamber_volume=vol_opt),
             get_gun_with_volume(chamber_volume=vol_max),
         )
+
+        logger.info(f"optimal chamber volume {vol_opt * 1e3:.3f} L")
+
+        return results
 
     def solve_chamber_volume_at_pressure_for_velocity(
         self,
@@ -271,22 +267,15 @@ class FixedChargeProblem(BaseProblem):
         reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
     ) -> Tuple[Optional[Gun], Optional[Gun]]:
 
-        logger.info(
-            logging_preamble
-            + "MATCH VELOCITY AND PRESSURE PROBLEM "
-            + (f"{velocity_target:.1f} m/s," if velocity_target else "UNSPECIFIED VELOCITY")
-            + f" {pressure_target.describe()} ->",
-        )
+        logger.info("solve chamber volume for " + f"{velocity_target:.1f} m/s" + f"and {pressure_target.describe()}")
 
         gun_vol_min, gun_opt, gun_vol_max = self.get_guns_at_pressure(
             pressure_target=pressure_target,
             reduced_burnrate_ratios=reduced_burnrate_ratios,
             n_intg=n_intg,
             acc=acc,
-            logging_preamble=logging_preamble,
         )
 
         def get_mv(gun: Gun) -> float:
@@ -296,15 +285,12 @@ class FixedChargeProblem(BaseProblem):
         v_vol_max = get_mv(gun_vol_max)
         v_opt = get_mv(gun_opt)
 
+        v_min = min(v_vol_min, v_vol_max)
+        logger.info(f"velocity from {v_min:.3f} and {v_opt:.3f} m/s")
+
         vol_min = gun_vol_min.chamber_volume
         vol_max = gun_vol_max.chamber_volume
         vol_opt = gun_opt.chamber_volume
-
-        v_min = min(v_vol_min, v_vol_max)
-        logger.info(logging_preamble + f"-> VELOCITY RANGE {v_min:.3f} TO {v_opt:.3f} m/s")
-
-        # if not v_min <= velocity_target <= v_opt:
-        #     raise ValueError("targeted velocity is not achievable in the range of valid loading condition.")
 
         def f(chamber_volume: float) -> Gun:
             return self.get_gun_developing_pressure(
@@ -314,7 +300,6 @@ class FixedChargeProblem(BaseProblem):
                 pressure_target=pressure_target,
                 n_intg=n_intg,
                 acc=acc,
-                logging_preamble=logging_preamble + "\t",
             )
 
         def g(vol_i: float, vol_j: float, v_i: float, v_j: float) -> Optional[Gun]:
@@ -324,19 +309,20 @@ class FixedChargeProblem(BaseProblem):
                     f=lambda x: get_mv(f(x)) - velocity_target, x_0=vol_i, x_1=vol_j, tol=acc * self.chamber_min_volume
                 )
                 gun = f(chamber_volume=chamber_volume)
-
-                logger.info(
-                    logging_preamble
-                    + f"-> CHAMBER {chamber_volume * 1e3:.3f} L, "
-                    + f"REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
-                )
                 return gun
             else:
                 return None
 
-        logger.info(logging_preamble + "END")
-
-        return (
+        results = (
             g(vol_i=vol_min, vol_j=vol_opt, v_i=v_vol_min, v_j=v_opt),
             g(vol_i=vol_opt, vol_j=vol_max, v_i=v_opt, v_j=v_vol_max),
         )
+
+        logger.info(
+            "low chamber volume "
+            + (f"{results[0].chamber_volume*1e3:.1f} L " if results[0] else "impossible ")
+            + "high chamber volume "
+            + (f"{results[1].chamber_volume*1e3:.1f} L " if results[1] else "impossible ")
+        )
+
+        return results

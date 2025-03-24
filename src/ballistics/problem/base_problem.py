@@ -102,7 +102,6 @@ class BaseProblem:
         pressure_target: PressureTarget,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
         *,
         chamber_volume: float,
         charge_mass: Optional[float] = None,
@@ -155,9 +154,7 @@ class BaseProblem:
                 charge_masses=charge_masses,
                 chamber_volume=chamber_volume,
             )
-            states = test_gun.to_burnout(
-                n_intg=n_intg, acc=acc, abort_travel=self.travel, logging_preamble=logging_preamble + "\t"
-            )
+            states = test_gun.to_burnout(n_intg=n_intg, acc=acc, abort_travel=self.travel)
             # logger.info(states.tabulate())
             delta_p = pressure_target.get_difference(states.get_state_by_marker(Significance.PEAK_PRESSURE))
             return delta_p
@@ -186,13 +183,6 @@ class BaseProblem:
         """
         while abs(est - est_prime) > acc * min(est, est_prime):
             est, est_prime = dekker(f=f, x_0=est, x_1=est_prime, tol=min(est, est_prime) * acc)
-
-        logger.info(
-            logging_preamble
-            + f"CHARGES {", ".join(f"{charge_mass:.3f} kg" for charge_mass in charge_masses)} CHAMBER {chamber_volume * 1e3:.3f} L"
-            + f" -> MAIN CHARGE REDUCED BURN RATE {est:.2e} s^-1 END"
-        )
-
         return self.get_gun(
             reduced_burnrates=get_burnrates(est), charge_masses=charge_masses, chamber_volume=chamber_volume
         )

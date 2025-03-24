@@ -292,7 +292,6 @@ class Gun:
         acc: float = DEFAULT_ACC,
         abort_velocity: float = inf,
         abort_travel: float = inf,
-        logging_preamble: str = "",
     ) -> StateList:
         """
         Integrates projectile motion up to the propellant burnout point and returns
@@ -379,14 +378,10 @@ class Gun:
             s_burnout = State.remark(s_end, new_significance=Significance.BURNOUT)
             states.append(s_burnout)
 
-        return self.mark_max_pressure(states, acc=acc, logging_preamble=logging_preamble)
+        return self.mark_max_pressure(states, acc=acc)
 
     def to_travel(
-        self,
-        travel: Optional[float] = None,
-        n_intg: int = DEFAULT_STEPS,
-        acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
+        self, travel: Optional[float] = None, n_intg: int = DEFAULT_STEPS, acc: float = DEFAULT_ACC
     ) -> StateList:
         """
         Conducts integration up to the desired shot-travel using time-wise ODE, if
@@ -437,9 +432,9 @@ class Gun:
 
         states.append(self.propagate_rk4_in_travel(state, dl=travel - state.travel, marker=Significance.MUZZLE))
 
-        return self.mark_max_pressure(states, acc=acc, logging_preamble=logging_preamble)
+        return self.mark_max_pressure(states, acc=acc)
 
-    def mark_max_pressure(self, states: StateList, acc: float = DEFAULT_ACC, logging_preamble: str = "") -> StateList:
+    def mark_max_pressure(self, states: StateList, acc: float = DEFAULT_ACC) -> StateList:
         """
         Finds the maximum pressure point and insert it into a list of
         `ballistics.state.State`, passed in as argument.
@@ -487,10 +482,6 @@ class Gun:
 
             insort(states, s_pmax)
 
-            logger.debug(
-                logging_preamble
-                + f"GUN -> PMAX {s_pmax.average_pressure * 1e-6:.3f} MPa"
-                + f" AT {s_pmax.time * 1e3:.3f} ms "
-            )
+            logger.debug(f"GUN -> PMAX {s_pmax.average_pressure * 1e-6:.3f} MPa" + f" AT {s_pmax.time * 1e3:.3f} ms ")
 
         return states

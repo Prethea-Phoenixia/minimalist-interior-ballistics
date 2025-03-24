@@ -83,7 +83,6 @@ class KnownGunProblem(BaseProblem):
         pressure_target: PressureTarget,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
         *,
         reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
         **kwargs,
@@ -96,5 +95,4 @@ class KnownGunProblem(BaseProblem):
             pressure_target=pressure_target,
             n_intg=n_intg,
             acc=acc,
-            logging_preamble=logging_preamble,
         )

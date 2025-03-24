@@ -52,4 +52,4 @@ class PressureTarget:
         return getattr(state, self.target) - self.value
 
     def describe(self) -> str:
-        return self.target.replace("_", " ").upper() + f" {self.value * 1e-6:.3f} MPa"
+        return self.target.replace("_", " ").lower() + f" {self.value * 1e-6:.3f} MPa"

@@ -40,10 +40,13 @@ twentythree_one = FormFunction.single_perf(arch_width=2.3 * mm, height=370 * mm)
 pressure_target = PressureTarget.breech_pressure(350e6)
 velocity_target = 1024
 
+
 logging.basicConfig(
     level=logging.INFO,
-    format="[%(asctime)s] [%(levelname)8s] %(message)s",  # (%(filename)s:%(lineno)s),
+    format="[%(asctime)s] %(levelname)s %(message)s",  # [%(filename)s-%(funcName)s:%(lineno)d]",
     datefmt="%Y-%m-%d %H:%M:%S",
+    filename="main.log",
+    filemode="w+",
 )
 
 

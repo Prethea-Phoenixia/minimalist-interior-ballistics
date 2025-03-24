@@ -78,6 +78,11 @@ class FixedVolumeProblem(BaseProblem):
         return self.chamber_volume * average_density
 
     def get_charge_masses(self, charge_mass, charge_mass_ratios: list[float] | tuple[float, ...]) -> tuple[float, ...]:
+        if len(charge_mass_ratios) != len(self.propellants):
+            raise ValueError("charge_mass_ratios must have the same dimension as self.propellants and form_functions")
+        else:
+            raise ValueError("invalid parameters.")
+
         normalized_charge_mass_ratios = tuple(
             [charge_mass / max(charge_mass_ratios) for charge_mass in charge_mass_ratios]
         )
@@ -87,8 +92,7 @@ class FixedVolumeProblem(BaseProblem):
         self,
         pressure_target: PressureTarget,
         acc: float = DEFAULT_ACC,
-        charge_mass_ratios: Optional[list[float] | tuple[float, ...]] = None,
-        logging_preamble: str = "",
+        charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1]),
     ) -> Tuple[float, float]:
         """
         Find the maximum and minimum valid charge mass value for the outlined gun design
@@ -124,16 +128,7 @@ class FixedVolumeProblem(BaseProblem):
         upper limit. Care is taken such that the returned limits, being numerically
         solved, errs on the conservative side.
         """
-
-        if not charge_mass_ratios:
-            charge_mass_ratios = tuple([1])
-
-        if charge_mass_ratios:
-            if len(charge_mass_ratios) != len(self.propellants):
-                raise ValueError("charge_masses must have same dimension as self.propellants and form_functions")
-        else:
-            raise ValueError("invalid parameters.")
-
+        logger.info("get charge mass limits")
         normalized_charge_mass_ratios = tuple(
             [charge_mass / max(charge_mass_ratios) for charge_mass in charge_mass_ratios]
         )
@@ -163,11 +158,12 @@ class FixedVolumeProblem(BaseProblem):
             raise ValueError("excessive pressure target does not permit solution at given accuracy.")
 
         lower_limit = max(dekker(f_p, 0, upper_limit, tol=chamber_fill_mass * acc))
+
         logger.info(
-            logging_preamble
-            + f"CHARGE LIMIT {pressure_target.describe()} -> "
-            + f"CHARGE {lower_limit:.3f} kg TO {upper_limit:.3f} kg END"
+            f"charge mass limit for {pressure_target.describe()} solved to be "
+            + f"{lower_limit:.3f} kg to {upper_limit:.3f} kg"
         )
+
         return lower_limit, upper_limit
 
     def solve_reduced_burn_rate_for_charge_at_pressure(
@@ -178,7 +174,6 @@ class FixedVolumeProblem(BaseProblem):
         reduced_burnrate_ratios: Optional[list[float] | tuple[float, ...]] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
         **kwargs,
     ) -> Gun:
         """
@@ -212,6 +207,8 @@ class FixedVolumeProblem(BaseProblem):
 
         """
 
+        logger.info(f"solve reduced burn rate for {pressure_target.describe()}")
+
         if charge_mass:
             charge_masses = tuple([charge_mass])
 
@@ -223,11 +220,9 @@ class FixedVolumeProblem(BaseProblem):
         else:
             raise ValueError("invalid parameters.")
 
-        logger.info(logging_preamble + f"MATCH PRESSURE PROBLEM {pressure_target.describe()} ->")
         min_mass, max_mass = self.get_charge_mass_limits(
             pressure_target=pressure_target,
             acc=acc,
-            logging_preamble=logging_preamble + "\t",
             charge_mass_ratios=charge_masses,
         )
 
@@ -244,11 +239,9 @@ class FixedVolumeProblem(BaseProblem):
             pressure_target=pressure_target,
             n_intg=n_intg,
             acc=acc,
-            logging_preamble=logging_preamble + "\t",
         )
         logger.info(
-            logging_preamble
-            + f"->REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
+            f"reduced burn rates solved to {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} "
         )
 
         return gun
@@ -256,27 +249,15 @@ class FixedVolumeProblem(BaseProblem):
     def get_guns_at_pressure(
         self,
         pressure_target: PressureTarget,
-        charge_mass_ratios: Optional[list[float] | tuple[float, ...]] = None,
+        charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
     ) -> Tuple[Gun, Gun, Gun]:
-        if not charge_mass_ratios:
-            charge_mass_ratios = tuple([1])
 
-        if charge_mass_ratios:
-            if len(charge_mass_ratios) != len(self.propellants):
-                raise ValueError(
-                    "charge_mass_ratios must have the same dimension as self.propellants and form_functions"
-                )
-        else:
-            raise ValueError("invalid parameters.")
+        logger.info("getting limiting cases for" + f" {pressure_target.describe()}")
 
         mass_min, mass_max = self.get_charge_mass_limits(
-            pressure_target=pressure_target,
-            charge_mass_ratios=charge_mass_ratios,
-            acc=acc,
-            logging_preamble=logging_preamble + "\t",
+            pressure_target=pressure_target, charge_mass_ratios=charge_mass_ratios, acc=acc
         )
 
         def get_gun_with_charge_mass(charge_mass: float) -> Gun:
@@ -286,12 +267,11 @@ class FixedVolumeProblem(BaseProblem):
                 pressure_target=pressure_target,
                 n_intg=n_intg,
                 acc=acc,
-                logging_preamble=logging_preamble + "\t",
             )
 
         def f(charge_mass: float) -> float:
             gun = get_gun_with_charge_mass(charge_mass=charge_mass)
-            states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc, logging_preamble=logging_preamble + "\t")
+            states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
             muzzle_state = states.get_state_by_marker(significance=Significance.MUZZLE)
 
             return muzzle_state.velocity
@@ -300,45 +280,29 @@ class FixedVolumeProblem(BaseProblem):
 
         mass_opt = sum(gss_max(f=f, x_0=mass_min, x_1=mass_max, tol=chamber_fill_mass * acc)) * 0.5
 
-        return (
+        results = (
             get_gun_with_charge_mass(charge_mass=mass_min),
             get_gun_with_charge_mass(charge_mass=mass_opt),
             get_gun_with_charge_mass(charge_mass=mass_max),
         )
 
+        logger.info(f"optimal charge mass {mass_opt:.3f} kg")
+
+        return results
+
     def solve_charge_mass_at_pressure_for_velocity(
         self,
         pressure_target: PressureTarget,
         velocity_target: float,
-        charge_mass_ratios: Optional[list[float] | tuple[float, ...]] = None,
+        charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        logging_preamble: str = "",
     ) -> Tuple[Optional[Gun], Optional[Gun]]:
 
-        logger.info(
-            logging_preamble
-            + "MATCH VELOCITY AND PRESSURE PROBLEM "
-            + (f"{velocity_target:.1f} m/s," if velocity_target else "UNSPECIFIED VELOCITY")
-            + f" {pressure_target.describe()} ->",
-        )
-
-        if not charge_mass_ratios:
-            charge_mass_ratios = tuple([1])
-        if charge_mass_ratios:
-            if len(charge_mass_ratios) != len(self.propellants):
-                raise ValueError(
-                    "charge_mass_ratios must have the same dimension as self.propellants and form_functions"
-                )
-        else:
-            raise ValueError("invalid parameters.")
+        logger.info("solve charge mass for " + f"{velocity_target:.1f} m/s" + f"and {pressure_target.describe()}")
 
         gun_mass_min, gun_opt, gun_mass_max = self.get_guns_at_pressure(
-            pressure_target=pressure_target,
-            charge_mass_ratios=charge_mass_ratios,
-            n_intg=n_intg,
-            acc=acc,
-            logging_preamble=logging_preamble,
+            pressure_target=pressure_target, charge_mass_ratios=charge_mass_ratios, n_intg=n_intg, acc=acc
         )
 
         mass_min = gun_mass_min.gross_charge_mass
@@ -352,12 +316,9 @@ class FixedVolumeProblem(BaseProblem):
         v_mass_max = get_mv(gun_mass_max)
         v_min = min(v_mass_min, v_mass_max)
         v_max = get_mv(gun_opt)
+        logger.info(f"velocity from {v_min:.3f} to {v_max:.3f} m/s")
 
         chamber_fill_mass = self.get_fill_mass(charge_mass_ratios=charge_mass_ratios)
-
-        logger.info(logging_preamble + f"-> VELOCITY RANGE {v_min:.3f} TO {v_max:.3f} m/s")
-        # if not v_min <= velocity_target <= v_max:
-        #     raise ValueError("targeted velocity is not achievable in the range of valid loading condition.")
 
         def f(charge_mass: float) -> Gun:
             gun = self.get_gun_developing_pressure(
@@ -366,7 +327,6 @@ class FixedVolumeProblem(BaseProblem):
                 pressure_target=pressure_target,
                 n_intg=n_intg,
                 acc=acc,
-                logging_preamble=logging_preamble + "\t",
             )
             return gun
 
@@ -377,18 +337,19 @@ class FixedVolumeProblem(BaseProblem):
                     f=lambda x: get_mv(f(x)) - velocity_target, x_0=mass_i, x_1=mass_j, tol=acc * chamber_fill_mass
                 )
                 gun = f(charge_mass=charge_mass)
-
-                logger.info(
-                    logging_preamble
-                    + f"-> CHARGE {charge_mass:.3f} kg, "
-                    + f"REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
-                )
                 return gun
             else:
                 return None
 
-        logger.info(logging_preamble + "END")
-        return (
+        results = (
             g(mass_i=mass_min, mass_j=mass_opt, v_i=v_mass_min, v_j=v_max),
             g(mass_i=mass_opt, mass_j=mass_max, v_i=v_max, v_j=v_mass_max),
         )
+
+        logger.info(
+            "low charge mass "
+            + (f"{results[0].gross_charge_mass:.3f} kg " if results[0] else "impossible ")
+            + "high charge mass "
+            + (f"{results[1].gross_charge_mass:.3f} kg " if results[1] else "impossible ")
+        )
+        return results
