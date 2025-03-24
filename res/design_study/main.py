@@ -68,7 +68,7 @@ for cal in cals:
         )
 
         try:
-            low_gun, opt_gun, high_gun = fcp.solve_chamber_volume_at_pressure_for_velocity(
+            low_gun, high_gun = fcp.solve_chamber_volume_at_pressure_for_velocity(
                 pressure_target=pressure_target, velocity_target=velocity_target
             )
 

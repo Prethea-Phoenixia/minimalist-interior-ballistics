@@ -225,22 +225,15 @@ class FixedChargeProblem(BaseProblem):
         )
         return gun
 
-    def solve_chamber_volume_at_pressure_for_velocity(
+    def get_guns_at_pressure(
         self,
         pressure_target: PressureTarget,
         reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
-        velocity_target: Optional[float] = None,
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
         logging_preamble: str = "",
-    ) -> Tuple[Optional[Gun], Optional[Gun], Optional[Gun]]:
+    ) -> tuple[Gun, Gun, Gun]:
 
-        logger.info(
-            logging_preamble
-            + "MATCH VELOCITY AND PRESSURE PROBLEM "
-            + (f"{velocity_target:.1f} m/s," if velocity_target else "UNSPECIFIED VELOCITY")
-            + f" {pressure_target.describe()} ->",
-        )
         vol_min, vol_max = self.get_chamber_volume_limits(
             pressure_target=pressure_target, acc=acc, logging_preamble=logging_preamble + "\t"
         )
@@ -264,46 +257,86 @@ class FixedChargeProblem(BaseProblem):
             return muzzle_state.velocity
 
         vol_opt = sum(gss_max(f, x_0=vol_min, x_1=vol_max, tol=self.chamber_min_volume * acc)) * 0.5
-        v_opt = f(vol_opt)
 
-        v_min_vol = f(chamber_volume=vol_min)
-        v_max_vol = f(chamber_volume=vol_max)
+        return (
+            get_gun_with_volume(chamber_volume=vol_min),
+            get_gun_with_volume(chamber_volume=vol_opt),
+            get_gun_with_volume(chamber_volume=vol_max),
+        )
 
-        v_min = min(v_min_vol, v_max_vol)
+    def solve_chamber_volume_at_pressure_for_velocity(
+        self,
+        pressure_target: PressureTarget,
+        velocity_target: float,
+        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
+        logging_preamble: str = "",
+    ) -> Tuple[Optional[Gun], Optional[Gun]]:
 
+        logger.info(
+            logging_preamble
+            + "MATCH VELOCITY AND PRESSURE PROBLEM "
+            + (f"{velocity_target:.1f} m/s," if velocity_target else "UNSPECIFIED VELOCITY")
+            + f" {pressure_target.describe()} ->",
+        )
+
+        gun_vol_min, gun_opt, gun_vol_max = self.get_guns_at_pressure(
+            pressure_target=pressure_target,
+            reduced_burnrate_ratios=reduced_burnrate_ratios,
+            n_intg=n_intg,
+            acc=acc,
+            logging_preamble=logging_preamble,
+        )
+
+        def get_mv(gun: Gun) -> float:
+            return gun.to_travel(n_intg=n_intg, acc=acc).muzzle_velocity
+
+        v_vol_min = get_mv(gun_vol_min)
+        v_vol_max = get_mv(gun_vol_max)
+        v_opt = get_mv(gun_opt)
+
+        vol_min = gun_vol_min.chamber_volume
+        vol_max = gun_vol_max.chamber_volume
+        vol_opt = gun_opt.chamber_volume
+
+        v_min = min(v_vol_min, v_vol_max)
         logger.info(logging_preamble + f"-> VELOCITY RANGE {v_min:.3f} TO {v_opt:.3f} m/s")
 
-        if velocity_target:
-            if not v_min < velocity_target <= v_opt:
-                raise ValueError("targeted velocity is not achievable in the range of valid loading condition.")
+        # if not v_min <= velocity_target <= v_opt:
+        #     raise ValueError("targeted velocity is not achievable in the range of valid loading condition.")
 
-            def g(vol_i: float, vol_j: float, v_i: float, v_j: float) -> Optional[Gun]:
-                if min(v_i, v_j) <= velocity_target <= max(v_i, v_j):
-                    # target velocity is achievable, find the corresponding charge mass to get it.
-                    chamber_volume, _ = dekker(
-                        f=lambda x: f(x) - velocity_target, x_0=vol_i, x_1=vol_j, tol=acc * self.chamber_min_volume
-                    )
-                    gun = get_gun_with_volume(chamber_volume=chamber_volume)
-
-                    logger.info(
-                        logging_preamble
-                        + f"-> CHAMBER {chamber_volume * 1e3:.3f} L, "
-                        + f"REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
-                    )
-                    return gun
-                else:
-                    return None
-
-            logger.info(logging_preamble + "END")
-
-            return (
-                g(vol_i=vol_min, vol_j=vol_opt, v_i=v_min_vol, v_j=v_opt),
-                None,
-                g(vol_i=vol_opt, vol_j=vol_max, v_i=v_opt, v_j=v_max_vol),
+        def f(chamber_volume: float) -> Gun:
+            return self.get_gun_developing_pressure(
+                charge_masses=self.charge_masses,
+                reduced_burnrate_ratios=reduced_burnrate_ratios,
+                chamber_volume=chamber_volume,
+                pressure_target=pressure_target,
+                n_intg=n_intg,
+                acc=acc,
+                logging_preamble=logging_preamble + "\t",
             )
-        else:
-            return (
-                get_gun_with_volume(chamber_volume=vol_min),
-                get_gun_with_volume(chamber_volume=vol_opt),
-                get_gun_with_volume(chamber_volume=vol_max),
-            )
+
+        def g(vol_i: float, vol_j: float, v_i: float, v_j: float) -> Optional[Gun]:
+            if min(v_i, v_j) <= velocity_target <= max(v_i, v_j):
+                # target velocity is achievable, find the corresponding charge mass to get it.
+                chamber_volume, _ = dekker(
+                    f=lambda x: get_mv(f(x)) - velocity_target, x_0=vol_i, x_1=vol_j, tol=acc * self.chamber_min_volume
+                )
+                gun = f(chamber_volume=chamber_volume)
+
+                logger.info(
+                    logging_preamble
+                    + f"-> CHAMBER {chamber_volume * 1e3:.3f} L, "
+                    + f"REDUCED BURN RATES {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} END"
+                )
+                return gun
+            else:
+                return None
+
+        logger.info(logging_preamble + "END")
+
+        return (
+            g(vol_i=vol_min, vol_j=vol_opt, v_i=v_vol_min, v_j=v_opt),
+            g(vol_i=vol_opt, vol_j=vol_max, v_i=v_opt, v_j=v_vol_max),
+        )

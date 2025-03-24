@@ -26,7 +26,6 @@ class BaseDesign:
     loss_fraction: float = DEFAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
 
-    velocity_target: float
     pressure_target: PressureTarget
 
     def set_up_problem(self, travel: float) -> BaseProblem:

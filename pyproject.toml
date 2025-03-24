@@ -16,7 +16,7 @@ dependencies = [
 requires-python = ">=3.9"
 readme = "README.md"
 description = "A minimalist package and GUI tool for the solution of interior ballistic system of equation and its variant problems, applicable to the design and verification of charge design of artillery pieces."
-license = {file = "LICENSE"}
+license-files=["LICENSE"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",
