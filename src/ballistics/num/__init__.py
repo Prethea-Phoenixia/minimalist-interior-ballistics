@@ -2,7 +2,7 @@
 A collection of useful numerical routines used here.
 """
 
-from .dekker import dekker
-from .gss import gss_max, gss_min
-from .intg import intg
-from .secant import secant
+from ballistics.num.dekker import dekker
+from ballistics.num.gss import gss_max, gss_min
+from ballistics.num.intg import intg
+from ballistics.num.secant import secant

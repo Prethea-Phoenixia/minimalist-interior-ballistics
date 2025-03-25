@@ -3,9 +3,7 @@ from __future__ import annotations
 from typing import Callable, Tuple
 
 
-def dekker(
-    f: Callable[[float], float], x_0: float, x_1: float, tol: float, max_it: int = 33
-) -> Tuple[float, float]:
+def dekker(f: Callable[[float], float], x_0: float, x_1: float, tol: float, max_it: int = 33) -> Tuple[float, float]:
     """
     Dekker algorithm for finding the root of a univariate function on a bracketing
     interval. Returns the best estimate and its counterpoint.

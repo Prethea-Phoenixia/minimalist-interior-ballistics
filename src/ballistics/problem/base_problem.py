@@ -4,14 +4,13 @@ import logging
 from typing import TYPE_CHECKING, Optional
 
 from attrs import field, frozen
-
-from .. import (DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION,
-                DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS,
-                REDUCED_BURN_RATE_INITIAL_GUESS, Significance)
-from ..charge import Charge, Propellant
-from ..gun import Gun
-from ..num import dekker
-from .pressure_target import PressureTarget
+from ballistics import (DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION,
+                        DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS,
+                        REDUCED_BURN_RATE_INITIAL_GUESS, Significance)
+from ballistics.charge import Charge, Propellant
+from ballistics.gun import Gun
+from ballistics.num import dekker
+from ballistics.problem.pressure_target import PressureTarget
 
 if TYPE_CHECKING:
     from ballistics.form_function import FormFunction

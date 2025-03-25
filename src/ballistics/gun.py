@@ -10,11 +10,12 @@ from typing import Callable, Dict, Iterable, Optional, Tuple
 from attrs import field, frozen
 from cattrs import Converter
 
-from . import (DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION,
-               DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, MAX_DT, Significance)
-from .charge import Charge
-from .num import dekker, gss_max
-from .state import State, StateList, StateVector
+from ballistics import (DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION,
+                        DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, MAX_DT,
+                        Significance)
+from ballistics.charge import Charge
+from ballistics.num import dekker, gss_max
+from ballistics.state import State, StateList, StateVector
 
 logger = logging.getLogger(__name__)
 
@@ -119,14 +120,14 @@ class Gun:
         return charge.adiabatic_index - 1  # catchall.
 
     @cached_property
-    def velocity_limit(self) -> float:
+    def asymptotic_velocity(self) -> float:
         return (
             (2 * sum(charge.force * charge_mass for charge, charge_mass in zip(self.charges, self.charge_masses)))
             / (self.theta * self.phi * self.shot_mass)
         ) ** 0.5
 
     def get_thermal_efficiency(self, velocity: float) -> float:
-        return (velocity / self.velocity_limit) ** 2
+        return (velocity / self.asymptotic_velocity) ** 2
 
     def get_ballistic_efficiency(self, velocity: float) -> float:
         return self.get_thermal_efficiency(velocity) / self.phi
@@ -273,7 +274,7 @@ class Gun:
     def get_velocity_post_burnout(self, *, burnout_state: State, travel: float) -> float:
         l_k, v_k = burnout_state.travel, burnout_state.velocity
         l_1 = self.l_0 * (1 - self.incompressible_fraction(tuple(1 for _ in self.charges)))
-        v_j = self.velocity_limit
+        v_j = self.asymptotic_velocity
         theta = self.theta
 
         return (1 - (1 - (v_k / v_j) ** 2) / ((l_1 + travel) / (l_1 + l_k)) ** theta) ** 0.5 * v_j
@@ -281,7 +282,7 @@ class Gun:
     def get_travel_post_burnout(self, *, burnout_state: State, velocity: float) -> float:
         l_k, v_k = burnout_state.travel, burnout_state.velocity
         l_1 = self.l_0 * (1 - self.incompressible_fraction(tuple(1 for _ in self.charges)))
-        v_j = self.velocity_limit
+        v_j = self.asymptotic_velocity
         theta = self.theta
 
         return (l_1 + l_k) * ((1 - (velocity / v_j) ** 2) / (1 - (v_k / v_j) ** 2)) ** (-1 / theta) - l_1

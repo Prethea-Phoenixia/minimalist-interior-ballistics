@@ -3,13 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from attrs import frozen
-
-from .. import DEFAULT_ACC, DEFAULT_STEPS
-from .base_problem import BaseProblem
+from ballistics import DEFAULT_ACC, DEFAULT_STEPS
+from ballistics.problem.base_problem import BaseProblem
 
 if TYPE_CHECKING:
-    from ..gun import Gun
-    from .pressure_target import PressureTarget
+    from ballistics.gun import Gun
+    from ballistics.problem.pressure_target import PressureTarget
 
 
 @frozen(kw_only=True)

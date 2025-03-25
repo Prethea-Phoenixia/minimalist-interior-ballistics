@@ -5,12 +5,11 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Optional, Tuple
 
 from attrs import frozen
-
-from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
-from ..gun import Gun
-from ..num import dekker, gss_max
-from .base_problem import BaseProblem
-from .pressure_target import PressureTarget
+from ballistics import DEFAULT_ACC, DEFAULT_STEPS, Significance
+from ballistics.gun import Gun
+from ballistics.num import dekker, gss_max
+from ballistics.problem.base_problem import BaseProblem
+from ballistics.problem.pressure_target import PressureTarget
 
 logger = logging.getLogger(__name__)
 

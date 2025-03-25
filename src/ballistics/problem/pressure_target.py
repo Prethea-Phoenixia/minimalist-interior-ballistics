@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from attrs import field, frozen
+from ballistics.state import State
 
-from ..state import State
+# from typing import TYPE_CHECKING
 
 
 @frozen()

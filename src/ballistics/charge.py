@@ -8,8 +8,8 @@ from typing import Optional, Tuple
 
 from attrs import field, frozen
 
-from . import AMBIENT_PRESSURE
-from .form_function import FormFunction
+from ballistics import AMBIENT_PRESSURE
+from ballistics.form_function import FormFunction
 
 logger = logging.getLogger(__name__)
 

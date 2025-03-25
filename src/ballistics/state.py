@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING, Iterable, Optional
 from attrs import field, frozen
 from tabulate import tabulate
 
-from . import Significance
+from ballistics import Significance
 
 if TYPE_CHECKING:
-    from .gun import Gun
+    from ballistics.gun import Gun
 
 
 @frozen(kw_only=True)

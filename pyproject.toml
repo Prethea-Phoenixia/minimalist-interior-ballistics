@@ -5,9 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ballistics"
 dynamic = ["version"]
-authors = [
-  { name="Jinpeng Zhai", email="914962409@qq.com" },
-]
+authors = [{name="Jinpeng Zhai", email="914962409@qq.com"}]
 dependencies = [
   "tabulate",
   "attrs",
@@ -20,14 +18,14 @@ license-files=["LICENSE"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
+    "Operating System :: OS Independent"
 ]
 
 [tool.setuptools.package-data]
 ballistics = ["py.typed"]
 
-[project.gui-scripts]
-ballistics-gui = "ballistics.gui.main:main"
+# [project.gui-scripts]
+# ballistics-gui = "ballistics.gui.main:main"
 
 [project.urls]
 Homepage = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics"
