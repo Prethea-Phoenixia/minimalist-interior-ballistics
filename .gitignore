@@ -162,3 +162,7 @@ cython_debug/
 
 # ignore privated python files.
 _*.py
+
+# sublime related
+*.sublime-project
+*.sublime-workspace
