@@ -1,5 +1,6 @@
 import logging
 import unittest
+from os import path
 
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
@@ -9,7 +10,7 @@ from ballistics.problem import (FixedChargeProblem, FixedVolumeProblem,
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO,
-    filename="test_problems.log",
+    filename=f"{path.splitext(__file__)[0]}.log",
     format="[%(asctime)s] [%(levelname)8s] %(message)s",  # (%(filename)s:%(lineno)s),
     datefmt="%Y-%m-%d %H:%M:%S",
     filemode="w+",
@@ -61,108 +62,6 @@ class TestProblems(unittest.TestCase):
 
         self.eighteen_one_fourtytwo = FormFunction.single_perf(arch_width=1.8, height=420)
 
-    def testFixedChargeProblems(self):
-        logger.info("Testing Fixed Charge Problems")
-        """53-УОФ-412 with НДТ-3 18/1"""
-
-        fcp_BS_3_53_UOF_412 = FixedChargeProblem(
-            name="БС-3 52-П-412 53-УОФ-412",
-            cross_section=0.818 * dm2,
-            shot_mass=15.6,
-            charge_mass=5.6,
-            loss_fraction=0.03,
-            start_pressure=30000 * kgf_dm2,
-            travel=47.38 * dm,
-            propellant=self.NDT_3,
-            form_function=self.eighteen_one_twentysix,
-        )
-
-        BS_3_53_UOF_412 = fcp_BS_3_53_UOF_412.solve_reduced_burn_rate_for_volume_at_pressure(
-            chamber_volume=7.9 * L,
-            pressure_target=PressureTarget.average_pressure(3070e2 * kgf_dm2),
-        )
-        logger.info(BS_3_53_UOF_412.name)
-        logger.info("\n" + BS_3_53_UOF_412.to_travel().tabulate())
-
-        for charge, arch_width in zip(BS_3_53_UOF_412.charges, (1.8e-3,)):
-            logger.info(f"{charge.name} {charge.get_coefficient_from_arch(arch_width)} m/s/Pa")
-
-        fcp_D_44_UO_365K = FixedChargeProblem(
-            name="Д-44 УО-365К O-365К",
-            description="793 m/s",
-            cross_section=0.582 * dm2,
-            shot_mass=9.54,
-            loss_fraction=0.03,
-            start_pressure=300e2 * kgf_dm2,
-            travel=35.92 * dm,
-            propellants=[self.single_base, self.single_base],
-            form_functions=[self.fourteen_seven, self.eighteen_one_fourtytwo],
-            charge_masses=[2.34, 0.26],
-        )
-
-        D_44_UO_365K = fcp_D_44_UO_365K.solve_reduced_burn_rate_for_volume_at_pressure(
-            chamber_volume=3.94 * L,
-            reduced_burnrate_ratios=[1 / 14, 1 / 18],
-            pressure_target=PressureTarget.average_pressure(2750e2 * kgf_dm2),
-        )
-
-        logger.info(D_44_UO_365K.name)
-        logger.info("\n" + D_44_UO_365K.to_travel().tabulate())
-
-        for charge, arch_width in zip(D_44_UO_365K.charges, (1.4e-3, 1.8e-3)):
-            logger.info(f"{charge.name} {charge.get_coefficient_from_arch(arch_width)} m/s/Pa")
-
-    def testFixedVolumeProblems(self):
-        logger.info("Testing Fixed Volume Problems")
-
-        fvp_BS_3_53_UOF_412 = FixedVolumeProblem(
-            name="БС-3 52-П-412 53-УОФ-412",
-            description="900 m/s",
-            cross_section=0.818 * dm2,
-            shot_mass=15.6,
-            chamber_volume=7.9 * L,
-            loss_fraction=0.03,
-            start_pressure=30000 * kgf_dm2,
-            travel=47.38 * dm,
-            propellant=self.NDT_3,
-            form_function=self.eighteen_one_twentysix,
-        )
-
-        BS_3_53_UOF_412 = fvp_BS_3_53_UOF_412.solve_reduced_burn_rate_for_charge_at_pressure(
-            charge_mass=5.6,
-            pressure_target=PressureTarget.average_pressure(3070e2 * kgf_dm2),
-        )
-        logger.info(BS_3_53_UOF_412.name)
-        logger.info("\n" + BS_3_53_UOF_412.to_travel().tabulate())
-
-        for charge, arch_width in zip(BS_3_53_UOF_412.charges, (1.8e-3,)):
-            logger.info(f"{charge.name} {charge.get_coefficient_from_arch(arch_width)} m/s/Pa")
-
-        fvp_D_44_UO_365K = FixedVolumeProblem(
-            name="Д-44 УО-365К O-365К",
-            description="793 m/s",
-            cross_section=0.582 * dm2,
-            shot_mass=9.54,
-            chamber_volume=3.94 * L,
-            loss_fraction=0.03,
-            start_pressure=300e2 * kgf_dm2,
-            travel=35.92 * dm,
-            propellants=[self.single_base, self.single_base],
-            form_functions=[self.fourteen_seven, self.eighteen_one_fourtytwo],
-        )
-
-        D_44_UO_365K = fvp_D_44_UO_365K.solve_reduced_burn_rate_for_charge_at_pressure(
-            charge_masses=[2.34, 0.26],
-            reduced_burnrate_ratios=[1 / 14, 1 / 18],
-            pressure_target=PressureTarget.average_pressure(2750e2 * kgf_dm2),
-        )
-
-        logger.info(D_44_UO_365K.name)
-        logger.info("\n" + D_44_UO_365K.to_travel().tabulate())
-
-        for charge, arch_width in zip(D_44_UO_365K.charges, (1.4e-3, 1.8e-3)):
-            logger.info(f"{charge.name} {charge.get_coefficient_from_arch(arch_width)} m/s/Pa")
-
     def testKnownGunProblem(self):
         logger.info("Testing Known Gun Problems")
 
@@ -180,7 +79,7 @@ class TestProblems(unittest.TestCase):
             form_function=self.eighteen_one_twentysix,
         )
 
-        BS_3_53_UOF_412 = kgp_BS_3_53_UOF_412.get_gun_developing_pressure(
+        BS_3_53_UOF_412 = kgp_BS_3_53_UOF_412.get_gun_at_pressure(
             pressure_target=PressureTarget.average_pressure(3070e2 * kgf_dm2)
         )
         logger.info(BS_3_53_UOF_412.name)
@@ -203,7 +102,7 @@ class TestProblems(unittest.TestCase):
             form_functions=[self.fourteen_seven, self.eighteen_one_fourtytwo],
         )
 
-        D_44_UO_365K = kgp_D_44_UO_365K.get_gun_developing_pressure(
+        D_44_UO_365K = kgp_D_44_UO_365K.get_gun_at_pressure(
             reduced_burnrate_ratios=[1 / 14, 1 / 18], pressure_target=PressureTarget.average_pressure(2750e2 * kgf_dm2)
         )
 
@@ -214,7 +113,125 @@ class TestProblems(unittest.TestCase):
             logger.info(f"{charge.name} {charge.get_coefficient_from_arch(arch_width)} m/s/Pa")
 
     def tearDown(self):
-        logger.info("Ended")
+        pass
+
+
+class TestFixedChargeProblem(TestProblems):
+    def setUp(self):
+        super().setUp()
+
+        self.fcp_BS_3_53_UOF_412 = FixedChargeProblem(
+            name="БС-3 52-П-412 53-УОФ-412",
+            cross_section=0.818 * dm2,
+            shot_mass=15.6,
+            charge_mass=5.6,
+            loss_fraction=0.03,
+            start_pressure=30000 * kgf_dm2,
+            travel=47.38 * dm,
+            propellant=self.NDT_3,
+            form_function=self.eighteen_one_twentysix,
+        )
+
+        self.fcp_D_44_UO_365K = FixedChargeProblem(
+            name="Д-44 УО-365К O-365К",
+            description="793 m/s",
+            cross_section=0.582 * dm2,
+            shot_mass=9.54,
+            loss_fraction=0.03,
+            start_pressure=300e2 * kgf_dm2,
+            travel=35.92 * dm,
+            propellants=[self.single_base, self.single_base],
+            form_functions=[self.fourteen_seven, self.eighteen_one_fourtytwo],
+            charge_masses=[2.34, 0.26],
+        )
+
+    def testSolveReducedBurnRateForVolumeAtPressure(self):
+        BS_3_53_UOF_412 = self.fcp_BS_3_53_UOF_412.solve_reduced_burn_rate_for_volume_at_pressure(
+            chamber_volume=7.9 * L,
+            pressure_target=PressureTarget.average_pressure(3070e2 * kgf_dm2),
+        )
+        logger.info(BS_3_53_UOF_412.name)
+        logger.info("\n" + BS_3_53_UOF_412.to_travel().tabulate())
+
+        for charge, arch_width in zip(BS_3_53_UOF_412.charges, (1.8e-3,)):
+            logger.info(f"{charge.name} {charge.get_coefficient_from_arch(arch_width)} m/s/Pa")
+
+    def testSolveChamberVolumeAtPressureForVelocity(self):
+        D_44_UO_365K, _ = self.fcp_D_44_UO_365K.solve_chamber_volume_at_pressure_for_velocity(
+            reduced_burnrate_ratios=[1 / 14, 1 / 18],
+            pressure_target=PressureTarget.average_pressure(2750e2 * kgf_dm2),
+            velocity_target=793.0,
+        )
+
+        logger.info(D_44_UO_365K.chamber_volume)
+        logger.info(D_44_UO_365K.name)
+        logger.info("\n" + D_44_UO_365K.to_travel().tabulate())
+
+        for charge, arch_width in zip(D_44_UO_365K.charges, (1.4e-3, 1.8e-3)):
+            logger.info(f"{charge.name} {charge.get_coefficient_from_arch(arch_width)} m/s/Pa")
+
+    def tearDown(self):
+        super().tearDown()
+
+
+class TestFixedVolumeProblem(TestProblems):
+    def setUp(self):
+        super().setUp()
+
+        self.fvp_D_44_UO_365K = FixedVolumeProblem(
+            name="Д-44 УО-365К O-365К",
+            description="793 m/s",
+            cross_section=0.582 * dm2,
+            shot_mass=9.54,
+            chamber_volume=3.94 * L,
+            loss_fraction=0.03,
+            start_pressure=300e2 * kgf_dm2,
+            travel=35.92 * dm,
+            propellants=[self.single_base, self.single_base],
+            form_functions=[self.fourteen_seven, self.eighteen_one_fourtytwo],
+        )
+
+        self.fvp_BS_3_53_UOF_412 = FixedVolumeProblem(
+            name="БС-3 52-П-412 53-УОФ-412",
+            description="900 m/s",
+            cross_section=0.818 * dm2,
+            shot_mass=15.6,
+            chamber_volume=7.9 * L,
+            loss_fraction=0.03,
+            start_pressure=30000 * kgf_dm2,
+            travel=47.38 * dm,
+            propellant=self.NDT_3,
+            form_function=self.eighteen_one_twentysix,
+        )
+
+    def testSolveReducedBurnRateForVolumeAtPressure(self):
+
+        BS_3_53_UOF_412 = self.fvp_BS_3_53_UOF_412.solve_reduced_burn_rate_for_charge_at_pressure(
+            charge_mass=5.6,
+            pressure_target=PressureTarget.average_pressure(3070e2 * kgf_dm2),
+        )
+        logger.info(BS_3_53_UOF_412.name)
+        logger.info("\n" + BS_3_53_UOF_412.to_travel().tabulate())
+
+        for charge, arch_width in zip(BS_3_53_UOF_412.charges, (1.8e-3,)):
+            logger.info(f"{charge.name} {charge.get_coefficient_from_arch(arch_width)} m/s/Pa")
+
+    def testSolveChargeMassAtPressureForVelocity(self):
+        D_44_UO_365K, _ = self.fvp_D_44_UO_365K.solve_charge_mass_at_pressure_for_velocity(
+            velocity_target=793.0,
+            pressure_target=PressureTarget.average_pressure(2750e2 * kgf_dm2),
+            charge_mass_ratios=[2.34, 0.26],
+            reduced_burnrate_ratios=[1 / 14, 1 / 18],
+        )
+
+        logger.info(D_44_UO_365K.name)
+        logger.info("\n" + D_44_UO_365K.to_travel().tabulate())
+
+        for charge, arch_width in zip(D_44_UO_365K.charges, (1.4e-3, 1.8e-3)):
+            logger.info(f"{charge.name} {charge.get_coefficient_from_arch(arch_width)} m/s/Pa")
+
+    def tearDown(self):
+        super().tearDown()
 
 
 if __name__ == "__main__":

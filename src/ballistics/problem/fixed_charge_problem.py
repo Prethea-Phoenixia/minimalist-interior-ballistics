@@ -96,7 +96,7 @@ class FixedChargeProblem(BaseProblem):
         Parameters
         ----------
         pressure_target, acc: `ballistics.problem.pressure_target.PressureTarget`, float
-            see `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`
+            see `ballistics.problem.base_problem.BaseProblem.get_gun_at_pressure`
             for more information.
 
         Returns
@@ -155,7 +155,7 @@ class FixedChargeProblem(BaseProblem):
         self,
         chamber_volume: float,
         pressure_target: PressureTarget,
-        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
         **kwargs,
@@ -164,7 +164,7 @@ class FixedChargeProblem(BaseProblem):
         solves the reduced burn rate such that the peak pressure developed in bore
         matches the desired value. This is the outer, user facing function that validates
         the input by checking against the calculated chamber volume limits. Implementation
-        is instead under `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`
+        is instead under `ballistics.problem.base_problem.BaseProblem.get_gun_at_pressure`
         method.
 
         Parameters
@@ -205,7 +205,7 @@ class FixedChargeProblem(BaseProblem):
                 "specified chamber volume too large for the targeted pressure to develop.\n" + valid_range_prompt
             )
 
-        gun = self.get_gun_developing_pressure(
+        gun = self.get_gun_at_pressure(
             charge_masses=self.charge_masses,
             reduced_burnrate_ratios=reduced_burnrate_ratios,
             chamber_volume=chamber_volume,
@@ -221,7 +221,7 @@ class FixedChargeProblem(BaseProblem):
     def get_guns_at_pressure(
         self,
         pressure_target: PressureTarget,
-        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
     ) -> tuple[Gun, Gun, Gun]:
@@ -231,7 +231,7 @@ class FixedChargeProblem(BaseProblem):
         vol_min, vol_max = self.get_chamber_volume_limits(pressure_target=pressure_target, acc=acc)
 
         def get_gun_with_volume(chamber_volume: float) -> Gun:
-            return self.get_gun_developing_pressure(
+            return self.get_gun_at_pressure(
                 charge_masses=self.charge_masses,
                 reduced_burnrate_ratios=reduced_burnrate_ratios,
                 chamber_volume=chamber_volume,
@@ -263,7 +263,7 @@ class FixedChargeProblem(BaseProblem):
         self,
         pressure_target: PressureTarget,
         velocity_target: float,
-        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
     ) -> Tuple[Optional[Gun], Optional[Gun]]:
@@ -292,7 +292,7 @@ class FixedChargeProblem(BaseProblem):
         vol_opt = gun_opt.chamber_volume
 
         def f(chamber_volume: float) -> Gun:
-            return self.get_gun_developing_pressure(
+            return self.get_gun_at_pressure(
                 charge_masses=self.charge_masses,
                 reduced_burnrate_ratios=reduced_burnrate_ratios,
                 chamber_volume=chamber_volume,

@@ -76,30 +76,30 @@ class FixedVolumeProblem(BaseProblem):
         )
         return self.chamber_volume * average_density
 
-    def get_charge_masses(self, charge_mass, charge_mass_ratios: list[float] | tuple[float, ...]) -> tuple[float, ...]:
+    def get_charge_masses(
+        self, total_charge_mass, charge_mass_ratios: list[float] | tuple[float, ...]
+    ) -> tuple[float, ...]:
         if len(charge_mass_ratios) != len(self.propellants):
             raise ValueError("charge_mass_ratios must have the same dimension as self.propellants and form_functions")
-        else:
-            raise ValueError("invalid parameters.")
 
         normalized_charge_mass_ratios = tuple(
-            [charge_mass / max(charge_mass_ratios) for charge_mass in charge_mass_ratios]
+            [charge_mass / sum(charge_mass_ratios) for charge_mass in charge_mass_ratios]
         )
-        return tuple(charge_mass_ratio * charge_mass for charge_mass_ratio in normalized_charge_mass_ratios)
+        return tuple(charge_mass_ratio * total_charge_mass for charge_mass_ratio in normalized_charge_mass_ratios)
 
     def get_charge_mass_limits(
         self,
         pressure_target: PressureTarget,
         acc: float = DEFAULT_ACC,
         charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1]),
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Find the maximum and minimum valid charge mass value for the outlined gun design
 
         Parameters
         ----------
         pressure_target, acc: `ballistics.problem.pressure_target.PressureTarget`, float
-            see `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`
+            see `ballistics.problem.base_problem.BaseProblem.get_gun_at_pressure`
             for more information.
 
         Returns
@@ -128,16 +128,13 @@ class FixedVolumeProblem(BaseProblem):
         solved, errs on the conservative side.
         """
         logger.info("get charge mass limits")
-        normalized_charge_mass_ratios = tuple(
-            [charge_mass / max(charge_mass_ratios) for charge_mass in charge_mass_ratios]
-        )
 
-        def get_masses(charge_mass: float) -> tuple[float, ...]:
-            return tuple(charge_mass_ratio * charge_mass for charge_mass_ratio in normalized_charge_mass_ratios)
-
-        def f_ff(charge_mass: float) -> float:
+        def f_ff(total_charge_mass: float) -> float:
             test_gun = self.get_gun(
-                charge_masses=get_masses(charge_mass), reduced_burnrates=tuple(1.0 for _ in self.propellants)
+                charge_masses=self.get_charge_masses(
+                    total_charge_mass=total_charge_mass, charge_mass_ratios=charge_mass_ratios
+                ),
+                reduced_burnrates=tuple(1.0 for _ in self.propellants),
             )
             return test_gun.bomb_free_fraction - acc
 
@@ -146,10 +143,13 @@ class FixedVolumeProblem(BaseProblem):
 
         # up until this point execution is guaranteed.
 
-        def f_p(charge_mass: float) -> float:
+        def f_p(total_charge_mass: float) -> float:
             # note this is defined on [0, chamber_fill_mass]
             test_gun = self.get_gun(
-                charge_masses=get_masses(charge_mass), reduced_burnrates=tuple(1.0 for _ in self.propellants)
+                charge_masses=self.get_charge_masses(
+                    total_charge_mass=total_charge_mass, charge_mass_ratios=charge_mass_ratios
+                ),
+                reduced_burnrates=tuple(1.0 for _ in self.propellants),
             )
             return pressure_target.get_difference(test_gun.get_bomb_state())
 
@@ -170,7 +170,7 @@ class FixedVolumeProblem(BaseProblem):
         pressure_target: PressureTarget,
         charge_mass: Optional[float] = None,
         charge_masses: Optional[list[float] | tuple[float, ...]] = None,
-        reduced_burnrate_ratios: Optional[list[float] | tuple[float, ...]] = None,
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
         **kwargs,
@@ -179,7 +179,7 @@ class FixedVolumeProblem(BaseProblem):
         solves the reduced burn rate such that the peak pressure developed in bore
         matches the desired value. This is the outer, user facing function that validates
         the input by checking against the calcualted charge mass limits. Implementation
-        instead under `ballistics.problem.base_problem.BaseProblem.get_gun_developing_pressure`
+        instead under `ballistics.problem.base_problem.BaseProblem.get_gun_at_pressure`
         method.
 
         Parameters
@@ -231,7 +231,7 @@ class FixedVolumeProblem(BaseProblem):
         elif sum(charge_masses) > max_mass:
             raise ValueError("specified charge exceed maximum load density considered.\n" + valid_range_prompt)
 
-        gun = self.get_gun_developing_pressure(
+        gun = self.get_gun_at_pressure(
             charge_masses=charge_masses,
             reduced_burnrate_ratios=reduced_burnrate_ratios,
             chamber_volume=self.chamber_volume,
@@ -248,7 +248,8 @@ class FixedVolumeProblem(BaseProblem):
     def get_guns_at_pressure(
         self,
         pressure_target: PressureTarget,
-        charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1]),
+        charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
     ) -> Tuple[Gun, Gun, Gun]:
@@ -259,17 +260,20 @@ class FixedVolumeProblem(BaseProblem):
             pressure_target=pressure_target, charge_mass_ratios=charge_mass_ratios, acc=acc
         )
 
-        def get_gun_with_charge_mass(charge_mass: float) -> Gun:
-            return self.get_gun_developing_pressure(
-                charge_masses=self.get_charge_masses(charge_mass=charge_mass, charge_mass_ratios=charge_mass_ratios),
+        def get_gun_with_charge_mass(total_charge_mass: float) -> Gun:
+            return self.get_gun_at_pressure(
+                charge_masses=self.get_charge_masses(
+                    total_charge_mass=total_charge_mass, charge_mass_ratios=charge_mass_ratios
+                ),
+                reduced_burnrate_ratios=reduced_burnrate_ratios,
                 chamber_volume=self.chamber_volume,
                 pressure_target=pressure_target,
                 n_intg=n_intg,
                 acc=acc,
             )
 
-        def f(charge_mass: float) -> float:
-            gun = get_gun_with_charge_mass(charge_mass=charge_mass)
+        def f(total_charge_mass: float) -> float:
+            gun = get_gun_with_charge_mass(total_charge_mass=total_charge_mass)
             states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
             muzzle_state = states.get_state_by_marker(significance=Significance.MUZZLE)
 
@@ -280,9 +284,9 @@ class FixedVolumeProblem(BaseProblem):
         mass_opt = sum(gss_max(f=f, x_0=mass_min, x_1=mass_max, tol=chamber_fill_mass * acc)) * 0.5
 
         results = (
-            get_gun_with_charge_mass(charge_mass=mass_min),
-            get_gun_with_charge_mass(charge_mass=mass_opt),
-            get_gun_with_charge_mass(charge_mass=mass_max),
+            get_gun_with_charge_mass(total_charge_mass=mass_min),
+            get_gun_with_charge_mass(total_charge_mass=mass_opt),
+            get_gun_with_charge_mass(total_charge_mass=mass_max),
         )
 
         logger.info(f"optimal charge mass {mass_opt:.3f} kg")
@@ -293,7 +297,8 @@ class FixedVolumeProblem(BaseProblem):
         self,
         pressure_target: PressureTarget,
         velocity_target: float,
-        charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1]),
+        charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
     ) -> Tuple[Optional[Gun], Optional[Gun]]:
@@ -301,7 +306,11 @@ class FixedVolumeProblem(BaseProblem):
         logger.info("solve charge mass for " + f"{velocity_target:.1f} m/s" + f"and {pressure_target.describe()}")
 
         gun_mass_min, gun_opt, gun_mass_max = self.get_guns_at_pressure(
-            pressure_target=pressure_target, charge_mass_ratios=charge_mass_ratios, n_intg=n_intg, acc=acc
+            pressure_target=pressure_target,
+            charge_mass_ratios=charge_mass_ratios,
+            reduced_burnrate_ratios=reduced_burnrate_ratios,
+            n_intg=n_intg,
+            acc=acc,
         )
 
         mass_min = gun_mass_min.gross_charge_mass
@@ -320,8 +329,11 @@ class FixedVolumeProblem(BaseProblem):
         chamber_fill_mass = self.get_fill_mass(charge_mass_ratios=charge_mass_ratios)
 
         def f(charge_mass: float) -> Gun:
-            gun = self.get_gun_developing_pressure(
-                charge_masses=self.get_charge_masses(charge_mass=charge_mass, charge_mass_ratios=charge_mass_ratios),
+            gun = self.get_gun_at_pressure(
+                charge_masses=self.get_charge_masses(
+                    total_charge_mass=charge_mass, charge_mass_ratios=charge_mass_ratios
+                ),
+                reduced_burnrate_ratios=reduced_burnrate_ratios,
                 chamber_volume=self.chamber_volume,
                 pressure_target=pressure_target,
                 n_intg=n_intg,

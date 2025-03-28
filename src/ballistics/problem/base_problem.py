@@ -96,7 +96,7 @@ class BaseProblem:
             start_pressure=self.start_pressure,
         )
 
-    def get_gun_developing_pressure(
+    def get_gun_at_pressure(
         self,
         pressure_target: PressureTarget,
         n_intg: int = DEFAULT_STEPS,
@@ -105,14 +105,11 @@ class BaseProblem:
         chamber_volume: float,
         charge_mass: Optional[float] = None,
         charge_masses: Optional[tuple[float, ...] | list[float]] = None,
-        reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
     ) -> Gun:
 
         if charge_mass:
             charge_masses = tuple([charge_mass])
-
-        if not reduced_burnrate_ratios:
-            reduced_burnrate_ratios = tuple([1.0])
 
         if charge_masses and reduced_burnrate_ratios:
             if len(charge_masses) == len(reduced_burnrate_ratios) == len(self.propellants):

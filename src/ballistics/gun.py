@@ -148,12 +148,7 @@ class Gun:
         """
         return State(
             gun=self,
-            sv=StateVector(
-                time=0,
-                travel=0,
-                velocity=0,
-                burnup_fractions=tuple(charge.Z_k for charge in self.charges),
-            ),
+            sv=StateVector(time=0, travel=0, velocity=0, burnup_fractions=tuple(charge.Z_k for charge in self.charges)),
             marker=Significance.BOMB,
         )
 
@@ -468,17 +463,7 @@ class Gun:
                     p_t = self.propagate_rk4_in_time(s_j, dt=time - s_j.time).average_pressure
                 return p_t
 
-            time_pmax = (
-                sum(
-                    gss_max(
-                        f=time_pressure,
-                        x_0=s_i.time,
-                        x_1=s_k.time,
-                        tol=acc * total_time,
-                    )
-                )
-                * 0.5
-            )
+            time_pmax = sum(gss_max(f=time_pressure, x_0=s_i.time, x_1=s_k.time, tol=acc * total_time)) * 0.5
             s_pmax = self.propagate_rk4_in_time(s_j, dt=time_pmax - s_j.time, marker=Significance.PEAK_PRESSURE)
 
             insort(states, s_pmax)
