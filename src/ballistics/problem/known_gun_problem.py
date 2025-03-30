@@ -4,11 +4,14 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import frozen
 from ballistics import DEFAULT_ACC, DEFAULT_STEPS
+from ballistics.gun import Gun
 from ballistics.problem.base_problem import BaseProblem
+from ballistics.problem.pressure_target import PressureTarget
 
 if TYPE_CHECKING:
-    from ballistics.gun import Gun
-    from ballistics.problem.pressure_target import PressureTarget
+    # these are required for pdoc to locate the references
+    from ballistics.charge import Propellant
+    from ballistics.form_function import FormFunction
 
 
 @frozen(kw_only=True)

@@ -16,41 +16,38 @@ logger = logging.getLogger(__name__)
 
 @frozen(kw_only=True)
 class Propellant:
-    """class that represent propellant before they are cut into gun charges.
+    r"""class that represent propellant before they are cut into gun charges.
 
     Parameters
     ----------
     density: float
-        bulk density of the propellant, in kg/m^3. Reported value is close to
-        1600 kg/m^3 for various modern, smokeless/nitrocellulose based propellant.
+        bulk density of the propellant, in $\text{kg}\text{m}^{-3}$.
+        Reported value is close to 1600 $\text{kg}\text{m}^{-3}$ for modern
+        propellants.
     force: float
         propellant force, or the work done by a kilogram of propellant gas (as
         ideal gas), when expanding from its isochoric adiabatic flame temperature
-        to absolute zero, in an isentropic manner. Unit in J/kg, or (m/s)^2.
+        to absolute zero, in an isentropic manner. Unit in
+        $\text{J}\text{kg}^{-1}$, or $(\text{m/s})^2$.
     pressure_exponent: float
-        parameter in the Saint Robert's (Viellie's) burn rate law:
-        ```
-        u = a * P^n
-        ```
+        parameter in the Saint Robert's (Viellie's) burn rate law, $u = a * P^n$,
         where:
-        - u: linear burn rate, in m/s
-        - a: burn rate coefficient, in m s^-1 Pa^-n.
-          - n: pressure exponent, dimensionless.
-        - P: average chamber pressure, in Pa.
+        - u: linear burn rate, in $\text{m}\text{s}^{-1}$
+        - a: burn rate coefficient, in $\text{m}\text{s}^{-1}\text{Pa}^{-n}$.
+        - n: pressure exponent, dimensionless.
+        - P: average chamber pressure, in $\text{Pa}$.
         is used to model the combustion behavior of the propellant.
     covolume: float
-        the co-volume of a propellant, as used in the Nobel-Abel equation of state:
-        ```
-        P (v-alpha) = RT
-        ```
+        the co-volume of a propellant, as used in the Nobel-Abel equation of state
+        $P(v-\\alpha)=RT$
         where:
-        - P: average pressure in Pa.
-        - v: specific volume of propellant gas, in m^3/kg.
-        - alpha: covolume, in m^3/kg.
-        - R: specific gas constant, in J/(kg-K).
-        - T: average temprature in K.
+        - P: average pressure in $\text{Pa}$.
+        - v: specific volume of propellant gas, in $\text{m}^3\text{kg}^{-1}$.
+        - alpha: covolume, in $\text{m}^3\text{kg}^{-1}$.
+        - R: specific gas constant, in $\text{J}\text{kg}^{-1}\text{K}^{-1}$.
+        - T: average temprature in $\text{K}$.
     adiabatic_index: float
-        the (average) heat capacity ratio of the working gas while in-bore.
+        the (average) heat capacity ratio of the propellant combustion product.
         At elevated temperatures and with a mix of species, this parameter typically
         clusters around 1.23-1.25.
 
@@ -111,45 +108,36 @@ class Propellant:
 
 @frozen(kw_only=True)
 class Charge(Propellant):
-    """class that represent particular charge design.
+    r"""class that represent particular charge design.
 
     Parameters
     ----------
     density, force, pressure_exponent, covolume, adiabatic_index: float
         see documentation for `Propellant`.
-    form_function: `FormFunction`
+    form_function: `ballistics.form_function.FormFunction`
         form function that describes the shape of charge.
     reduced_burnrate: float, optional
-        the burn-rate coefficient is factored against the propellant's arch,
-        to produce the `reduced burn rate`, defined as:
-        ```
-        a / e
-        ```
-        where:
-        - a: burn rate coefficient, in m Pa^-n s^-1.
-          - n: burn rate exponent, dimensionless.
+        $a/e$, where:
+        - a: burn rate coefficient, in $\text{m} \text{Pa}^{-n} \text{s}^-1$.
+        - n: burn rate exponent, dimensionless.
         - 2e: width of the propellant arch.
-        If this is not supplied, this would be calculated from `FormFunction.e_1`
-        and `Propellant.burn_rate_coefficient`.
+        If not supplied, this is calculated from
+        `ballistics.form_function.FormFunction.e_1` and
+        `Propellant.burn_rate_coefficient`.
 
     Raises
     ------
     ValueError
-        if the reduced burnrate is not supplied, and both the `FormFunction.e_1`
-        and the `Propellant.burnrate_coefficient` are None.
-
+        if reduced burnrate is not supplied and cannot be derived from Charge
+        and FormFuction objects.
 
     Attributes
     ----------
     Z_k: float
-        cached value from `FormFunction.Z_k`.
+        cached from `ballistics.form_function.FormFunction.Z_k`.
     theta: float
         see documentation for `Propellant`
 
-    Raises
-    ------
-    ValueError
-        if both the `Charge.reduced_burnrate` and the `FormFunction.e_1` are None.
 
     References
     ----------
@@ -168,7 +156,7 @@ class Charge(Propellant):
             object.__setattr__(self, "reduced_burnrate", self.burn_rate_coefficient / self.form_function.e_1)
         else:
             raise ValueError(
-                "reduced_burnrate is either supplied as an argument, or derived from a valid \
+                "reduced_burnrate is either supplied as an argument, or derived from non null \
 Charge.burn_rate_coefficient and FormFunction.e_1"
             )
 

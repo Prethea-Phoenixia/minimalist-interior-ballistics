@@ -287,14 +287,3 @@ class FormFunction:
             Z_k=(e_1 + rho) / e_1,
             e_1=e_1,
         )
-
-
-# if __name__ == "__main__":
-#     f = FormFunction.multi_perf(5.5 * 2, 2, 1, shape=MultiPerfShape.SEVEN_PERF_CYLINDER)
-#     print(f)
-#     print(1, f(1))
-#     print(f.Z_k, f(f.Z_k))
-
-#     for i in range(200):
-#         Z = f.Z_k * i / 199
-#         print(Z, f(Z))

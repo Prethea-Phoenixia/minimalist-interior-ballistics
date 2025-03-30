@@ -13,6 +13,11 @@ from ballistics.problem.pressure_target import PressureTarget
 
 logger = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    # these are required for pdoc to locate the references
+    from ballistics.charge import Propellant
+    from ballistics.form_function import FormFunction
+
 
 @frozen(kw_only=True)
 class FixedChargeProblem(BaseProblem):
