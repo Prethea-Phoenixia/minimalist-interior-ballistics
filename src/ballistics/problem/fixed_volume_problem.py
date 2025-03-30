@@ -70,6 +70,27 @@ class FixedVolumeProblem(BaseProblem):
             chamber_volume=self.chamber_volume,
         )
 
+    def get_gun_at_pressure(
+        self,
+        pressure_target: PressureTarget,
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
+        *,
+        charge_mass: Optional[float] = None,
+        charge_masses: Optional[tuple[float, ...] | list[float]] = None,
+        **kwargs,
+    ) -> Gun:
+        return super().get_gun_at_pressure(
+            pressure_target=pressure_target,
+            n_intg=n_intg,
+            acc=acc,
+            chamber_volume=self.chamber_volume,
+            charge_mass=charge_mass,
+            charge_masses=charge_masses,
+            reduced_burnrate_ratios=reduced_burnrate_ratios,
+        )
+
     def get_fill_mass(self, charge_mass_ratios: list[float] | tuple[float, ...]) -> float:
         average_density = sum(charge_mass_ratios) / sum(
             charge_mass / propellant.density for charge_mass, propellant in zip(charge_mass_ratios, self.propellants)
@@ -234,7 +255,6 @@ class FixedVolumeProblem(BaseProblem):
         gun = self.get_gun_at_pressure(
             charge_masses=charge_masses,
             reduced_burnrate_ratios=reduced_burnrate_ratios,
-            chamber_volume=self.chamber_volume,
             pressure_target=pressure_target,
             n_intg=n_intg,
             acc=acc,
@@ -266,7 +286,6 @@ class FixedVolumeProblem(BaseProblem):
                     total_charge_mass=total_charge_mass, charge_mass_ratios=charge_mass_ratios
                 ),
                 reduced_burnrate_ratios=reduced_burnrate_ratios,
-                chamber_volume=self.chamber_volume,
                 pressure_target=pressure_target,
                 n_intg=n_intg,
                 acc=acc,
@@ -334,7 +353,6 @@ class FixedVolumeProblem(BaseProblem):
                     total_charge_mass=charge_mass, charge_mass_ratios=charge_mass_ratios
                 ),
                 reduced_burnrate_ratios=reduced_burnrate_ratios,
-                chamber_volume=self.chamber_volume,
                 pressure_target=pressure_target,
                 n_intg=n_intg,
                 acc=acc,

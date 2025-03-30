@@ -99,13 +99,13 @@ class BaseProblem:
     def get_gun_at_pressure(
         self,
         pressure_target: PressureTarget,
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
         *,
         chamber_volume: float,
         charge_mass: Optional[float] = None,
         charge_masses: Optional[tuple[float, ...] | list[float]] = None,
-        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
     ) -> Gun:
 
         if charge_mass:

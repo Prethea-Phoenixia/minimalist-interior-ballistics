@@ -80,6 +80,26 @@ class FixedChargeProblem(BaseProblem):
             charge_masses=self.charge_masses, chamber_volume=chamber_volume, reduced_burnrates=reduced_burnrates
         )
 
+    def get_gun_at_pressure(
+        self,
+        pressure_target: PressureTarget,
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
+        n_intg: int = DEFAULT_STEPS,
+        acc: float = DEFAULT_ACC,
+        *,
+        chamber_volume: float,
+        **kwargs,
+    ) -> Gun:
+        return super().get_gun_at_pressure(
+            pressure_target=pressure_target,
+            n_intg=n_intg,
+            acc=acc,
+            chamber_volume=chamber_volume,
+            charge_mass=self.charge_mass,
+            charge_masses=self.charge_masses,
+            reduced_burnrate_ratios=reduced_burnrate_ratios,
+        )
+
     @cached_property
     def chamber_min_volume(self) -> float:
         return sum(
@@ -206,7 +226,6 @@ class FixedChargeProblem(BaseProblem):
             )
 
         gun = self.get_gun_at_pressure(
-            charge_masses=self.charge_masses,
             reduced_burnrate_ratios=reduced_burnrate_ratios,
             chamber_volume=chamber_volume,
             pressure_target=pressure_target,
@@ -232,7 +251,6 @@ class FixedChargeProblem(BaseProblem):
 
         def get_gun_with_volume(chamber_volume: float) -> Gun:
             return self.get_gun_at_pressure(
-                charge_masses=self.charge_masses,
                 reduced_burnrate_ratios=reduced_burnrate_ratios,
                 chamber_volume=chamber_volume,
                 pressure_target=pressure_target,
@@ -293,7 +311,6 @@ class FixedChargeProblem(BaseProblem):
 
         def f(chamber_volume: float) -> Gun:
             return self.get_gun_at_pressure(
-                charge_masses=self.charge_masses,
                 reduced_burnrate_ratios=reduced_burnrate_ratios,
                 chamber_volume=chamber_volume,
                 pressure_target=pressure_target,

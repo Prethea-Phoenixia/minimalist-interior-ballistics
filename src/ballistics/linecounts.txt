@@ -1,0 +1,22 @@
+     ADDED |     TOTAL | FILE                
+-----------|-----------|--------------------
+       274 |       274 | .charge.py          
+       300 |       574 | .form_function.py   
+       473 |      1047 | .gun.py             
+       295 |      1342 | .state.py           
+        35 |      1377 | ._countlines.py     
+        51 |      1428 | .__init__.py        
+        43 |      1471 | .design\base_design.py
+        60 |      1531 | .design\fixed_charge_design.py
+         1 |      1532 | .design\__init__.py 
+       106 |      1638 | .num\dekker.py      
+       111 |      1749 | .num\gss.py         
+       105 |      1854 | .num\intg.py        
+        82 |      1936 | .num\secant.py      
+         8 |      1944 | .num\__init__.py    
+       184 |      2128 | .problem\base_problem.py
+       327 |      2455 | .problem\fixed_charge_problem.py
+       366 |      2821 | .problem\fixed_volume_problem.py
+        97 |      2918 | .problem\known_gun_problem.py
+        54 |      2972 | .problem\pressure_target.py
+         5 |      2977 | .problem\__init__.py

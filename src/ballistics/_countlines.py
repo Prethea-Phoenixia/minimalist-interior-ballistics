@@ -1,7 +1,8 @@
 import os
+import sys
 
 
-def countlines(start, lines=0, header=True, begin_start=None):
+def countlines(start, lines=0, header=True, begin_start=None) -> int:
     if header:
         print("{:>10} |{:>10} | {:<20}".format("ADDED", "TOTAL", "FILE"))
         print("{:->11}|{:->11}|{:->20}".format("", "", ""))
@@ -11,8 +12,7 @@ def countlines(start, lines=0, header=True, begin_start=None):
         if os.path.isfile(thing):
             if thing.endswith(".py"):
                 with open(thing, "r", encoding="utf-8") as f:
-                    newlines = f.readlines()
-                    newlines = len(newlines)
+                    newlines = len(f.readlines())
                     lines += newlines
 
                     if begin_start is not None:
@@ -20,11 +20,7 @@ def countlines(start, lines=0, header=True, begin_start=None):
                     else:
                         reldir_of_thing = "." + thing.replace(start, "")
 
-                    print(
-                        "{:>10} |{:>10} | {:<20}".format(
-                            newlines, lines, reldir_of_thing
-                        )
-                    )
+                    print("{:>10} |{:>10} | {:<20}".format(newlines, lines, reldir_of_thing))
 
     for thing in os.listdir(start):
         thing = os.path.join(start, thing)
@@ -35,4 +31,5 @@ def countlines(start, lines=0, header=True, begin_start=None):
 
 
 if __name__ == "__main__":
-    print(countlines(r"./"))
+    with open("linecounts.txt", "w+") as sys.stdout:
+        countlines(r"./")

@@ -80,14 +80,14 @@ class KnownGunProblem(BaseProblem):
     def get_gun_at_pressure(
         self,
         pressure_target: PressureTarget,
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        *,
-        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         **kwargs,
     ) -> Gun:
 
         return super().get_gun_at_pressure(
+            charge_mass=self.charge_mass,
             charge_masses=self.charge_masses,
             chamber_volume=self.chamber_volume,
             reduced_burnrate_ratios=reduced_burnrate_ratios,

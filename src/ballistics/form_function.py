@@ -10,13 +10,20 @@ from attrs import field, frozen
 
 class MultiPerfShape(Enum):
     # fmt: off
-    SEVEN_PERF_CYLINDER = ("cylinder", 7, 1, 7, 0, (3, 8), (0, 0), 0.2956)
-    SEVEN_PERF_ROSETTE = ("rosette", 7, 2, 8, 12 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
-    FOURTEEN_PERF_ROSETTE = ("rosette", 14, 8 / 3, 47 / 3, 26 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
-    NINETEEN_PERF_ROSETTE = ("rosette", 19, 3, 21, 36 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
-    NINETEEN_PERF_CYLINDER = ("cylinder", 19, 1, 19, 0, (5, 12), (0, 0), 0.3559)
-    NINETEEN_PERF_HEXAGON = ("hexagon", 19, 18 / pi, 19, 18 * (3 * 3**0.5 - 1) / pi, (1, 2), (1, 2), 0.1864)
-    NINETEEN_PERF_ROUNDED_HEXAGON = ("rounded hexagon", 19, 3**0.5 + 12 / pi, 19, 3 - 3**0.5 + 12 * (4 * 3**0.5 - 1) / pi, (1, 2), (1, 2), 0.1977)
+    SEVEN_PERF_CYLINDER = \
+        ("cylinder", 7, 1, 7, 0, (3, 8), (0, 0), 0.2956)
+    SEVEN_PERF_ROSETTE = \
+        ("rosette", 7, 2, 8, 12 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
+    FOURTEEN_PERF_ROSETTE = \
+        ("rosette", 14, 8 / 3, 47 / 3, 26 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
+    NINETEEN_PERF_ROSETTE = \
+        ("rosette", 19, 3, 21, 36 * 3**0.5 / pi, (1, 4), (1, 2), 0.1547)
+    NINETEEN_PERF_CYLINDER = \
+        ("cylinder", 19, 1, 19, 0, (5, 12), (0, 0), 0.3559)
+    NINETEEN_PERF_HEXAGON = \
+        ("hexagon", 19, 18 / pi, 19, 18 * (3 * 3**0.5 - 1) / pi, (1, 2), (1, 2), 0.1864)
+    NINETEEN_PERF_ROUNDED_HEXAGON = \
+        ("rounded hexagon", 19, 3**0.5 + 12 / pi, 19, 3 - 3**0.5 + 12 * (4 * 3**0.5 - 1) / pi, (1, 2), (1, 2), 0.1977)
     # fmt: on
 
     def describe(self) -> str:
@@ -25,17 +32,10 @@ class MultiPerfShape(Enum):
 
     def __call__(self, d_0: float, e_1: float) -> Tuple[str, int, float, float, float, float, float, float]:
         desc, n, A, B, C, b_factors, a_factors, rho_ratio = self.value
+        b = sum(v * f for v, f in zip((d_0, e_1), b_factors))
+        a = sum(v * f for v, f in zip((d_0, e_1), a_factors))
 
-        return (
-            desc,
-            n,
-            A,
-            B,
-            C,
-            sum(v * f for v, f in zip((d_0, e_1), b_factors)),
-            sum(v * f for v, f in zip((d_0, e_1), a_factors)),
-            rho_ratio,
-        )
+        return (desc, n, A, B, C, b, a, rho_ratio)
 
 
 @frozen(kw_only=True)
@@ -289,12 +289,12 @@ class FormFunction:
         )
 
 
-if __name__ == "__main__":
-    f = FormFunction.multi_perf(5.5 * 2, 2, 1, shape=MultiPerfShape.SEVEN_PERF_CYLINDER)
-    print(f)
-    print(1, f(1))
-    print(f.Z_k, f(f.Z_k))
+# if __name__ == "__main__":
+#     f = FormFunction.multi_perf(5.5 * 2, 2, 1, shape=MultiPerfShape.SEVEN_PERF_CYLINDER)
+#     print(f)
+#     print(1, f(1))
+#     print(f.Z_k, f(f.Z_k))
 
-    for i in range(200):
-        Z = f.Z_k * i / 199
-        print(Z, f(Z))
+#     for i in range(200):
+#         Z = f.Z_k * i / 199
+#         print(Z, f(Z))
