@@ -93,13 +93,6 @@ class FormFunction:
     also all shapes that are similar. The required parameters are best thought of as
     characteristic ratios.
 
-    Subscripts are kept in-line with those used by M.E.Serebryakov and in common
-    circulation within Soviet-sphere ballistic community, which was the convention
-    in effect for interior balistics works of the 1980s in China. `k` (likely comes from
-    *komplett*, "complete, with everything included" in German) is used to indicate
-    the point of complete combustion, whereas `s` (for various Germanic word meaning
-    "sliver" or "splinter", *schiefer* or *splitter*) denotes values at fracture point.
-
 
     References
     ----------

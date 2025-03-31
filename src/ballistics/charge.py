@@ -176,17 +176,17 @@ Charge.burn_rate_coefficient and FormFunction.e_1"
         Parameters
         ----------
         reduced_burnrate: float
-            see documentation of `FormFunction` for more information.
+            see documentation of `ballistics.form_function.FormFunction` for more information.
         propellant: `Propellant`
             base propellant of this charge.
         form_function:
-            `FormFunction` object that describes the geometry of this propellant.
+            `ballistics.form_function.FormFunction` object that describes the geometry of this propellant.
 
         Notes
         -----
         For convenience, functions to estimate the reduced burn rate has been provided, as
-        `Charge.estimate_reduced_from_coefficient_and_arch` and
-        `Charge.estimate_reduced_from_unitary_and_arch`, and their use is strongly encouraged.
+        `Charge.estimate_reduced_from_arch_and_coefficient` and
+        `Charge.get_coefficient_from_arch`, and their use is strongly encouraged.
 
         """
 
@@ -210,7 +210,7 @@ Charge.burn_rate_coefficient and FormFunction.e_1"
         ----------
         arch_width: float
             the minimum depth the propellant's burn surface must recede to burnthrough.
-            See documentation of `FormFunction` for more information.
+            See documentation of `ballistics.form_function.FormFunction` for more information.
         burn_rate_coefficient: float
             coefficient used in de Saint Robert's burn rate law. See documentation for
             `Charge` for more information.
@@ -228,18 +228,19 @@ Charge.burn_rate_coefficient and FormFunction.e_1"
         ----------
         arch_width: float, optional.
             the minimum depth the propellant's burn surface must recede to burnthrough.
-            See documentation of `FormFunction` for more information.
-            If this parameter is not supplied, then the value set for `FormFunction.e_1` is used.
+            See documentation of `ballistics.form_function.FormFunction` for more information.
+            If this parameter is not supplied, then the value set for
+            `ballistics.form_function.FormFunction.e_1` is used.
 
         Raises
         ------
         ValueError
-            if both `arch_width` and `FormFunction.e_1` are None.
+            if arch width is not supplied, and cannot be derived from a FormFunction object.
 
         Notes
         -----
         Tabulating the propellant's burn rate this way is particularly common with Western sources
-        and more recent work fromChina.
+        and more recent work from China.
 
         """
         if arch_width:

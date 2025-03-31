@@ -246,9 +246,7 @@ class FixedVolumeProblem(BaseProblem):
             raise ValueError("invalid parameters.")
 
         min_mass, max_mass = self.get_charge_mass_limits(
-            pressure_target=pressure_target,
-            acc=acc,
-            charge_mass_ratios=charge_masses,
+            pressure_target=pressure_target, acc=acc, charge_mass_ratios=charge_masses
         )
 
         valid_range_prompt = f"valid range of charge mass: [{min_mass:.3f}, {max_mass:.3f}]"

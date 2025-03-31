@@ -326,17 +326,17 @@
 </span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">        Parameters</span>
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        ----------</span>
 </span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">        reduced_burnrate: float</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">            see documentation of `FormFunction` for more information.</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">            see documentation of `ballistics.form_function.FormFunction` for more information.</span>
 </span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="sd">        propellant: `Propellant`</span>
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">            base propellant of this charge.</span>
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">        form_function:</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">            `FormFunction` object that describes the geometry of this propellant.</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">            `ballistics.form_function.FormFunction` object that describes the geometry of this propellant.</span>
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>
 </span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">        Notes</span>
 </span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">        -----</span>
 </span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">        For convenience, functions to estimate the reduced burn rate has been provided, as</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        `Charge.estimate_reduced_from_coefficient_and_arch` and</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">        `Charge.estimate_reduced_from_unitary_and_arch`, and their use is strongly encouraged.</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        `Charge.estimate_reduced_from_arch_and_coefficient` and</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">        `Charge.get_coefficient_from_arch`, and their use is strongly encouraged.</span>
 </span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>
 </span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>
@@ -360,7 +360,7 @@
 </span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">        ----------</span>
 </span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="sd">        arch_width: float</span>
 </span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">            the minimum depth the propellant&#39;s burn surface must recede to burnthrough.</span>
-</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">            See documentation of `FormFunction` for more information.</span>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">            See documentation of `ballistics.form_function.FormFunction` for more information.</span>
 </span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">        burn_rate_coefficient: float</span>
 </span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a><span class="sd">            coefficient used in de Saint Robert&#39;s burn rate law. See documentation for</span>
 </span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="sd">            `Charge` for more information.</span>
@@ -378,38 +378,39 @@
 </span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="sd">        ----------</span>
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="sd">        arch_width: float, optional.</span>
 </span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="sd">            the minimum depth the propellant&#39;s burn surface must recede to burnthrough.</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">            See documentation of `FormFunction` for more information.</span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">            If this parameter is not supplied, then the value set for `FormFunction.e_1` is used.</span>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">        Raises</span>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">        ------</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="sd">        ValueError</span>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a><span class="sd">            if both `arch_width` and `FormFunction.e_1` are None.</span>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a><span class="sd">        Notes</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="sd">        -----</span>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">        Tabulating the propellant&#39;s burn rate this way is particularly common with Western sources</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">        and more recent work fromChina.</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>        <span class="k">if</span> <span class="n">arch_width</span><span class="p">:</span>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>            <span class="k">pass</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span><span class="p">:</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>            <span class="n">arch_width</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;arch width must be supplied either as an argument or when instantiating FormFunction.&quot;</span><span class="p">)</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="n">arch_width</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>    <span class="nd">@cached_property</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dZdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">            See documentation of `ballistics.form_function.FormFunction` for more information.</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">            If this parameter is not supplied, then the value set for</span>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">            `ballistics.form_function.FormFunction.e_1` is used.</span>
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">        Raises</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="sd">        ------</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a><span class="sd">        ValueError</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a><span class="sd">            if arch width is not supplied, and cannot be derived from a FormFunction object.</span>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="sd">        Notes</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">        -----</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">        Tabulating the propellant&#39;s burn rate this way is particularly common with Western sources</span>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">        and more recent work from China.</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>        <span class="k">if</span> <span class="n">arch_width</span><span class="p">:</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>            <span class="k">pass</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span><span class="p">:</span>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>            <span class="n">arch_width</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;arch width must be supplied either as an argument or when instantiating FormFunction.&quot;</span><span class="p">)</span>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="n">arch_width</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>    <span class="nd">@cached_property</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dZdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
 </span></pre></div>
 
 
@@ -844,17 +845,17 @@ Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</li>
 </span><span id="Charge-177"><a href="#Charge-177"><span class="linenos">177</span></a><span class="sd">        Parameters</span>
 </span><span id="Charge-178"><a href="#Charge-178"><span class="linenos">178</span></a><span class="sd">        ----------</span>
 </span><span id="Charge-179"><a href="#Charge-179"><span class="linenos">179</span></a><span class="sd">        reduced_burnrate: float</span>
-</span><span id="Charge-180"><a href="#Charge-180"><span class="linenos">180</span></a><span class="sd">            see documentation of `FormFunction` for more information.</span>
+</span><span id="Charge-180"><a href="#Charge-180"><span class="linenos">180</span></a><span class="sd">            see documentation of `ballistics.form_function.FormFunction` for more information.</span>
 </span><span id="Charge-181"><a href="#Charge-181"><span class="linenos">181</span></a><span class="sd">        propellant: `Propellant`</span>
 </span><span id="Charge-182"><a href="#Charge-182"><span class="linenos">182</span></a><span class="sd">            base propellant of this charge.</span>
 </span><span id="Charge-183"><a href="#Charge-183"><span class="linenos">183</span></a><span class="sd">        form_function:</span>
-</span><span id="Charge-184"><a href="#Charge-184"><span class="linenos">184</span></a><span class="sd">            `FormFunction` object that describes the geometry of this propellant.</span>
+</span><span id="Charge-184"><a href="#Charge-184"><span class="linenos">184</span></a><span class="sd">            `ballistics.form_function.FormFunction` object that describes the geometry of this propellant.</span>
 </span><span id="Charge-185"><a href="#Charge-185"><span class="linenos">185</span></a>
 </span><span id="Charge-186"><a href="#Charge-186"><span class="linenos">186</span></a><span class="sd">        Notes</span>
 </span><span id="Charge-187"><a href="#Charge-187"><span class="linenos">187</span></a><span class="sd">        -----</span>
 </span><span id="Charge-188"><a href="#Charge-188"><span class="linenos">188</span></a><span class="sd">        For convenience, functions to estimate the reduced burn rate has been provided, as</span>
-</span><span id="Charge-189"><a href="#Charge-189"><span class="linenos">189</span></a><span class="sd">        `Charge.estimate_reduced_from_coefficient_and_arch` and</span>
-</span><span id="Charge-190"><a href="#Charge-190"><span class="linenos">190</span></a><span class="sd">        `Charge.estimate_reduced_from_unitary_and_arch`, and their use is strongly encouraged.</span>
+</span><span id="Charge-189"><a href="#Charge-189"><span class="linenos">189</span></a><span class="sd">        `Charge.estimate_reduced_from_arch_and_coefficient` and</span>
+</span><span id="Charge-190"><a href="#Charge-190"><span class="linenos">190</span></a><span class="sd">        `Charge.get_coefficient_from_arch`, and their use is strongly encouraged.</span>
 </span><span id="Charge-191"><a href="#Charge-191"><span class="linenos">191</span></a>
 </span><span id="Charge-192"><a href="#Charge-192"><span class="linenos">192</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Charge-193"><a href="#Charge-193"><span class="linenos">193</span></a>
@@ -878,7 +879,7 @@ Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</li>
 </span><span id="Charge-211"><a href="#Charge-211"><span class="linenos">211</span></a><span class="sd">        ----------</span>
 </span><span id="Charge-212"><a href="#Charge-212"><span class="linenos">212</span></a><span class="sd">        arch_width: float</span>
 </span><span id="Charge-213"><a href="#Charge-213"><span class="linenos">213</span></a><span class="sd">            the minimum depth the propellant&#39;s burn surface must recede to burnthrough.</span>
-</span><span id="Charge-214"><a href="#Charge-214"><span class="linenos">214</span></a><span class="sd">            See documentation of `FormFunction` for more information.</span>
+</span><span id="Charge-214"><a href="#Charge-214"><span class="linenos">214</span></a><span class="sd">            See documentation of `ballistics.form_function.FormFunction` for more information.</span>
 </span><span id="Charge-215"><a href="#Charge-215"><span class="linenos">215</span></a><span class="sd">        burn_rate_coefficient: float</span>
 </span><span id="Charge-216"><a href="#Charge-216"><span class="linenos">216</span></a><span class="sd">            coefficient used in de Saint Robert&#39;s burn rate law. See documentation for</span>
 </span><span id="Charge-217"><a href="#Charge-217"><span class="linenos">217</span></a><span class="sd">            `Charge` for more information.</span>
@@ -896,38 +897,39 @@ Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</li>
 </span><span id="Charge-229"><a href="#Charge-229"><span class="linenos">229</span></a><span class="sd">        ----------</span>
 </span><span id="Charge-230"><a href="#Charge-230"><span class="linenos">230</span></a><span class="sd">        arch_width: float, optional.</span>
 </span><span id="Charge-231"><a href="#Charge-231"><span class="linenos">231</span></a><span class="sd">            the minimum depth the propellant&#39;s burn surface must recede to burnthrough.</span>
-</span><span id="Charge-232"><a href="#Charge-232"><span class="linenos">232</span></a><span class="sd">            See documentation of `FormFunction` for more information.</span>
-</span><span id="Charge-233"><a href="#Charge-233"><span class="linenos">233</span></a><span class="sd">            If this parameter is not supplied, then the value set for `FormFunction.e_1` is used.</span>
-</span><span id="Charge-234"><a href="#Charge-234"><span class="linenos">234</span></a>
-</span><span id="Charge-235"><a href="#Charge-235"><span class="linenos">235</span></a><span class="sd">        Raises</span>
-</span><span id="Charge-236"><a href="#Charge-236"><span class="linenos">236</span></a><span class="sd">        ------</span>
-</span><span id="Charge-237"><a href="#Charge-237"><span class="linenos">237</span></a><span class="sd">        ValueError</span>
-</span><span id="Charge-238"><a href="#Charge-238"><span class="linenos">238</span></a><span class="sd">            if both `arch_width` and `FormFunction.e_1` are None.</span>
-</span><span id="Charge-239"><a href="#Charge-239"><span class="linenos">239</span></a>
-</span><span id="Charge-240"><a href="#Charge-240"><span class="linenos">240</span></a><span class="sd">        Notes</span>
-</span><span id="Charge-241"><a href="#Charge-241"><span class="linenos">241</span></a><span class="sd">        -----</span>
-</span><span id="Charge-242"><a href="#Charge-242"><span class="linenos">242</span></a><span class="sd">        Tabulating the propellant&#39;s burn rate this way is particularly common with Western sources</span>
-</span><span id="Charge-243"><a href="#Charge-243"><span class="linenos">243</span></a><span class="sd">        and more recent work fromChina.</span>
-</span><span id="Charge-244"><a href="#Charge-244"><span class="linenos">244</span></a>
-</span><span id="Charge-245"><a href="#Charge-245"><span class="linenos">245</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Charge-246"><a href="#Charge-246"><span class="linenos">246</span></a>        <span class="k">if</span> <span class="n">arch_width</span><span class="p">:</span>
-</span><span id="Charge-247"><a href="#Charge-247"><span class="linenos">247</span></a>            <span class="k">pass</span>
-</span><span id="Charge-248"><a href="#Charge-248"><span class="linenos">248</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span><span class="p">:</span>
-</span><span id="Charge-249"><a href="#Charge-249"><span class="linenos">249</span></a>            <span class="n">arch_width</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span>
-</span><span id="Charge-250"><a href="#Charge-250"><span class="linenos">250</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Charge-251"><a href="#Charge-251"><span class="linenos">251</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;arch width must be supplied either as an argument or when instantiating FormFunction.&quot;</span><span class="p">)</span>
-</span><span id="Charge-252"><a href="#Charge-252"><span class="linenos">252</span></a>
-</span><span id="Charge-253"><a href="#Charge-253"><span class="linenos">253</span></a>        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="n">arch_width</span>
-</span><span id="Charge-254"><a href="#Charge-254"><span class="linenos">254</span></a>
-</span><span id="Charge-255"><a href="#Charge-255"><span class="linenos">255</span></a>    <span class="nd">@cached_property</span>
-</span><span id="Charge-256"><a href="#Charge-256"><span class="linenos">256</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge-257"><a href="#Charge-257"><span class="linenos">257</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
-</span><span id="Charge-258"><a href="#Charge-258"><span class="linenos">258</span></a>
-</span><span id="Charge-259"><a href="#Charge-259"><span class="linenos">259</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge-260"><a href="#Charge-260"><span class="linenos">260</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
-</span><span id="Charge-261"><a href="#Charge-261"><span class="linenos">261</span></a>
-</span><span id="Charge-262"><a href="#Charge-262"><span class="linenos">262</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dZdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge-263"><a href="#Charge-263"><span class="linenos">263</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
+</span><span id="Charge-232"><a href="#Charge-232"><span class="linenos">232</span></a><span class="sd">            See documentation of `ballistics.form_function.FormFunction` for more information.</span>
+</span><span id="Charge-233"><a href="#Charge-233"><span class="linenos">233</span></a><span class="sd">            If this parameter is not supplied, then the value set for</span>
+</span><span id="Charge-234"><a href="#Charge-234"><span class="linenos">234</span></a><span class="sd">            `ballistics.form_function.FormFunction.e_1` is used.</span>
+</span><span id="Charge-235"><a href="#Charge-235"><span class="linenos">235</span></a>
+</span><span id="Charge-236"><a href="#Charge-236"><span class="linenos">236</span></a><span class="sd">        Raises</span>
+</span><span id="Charge-237"><a href="#Charge-237"><span class="linenos">237</span></a><span class="sd">        ------</span>
+</span><span id="Charge-238"><a href="#Charge-238"><span class="linenos">238</span></a><span class="sd">        ValueError</span>
+</span><span id="Charge-239"><a href="#Charge-239"><span class="linenos">239</span></a><span class="sd">            if arch width is not supplied, and cannot be derived from a FormFunction object.</span>
+</span><span id="Charge-240"><a href="#Charge-240"><span class="linenos">240</span></a>
+</span><span id="Charge-241"><a href="#Charge-241"><span class="linenos">241</span></a><span class="sd">        Notes</span>
+</span><span id="Charge-242"><a href="#Charge-242"><span class="linenos">242</span></a><span class="sd">        -----</span>
+</span><span id="Charge-243"><a href="#Charge-243"><span class="linenos">243</span></a><span class="sd">        Tabulating the propellant&#39;s burn rate this way is particularly common with Western sources</span>
+</span><span id="Charge-244"><a href="#Charge-244"><span class="linenos">244</span></a><span class="sd">        and more recent work from China.</span>
+</span><span id="Charge-245"><a href="#Charge-245"><span class="linenos">245</span></a>
+</span><span id="Charge-246"><a href="#Charge-246"><span class="linenos">246</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Charge-247"><a href="#Charge-247"><span class="linenos">247</span></a>        <span class="k">if</span> <span class="n">arch_width</span><span class="p">:</span>
+</span><span id="Charge-248"><a href="#Charge-248"><span class="linenos">248</span></a>            <span class="k">pass</span>
+</span><span id="Charge-249"><a href="#Charge-249"><span class="linenos">249</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span><span class="p">:</span>
+</span><span id="Charge-250"><a href="#Charge-250"><span class="linenos">250</span></a>            <span class="n">arch_width</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span>
+</span><span id="Charge-251"><a href="#Charge-251"><span class="linenos">251</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Charge-252"><a href="#Charge-252"><span class="linenos">252</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;arch width must be supplied either as an argument or when instantiating FormFunction.&quot;</span><span class="p">)</span>
+</span><span id="Charge-253"><a href="#Charge-253"><span class="linenos">253</span></a>
+</span><span id="Charge-254"><a href="#Charge-254"><span class="linenos">254</span></a>        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="n">arch_width</span>
+</span><span id="Charge-255"><a href="#Charge-255"><span class="linenos">255</span></a>
+</span><span id="Charge-256"><a href="#Charge-256"><span class="linenos">256</span></a>    <span class="nd">@cached_property</span>
+</span><span id="Charge-257"><a href="#Charge-257"><span class="linenos">257</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">Z_k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge-258"><a href="#Charge-258"><span class="linenos">258</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">Z_k</span>
+</span><span id="Charge-259"><a href="#Charge-259"><span class="linenos">259</span></a>
+</span><span id="Charge-260"><a href="#Charge-260"><span class="linenos">260</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge-261"><a href="#Charge-261"><span class="linenos">261</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+</span><span id="Charge-262"><a href="#Charge-262"><span class="linenos">262</span></a>
+</span><span id="Charge-263"><a href="#Charge-263"><span class="linenos">263</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dZdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge-264"><a href="#Charge-264"><span class="linenos">264</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
 </span></pre></div>
 
 
@@ -1058,17 +1060,17 @@ Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</li>
 </span><span id="Charge.from_propellant-177"><a href="#Charge.from_propellant-177"><span class="linenos">177</span></a><span class="sd">        Parameters</span>
 </span><span id="Charge.from_propellant-178"><a href="#Charge.from_propellant-178"><span class="linenos">178</span></a><span class="sd">        ----------</span>
 </span><span id="Charge.from_propellant-179"><a href="#Charge.from_propellant-179"><span class="linenos">179</span></a><span class="sd">        reduced_burnrate: float</span>
-</span><span id="Charge.from_propellant-180"><a href="#Charge.from_propellant-180"><span class="linenos">180</span></a><span class="sd">            see documentation of `FormFunction` for more information.</span>
+</span><span id="Charge.from_propellant-180"><a href="#Charge.from_propellant-180"><span class="linenos">180</span></a><span class="sd">            see documentation of `ballistics.form_function.FormFunction` for more information.</span>
 </span><span id="Charge.from_propellant-181"><a href="#Charge.from_propellant-181"><span class="linenos">181</span></a><span class="sd">        propellant: `Propellant`</span>
 </span><span id="Charge.from_propellant-182"><a href="#Charge.from_propellant-182"><span class="linenos">182</span></a><span class="sd">            base propellant of this charge.</span>
 </span><span id="Charge.from_propellant-183"><a href="#Charge.from_propellant-183"><span class="linenos">183</span></a><span class="sd">        form_function:</span>
-</span><span id="Charge.from_propellant-184"><a href="#Charge.from_propellant-184"><span class="linenos">184</span></a><span class="sd">            `FormFunction` object that describes the geometry of this propellant.</span>
+</span><span id="Charge.from_propellant-184"><a href="#Charge.from_propellant-184"><span class="linenos">184</span></a><span class="sd">            `ballistics.form_function.FormFunction` object that describes the geometry of this propellant.</span>
 </span><span id="Charge.from_propellant-185"><a href="#Charge.from_propellant-185"><span class="linenos">185</span></a>
 </span><span id="Charge.from_propellant-186"><a href="#Charge.from_propellant-186"><span class="linenos">186</span></a><span class="sd">        Notes</span>
 </span><span id="Charge.from_propellant-187"><a href="#Charge.from_propellant-187"><span class="linenos">187</span></a><span class="sd">        -----</span>
 </span><span id="Charge.from_propellant-188"><a href="#Charge.from_propellant-188"><span class="linenos">188</span></a><span class="sd">        For convenience, functions to estimate the reduced burn rate has been provided, as</span>
-</span><span id="Charge.from_propellant-189"><a href="#Charge.from_propellant-189"><span class="linenos">189</span></a><span class="sd">        `Charge.estimate_reduced_from_coefficient_and_arch` and</span>
-</span><span id="Charge.from_propellant-190"><a href="#Charge.from_propellant-190"><span class="linenos">190</span></a><span class="sd">        `Charge.estimate_reduced_from_unitary_and_arch`, and their use is strongly encouraged.</span>
+</span><span id="Charge.from_propellant-189"><a href="#Charge.from_propellant-189"><span class="linenos">189</span></a><span class="sd">        `Charge.estimate_reduced_from_arch_and_coefficient` and</span>
+</span><span id="Charge.from_propellant-190"><a href="#Charge.from_propellant-190"><span class="linenos">190</span></a><span class="sd">        `Charge.get_coefficient_from_arch`, and their use is strongly encouraged.</span>
 </span><span id="Charge.from_propellant-191"><a href="#Charge.from_propellant-191"><span class="linenos">191</span></a>
 </span><span id="Charge.from_propellant-192"><a href="#Charge.from_propellant-192"><span class="linenos">192</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Charge.from_propellant-193"><a href="#Charge.from_propellant-193"><span class="linenos">193</span></a>
@@ -1093,17 +1095,17 @@ Defence Technology. 9. 127-130. 10.1016/j.dt.2013.10.005.</li>
 
 <ul>
 <li><strong>reduced_burnrate</strong> (float):
-see documentation of <code>FormFunction</code> for more information.</li>
+see documentation of <code><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></code> for more information.</li>
 <li><strong>propellant</strong> (<code><a href="#Propellant">Propellant</a></code>):
 base propellant of this charge.</li>
-<li><strong>form_function:</strong>: <code>FormFunction</code> object that describes the geometry of this propellant.</li>
+<li><strong>form_function:</strong>: <code><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></code> object that describes the geometry of this propellant.</li>
 </ul>
 
 <h6 id="notes">Notes</h6>
 
 <p>For convenience, functions to estimate the reduced burn rate has been provided, as
-<code>Charge.estimate_reduced_from_coefficient_and_arch</code> and
-<code>Charge.estimate_reduced_from_unitary_and_arch</code>, and their use is strongly encouraged.</p>
+<code><a href="#Charge.estimate_reduced_from_arch_and_coefficient">Charge.estimate_reduced_from_arch_and_coefficient</a></code> and
+<code><a href="#Charge.get_coefficient_from_arch">Charge.get_coefficient_from_arch</a></code>, and their use is strongly encouraged.</p>
 </div>
 
 
@@ -1127,7 +1129,7 @@ base propellant of this charge.</li>
 </span><span id="Charge.estimate_reduced_from_arch_and_coefficient-211"><a href="#Charge.estimate_reduced_from_arch_and_coefficient-211"><span class="linenos">211</span></a><span class="sd">        ----------</span>
 </span><span id="Charge.estimate_reduced_from_arch_and_coefficient-212"><a href="#Charge.estimate_reduced_from_arch_and_coefficient-212"><span class="linenos">212</span></a><span class="sd">        arch_width: float</span>
 </span><span id="Charge.estimate_reduced_from_arch_and_coefficient-213"><a href="#Charge.estimate_reduced_from_arch_and_coefficient-213"><span class="linenos">213</span></a><span class="sd">            the minimum depth the propellant&#39;s burn surface must recede to burnthrough.</span>
-</span><span id="Charge.estimate_reduced_from_arch_and_coefficient-214"><a href="#Charge.estimate_reduced_from_arch_and_coefficient-214"><span class="linenos">214</span></a><span class="sd">            See documentation of `FormFunction` for more information.</span>
+</span><span id="Charge.estimate_reduced_from_arch_and_coefficient-214"><a href="#Charge.estimate_reduced_from_arch_and_coefficient-214"><span class="linenos">214</span></a><span class="sd">            See documentation of `ballistics.form_function.FormFunction` for more information.</span>
 </span><span id="Charge.estimate_reduced_from_arch_and_coefficient-215"><a href="#Charge.estimate_reduced_from_arch_and_coefficient-215"><span class="linenos">215</span></a><span class="sd">        burn_rate_coefficient: float</span>
 </span><span id="Charge.estimate_reduced_from_arch_and_coefficient-216"><a href="#Charge.estimate_reduced_from_arch_and_coefficient-216"><span class="linenos">216</span></a><span class="sd">            coefficient used in de Saint Robert&#39;s burn rate law. See documentation for</span>
 </span><span id="Charge.estimate_reduced_from_arch_and_coefficient-217"><a href="#Charge.estimate_reduced_from_arch_and_coefficient-217"><span class="linenos">217</span></a><span class="sd">            `Charge` for more information.</span>
@@ -1146,7 +1148,7 @@ base propellant of this charge.</li>
 <ul>
 <li><strong>arch_width</strong> (float):
 the minimum depth the propellant's burn surface must recede to burnthrough.
-See documentation of <code>FormFunction</code> for more information.</li>
+See documentation of <code><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></code> for more information.</li>
 <li><strong>burn_rate_coefficient</strong> (float):
 coefficient used in de Saint Robert's burn rate law. See documentation for
 <code><a href="#Charge">Charge</a></code> for more information.</li>
@@ -1177,28 +1179,29 @@ and more recent work from China.</p>
 </span><span id="Charge.get_coefficient_from_arch-229"><a href="#Charge.get_coefficient_from_arch-229"><span class="linenos">229</span></a><span class="sd">        ----------</span>
 </span><span id="Charge.get_coefficient_from_arch-230"><a href="#Charge.get_coefficient_from_arch-230"><span class="linenos">230</span></a><span class="sd">        arch_width: float, optional.</span>
 </span><span id="Charge.get_coefficient_from_arch-231"><a href="#Charge.get_coefficient_from_arch-231"><span class="linenos">231</span></a><span class="sd">            the minimum depth the propellant&#39;s burn surface must recede to burnthrough.</span>
-</span><span id="Charge.get_coefficient_from_arch-232"><a href="#Charge.get_coefficient_from_arch-232"><span class="linenos">232</span></a><span class="sd">            See documentation of `FormFunction` for more information.</span>
-</span><span id="Charge.get_coefficient_from_arch-233"><a href="#Charge.get_coefficient_from_arch-233"><span class="linenos">233</span></a><span class="sd">            If this parameter is not supplied, then the value set for `FormFunction.e_1` is used.</span>
-</span><span id="Charge.get_coefficient_from_arch-234"><a href="#Charge.get_coefficient_from_arch-234"><span class="linenos">234</span></a>
-</span><span id="Charge.get_coefficient_from_arch-235"><a href="#Charge.get_coefficient_from_arch-235"><span class="linenos">235</span></a><span class="sd">        Raises</span>
-</span><span id="Charge.get_coefficient_from_arch-236"><a href="#Charge.get_coefficient_from_arch-236"><span class="linenos">236</span></a><span class="sd">        ------</span>
-</span><span id="Charge.get_coefficient_from_arch-237"><a href="#Charge.get_coefficient_from_arch-237"><span class="linenos">237</span></a><span class="sd">        ValueError</span>
-</span><span id="Charge.get_coefficient_from_arch-238"><a href="#Charge.get_coefficient_from_arch-238"><span class="linenos">238</span></a><span class="sd">            if both `arch_width` and `FormFunction.e_1` are None.</span>
-</span><span id="Charge.get_coefficient_from_arch-239"><a href="#Charge.get_coefficient_from_arch-239"><span class="linenos">239</span></a>
-</span><span id="Charge.get_coefficient_from_arch-240"><a href="#Charge.get_coefficient_from_arch-240"><span class="linenos">240</span></a><span class="sd">        Notes</span>
-</span><span id="Charge.get_coefficient_from_arch-241"><a href="#Charge.get_coefficient_from_arch-241"><span class="linenos">241</span></a><span class="sd">        -----</span>
-</span><span id="Charge.get_coefficient_from_arch-242"><a href="#Charge.get_coefficient_from_arch-242"><span class="linenos">242</span></a><span class="sd">        Tabulating the propellant&#39;s burn rate this way is particularly common with Western sources</span>
-</span><span id="Charge.get_coefficient_from_arch-243"><a href="#Charge.get_coefficient_from_arch-243"><span class="linenos">243</span></a><span class="sd">        and more recent work fromChina.</span>
-</span><span id="Charge.get_coefficient_from_arch-244"><a href="#Charge.get_coefficient_from_arch-244"><span class="linenos">244</span></a>
-</span><span id="Charge.get_coefficient_from_arch-245"><a href="#Charge.get_coefficient_from_arch-245"><span class="linenos">245</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Charge.get_coefficient_from_arch-246"><a href="#Charge.get_coefficient_from_arch-246"><span class="linenos">246</span></a>        <span class="k">if</span> <span class="n">arch_width</span><span class="p">:</span>
-</span><span id="Charge.get_coefficient_from_arch-247"><a href="#Charge.get_coefficient_from_arch-247"><span class="linenos">247</span></a>            <span class="k">pass</span>
-</span><span id="Charge.get_coefficient_from_arch-248"><a href="#Charge.get_coefficient_from_arch-248"><span class="linenos">248</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span><span class="p">:</span>
-</span><span id="Charge.get_coefficient_from_arch-249"><a href="#Charge.get_coefficient_from_arch-249"><span class="linenos">249</span></a>            <span class="n">arch_width</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span>
-</span><span id="Charge.get_coefficient_from_arch-250"><a href="#Charge.get_coefficient_from_arch-250"><span class="linenos">250</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Charge.get_coefficient_from_arch-251"><a href="#Charge.get_coefficient_from_arch-251"><span class="linenos">251</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;arch width must be supplied either as an argument or when instantiating FormFunction.&quot;</span><span class="p">)</span>
-</span><span id="Charge.get_coefficient_from_arch-252"><a href="#Charge.get_coefficient_from_arch-252"><span class="linenos">252</span></a>
-</span><span id="Charge.get_coefficient_from_arch-253"><a href="#Charge.get_coefficient_from_arch-253"><span class="linenos">253</span></a>        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="n">arch_width</span>
+</span><span id="Charge.get_coefficient_from_arch-232"><a href="#Charge.get_coefficient_from_arch-232"><span class="linenos">232</span></a><span class="sd">            See documentation of `ballistics.form_function.FormFunction` for more information.</span>
+</span><span id="Charge.get_coefficient_from_arch-233"><a href="#Charge.get_coefficient_from_arch-233"><span class="linenos">233</span></a><span class="sd">            If this parameter is not supplied, then the value set for</span>
+</span><span id="Charge.get_coefficient_from_arch-234"><a href="#Charge.get_coefficient_from_arch-234"><span class="linenos">234</span></a><span class="sd">            `ballistics.form_function.FormFunction.e_1` is used.</span>
+</span><span id="Charge.get_coefficient_from_arch-235"><a href="#Charge.get_coefficient_from_arch-235"><span class="linenos">235</span></a>
+</span><span id="Charge.get_coefficient_from_arch-236"><a href="#Charge.get_coefficient_from_arch-236"><span class="linenos">236</span></a><span class="sd">        Raises</span>
+</span><span id="Charge.get_coefficient_from_arch-237"><a href="#Charge.get_coefficient_from_arch-237"><span class="linenos">237</span></a><span class="sd">        ------</span>
+</span><span id="Charge.get_coefficient_from_arch-238"><a href="#Charge.get_coefficient_from_arch-238"><span class="linenos">238</span></a><span class="sd">        ValueError</span>
+</span><span id="Charge.get_coefficient_from_arch-239"><a href="#Charge.get_coefficient_from_arch-239"><span class="linenos">239</span></a><span class="sd">            if arch width is not supplied, and cannot be derived from a FormFunction object.</span>
+</span><span id="Charge.get_coefficient_from_arch-240"><a href="#Charge.get_coefficient_from_arch-240"><span class="linenos">240</span></a>
+</span><span id="Charge.get_coefficient_from_arch-241"><a href="#Charge.get_coefficient_from_arch-241"><span class="linenos">241</span></a><span class="sd">        Notes</span>
+</span><span id="Charge.get_coefficient_from_arch-242"><a href="#Charge.get_coefficient_from_arch-242"><span class="linenos">242</span></a><span class="sd">        -----</span>
+</span><span id="Charge.get_coefficient_from_arch-243"><a href="#Charge.get_coefficient_from_arch-243"><span class="linenos">243</span></a><span class="sd">        Tabulating the propellant&#39;s burn rate this way is particularly common with Western sources</span>
+</span><span id="Charge.get_coefficient_from_arch-244"><a href="#Charge.get_coefficient_from_arch-244"><span class="linenos">244</span></a><span class="sd">        and more recent work from China.</span>
+</span><span id="Charge.get_coefficient_from_arch-245"><a href="#Charge.get_coefficient_from_arch-245"><span class="linenos">245</span></a>
+</span><span id="Charge.get_coefficient_from_arch-246"><a href="#Charge.get_coefficient_from_arch-246"><span class="linenos">246</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Charge.get_coefficient_from_arch-247"><a href="#Charge.get_coefficient_from_arch-247"><span class="linenos">247</span></a>        <span class="k">if</span> <span class="n">arch_width</span><span class="p">:</span>
+</span><span id="Charge.get_coefficient_from_arch-248"><a href="#Charge.get_coefficient_from_arch-248"><span class="linenos">248</span></a>            <span class="k">pass</span>
+</span><span id="Charge.get_coefficient_from_arch-249"><a href="#Charge.get_coefficient_from_arch-249"><span class="linenos">249</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span><span class="p">:</span>
+</span><span id="Charge.get_coefficient_from_arch-250"><a href="#Charge.get_coefficient_from_arch-250"><span class="linenos">250</span></a>            <span class="n">arch_width</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="o">.</span><span class="n">e_1</span>
+</span><span id="Charge.get_coefficient_from_arch-251"><a href="#Charge.get_coefficient_from_arch-251"><span class="linenos">251</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Charge.get_coefficient_from_arch-252"><a href="#Charge.get_coefficient_from_arch-252"><span class="linenos">252</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;arch width must be supplied either as an argument or when instantiating FormFunction.&quot;</span><span class="p">)</span>
+</span><span id="Charge.get_coefficient_from_arch-253"><a href="#Charge.get_coefficient_from_arch-253"><span class="linenos">253</span></a>
+</span><span id="Charge.get_coefficient_from_arch-254"><a href="#Charge.get_coefficient_from_arch-254"><span class="linenos">254</span></a>        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="n">arch_width</span>
 </span></pre></div>
 
 
@@ -1207,20 +1210,21 @@ and more recent work from China.</p>
 <ul>
 <li><strong>arch_width</strong> (float, optional.):
 the minimum depth the propellant's burn surface must recede to burnthrough.
-See documentation of <code>FormFunction</code> for more information.
-If this parameter is not supplied, then the value set for <code>FormFunction.e_1</code> is used.</li>
+See documentation of <code><a href="form_function.html#FormFunction">ballistics.form_function.FormFunction</a></code> for more information.
+If this parameter is not supplied, then the value set for
+<code><a href="form_function.html#FormFunction.e_1">ballistics.form_function.FormFunction.e_1</a></code> is used.</li>
 </ul>
 
 <h6 id="raises">Raises</h6>
 
 <ul>
-<li><strong>ValueError</strong>: if both <code>arch_width</code> and <code>FormFunction.e_1</code> are None.</li>
+<li><strong>ValueError</strong>: if arch width is not supplied, and cannot be derived from a FormFunction object.</li>
 </ul>
 
 <h6 id="notes">Notes</h6>
 
 <p>Tabulating the propellant's burn rate this way is particularly common with Western sources
-and more recent work fromChina.</p>
+and more recent work from China.</p>
 </div>
 
 
@@ -1247,8 +1251,8 @@ and more recent work fromChina.</p>
 
     </div>
     <a class="headerlink" href="#Charge.psi"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.psi-259"><a href="#Charge.psi-259"><span class="linenos">259</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge.psi-260"><a href="#Charge.psi-260"><span class="linenos">260</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.psi-260"><a href="#Charge.psi-260"><span class="linenos">260</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge.psi-261"><a href="#Charge.psi-261"><span class="linenos">261</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_function</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -1266,8 +1270,8 @@ and more recent work fromChina.</p>
 
     </div>
     <a class="headerlink" href="#Charge.dZdt"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.dZdt-262"><a href="#Charge.dZdt-262"><span class="linenos">262</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dZdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="Charge.dZdt-263"><a href="#Charge.dZdt-263"><span class="linenos">263</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Charge.dZdt-263"><a href="#Charge.dZdt-263"><span class="linenos">263</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dZdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="Charge.dZdt-264"><a href="#Charge.dZdt-264"><span class="linenos">264</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_burnrate</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">AMBIENT_PRESSURE</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_exponent</span>
 </span></pre></div>
 
 
