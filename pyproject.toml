@@ -31,5 +31,10 @@ ballistics = ["py.typed"]
 Homepage = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics"
 Issues = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics/issues"
 
+[tool.black]
+line-length = 120
+target-version = ['py312']
+include = '\.pyi?$'
+
 [tool.setuptools.dynamic]
 version = {attr = "ballistics.__version__"}

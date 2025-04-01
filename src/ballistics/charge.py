@@ -8,8 +8,8 @@ from typing import Optional, Tuple
 
 from attrs import field, frozen
 
-from ballistics import AMBIENT_PRESSURE
-from ballistics.form_function import FormFunction
+from . import AMBIENT_PRESSURE
+from .form_function import FormFunction
 
 logger = logging.getLogger(__name__)
 
@@ -191,7 +191,7 @@ Charge.burn_rate_coefficient and FormFunction.e_1"
         """
 
         return cls(
-            name=" ".join((propellant.name, form_function.name)) if name is None else name,
+            name=name if name else " ".join((propellant.name, form_function.name)),
             description=form_function.description if description is None else description,
             density=propellant.density,
             force=propellant.force,

@@ -6,8 +6,7 @@ from ballistics import Significance
 from ballistics.charge import Charge, Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
 from ballistics.gun import Gun
-from ballistics.problem import (FixedChargeProblem, FixedVolumeProblem,
-                                KnownGunProblem, PressureTarget)
+from ballistics.problem import FixedChargeProblem, FixedVolumeProblem, KnownGunProblem, PressureTarget
 from ballistics.state import StateList
 from tabulate import tabulate
 

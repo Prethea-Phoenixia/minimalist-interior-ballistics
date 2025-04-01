@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
 
 from attrs import frozen
-from ballistics import DEFAULT_ACC, DEFAULT_STEPS, Significance
-from ballistics.design.base_design import BaseDesign
-from ballistics.gun import Gun
-from ballistics.num import dekker, gss_max
-from ballistics.problem import FixedChargeProblem
+from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
+from .base_design import BaseDesign
+from ..gun import Gun
+from ..num import dekker, gss_max
+from ..problem import FixedChargeProblem
 
 
 @frozen(kw_only=True)

@@ -4,16 +4,16 @@ import logging
 from typing import TYPE_CHECKING, Optional, Tuple
 
 from attrs import frozen
-from ballistics import DEFAULT_ACC, DEFAULT_STEPS, Significance
-from ballistics.gun import Gun
-from ballistics.num import dekker, gss_max
-from ballistics.problem.base_problem import BaseProblem
-from ballistics.problem.pressure_target import PressureTarget
+from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
+from ..gun import Gun
+from ..num import dekker, gss_max
+from .base_problem import BaseProblem
+from .pressure_target import PressureTarget
 
 if TYPE_CHECKING:
     # these are required for pdoc to locate the references
-    from ballistics.charge import Propellant
-    from ballistics.form_function import FormFunction
+    from ..charge import Propellant
+    from ..form_function import FormFunction
 
 logger = logging.getLogger(__name__)
 

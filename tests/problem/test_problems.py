@@ -2,16 +2,7 @@ import unittest
 
 from ballistics.charge import Propellant
 from ballistics.form_function import FormFunction, MultiPerfShape
-from tests import logger
-
-dm = 1e-1
-dm2 = 1e-2
-L = 1e-3
-kg_dm3 = 1e3
-dm3_kg = 1e-3
-kgfdm_kg = 0.98
-kgf_dm2 = 980
-dm_s = 0.1
+from tests import logger, kgfdm_kg, kg_dm3, dm3_kg
 
 
 class SingleChargeProblem(unittest.TestCase):

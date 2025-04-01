@@ -1,6 +1,6 @@
 from ballistics.problem import FixedChargeProblem, PressureTarget
-from tests.problem.test_problems import (L, MultipleChargeProblem,
-                                         SingleChargeProblem, dm, dm2, kgf_dm2)
+from tests.problem.test_problems import MultipleChargeProblem, SingleChargeProblem
+from tests import L, dm, dm2, kgf_dm2
 
 
 class TestFixedChargeProblemWithOneCharge(SingleChargeProblem):
@@ -25,6 +25,12 @@ class TestFixedChargeProblemWithOneCharge(SingleChargeProblem):
             pressure_target=PressureTarget.average_pressure(3070e2 * kgf_dm2),
         )
 
+    def testSolveChamberVolumeAtPressureForVelocity(self):
+        self.result, _ = self.fcp_BS_3_53_UOF_412.solve_chamber_volume_at_pressure_for_velocity(
+            pressure_target=PressureTarget.average_pressure(3070e2 * kgf_dm2),
+            velocity_target=900.0,
+        )
+
     def tearDown(self):
         super().tearDown()
 
@@ -43,6 +49,13 @@ class TestFixedChargeProblemWithMultipleCharges(MultipleChargeProblem):
             propellants=[self.single_base, self.single_base],
             form_functions=[self.fourteen_seven, self.eighteen_one_fourtytwo],
             charge_masses=[2.34, 0.26],
+        )
+
+    def testSolveReducedBurnRateForVolumeAtPressure(self):
+        self.result = self.fcp_D_44_UO_365K.solve_reduced_burn_rate_for_volume_at_pressure(
+            reduced_burnrate_ratios=[1 / 14, 1 / 18],
+            chamber_volume=3.94 * L,
+            pressure_target=PressureTarget.average_pressure(2750e2 * kgf_dm2),
         )
 
     def testSolveChamberVolumeAtPressureForVelocity(self):

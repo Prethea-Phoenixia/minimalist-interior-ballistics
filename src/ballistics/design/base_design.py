@@ -1,10 +1,10 @@
 from typing import Optional, Type
 
 from attrs import field, frozen
-from ballistics import DEFAULT_GUN_LOSS_FRACTION, DEFAULT_GUN_START_PRESSURE
-from ballistics.charge import Propellant
-from ballistics.form_function import FormFunction
-from ballistics.problem import BaseProblem, PressureTarget
+from .. import DEFAULT_GUN_LOSS_FRACTION, DEFAULT_GUN_START_PRESSURE
+from ..charge import Propellant
+from ..form_function import FormFunction
+from ..problem import BaseProblem, PressureTarget
 
 
 @frozen(kw_only=True)

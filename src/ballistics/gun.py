@@ -10,12 +10,10 @@ from typing import Callable, Dict, Iterable, Optional, Tuple
 from attrs import field, frozen
 from cattrs import Converter
 
-from ballistics import (DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION,
-                        DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, MAX_DT,
-                        Significance)
-from ballistics.charge import Charge
-from ballistics.num import dekker, gss_max
-from ballistics.state import State, StateList, StateVector
+from . import DEFAULT_ACC, DEFAULT_GUN_LOSS_FRACTION, DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, MAX_DT, Significance
+from .charge import Charge
+from .num import dekker, gss_max
+from .state import State, StateList, StateVector
 
 logger = logging.getLogger(__name__)
 

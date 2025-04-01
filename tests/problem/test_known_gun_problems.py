@@ -1,6 +1,6 @@
 from ballistics.problem import KnownGunProblem, PressureTarget
-from tests.problem.test_problems import (L, MultipleChargeProblem,
-                                         SingleChargeProblem, dm, dm2, kgf_dm2)
+from tests.problem.test_problems import MultipleChargeProblem, SingleChargeProblem
+from tests import L, dm, dm2, kgf_dm2
 
 
 class TestKnownGunProblemWithSingleCharge(SingleChargeProblem):
