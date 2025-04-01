@@ -1,7 +1,7 @@
 import unittest
 
-from ballistics.charge import Propellant
-from ballistics.form_function import FormFunction, MultiPerfShape
+from minimalist_interior_ballistics.charge import Propellant
+from minimalist_interior_ballistics.form_function import FormFunction, MultiPerfShape
 from tests import logger, kgfdm_kg, kg_dm3, dm3_kg
 
 

@@ -2,12 +2,17 @@ import logging
 from math import pi
 from statistics import mean
 
-from ballistics import Significance
-from ballistics.charge import Charge, Propellant
-from ballistics.form_function import FormFunction, MultiPerfShape
-from ballistics.gun import Gun
-from ballistics.problem import FixedChargeProblem, FixedVolumeProblem, KnownGunProblem, PressureTarget
-from ballistics.state import StateList
+from minimalist_interior_ballistics import Significance
+from minimalist_interior_ballistics.charge import Charge, Propellant
+from minimalist_interior_ballistics.form_function import FormFunction, MultiPerfShape
+from minimalist_interior_ballistics.gun import Gun
+from minimalist_interior_ballistics.problem import (
+    FixedChargeProblem,
+    FixedVolumeProblem,
+    KnownGunProblem,
+    PressureTarget,
+)
+from minimalist_interior_ballistics.state import StateList
 from tabulate import tabulate
 
 # from misc import L, dm, dm2, dm3_kg, kg_dm3, kgf_dm2, kgfdm_kg, mm

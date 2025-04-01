@@ -1,9 +1,9 @@
 from statistics import mean
 
-from ballistics.charge import Charge, Propellant
-from ballistics.form_function import FormFunction, MultiPerfShape
-from ballistics.gun import Gun
-from ballistics.problem import KnownGunProblem, PressureTarget
+from minimalist_interior_ballistics.charge import Charge, Propellant
+from minimalist_interior_ballistics.form_function import FormFunction, MultiPerfShape
+from minimalist_interior_ballistics.gun import Gun
+from minimalist_interior_ballistics.problem import KnownGunProblem, PressureTarget
 
 dm = 1e-1
 dm2 = 1e-2
@@ -373,7 +373,7 @@ all_guns = [
 
 
 if __name__ == "__main__":
-    from ballistics.state import StateList
+    from minimalist_interior_ballistics.state import StateList
 
     family_dict = {}
 

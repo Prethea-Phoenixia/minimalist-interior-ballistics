@@ -2,7 +2,7 @@ import logging
 import os
 from importlib import import_module
 
-from ballistics.gun import Gun
+from minimalist_interior_ballistics.gun import Gun
 
 logger = logging.getLogger(__name__)
 

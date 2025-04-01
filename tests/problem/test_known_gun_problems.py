@@ -1,4 +1,4 @@
-from ballistics.problem import KnownGunProblem, PressureTarget
+from minimalist_interior_ballistics.problem import KnownGunProblem, PressureTarget
 from tests.problem.test_problems import MultipleChargeProblem, SingleChargeProblem
 from tests import L, dm, dm2, kgf_dm2
 
