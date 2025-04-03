@@ -23,6 +23,50 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def accepts_charge_masses(func):
+    def handled_func(
+        self: BaseProblem,
+        *args,
+        charge_mass: Optional[float] = None,
+        charge_masses: Optional[list[float] | tuple[float, ...]] = None,
+        **kwargs,
+    ):
+        if bool(charge_mass) == bool(charge_masses):
+            raise ValueError("one and only one charge_mass or charge_masses must be supplied")
+        if charge_mass:
+            charge_masses = tuple([charge_mass])
+        else:
+            charge_masses = tuple(charge_masses)
+        if len(charge_masses) != len(self.propellants):
+            raise ValueError("charge_mass(es) must have same dimension as charge(s)")
+
+        return func(self, *args, charge_masses=charge_masses, **kwargs)
+
+    return handled_func
+
+
+def accepts_reduced_burnrates(func):
+    def handled_func(
+        self: BaseProblem,
+        *args,
+        reduced_burnrate: Optional[float] = None,
+        reduced_burnrates: Optional[list[float] | tuple[float, ...]] = None,
+        **kwargs,
+    ):
+        if bool(reduced_burnrates) == bool(reduced_burnrate):
+            raise ValueError("one and only one reduced_burnrate or reduced_burnrates must be supplied")
+        if reduced_burnrate:
+            reduced_burnrates = tuple([reduced_burnrate])
+        else:
+            reduced_burnrates = tuple(reduced_burnrates)
+        if len(reduced_burnrates) != len(self.propellants):
+            raise ValueError("reduced_burnrate(s) must have same dimension as charge(s)")
+
+        return func(self, *args, reduced_burnrates=reduced_burnrates, **kwargs)
+
+    return handled_func
+
+
 @frozen(kw_only=True)
 class BaseProblem:
     name: str = field(default="")
@@ -48,33 +92,15 @@ class BaseProblem:
 
         if self.propellants and self.form_functions:
             if len(self.propellants) != len(self.form_functions):
-                raise ValueError("propellants and form_functions length mismatch")
+                raise ValueError("mismatch for propellants and form_functions dimensions.")
         else:
-            raise ValueError("invalid BaseProblem parameters")
+            raise ValueError("invalid BaseProblem parameters.")
 
+    @accepts_reduced_burnrates
+    @accepts_charge_masses
     def get_gun(
-        self,
-        *,
-        chamber_volume: float,
-        charge_mass: Optional[float] = None,
-        charge_masses: Optional[tuple[float, ...] | list[float]] = None,
-        reduced_burnrate: Optional[float] = None,
-        reduced_burnrates: Optional[tuple[float, ...] | list[float]] = None,
+        self, chamber_volume: float, charge_masses: tuple[float, ...], reduced_burnrates: tuple[float, ...]
     ) -> Gun:
-
-        if charge_mass and reduced_burnrate:
-            charge_masses = tuple([charge_mass])
-            reduced_burnrates = tuple([reduced_burnrate])
-
-        if charge_masses and reduced_burnrates:
-            if len(charge_masses) == len(reduced_burnrates) == len(self.propellants):
-                pass
-            else:
-                raise ValueError(
-                    "charge_masses and reduced_burnrates must have the same dimension as self.propellants and form_functions"
-                )
-        else:
-            raise ValueError("invalid parameters.")
 
         return Gun(
             name=self.name,
@@ -97,6 +123,7 @@ class BaseProblem:
             start_pressure=self.start_pressure,
         )
 
+    @accepts_charge_masses
     def get_gun_at_pressure(
         self,
         pressure_target: PressureTarget,
@@ -105,24 +132,8 @@ class BaseProblem:
         acc: float = DEFAULT_ACC,
         *,
         chamber_volume: float,
-        charge_mass: Optional[float] = None,
-        charge_masses: Optional[tuple[float, ...] | list[float]] = None,
+        charge_masses: tuple[float, ...],
     ) -> Gun:
-
-        if charge_mass:
-            charge_masses = tuple([charge_mass])
-
-        if charge_masses and reduced_burnrate_ratios:
-            if len(charge_masses) == len(reduced_burnrate_ratios) == len(self.propellants):
-                pass
-            else:
-                raise ValueError(
-                    "charge_masses and reduced_burnrate_ratios must have the same dimension as self.propellants and form_functions"
-                )
-        else:
-            raise ValueError("invalid parameters.")
-
-        # first, sanity check the pressure value is achievable:
 
         main_charge_index = charge_masses.index(max(charge_masses))
         normalized_burn_rate_ratios = tuple(

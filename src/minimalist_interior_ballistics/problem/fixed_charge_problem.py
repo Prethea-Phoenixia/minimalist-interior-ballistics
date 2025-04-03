@@ -9,7 +9,7 @@ from attrs import frozen
 from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
 from ..gun import Gun
 from ..num import dekker, gss_max
-from .base_problem import BaseProblem
+from .base_problem import BaseProblem, accepts_reduced_burnrates, accepts_charge_masses
 from .pressure_target import PressureTarget
 
 logger = logging.getLogger(__name__)
@@ -22,21 +22,8 @@ if TYPE_CHECKING:
 
 @frozen(kw_only=True)
 class FixedChargeProblem(BaseProblem):
-
     charge_mass: Optional[float] = None
     charge_masses: list[float] | tuple[float, ...] = tuple()
-
-    def __attrs_post_init__(self):
-
-        super().__attrs_post_init__()  # todo: test if this is needed.
-        if self.charge_mass:
-            object.__setattr__(self, "charge_masses", tuple([self.charge_mass]))
-
-        if self.charge_masses:
-            if len(self.charge_masses) != len(self.propellants):
-                raise ValueError("charge_masses must have the same dimension as self.propellants and form_functions")
-        else:
-            raise ValueError("invalid parameters")
 
     @classmethod
     def from_base_problem(
@@ -62,29 +49,23 @@ class FixedChargeProblem(BaseProblem):
             charge_masses=charge_masses,
         )
 
-    def get_gun(
-        self,
-        *,
-        chamber_volume: float,
-        reduced_burnrate: Optional[float] = None,
-        reduced_burnrates: Optional[tuple[float, ...] | list[float]] = None,
-        **kwargs,
-    ) -> Gun:
+    @accepts_reduced_burnrates
+    def get_gun(self, chamber_volume: float, reduced_burnrates: tuple[float, ...], **kwargs) -> Gun:
 
-        if reduced_burnrate:
-            reduced_burnrates = tuple([reduced_burnrate])
-
-        if reduced_burnrates:
-            if len(self.charge_masses) != len(reduced_burnrates):
-                raise ValueError(
-                    "reduced_burnrates must have the same dimension as self.propellants, charge_masses, and form_functions"
-                )
-        else:
-            raise ValueError("invalid parameters.")
-
-        return super().get_gun(
-            charge_masses=self.charge_masses, chamber_volume=chamber_volume, reduced_burnrates=reduced_burnrates
+        return super(FixedChargeProblem, self).get_gun(
+            charge_mass=self.charge_mass,
+            charge_masses=self.charge_masses,
+            chamber_volume=chamber_volume,
+            reduced_burnrates=reduced_burnrates,
         )
+
+    @accepts_charge_masses
+    def get_chamber_min_volume(self, charge_masses: tuple[float, ...]) -> float:
+        return sum(charge_mass / propellant.density for charge_mass, propellant in zip(charge_masses, self.propellants))
+
+    @cached_property
+    def chamber_min_volume(self) -> float:
+        return self.get_chamber_min_volume(charge_mass=self.charge_mass, charge_masses=self.charge_masses)
 
     def get_gun_at_pressure(
         self,
@@ -96,7 +77,7 @@ class FixedChargeProblem(BaseProblem):
         chamber_volume: float,
         **kwargs,
     ) -> Gun:
-        return super().get_gun_at_pressure(
+        return super(FixedChargeProblem, self).get_gun_at_pressure(
             pressure_target=pressure_target,
             n_intg=n_intg,
             acc=acc,
@@ -105,13 +86,6 @@ class FixedChargeProblem(BaseProblem):
             charge_masses=self.charge_masses,
             reduced_burnrate_ratios=reduced_burnrate_ratios,
         )
-
-    @cached_property
-    def chamber_min_volume(self) -> float:
-        return sum(
-            charge_mass / propellant.density for charge_mass, propellant in zip(self.charge_masses, self.propellants)
-        )
-        # return self.charge_mass / self.propellant.density
 
     def get_chamber_volume_limits(
         self, pressure_target: PressureTarget, acc: float = DEFAULT_ACC
@@ -180,7 +154,6 @@ class FixedChargeProblem(BaseProblem):
         reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
         n_intg: int = DEFAULT_STEPS,
         acc: float = DEFAULT_ACC,
-        **kwargs,
     ) -> Gun:
         """
         solves the reduced burn rate such that the peak pressure developed in bore
@@ -191,6 +164,9 @@ class FixedChargeProblem(BaseProblem):
 
         Parameters
         ----------
+        reduced_burnrate_ratios: list[float] | tuple[float, ...]
+            if more than one charge is specified, then the ratio between the reduced burnrates of each is
+            required.
         chamber_volume: float
             volume of the chamber.
         pressure_target: float, `minimalist_interior_ballistics.problem.pressure_target.PressureTarget`
@@ -235,7 +211,7 @@ class FixedChargeProblem(BaseProblem):
             acc=acc,
         )
         logger.info(
-            f"reduced burn rates solved to {", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)} "
+            "reduced burn rates solved to " + ", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)
         )
         return gun
 

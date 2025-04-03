@@ -5,12 +5,15 @@ from typing import TYPE_CHECKING, Optional
 from attrs import frozen
 from .. import DEFAULT_ACC, DEFAULT_STEPS
 from ..gun import Gun
-from .base_problem import BaseProblem
+from .base_problem import BaseProblem, accepts_reduced_burnrates, accepts_charge_masses
 from .pressure_target import PressureTarget
 
 if TYPE_CHECKING:
     # these are required for pdoc to locate the references
+    # noinspection PyUnresolvedReferences
     from ..charge import Propellant
+
+    # noinspection PyUnresolvedReferences
     from ..form_function import FormFunction
 
 
@@ -19,17 +22,6 @@ class KnownGunProblem(BaseProblem):
     chamber_volume: float
     charge_mass: Optional[float] = None
     charge_masses: list[float] | tuple[float, ...] = tuple()
-
-    def __attrs_post_init__(self):
-        super().__attrs_post_init__()  # todo: test if this is needed.
-        if self.charge_mass:
-            object.__setattr__(self, "charge_masses", tuple([self.charge_mass]))
-
-        if self.charge_masses:
-            if len(self.charge_masses) != len(self.propellants):
-                raise ValueError("charge_masses must have the same dimension as self.propellants and form_functions")
-        else:
-            raise ValueError("invalid parameters")
 
     @classmethod
     def from_base_problem(
@@ -57,27 +49,18 @@ class KnownGunProblem(BaseProblem):
             charge_masses=charge_masses,
         )
 
+    @accepts_reduced_burnrates
     def get_gun(
         self,
-        *,
-        reduced_burnrate: Optional[float] = None,
-        reduced_burnrates: Optional[list[float] | tuple[float, ...]] = None,
+        reduced_burnrates: tuple[float, ...],
         **kwargs,
     ) -> Gun:
 
-        if reduced_burnrate:
-            reduced_burnrates = tuple([reduced_burnrate])
-
-        if reduced_burnrates:
-            if len(reduced_burnrates) != len(self.propellants):
-                raise ValueError(
-                    "reduced_burnrates must have the same dimension as self.propellants, charge_masses and form_functions"
-                )
-        else:
-            raise ValueError("invalid parameters.")
-
         return super().get_gun(
-            charge_masses=self.charge_masses, chamber_volume=self.chamber_volume, reduced_burnrates=reduced_burnrates
+            charge_mass=self.charge_mass,
+            charge_masses=self.charge_masses,
+            chamber_volume=self.chamber_volume,
+            reduced_burnrates=reduced_burnrates,
         )
 
     def get_gun_at_pressure(
