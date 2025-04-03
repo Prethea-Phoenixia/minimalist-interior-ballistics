@@ -9,17 +9,28 @@ from typing import TYPE_CHECKING
 @frozen()
 class PressureTarget:
     """
-    class representing pressure target, encompassing both the numeric pressure value, as
-    well as the location it is measured/specified as.
+    class representing pressure target, encompassing both the numeric pressure value, and
+    the location it is measured/specified as.
 
-    Use of one of the three classmethods:
+    Use of one of the three class methods:
     `PressureTarget.breech_pressure`, `PressureTarget.average_pressure`,
-    `PressureTarget.shot_pressure`, instead of manually specifying the various pressure points
-    is strongly advised.
+    `PressureTarget.shot_pressure`, is strongly advised.
     """
 
     value: float
-    target: str = field(kw_only=True)
+    target: str = field()
+
+    def __mul__(self, other: float) -> PressureTarget:
+        if isinstance(other, float):
+            return PressureTarget(value=self.value * other, target=self.target)
+        else:
+            raise ValueError(f"instance of PressureTarget cannot be multiplied with type {type(other)}")
+
+    def __rmul__(self, other: float) -> PressureTarget:
+        return self * other
+
+    def __truediv__(self, other) -> PressureTarget:
+        return self * (1 / other)
 
     @target.validator
     def _check_target(self, attribute, value):

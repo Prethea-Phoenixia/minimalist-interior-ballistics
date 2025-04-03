@@ -83,11 +83,11 @@ class State:
 
         Notes
         -----
-        The equivalent gun is a is formed by stretching the chamber volume of the
-        actual gun into a section such that the gun is of uniform cross section
+        The equivalent gun is formed by stretching the chamber volume of the
+        actual gun into a section such that the gun is of uniform cross-section
         throughout. The error of this treatment is usually insignificant for the range
         of conditions encountered in conventional firearms (although it is of more
-        concern in light-gas guns).
+        concern in light gas guns).
         """
         l, v = self.travel, self.velocity
         l_psi = self.gun.l_0 * (1 - self.gun.incompressible_fraction(self.volume_burnup_fractions))

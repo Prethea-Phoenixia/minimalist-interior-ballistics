@@ -16,6 +16,10 @@
     <option name="requirementsPath" value="C:\Users\Jinpeng Zhai\Documents\GitHub\minimalist-interior-ballistics\requirements.txt" />
     <option name="versionSpecifier" value="Don't specify version" />
   </component>
+  <component name="PyDocumentationSettings">
+    <option name="format" value="NUMPY" />
+    <option name="myDocStringFormat" value="NumPy" />
+  </component>
   <component name="PyNamespacePackagesService">
     <option name="namespacePackageFolders">
       <list>

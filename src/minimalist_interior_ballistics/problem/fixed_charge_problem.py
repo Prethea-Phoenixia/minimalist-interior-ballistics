@@ -5,6 +5,7 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Optional, Tuple
 
 from attrs import frozen
+
 from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
 from ..gun import Gun
 from ..num import dekker, gss_max
@@ -130,12 +131,6 @@ class FixedChargeProblem(BaseProblem):
 
         Notes
         -----
-        The upper limit is determined to ensure minimum free fraction for the bomb case.
-
-        The lower limit is such that the pressure specification may be achieved in the
-        bomb case. Choice of the more conservative solution ensures valid (finite) burn
-        rate if it were to be used.
-
         For more explanation of the rationale, reference
         `minimalist_interior_ballistics.problem.fixed_volume_problem.FixedVolumeProblem.get_charge_mass_limits`.
 
@@ -156,11 +151,13 @@ class FixedChargeProblem(BaseProblem):
 
         lower_limit = max(dekker(f=f_ff, x_0=chamber_min_volume, x_1=bound, tol=chamber_min_volume * acc))
 
+        safe_target = pressure_target * (1 + acc)
+
         def f_p(chamber_volume: float) -> float:
             test_gun = self.get_gun(
                 chamber_volume=chamber_volume, reduced_burnrates=tuple(1.0 for _ in self.propellants)
             )
-            return pressure_target.get_difference(test_gun.get_bomb_state())
+            return safe_target.get_difference(test_gun.get_bomb_state())
 
         if f_p(lower_limit) <= 0:
             raise ValueError("excessive pressure does not permit solution at given accuracy.")
@@ -291,7 +288,7 @@ class FixedChargeProblem(BaseProblem):
         acc: float = DEFAULT_ACC,
     ) -> Tuple[Optional[Gun], Optional[Gun]]:
 
-        logger.info("solve chamber volume for " + f"{velocity_target:.1f} m/s" + f"and {pressure_target.describe()}")
+        logger.info(f"solve chamber volume for {velocity_target:.1f} m/s and {pressure_target.describe()}")
 
         gun_vol_min, gun_opt, gun_vol_max = self.get_guns_at_pressure(
             pressure_target=pressure_target,

@@ -135,23 +135,25 @@ class FixedVolumeProblem(BaseProblem):
         Notes
         -----
         The bomb-pressure refers to the pressure developed in a gun as its charges
-        have completelly burnt, before the projectile has moved. This corresponds
-        to the case where the reduced burn-rate is infinitesimally high. It has the
-        convenient property that it is the maximum pressure that can be developed with
+        have completely burnt, before the projectile has moved. This corresponds
+        to the case where the reduced burn-rate is infinitely high. It has the
+        convenient property of being the maximum pressure that can be developed with
         a certain charge loading.
 
         The lower limit is found by finding the required mass of charge to bring the
-        gun's bomb-pressure to at least the targeted pressure levels.
+        gun's bomb-pressure to the required level. The upper limit is found when the
+        complete combustion of charge within chamber reduces volumetric free fraction
+        to less than a reasonable level, conveniently chosen to be `acc`.
 
-        The upper limit is found when the complete combustion of charge within
-        chamber reduces volumetric free fraction to less than `acc`, since the Nobel-Abel
-        equation of state does not model high pressure (and correspondingly
-        high incompressibility) well.
+        In reality, designs falling close to either limits are highly undesirable,
+        as the reduced-burn rate corresponding to the limiting charge weights asymptotically
+        approaches `+inf` for the lower charge mass limit, and 0 for the upper limit.
+        The former case approximates the interior ballistics for a pre-burned (light gas) gun,
+        while the latter case usually implies unreasonable pressure levels.
 
-        The reduced-burn rate that corresponds to the limiting charge
-        weights asymptotically approaches `+inf` for the lower limit, and 0 for the
-        upper limit. Care is taken such that the returned limits, being numerically
-        solved, errs on the conservative side.
+        Since the returned results are required for further numerical solving, care is
+        taken that the returned results are fudged on the conservative side, to ensure
+        the interior ballistics system is always solved in domain.
         """
         logger.info("get charge mass limits")
 
@@ -165,24 +167,23 @@ class FixedVolumeProblem(BaseProblem):
             return test_gun.bomb_free_fraction - acc
 
         chamber_fill_mass = self.get_fill_mass(charge_mass_ratios=charge_mass_ratios)
-        upper_limit = min(dekker(f_ff, 0, chamber_fill_mass, tol=chamber_fill_mass * acc))
+        upper_limit = min(dekker(f=f_ff, x_0=0, x_1=chamber_fill_mass, tol=chamber_fill_mass * acc))
 
-        # up until this point execution is guaranteed.
+        safe_target = pressure_target * (1 + acc)
 
         def f_p(total_charge_mass: float) -> float:
-            # note this is defined on [0, chamber_fill_mass]
             test_gun = self.get_gun(
                 charge_masses=self.get_charge_masses(
                     total_charge_mass=total_charge_mass, charge_mass_ratios=charge_mass_ratios
                 ),
                 reduced_burnrates=tuple(1.0 for _ in self.propellants),
             )
-            return pressure_target.get_difference(test_gun.get_bomb_state())
+            return safe_target.get_difference(test_gun.get_bomb_state())
 
         if f_p(upper_limit) <= 0:
             raise ValueError("excessive pressure target does not permit solution at given accuracy.")
 
-        lower_limit = max(dekker(f_p, 0, upper_limit, tol=chamber_fill_mass * acc))
+        lower_limit = max(dekker(f_p, x_0=0, x_1=upper_limit, tol=chamber_fill_mass * acc))
 
         logger.info(
             f"charge mass limit for {pressure_target.describe()} solved to be "
@@ -325,7 +326,7 @@ class FixedVolumeProblem(BaseProblem):
         acc: float = DEFAULT_ACC,
     ) -> Tuple[Optional[Gun], Optional[Gun]]:
 
-        logger.info("solve charge mass for " + f"{velocity_target:.1f} m/s" + f"and {pressure_target.describe()}")
+        logger.info(f"solve charge mass for {velocity_target:.1f} m/s and {pressure_target.describe()}")
 
         gun_mass_min, gun_opt, gun_mass_max = self.get_guns_at_pressure(
             pressure_target=pressure_target,

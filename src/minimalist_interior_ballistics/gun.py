@@ -150,7 +150,7 @@ class Gun:
             marker=Significance.BOMB,
         )
 
-    def get_start_state(self, *, n_intg: int = DEFAULT_STEPS, acc: float = DEFAULT_ACC) -> State:
+    def get_start_state(self, n_intg: int = DEFAULT_STEPS, acc: float = DEFAULT_ACC) -> State:
         return self.to_start(n_intg=n_intg, acc=acc).get_state_by_marker(significance=Significance.START)
 
     def gas_energy(self, *, psis: tuple[float, ...], v: float) -> float:
@@ -243,7 +243,6 @@ class Gun:
             states = StateList([s_next])
 
             while s_next.average_pressure < self.start_pressure:
-
                 states.append(s_now := s_next)
                 s_next = self.propagate_rk4_in_time(s_now, dt=delta_t)
 
@@ -301,7 +300,7 @@ class Gun:
             determined to in relation to the process's total time. Also controls
             the accuracy to which initial burnup is solved to.
         abort_travel, abort_velocity: float
-            additional criterias to abort the calculation before burnout point is
+            additional criteria to abort the calculation before burnout point is
             reached.
 
         Returns
@@ -331,9 +330,6 @@ class Gun:
         """
         start_state = self.get_start_state(n_intg=n_intg, acc=acc)
         Z_c0s = start_state.burnup_fractions
-
-        # def burnout(state: State) -> int:
-        #     return state.burnup_fraction > self.charge.Z_k
 
         def abort(state: State) -> bool:
             return state.travel > abort_travel or state.velocity > abort_velocity
@@ -442,7 +438,7 @@ class Gun:
         times `acc`.
 
         If a previous round of peak pressure finding is recognized (by the presence
-        of the `minimalist_interior_ballistics.Significance.PEAK_PRPESSURE` marker).
+        of the `minimalist_interior_ballistics.Significance.PEAK_PRESSURE` marker).
         """
         if not any(s.marker == Significance.PEAK_PRESSURE for s in states):
             total_time = max(states).time - min(states).time
@@ -465,7 +461,5 @@ class Gun:
             s_pmax = self.propagate_rk4_in_time(s_j, dt=time_pmax - s_j.time, marker=Significance.PEAK_PRESSURE)
 
             insort(states, s_pmax)
-
-            logger.debug(f"GUN -> PMAX {s_pmax.average_pressure * 1e-6:.3f} MPa" + f" AT {s_pmax.time * 1e3:.3f} ms ")
 
         return states

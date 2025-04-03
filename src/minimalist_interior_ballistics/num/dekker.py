@@ -40,7 +40,7 @@ def dekker(f: Callable[[float], float], x_0: float, x_1: float, tol: float, max_
     and mid-point estimate. If this results in a sign change, the contrapoint is updated
     with the previous best estimate.
 
-    This allows faster convergence when functions are well behaved, but if successive
+    This allows faster convergence when functions are well-behaved, but if successive
     secant branches are taken, the convergence can be poorer than simple bisection.
 
     References

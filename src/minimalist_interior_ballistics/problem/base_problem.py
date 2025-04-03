@@ -152,11 +152,8 @@ class BaseProblem:
                 chamber_volume=chamber_volume,
             )
             states = test_gun.to_burnout(n_intg=n_intg, acc=acc, abort_travel=self.travel)
-            # logger.info(states.tabulate())
             delta_p = pressure_target.get_difference(states.get_state_by_marker(Significance.PEAK_PRESSURE))
             return delta_p
-
-        # solve the burn rate coefficient on (0, +inf)
 
         """
         first, find two estimate, est and est' (rendered as est_prime) such that
