@@ -160,8 +160,6 @@ cython_debug/
 #.idea/
 .pypirc
 
-# ignore privated python files.
-_*.py
 
 # sublime related
 *.sublime-project

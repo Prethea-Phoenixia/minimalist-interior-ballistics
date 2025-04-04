@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING, Optional
-
+from functools import wraps
 from attrs import field, frozen
 from .. import (
     DEFAULT_ACC,
@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def accepts_charge_masses(func):
+    @wraps(func)
     def handled_func(
         self: BaseProblem,
         *args,
@@ -35,8 +36,8 @@ def accepts_charge_masses(func):
             raise ValueError("one and only one charge_mass or charge_masses must be supplied")
         if charge_mass:
             charge_masses = tuple([charge_mass])
-        else:
-            charge_masses = tuple(charge_masses)
+        charge_masses = tuple(charge_masses)
+
         if len(charge_masses) != len(self.propellants):
             raise ValueError("charge_mass(es) must have same dimension as charge(s)")
 
@@ -46,6 +47,7 @@ def accepts_charge_masses(func):
 
 
 def accepts_reduced_burnrates(func):
+    @wraps(func)
     def handled_func(
         self: BaseProblem,
         *args,
@@ -57,8 +59,8 @@ def accepts_reduced_burnrates(func):
             raise ValueError("one and only one reduced_burnrate or reduced_burnrates must be supplied")
         if reduced_burnrate:
             reduced_burnrates = tuple([reduced_burnrate])
-        else:
-            reduced_burnrates = tuple(reduced_burnrates)
+        reduced_burnrates = tuple(reduced_burnrates)
+
         if len(reduced_burnrates) != len(self.propellants):
             raise ValueError("reduced_burnrate(s) must have same dimension as charge(s)")
 
@@ -84,6 +86,8 @@ class BaseProblem:
     travel: float
     loss_fraction: float = DEFAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
+    acc: float = DEFAULT_ACC
+    n_intg: int = DEFAULT_STEPS
 
     def __attrs_post_init__(self):
         if self.propellant and self.form_function:
@@ -128,8 +132,6 @@ class BaseProblem:
         self,
         pressure_target: PressureTarget,
         reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
-        n_intg: int = DEFAULT_STEPS,
-        acc: float = DEFAULT_ACC,
         *,
         chamber_volume: float,
         charge_masses: tuple[float, ...],
@@ -153,7 +155,7 @@ class BaseProblem:
 
         if pressure_target.get_difference(unitary_gun.get_bomb_state()) < 0:
             raise ValueError("specified pressure is too high to achieve")
-        elif pressure_target.get_difference(unitary_gun.get_start_state(n_intg=n_intg, acc=acc)) > 0:
+        elif pressure_target.get_difference(unitary_gun.get_start_state(n_intg=self.n_intg, acc=self.acc)) > 0:
             raise ValueError("specified pressure is less than the starting state.")
 
         def f(reduced_burnrate: float) -> float:
@@ -162,7 +164,7 @@ class BaseProblem:
                 charge_masses=charge_masses,
                 chamber_volume=chamber_volume,
             )
-            states = test_gun.to_burnout(n_intg=n_intg, acc=acc, abort_travel=self.travel)
+            states = test_gun.to_burnout(n_intg=self.n_intg, acc=self.acc, abort_travel=self.travel)
             delta_p = pressure_target.get_difference(states.get_state_by_marker(Significance.PEAK_PRESSURE))
             return delta_p
 
@@ -186,8 +188,8 @@ class BaseProblem:
         since the accuracy specification is realtive and the order of magnitude of the
         estimates aren't known a-priori
         """
-        while abs(est - est_prime) > acc * min(est, est_prime):
-            est, est_prime = dekker(f=f, x_0=est, x_1=est_prime, tol=min(est, est_prime) * acc)
+        while abs(est - est_prime) > self.acc * min(est, est_prime):
+            est, est_prime = dekker(f=f, x_0=est, x_1=est_prime, tol=min(est, est_prime) * self.acc)
         return self.get_gun(
             reduced_burnrates=get_burnrates(est), charge_masses=charge_masses, chamber_volume=chamber_volume
         )

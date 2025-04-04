@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from attrs import frozen
-from .. import DEFAULT_ACC, DEFAULT_STEPS
 from ..gun import Gun
 from .base_problem import BaseProblem, accepts_reduced_burnrates, accepts_charge_masses
 from .pressure_target import PressureTarget
@@ -47,6 +46,8 @@ class KnownGunProblem(BaseProblem):
             chamber_volume=chamber_volume,
             charge_mass=charge_mass,
             charge_masses=charge_masses,
+            acc=base_problem.acc,
+            n_intg=base_problem.n_intg,
         )
 
     @accepts_reduced_burnrates
@@ -67,8 +68,6 @@ class KnownGunProblem(BaseProblem):
         self,
         pressure_target: PressureTarget,
         reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
-        n_intg: int = DEFAULT_STEPS,
-        acc: float = DEFAULT_ACC,
         **kwargs,
     ) -> Gun:
 
@@ -78,6 +77,4 @@ class KnownGunProblem(BaseProblem):
             chamber_volume=self.chamber_volume,
             reduced_burnrate_ratios=reduced_burnrate_ratios,
             pressure_target=pressure_target,
-            n_intg=n_intg,
-            acc=acc,
         )

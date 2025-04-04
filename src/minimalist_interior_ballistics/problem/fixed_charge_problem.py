@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional, Tuple
 
 from attrs import frozen
 
-from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
+from .. import Significance
 from ..gun import Gun
 from ..num import dekker, gss_max
 from .base_problem import BaseProblem, accepts_reduced_burnrates, accepts_charge_masses
@@ -47,6 +47,8 @@ class FixedChargeProblem(BaseProblem):
             start_pressure=base_problem.start_pressure,
             charge_mass=charge_mass,
             charge_masses=charge_masses,
+            acc=base_problem.acc,
+            n_intg=base_problem.n_intg,
         )
 
     @accepts_reduced_burnrates
@@ -71,31 +73,25 @@ class FixedChargeProblem(BaseProblem):
         self,
         pressure_target: PressureTarget,
         reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
-        n_intg: int = DEFAULT_STEPS,
-        acc: float = DEFAULT_ACC,
         *,
         chamber_volume: float,
         **kwargs,
     ) -> Gun:
         return super(FixedChargeProblem, self).get_gun_at_pressure(
             pressure_target=pressure_target,
-            n_intg=n_intg,
-            acc=acc,
             chamber_volume=chamber_volume,
             charge_mass=self.charge_mass,
             charge_masses=self.charge_masses,
             reduced_burnrate_ratios=reduced_burnrate_ratios,
         )
 
-    def get_chamber_volume_limits(
-        self, pressure_target: PressureTarget, acc: float = DEFAULT_ACC
-    ) -> Tuple[float, float]:
+    def get_chamber_volume_limits(self, pressure_target: PressureTarget) -> Tuple[float, float]:
         """
         find the range of valid chamber volume
 
         Parameters
         ----------
-        pressure_target, acc: `minimalist_interior_ballistics.problem.pressure_target.PressureTarget`, float
+        pressure_target: `minimalist_interior_ballistics.problem.pressure_target.PressureTarget`
             see `minimalist_interior_ballistics.problem.base_problem.BaseProblem.get_gun_at_pressure`
             for more information.
 
@@ -115,7 +111,7 @@ class FixedChargeProblem(BaseProblem):
             test_gun = self.get_gun(
                 chamber_volume=chamber_volume, reduced_burnrates=tuple(1.0 for _ in self.propellants)
             )
-            return test_gun.bomb_free_fraction - acc
+            return test_gun.bomb_free_fraction - self.acc
 
         chamber_min_volume = self.chamber_min_volume
 
@@ -123,9 +119,9 @@ class FixedChargeProblem(BaseProblem):
         while f_ff(bound) <= 0:
             bound *= 2
 
-        lower_limit = max(dekker(f=f_ff, x_0=chamber_min_volume, x_1=bound, tol=chamber_min_volume * acc))
+        lower_limit = max(dekker(f=f_ff, x_0=chamber_min_volume, x_1=bound, tol=chamber_min_volume * self.acc))
 
-        safe_target = pressure_target * (1 + acc)
+        safe_target = pressure_target * (1 + self.acc)
 
         def f_p(chamber_volume: float) -> float:
             test_gun = self.get_gun(
@@ -139,7 +135,7 @@ class FixedChargeProblem(BaseProblem):
         while f_p(bound) >= 0:
             bound *= 2
 
-        upper_limit = min(dekker(f=f_p, x_0=lower_limit, x_1=bound, tol=chamber_min_volume * acc))
+        upper_limit = min(dekker(f=f_p, x_0=lower_limit, x_1=bound, tol=chamber_min_volume * self.acc))
 
         logger.info(
             f"chamber volume limit for {pressure_target.describe()} solved to be "
@@ -152,8 +148,6 @@ class FixedChargeProblem(BaseProblem):
         chamber_volume: float,
         pressure_target: PressureTarget,
         reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
-        n_intg: int = DEFAULT_STEPS,
-        acc: float = DEFAULT_ACC,
     ) -> Gun:
         """
         solves the reduced burn rate such that the peak pressure developed in bore
@@ -171,10 +165,6 @@ class FixedChargeProblem(BaseProblem):
             volume of the chamber.
         pressure_target: float, `minimalist_interior_ballistics.problem.pressure_target.PressureTarget`
             the pressure to target, along with its point-of-measurement.
-        n_intg, acc: int, float
-            parameter passed to `minimalist_interior_ballistics.gun.MonoChargeGun.to_burnout`. In addition, `acc`
-            specifies the relative accuracy to which the reduced burn-rate is solved to,
-            using an iterative procedure.
 
         Raises
         ------
@@ -190,7 +180,7 @@ class FixedChargeProblem(BaseProblem):
         """
 
         logger.info(f"solve reduced burn rate for {pressure_target.describe()}")
-        min_vol, max_vol = self.get_chamber_volume_limits(pressure_target=pressure_target, acc=acc)
+        min_vol, max_vol = self.get_chamber_volume_limits(pressure_target=pressure_target)
 
         valid_range_prompt = f"valid range of chamber_volume: [{min_vol * 1e3:.3f} L, {max_vol * 1e3:.3f} L]"
         if chamber_volume < min_vol:
@@ -207,8 +197,6 @@ class FixedChargeProblem(BaseProblem):
             reduced_burnrate_ratios=reduced_burnrate_ratios,
             chamber_volume=chamber_volume,
             pressure_target=pressure_target,
-            n_intg=n_intg,
-            acc=acc,
         )
         logger.info(
             "reduced burn rates solved to " + ", ".join(f"{charge.reduced_burnrate:.2e} s^-1" for charge in gun.charges)
@@ -219,31 +207,27 @@ class FixedChargeProblem(BaseProblem):
         self,
         pressure_target: PressureTarget,
         reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
-        n_intg: int = DEFAULT_STEPS,
-        acc: float = DEFAULT_ACC,
     ) -> tuple[Gun, Gun, Gun]:
 
         logger.info("getting limiting cases for" + f" {pressure_target.describe()}")
 
-        vol_min, vol_max = self.get_chamber_volume_limits(pressure_target=pressure_target, acc=acc)
+        vol_min, vol_max = self.get_chamber_volume_limits(pressure_target=pressure_target)
 
         def get_gun_with_volume(chamber_volume: float) -> Gun:
             return self.get_gun_at_pressure(
                 reduced_burnrate_ratios=reduced_burnrate_ratios,
                 chamber_volume=chamber_volume,
                 pressure_target=pressure_target,
-                n_intg=n_intg,
-                acc=acc,
             )
 
         def f(chamber_volume: float) -> float:
             gun = get_gun_with_volume(chamber_volume=chamber_volume)
-            states = gun.to_travel(travel=self.travel, n_intg=n_intg, acc=acc)
+            states = gun.to_travel(travel=self.travel, n_intg=self.n_intg, acc=self.acc)
             muzzle_state = states.get_state_by_marker(significance=Significance.MUZZLE)
 
             return muzzle_state.velocity
 
-        vol_opt = sum(gss_max(f, x_0=vol_min, x_1=vol_max, tol=self.chamber_min_volume * acc)) * 0.5
+        vol_opt = sum(gss_max(f, x_0=vol_min, x_1=vol_max, tol=self.chamber_min_volume * self.acc)) * 0.5
 
         results = (
             get_gun_with_volume(chamber_volume=vol_min),
@@ -260,21 +244,16 @@ class FixedChargeProblem(BaseProblem):
         pressure_target: PressureTarget,
         velocity_target: float,
         reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
-        n_intg: int = DEFAULT_STEPS,
-        acc: float = DEFAULT_ACC,
     ) -> Tuple[Optional[Gun], Optional[Gun]]:
 
         logger.info(f"solve chamber volume for {velocity_target:.1f} m/s and {pressure_target.describe()}")
 
         gun_vol_min, gun_opt, gun_vol_max = self.get_guns_at_pressure(
-            pressure_target=pressure_target,
-            reduced_burnrate_ratios=reduced_burnrate_ratios,
-            n_intg=n_intg,
-            acc=acc,
+            pressure_target=pressure_target, reduced_burnrate_ratios=reduced_burnrate_ratios
         )
 
         def get_mv(gun: Gun) -> float:
-            return gun.to_travel(n_intg=n_intg, acc=acc).muzzle_velocity
+            return gun.to_travel(n_intg=self.n_intg, acc=self.acc).muzzle_velocity
 
         v_vol_min = get_mv(gun_vol_min)
         v_vol_max = get_mv(gun_vol_max)
@@ -292,15 +271,16 @@ class FixedChargeProblem(BaseProblem):
                 reduced_burnrate_ratios=reduced_burnrate_ratios,
                 chamber_volume=chamber_volume,
                 pressure_target=pressure_target,
-                n_intg=n_intg,
-                acc=acc,
             )
 
         def g(vol_i: float, vol_j: float, v_i: float, v_j: float) -> Optional[Gun]:
             if min(v_i, v_j) <= velocity_target <= max(v_i, v_j):
                 # target velocity is achievable, find the corresponding charge mass to get it.
                 chamber_volume, _ = dekker(
-                    f=lambda x: get_mv(f(x)) - velocity_target, x_0=vol_i, x_1=vol_j, tol=acc * self.chamber_min_volume
+                    f=lambda x: get_mv(f(x)) - velocity_target,
+                    x_0=vol_i,
+                    x_1=vol_j,
+                    tol=self.acc * self.chamber_min_volume,
                 )
                 gun = f(chamber_volume=chamber_volume)
                 return gun
