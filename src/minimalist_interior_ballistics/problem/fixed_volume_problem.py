@@ -158,9 +158,6 @@ class FixedVolumeProblem(BaseProblem):
             )
             return safe_target.get_difference(test_gun.get_bomb_state())
 
-        if f_p(upper_limit) <= 0:
-            raise ValueError("excessive pressure target does not permit solution at given accuracy.")
-
         lower_limit = max(dekker(f_p, x_0=0, x_1=upper_limit, tol=chamber_fill_mass * self.acc))
 
         logger.info(
@@ -230,7 +227,7 @@ class FixedVolumeProblem(BaseProblem):
 
         return gun
 
-    def get_guns_at_pressure(
+    def get_limiting_guns_at_pressure(
         self,
         pressure_target: PressureTarget,
         charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
@@ -283,7 +280,7 @@ class FixedVolumeProblem(BaseProblem):
 
         logger.info(f"solve charge mass for {velocity_target:.1f} m/s and {pressure_target.describe()}")
 
-        gun_mass_min, gun_opt, gun_mass_max = self.get_guns_at_pressure(
+        gun_mass_min, gun_opt, gun_mass_max = self.get_limiting_guns_at_pressure(
             pressure_target=pressure_target,
             charge_mass_ratios=charge_mass_ratios,
             reduced_burnrate_ratios=reduced_burnrate_ratios,

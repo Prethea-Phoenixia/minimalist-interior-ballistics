@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
-
+from math import pi
 from attrs import frozen
 from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
 from .base_design import BaseDesign
@@ -21,42 +21,31 @@ class FixedChargeDesign(BaseDesign):
             base_problem=base_problem, charge_mass=self.charge_mass, charge_masses=self.charge_masses
         )
 
-    # def get_optimal_gun(
-    #     self,
-    #     velocity_target: float,
-    #     reduced_burnrate_ratios: Optional[tuple[float, ...] | list[float]] = None,
-    #     n_intg: int = DEFAULT_STEPS,
-    #     acc: float = DEFAULT_ACC,
-    # ) -> Gun:
+    def get_optimal_gun(
+        self,
+        velocity_target: float,
+        reduced_burnrate_ratios: tuple[float, ...] | list[float] = tuple([1]),
+        max_calibers: int = 1000,
+    ) -> Gun:
+        caliber = (4 * self.cross_section / pi) ** 0.5
 
-    # def f(travel: float) -> Gun:
-    #     _, gun_opt, _ = self.set_up_problem(travel=travel).get_guns_at_pressure(
-    #         pressure_target=self.pressure_target, n_intg=n_intg, acc=acc
-    #     )
-    #     return gun_opt
+        def f(travel: float) -> Gun:
+            _, gun_opt, _ = self.set_up_problem(travel=travel).get_limiting_guns_at_pressure(
+                pressure_target=self.pressure_target, reduced_burnrate_ratios=reduced_burnrate_ratios
+            )
+            return gun_opt
 
-    # test_gun = f(1.0)
+        def fmv(travel: float) -> float:
+            gun = f(travel=travel)
+            return gun.to_travel(n_intg=self.n_intg, acc=self.acc).muzzle_velocity - velocity_target
 
-    # asymptotic_velocity = f(1.0).asymptotic_velocity
+        max_travel = max_calibers * caliber
+        if fmv(travel=max_travel) < 0:
+            raise ValueError(f"velocity cannot be achieved out to {max_calibers:.0f} calibers.")
+        counterpoint = max_travel * 0.5
+        while fmv(counterpoint) >= 0:
+            counterpoint *= 0.5
 
-    # if velocity_target > asymptotic_velocity:
-    #     raise ValueError("velocity cannot be achieved with specified charge:mass.")
+        travel, _ = dekker(f=lambda x: fmv(x), x_0=counterpoint, x_1=max_travel, tol=counterpoint * self.acc)
 
-    # def fmv(travel: float) -> float:
-    #     gun = f(travel=travel)
-    #     return gun.to_travel(n_intg=n_intg, acc=acc).muzzle_velocity - velocity_target
-
-    # guess = 1.0
-    # if fmv(guess) < 0:
-    #     counterpoint = guess * 2
-    #     while fmv(counterpoint) < 0:
-    #         counterpoint *= 2
-
-    # else:
-    #     counterpoint = guess * 0.5
-    #     while fmv(counterpoint) >= 0:
-    #         counterpoint *= 0.5
-
-    # travel, _ = dekker(f=lambda x: fmv(x), x_0=guess, x_1=counterpoint, tol=min(guess, counterpoint) * acc)
-
-    # return f(travel=travel)
+        return f(travel=travel)

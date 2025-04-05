@@ -1,7 +1,7 @@
 from typing import Optional, Type
 
 from attrs import field, frozen
-from .. import DEFAULT_GUN_LOSS_FRACTION, DEFAULT_GUN_START_PRESSURE
+from .. import DEFAULT_GUN_LOSS_FRACTION, DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, DEFAULT_ACC
 from ..charge import Propellant
 from ..form_function import FormFunction
 from ..problem import BaseProblem, PressureTarget
@@ -26,6 +26,9 @@ class BaseDesign:
 
     pressure_target: PressureTarget
 
+    acc: float = DEFAULT_ACC
+    n_intg: int = DEFAULT_STEPS
+
     def set_up_problem(self, travel: float) -> BaseProblem:
         return BaseProblem(
             name=self.name,
@@ -39,5 +42,7 @@ class BaseDesign:
             shot_mass=self.shot_mass,
             loss_fraction=self.loss_fraction,
             start_pressure=self.start_pressure,
+            acc=self.acc,
+            n_intg=self.n_intg,
             travel=travel,
         )

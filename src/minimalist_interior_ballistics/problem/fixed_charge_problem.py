@@ -129,9 +129,6 @@ class FixedChargeProblem(BaseProblem):
             )
             return safe_target.get_difference(test_gun.get_bomb_state())
 
-        if f_p(lower_limit) <= 0:
-            raise ValueError("excessive pressure does not permit solution at given accuracy.")
-
         while f_p(bound) >= 0:
             bound *= 2
 
@@ -203,7 +200,7 @@ class FixedChargeProblem(BaseProblem):
         )
         return gun
 
-    def get_guns_at_pressure(
+    def get_limiting_guns_at_pressure(
         self,
         pressure_target: PressureTarget,
         reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
@@ -248,7 +245,7 @@ class FixedChargeProblem(BaseProblem):
 
         logger.info(f"solve chamber volume for {velocity_target:.1f} m/s and {pressure_target.describe()}")
 
-        gun_vol_min, gun_opt, gun_vol_max = self.get_guns_at_pressure(
+        gun_vol_min, gun_opt, gun_vol_max = self.get_limiting_guns_at_pressure(
             pressure_target=pressure_target, reduced_burnrate_ratios=reduced_burnrate_ratios
         )
 
