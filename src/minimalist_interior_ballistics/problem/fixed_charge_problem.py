@@ -4,12 +4,12 @@ import logging
 from functools import cached_property
 from typing import TYPE_CHECKING, Optional, Tuple
 
-from attrs import frozen
+from attrs import frozen, asdict
 
 from .. import Significance
 from ..gun import Gun
 from ..num import dekker, gss_max
-from .base_problem import BaseProblem, accepts_reduced_burnrates, accepts_charge_masses
+from .base_problem import BaseProblem, accepts_reduced_burnrate, accepts_charge_mass
 from .pressure_target import PressureTarget
 
 logger = logging.getLogger(__name__)
@@ -32,28 +32,10 @@ class FixedChargeProblem(BaseProblem):
         charge_mass: Optional[float] = None,
         charge_masses: list[float] | tuple[float, ...] = tuple(),
     ) -> FixedChargeProblem:
-        return cls(
-            name=base_problem.name,
-            description=base_problem.description,
-            family=base_problem.family,
-            propellant=base_problem.propellant,
-            propellants=base_problem.propellants,
-            form_function=base_problem.form_function,
-            form_functions=base_problem.form_functions,
-            cross_section=base_problem.cross_section,
-            shot_mass=base_problem.shot_mass,
-            travel=base_problem.travel,
-            loss_fraction=base_problem.loss_fraction,
-            start_pressure=base_problem.start_pressure,
-            charge_mass=charge_mass,
-            charge_masses=charge_masses,
-            acc=base_problem.acc,
-            n_intg=base_problem.n_intg,
-        )
+        return cls(**asdict(base_problem, recurse=False), charge_mass=charge_mass, charge_masses=charge_masses)
 
-    @accepts_reduced_burnrates
+    @accepts_reduced_burnrate
     def get_gun(self, chamber_volume: float, reduced_burnrates: tuple[float, ...], **kwargs) -> Gun:
-
         return super(FixedChargeProblem, self).get_gun(
             charge_mass=self.charge_mass,
             charge_masses=self.charge_masses,
@@ -61,7 +43,7 @@ class FixedChargeProblem(BaseProblem):
             reduced_burnrates=reduced_burnrates,
         )
 
-    @accepts_charge_masses
+    @accepts_charge_mass
     def get_chamber_min_volume(self, charge_masses: tuple[float, ...]) -> float:
         return sum(charge_mass / propellant.density for charge_mass, propellant in zip(charge_masses, self.propellants))
 

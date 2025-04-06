@@ -1,6 +1,6 @@
 from typing import Optional, Type
 
-from attrs import field, frozen
+from attrs import field, frozen, asdict
 from .. import DEFAULT_GUN_LOSS_FRACTION, DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, DEFAULT_ACC
 from ..charge import Propellant
 from ..form_function import FormFunction
@@ -30,19 +30,4 @@ class BaseDesign:
     n_intg: int = DEFAULT_STEPS
 
     def set_up_problem(self, travel: float) -> BaseProblem:
-        return BaseProblem(
-            name=self.name,
-            description=self.description,
-            family=self.family,
-            propellant=self.propellant,
-            propellants=self.propellants,
-            form_function=self.form_function,
-            form_functions=self.form_functions,
-            cross_section=self.cross_section,
-            shot_mass=self.shot_mass,
-            loss_fraction=self.loss_fraction,
-            start_pressure=self.start_pressure,
-            acc=self.acc,
-            n_intg=self.n_intg,
-            travel=travel,
-        )
+        return BaseProblem(**asdict(self, recurse=False), travel=travel)

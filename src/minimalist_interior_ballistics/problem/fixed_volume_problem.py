@@ -3,11 +3,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional, Tuple
 
-from attrs import frozen
+from attrs import asdict, frozen
+
 from .. import Significance
 from ..gun import Gun
 from ..num import dekker, gss_max
-from .base_problem import BaseProblem, accepts_charge_masses, accepts_reduced_burnrates
+from .base_problem import BaseProblem, accepts_charge_mass, accepts_reduced_burnrate
 from .pressure_target import PressureTarget
 
 if TYPE_CHECKING:
@@ -32,32 +33,16 @@ class FixedVolumeProblem(BaseProblem):
 
     @classmethod
     def from_base_problem(cls, base_problem: BaseProblem, chamber_volume: float) -> FixedVolumeProblem:
-        return cls(
-            name=base_problem.name,
-            description=base_problem.description,
-            family=base_problem.family,
-            propellant=base_problem.propellant,
-            propellants=base_problem.propellants,
-            form_function=base_problem.form_function,
-            form_functions=base_problem.form_functions,
-            cross_section=base_problem.cross_section,
-            shot_mass=base_problem.shot_mass,
-            travel=base_problem.travel,
-            loss_fraction=base_problem.loss_fraction,
-            start_pressure=base_problem.start_pressure,
-            chamber_volume=chamber_volume,
-            acc=base_problem.acc,
-            n_intg=base_problem.n_intg,
-        )
+        return cls(**asdict(base_problem, recurse=False), chamber_volume=chamber_volume)
 
-    @accepts_charge_masses
-    @accepts_reduced_burnrates
+    @accepts_charge_mass
+    @accepts_reduced_burnrate
     def get_gun(self, charge_masses: tuple[float, ...], reduced_burnrates: tuple[float, ...], **kwargs) -> Gun:
         return super(FixedVolumeProblem, self).get_gun(
             reduced_burnrates=reduced_burnrates, charge_masses=charge_masses, chamber_volume=self.chamber_volume
         )
 
-    @accepts_charge_masses
+    @accepts_charge_mass
     def get_gun_at_pressure(
         self,
         pressure_target: PressureTarget,
@@ -167,7 +152,7 @@ class FixedVolumeProblem(BaseProblem):
 
         return lower_limit, upper_limit
 
-    @accepts_charge_masses
+    @accepts_charge_mass
     def solve_reduced_burn_rate_for_charge_at_pressure(
         self,
         pressure_target: PressureTarget,
@@ -184,10 +169,8 @@ class FixedVolumeProblem(BaseProblem):
         Parameters
         ----------
         charge_masses, reduced_burnrate_ratios: list[float] | tuple[float, ...]
-            if more than one charge is specified, then it is required to specify the mass for each, and the
-            ratio of reduced burnrates.
-        charge_mass: float
-            the mass of the charge.
+            if more than one charge is specified, then it is also required that the mass for each, and the
+            ratio of reduced burnrates be provided.
         pressure_target: float, `minimalist_interior_ballistics.problem.pressure_target.PressureTarget`
             the pressure to target, along with its point-of-measurement.
 

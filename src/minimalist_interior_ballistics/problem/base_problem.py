@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def accepts_charge_masses(func):
+def accepts_charge_mass(func):
     @wraps(func)
     def handled_func(
         self: BaseProblem,
@@ -46,7 +46,7 @@ def accepts_charge_masses(func):
     return handled_func
 
 
-def accepts_reduced_burnrates(func):
+def accepts_reduced_burnrate(func):
     @wraps(func)
     def handled_func(
         self: BaseProblem,
@@ -55,6 +55,7 @@ def accepts_reduced_burnrates(func):
         reduced_burnrates: Optional[list[float] | tuple[float, ...]] = None,
         **kwargs,
     ):
+
         if bool(reduced_burnrates) == bool(reduced_burnrate):
             raise ValueError("one and only one reduced_burnrate or reduced_burnrates must be supplied")
         if reduced_burnrate:
@@ -100,8 +101,8 @@ class BaseProblem:
         else:
             raise ValueError("invalid BaseProblem parameters.")
 
-    @accepts_reduced_burnrates
-    @accepts_charge_masses
+    @accepts_reduced_burnrate
+    @accepts_charge_mass
     def get_gun(
         self, chamber_volume: float, charge_masses: tuple[float, ...], reduced_burnrates: tuple[float, ...]
     ) -> Gun:
@@ -127,7 +128,7 @@ class BaseProblem:
             start_pressure=self.start_pressure,
         )
 
-    @accepts_charge_masses
+    @accepts_charge_mass
     def get_gun_at_pressure(
         self,
         pressure_target: PressureTarget,

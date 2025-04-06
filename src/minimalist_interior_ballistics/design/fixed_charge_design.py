@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 from math import pi
-from attrs import frozen
-from .. import DEFAULT_ACC, DEFAULT_STEPS, Significance
+from attrs import frozen, asdict
 from .base_design import BaseDesign
 from ..gun import Gun
-from ..num import dekker, gss_max
+from ..num import dekker
 from ..problem import FixedChargeProblem
 
 
@@ -14,6 +13,16 @@ from ..problem import FixedChargeProblem
 class FixedChargeDesign(BaseDesign):
     charge_mass: Optional[float] = None
     charge_masses: list[float] | tuple[float, ...] = tuple()
+
+    @classmethod
+    def from_base_design(
+        cls,
+        base_design: BaseDesign,
+        charge_mass: Optional[float] = None,
+        charge_masses: list[float] | tuple[float, ...] = tuple(),
+    ):
+
+        return cls(**asdict(base_design, recurse=False), charge_masses=charge_masses, charge_mass=charge_mass)
 
     def set_up_problem(self, travel: float) -> FixedChargeProblem:
         base_problem = super().set_up_problem(travel=travel)
@@ -42,10 +51,14 @@ class FixedChargeDesign(BaseDesign):
         max_travel = max_calibers * caliber
         if fmv(travel=max_travel) < 0:
             raise ValueError(f"velocity cannot be achieved out to {max_calibers:.0f} calibers.")
-        counterpoint = max_travel * 0.5
-        while fmv(counterpoint) >= 0:
-            counterpoint *= 0.5
 
-        travel, _ = dekker(f=lambda x: fmv(x), x_0=counterpoint, x_1=max_travel, tol=counterpoint * self.acc)
+        ul = max_travel
+        ll = max_travel * 0.5
+        while fmvll := fmv(ll) >= 0:
+            if fmvll > 0:
+                ul = ll
+            ll *= 0.5
+
+        travel, _ = dekker(f=lambda x: fmv(x), x_0=ll, x_1=ul, tol=ll * self.acc)
 
         return f(travel=travel)
