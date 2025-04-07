@@ -6,39 +6,34 @@ from attrs import frozen, asdict
 from .base_design import BaseDesign
 from ..gun import Gun
 from ..num import dekker
-from ..problem import FixedChargeProblem, PressureTarget
+from ..problem import FixedVolumeProblem, PressureTarget
 
 
 @frozen(kw_only=True)
-class FixedChargeDesign(BaseDesign):
-    charge_mass: Optional[float] = None
-    charge_masses: list[float] | tuple[float, ...] = tuple()
+class FixedVolumeDesign(BaseDesign):
+    chamber_volume: float
 
     @classmethod
-    def from_base_design(
-        cls,
-        base_design: BaseDesign,
-        charge_mass: Optional[float] = None,
-        charge_masses: list[float] | tuple[float, ...] = tuple(),
-    ):
-        return cls(**asdict(base_design, recurse=False), charge_masses=charge_masses, charge_mass=charge_mass)
+    def from_base_design(cls, base_design: BaseDesign, chamber_volume: float):
+        return cls(**asdict(base_design, recurse=False), chamber_volume=chamber_volume)
 
-    def set_up_problem(self, travel: float) -> FixedChargeProblem:
+    def set_up_problem(self, travel: float) -> FixedVolumeProblem:
         base_problem = super().set_up_problem(travel=travel)
-        return FixedChargeProblem.from_base_problem(
-            base_problem=base_problem, charge_mass=self.charge_mass, charge_masses=self.charge_masses
-        )
+        return FixedVolumeProblem.from_base_problem(base_problem=base_problem, chamber_volume=self.chamber_volume)
 
     def get_optimal_gun(
         self,
         velocity_target: float,
         pressure_target: PressureTarget,
         reduced_burnrate_ratios: tuple[float, ...] | list[float] = tuple([1]),
+        charge_mass_ratios: list[float] | tuple[float, ...] = tuple([1]),
         max_calibers: int = 500,
     ) -> Gun:
         def f(travel: float) -> Gun:
             _, gun_opt, _ = self.set_up_problem(travel=travel).get_limiting_guns_at_pressure(
-                pressure_target=pressure_target, reduced_burnrate_ratios=reduced_burnrate_ratios
+                pressure_target=pressure_target,
+                reduced_burnrate_ratios=reduced_burnrate_ratios,
+                charge_mass_ratios=charge_mass_ratios,
             )
             return gun_opt
 

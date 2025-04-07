@@ -1,10 +1,13 @@
-from typing import Optional, Type
+from typing import Optional, Type, Callable
 
-from attrs import field, frozen, asdict
+from attrs import field, frozen, asdict, fields, Attribute
 from .. import DEFAULT_GUN_LOSS_FRACTION, DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, DEFAULT_ACC
 from ..charge import Propellant
 from ..form_function import FormFunction
+from ..gun import Gun
 from ..problem import BaseProblem, PressureTarget
+from ..num import dekker
+from math import pi
 
 
 @frozen(kw_only=True)
@@ -24,10 +27,36 @@ class BaseDesign:
     loss_fraction: float = DEFAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
 
-    pressure_target: PressureTarget
-
     acc: float = DEFAULT_ACC
     n_intg: int = DEFAULT_STEPS
 
     def set_up_problem(self, travel: float) -> BaseProblem:
-        return BaseProblem(**asdict(self, recurse=False), travel=travel)
+        def basedesign_fields_filter(attr: Attribute, val) -> bool:
+            if attr in fields(BaseDesign):
+                return True
+            return False
+
+        return BaseProblem(**asdict(self, recurse=False, filter=basedesign_fields_filter), travel=travel)
+
+    def get_optimal_gun_with_opt_func(
+        self, func_opt_gun_for_travel: Callable[[float], Gun], velocity_target: float, max_calibers: int
+    ) -> Gun:
+
+        def func_mv(travel: float) -> float:
+            gun = func_opt_gun_for_travel(travel)
+            return gun.to_travel(n_intg=self.n_intg, acc=self.acc).muzzle_velocity - velocity_target
+
+        max_travel = max_calibers * (4 * self.cross_section / pi) ** 0.5
+        if func_mv(travel=max_travel) < 0:
+            raise ValueError(f"velocity cannot be achieved out to {max_calibers:.0f} calibers.")
+
+        ul = max_travel
+        ll = max_travel * 0.5
+        while fmvll := func_mv(ll) >= 0:
+            if fmvll > 0:
+                ul = ll
+            ll *= 0.5
+
+        opt_travel, _ = dekker(f=lambda x: func_mv(x), x_0=ll, x_1=ul, tol=ll * self.acc)
+
+        return func_opt_gun_for_travel(opt_travel)

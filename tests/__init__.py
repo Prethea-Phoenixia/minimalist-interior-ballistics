@@ -27,6 +27,7 @@ dm_s = 0.1
 class BaseTestCase(TestCase):
     def setUp(self):
         logger.info(f"test started: {self.id()}")
+        self.result = None
 
     def tearDown(self):
         logger.info(f"test finished: {self.id()}")
@@ -54,13 +55,13 @@ class SingleChargeTestCase(BaseTestCase):
         self.charge_mass = 5.6
         self.velocity_target = 900
         self.chamber_volume = 7.9 * L
+        self.travel = 47.38 * dm
         self.base_args = {
             "name": "БС-3 52-П-412 53-УОФ-412",
             "cross_section": 0.818 * dm2,
             "shot_mass": 15.6,
             "loss_fraction": 0.03,
             "start_pressure": 30000 * kgf_dm2,
-            "travel": 47.38 * dm,
             "form_function": eighteen_one_twentysix,
             "propellant": NDT_3,
         }
@@ -90,13 +91,13 @@ class MultipleChargeTestCase(BaseTestCase):
         self.reduced_burnrate_ratios = [1 / 14, 1 / 18]
         self.velocity_target = 793
         self.chamber_volume = 3.94 * L
+        self.travel = 35.92 * dm
         self.base_args = {
             "name": "Д-44 УО-365К O-365К",
             "cross_section": 0.582 * dm2,
             "shot_mass": 9.54,
             "loss_fraction": 0.03,
             "start_pressure": 300e2 * kgf_dm2,
-            "travel": 35.92 * dm,
             "propellants": [single_base, single_base],
             "form_functions": [fourteen_seven, eighteen_one_fourtytwo],
         }
