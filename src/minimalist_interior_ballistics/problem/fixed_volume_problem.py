@@ -35,29 +35,6 @@ class FixedVolumeProblem(BaseProblem):
     def from_base_problem(cls, base_problem: BaseProblem, chamber_volume: float) -> FixedVolumeProblem:
         return cls(**asdict(base_problem, recurse=False), chamber_volume=chamber_volume)
 
-    @accepts_charge_mass
-    @accepts_reduced_burnrate
-    def get_gun(self, charge_masses: tuple[float, ...], reduced_burnrates: tuple[float, ...], **kwargs) -> Gun:
-        return super(FixedVolumeProblem, self).get_gun(
-            reduced_burnrates=reduced_burnrates, charge_masses=charge_masses, chamber_volume=self.chamber_volume
-        )
-
-    @accepts_charge_mass
-    def get_gun_at_pressure(
-        self,
-        pressure_target: PressureTarget,
-        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
-        *,
-        charge_masses: tuple[float, ...],
-        **kwargs,
-    ) -> Gun:
-        return super(FixedVolumeProblem, self).get_gun_at_pressure(
-            pressure_target=pressure_target,
-            chamber_volume=self.chamber_volume,
-            charge_masses=charge_masses,
-            reduced_burnrate_ratios=reduced_burnrate_ratios,
-        )
-
     def get_fill_mass(self, charge_mass_ratios: list[float] | tuple[float, ...]) -> float:
         average_density = sum(charge_mass_ratios) / sum(
             charge_mass / propellant.density for charge_mass, propellant in zip(charge_mass_ratios, self.propellants)
@@ -122,6 +99,7 @@ class FixedVolumeProblem(BaseProblem):
 
         def f_ff(total_charge_mass: float) -> float:
             test_gun = self.get_gun(
+                chamber_volume=self.chamber_volume,
                 charge_masses=self.get_charge_masses(
                     total_charge_mass=total_charge_mass, charge_mass_ratios=charge_mass_ratios
                 ),
@@ -136,6 +114,7 @@ class FixedVolumeProblem(BaseProblem):
 
         def f_p(total_charge_mass: float) -> float:
             test_gun = self.get_gun(
+                chamber_volume=self.chamber_volume,
                 charge_masses=self.get_charge_masses(
                     total_charge_mass=total_charge_mass, charge_mass_ratios=charge_mass_ratios
                 ),
@@ -200,6 +179,7 @@ class FixedVolumeProblem(BaseProblem):
             raise ValueError("specified charge exceed maximum load density considered.\n" + valid_range_prompt)
 
         gun = self.get_gun_at_pressure(
+            chamber_volume=self.chamber_volume,
             charge_masses=charge_masses,
             reduced_burnrate_ratios=reduced_burnrate_ratios,
             pressure_target=pressure_target,
@@ -225,6 +205,7 @@ class FixedVolumeProblem(BaseProblem):
 
         def get_gun_with_charge_mass(total_charge_mass: float) -> Gun:
             return self.get_gun_at_pressure(
+                chamber_volume=self.chamber_volume,
                 charge_masses=self.get_charge_masses(
                     total_charge_mass=total_charge_mass, charge_mass_ratios=charge_mass_ratios
                 ),
@@ -286,6 +267,7 @@ class FixedVolumeProblem(BaseProblem):
 
         def f(charge_mass: float) -> Gun:
             gun = self.get_gun_at_pressure(
+                chamber_volume=self.chamber_volume,
                 charge_masses=self.get_charge_masses(
                     total_charge_mass=charge_mass, charge_mass_ratios=charge_mass_ratios
                 ),

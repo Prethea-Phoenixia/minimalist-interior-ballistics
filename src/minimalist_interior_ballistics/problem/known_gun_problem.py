@@ -39,7 +39,6 @@ class KnownGunProblem(BaseProblem):
 
     @accepts_reduced_burnrate
     def get_gun(self, reduced_burnrates: tuple[float, ...], **kwargs) -> Gun:
-
         return super().get_gun(
             charge_mass=self.charge_mass,
             charge_masses=self.charge_masses,

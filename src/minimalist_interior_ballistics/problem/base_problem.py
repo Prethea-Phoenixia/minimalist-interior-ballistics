@@ -132,10 +132,9 @@ class BaseProblem:
     def get_gun_at_pressure(
         self,
         pressure_target: PressureTarget,
-        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
-        *,
         chamber_volume: float,
         charge_masses: tuple[float, ...],
+        reduced_burnrate_ratios: list[float] | tuple[float, ...] = tuple([1.0]),
     ) -> Gun:
 
         main_charge_index = charge_masses.index(max(charge_masses))
