@@ -45,9 +45,13 @@ rate. This prevents edge cases from taking excessive time to return.
 
 REDUCED_BURN_RATE_INITIAL_GUESS = 1.0
 
-
 DEFAULT_ACC: float = 1e-3
 DEFAULT_STEPS: int = 10
 """
-Sets the default value for `acc` and `n_intg`, whereever numerical techniques are used.
+Sets the default value for `acc` and `n_intg`, where numerical techniques are used.
 """
+
+
+from .gun import Gun
+from .charge import Charge, Propellant
+from .form_function import FormFunction

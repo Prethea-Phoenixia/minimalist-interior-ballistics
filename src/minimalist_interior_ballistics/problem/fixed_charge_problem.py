@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from functools import cached_property
-from typing import TYPE_CHECKING, Optional, Tuple, override
+from typing import TYPE_CHECKING, Optional, Tuple
 
 from attrs import frozen, asdict
 
@@ -22,14 +22,14 @@ if TYPE_CHECKING:
 
 @frozen(kw_only=True)
 class FixedChargeProblem(BaseProblem):
-    charge_mass: Optional[float] = None
+    charge_mass: float = 0.0
     charge_masses: list[float] | tuple[float, ...] = tuple()
 
     @classmethod
     def from_base_problem(
         cls,
         base_problem: BaseProblem,
-        charge_mass: Optional[float] = None,
+        charge_mass: float = 0.0,
         charge_masses: list[float] | tuple[float, ...] = tuple(),
     ) -> FixedChargeProblem:
         return cls(**asdict(base_problem, recurse=False), charge_mass=charge_mass, charge_masses=charge_masses)
@@ -145,7 +145,7 @@ class FixedChargeProblem(BaseProblem):
         valid_range_prompt = f"valid range of chamber_volume: [{min_vol * 1e3:.3f} L, {max_vol * 1e3:.3f} L]"
         if chamber_volume < min_vol:
             raise ValueError(
-                "specified chamber volume too small to accomodate charge incompressibility at bomb state.\n"
+                "specified chamber volume too small to accommodate charge incompressibility at bomb state.\n"
                 + valid_range_prompt
             )
         elif chamber_volume > max_vol:

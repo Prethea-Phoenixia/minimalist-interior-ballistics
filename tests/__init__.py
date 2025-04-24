@@ -19,8 +19,8 @@ dm2 = 1e-2
 L = 1e-3
 kg_dm3 = 1e3
 dm3_kg = 1e-3
-kgfdm_kg = 0.98
-kgf_dm2 = 980
+kgfdm_kg = 0.981
+kgf_dm2 = 981
 dm_s = 0.1
 
 
@@ -46,7 +46,7 @@ class SingleChargeTestCase(BaseTestCase):
             name="НДТ-3",
             density=1.6 * kg_dm3,
             force=950e3 * kgfdm_kg,
-            pressure_exponent=0.81,
+            pressure_exponent=1.0,
             covolume=1.0 * dm3_kg,
             adiabatic_index=1.2,
         )
@@ -77,7 +77,7 @@ class MultipleChargeTestCase(BaseTestCase):
             name="",
             density=1.6 * kg_dm3,
             force=900e3 * kgfdm_kg,
-            pressure_exponent=0.83,
+            pressure_exponent=1.0,
             covolume=1.0 * dm3_kg,
             adiabatic_index=1.2,
         )

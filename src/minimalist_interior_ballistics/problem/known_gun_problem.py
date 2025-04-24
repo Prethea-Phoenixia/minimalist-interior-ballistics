@@ -9,17 +9,14 @@ from .pressure_target import PressureTarget
 
 if TYPE_CHECKING:
     # these are required for pdoc to locate the references
-    # noinspection PyUnresolvedReferences
     from ..charge import Propellant
-
-    # noinspection PyUnresolvedReferences
     from ..form_function import FormFunction
 
 
 @frozen(kw_only=True)
 class KnownGunProblem(BaseProblem):
     chamber_volume: float
-    charge_mass: Optional[float] = None
+    charge_mass: float = 0.0
     charge_masses: list[float] | tuple[float, ...] = tuple()
 
     @classmethod
@@ -27,7 +24,7 @@ class KnownGunProblem(BaseProblem):
         cls,
         base_problem: BaseProblem,
         chamber_volume: float,
-        charge_mass: Optional[float] = None,
+        charge_mass: float = 0.0,
         charge_masses: list[float] | tuple[float, ...] = tuple(),
     ) -> KnownGunProblem:
         return cls(

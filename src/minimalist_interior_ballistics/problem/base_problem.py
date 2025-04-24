@@ -143,8 +143,8 @@ class BaseProblem:
             for reduced_burnrate_ratio in reduced_burnrate_ratios
         )
 
-        def get_burnrates(main_charge_redueced_burnrate: float) -> tuple[float, ...]:
-            return tuple(nrbr * main_charge_redueced_burnrate for nrbr in normalized_burn_rate_ratios)
+        def get_burnrates(main_charge_reduced_burnrate: float) -> tuple[float, ...]:
+            return tuple(nrbr * main_charge_reduced_burnrate for nrbr in normalized_burn_rate_ratios)
 
         unitary_gun = self.get_gun(
             charge_masses=charge_masses, chamber_volume=chamber_volume, reduced_burnrates=get_burnrates(1.0)
@@ -185,7 +185,7 @@ class BaseProblem:
 
         """
         then, use `minimalist_interior_ballistics.num.dekker` to find the exact solution. this is necessary
-        since the accuracy specification is realtive and the order of magnitude of the
+        since the accuracy specification is relative and the order of magnitude of the
         estimates aren't known a-priori
         """
         while abs(est - est_prime) > self.acc * min(est, est_prime):

@@ -11,6 +11,7 @@ from attrs import field, frozen
 from . import AMBIENT_PRESSURE
 from .form_function import FormFunction
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -45,7 +46,7 @@ class Propellant:
         - v: specific volume of propellant gas, in $\text{m}^3\text{kg}^{-1}$.
         - alpha: covolume, in $\text{m}^3\text{kg}^{-1}$.
         - R: specific gas constant, in $\text{J}\text{kg}^{-1}\text{K}^{-1}$.
-        - T: average temprature in $\text{K}$.
+        - T: average temperature in $\text{K}$.
     adiabatic_index: float
         the (average) heat capacity ratio of the propellant combustion product.
         At elevated temperatures and with a mix of species, this parameter typically
@@ -65,12 +66,12 @@ class Propellant:
 
     name: str = field(default="")
     description: str = field(default="")
-    burn_rate_coefficient: Optional[float] = field(default=None)
-    density: float = field(default=1600)
+    burn_rate_coefficient: float = field(default=0)
+    density: float
     force: float
-    pressure_exponent: float = field(default=0.82)
-    covolume: float = field(default=1e-3)
-    adiabatic_index: float = field(default=1.2)
+    pressure_exponent: float
+    covolume: float
+    adiabatic_index: float
 
     @cached_property
     def theta(self) -> float:
@@ -84,9 +85,7 @@ class Propellant:
             for row in reader:
                 try:
                     (adiabatic_index, density, force, covolume, pressure_exponent, burn_rate_coefficient) = row[2:]
-
                     name, description = row[:2]
-
                     prop_list.append(
                         Propellant(
                             name=name,
@@ -101,7 +100,7 @@ class Propellant:
                     )
 
                 except ValueError as e:
-                    logger.warn("skipped line in propellant definition: " + str(e))
+                    logger.warning("skipped line in propellant definition: " + str(e))
 
         return tuple(prop_list)
 
@@ -117,7 +116,7 @@ class Charge(Propellant):
     form_function: `ballistics.form_function.FormFunction`
         form function that describes the shape of charge.
     reduced_burnrate: float, optional
-        $a/e$, where:
+        $a/e$, in units of 1/second, where:
         - a: burn rate coefficient, in $\text{m} \text{Pa}^{-n} \text{s}^-1$.
         - n: burn rate exponent, dimensionless.
         - 2e: width of the propellant arch.
@@ -129,7 +128,7 @@ class Charge(Propellant):
     ------
     ValueError
         if reduced burnrate is not supplied and cannot be derived from Charge
-        and FormFuction objects.
+        and FormFunction objects.
 
     Attributes
     ----------
@@ -175,6 +174,8 @@ Charge.burn_rate_coefficient and FormFunction.e_1"
 
         Parameters
         ----------
+        name, description: Optional[str]
+            name and description to assign to the charge.
         reduced_burnrate: float
             see documentation of `minimalist_interior_ballistics.form_function.FormFunction` for more information.
         propellant: `Propellant`
@@ -209,7 +210,7 @@ Charge.burn_rate_coefficient and FormFunction.e_1"
         Parameters
         ----------
         arch_width: float
-            the minimum depth the propellant's burn surface must recede to burnthrough.
+            the minimum depth the propellant's burn surface must recede to burn through.
             See documentation of `minimalist_interior_ballistics.form_function.FormFunction` for more information.
         burn_rate_coefficient: float
             coefficient used in de Saint Robert's burn rate law. See documentation for
@@ -227,7 +228,7 @@ Charge.burn_rate_coefficient and FormFunction.e_1"
         Parameters
         ----------
         arch_width: float, optional.
-            the minimum depth the propellant's burn surface must recede to burnthrough.
+            the minimum depth the propellant's burn surface must recede to burn through.
             See documentation of `minimalist_interior_ballistics.form_function.FormFunction` for more information.
             If this parameter is not supplied, then the value set for
             `minimalist_interior_ballistics.form_function.FormFunction.e_1` is used.

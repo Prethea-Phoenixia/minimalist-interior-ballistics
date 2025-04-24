@@ -34,13 +34,13 @@ class Gun:
     charge: Optional[Charge] = None
     charges: tuple[Charge, ...] | list[Charge] = tuple()
 
-    charge_mass: Optional[float] = None
+    charge_mass: float = 0.0
     charge_masses: tuple[float, ...] | list[float] = tuple()
 
     chamber_volume: float
     loss_fraction: float = DEFAULT_GUN_LOSS_FRACTION
     start_pressure: float = DEFAULT_GUN_START_PRESSURE
-    travel: float
+    travel: float = 0.0
 
     def __attrs_post_init__(self):
         if self.charge and self.charge_mass:
@@ -130,15 +130,13 @@ class Gun:
     def get_ballistic_efficiency(self, velocity: float) -> float:
         return self.get_thermal_efficiency(velocity) / self.phi
 
-    def get_piezoelectric_efficiency(self, velocity: float, peak_average_pressure: float) -> float:
-        return (0.5 * self.phi * self.shot_mass * velocity**2) / (
-            self.cross_section * self.travel * peak_average_pressure
-        )
+    def get_piezoelectric_efficiency(self, travel: float, velocity: float, peak_average_pressure: float) -> float:
+        return (0.5 * self.phi * self.shot_mass * velocity**2) / (self.cross_section * travel * peak_average_pressure)
 
     def get_bomb_state(self) -> State:
         """
         Generate a special state that corresponds to the case where the gun is operated
-        as a ballistic bomb, and where all propellants has fully combusted. This
+        as a ballistic bomb, and where all propellants have fully combusted. This
         `ballistic.state.State` is uniquely marked by a `ballistic.Significance.BOMB`
         marker. This state's pressure values represents the maximum possible that can
         be achieved under this loading condition regardless of powder combustion behavior.
@@ -162,12 +160,12 @@ class Gun:
         return g_e
 
     def incompressible_fraction(self, psis: tuple[float, ...]) -> float:
-        incomp_frac = 0.0
+        incompressible_fraction: float = 0.0
         for charge, charge_mass, psi in zip(self.charges, self.charge_masses, psis):
             delta = charge_mass / self.chamber_volume
-            incomp_frac += delta / charge.density * (1 - psi) + charge.covolume * delta * psi
+            incompressible_fraction += delta / charge.density * (1 - psi) + charge.covolume * delta * psi
 
-        return incomp_frac
+        return incompressible_fraction
 
     def dt(self, state: State) -> StateVector:
         P = state.average_pressure
@@ -235,6 +233,8 @@ class Gun:
         delta_t, rough_ttb = MAX_DT, 0.0
         states = StateList()
 
+        s_now = s_next = initial_state
+
         while len(states) < n_intg:
             if rough_ttb > 0:
                 delta_t = rough_ttb / n_intg
@@ -251,12 +251,12 @@ class Gun:
         def state_at_time(time: float, marker: Significance = Significance.INTERMEDIATE) -> State:
             return self.propagate_rk4_in_time(s_now, dt=time - s_now.time, marker=marker)
 
-        start_time = dekker(
+        start_time, _ = dekker(
             f=lambda t: state_at_time(t).average_pressure - self.start_pressure,
             x_0=s_now.time,
             x_1=s_next.time,
             tol=rough_ttb * acc,
-        )[0]
+        )
 
         s_start = state_at_time(time=start_time, marker=Significance.START)
         states.append(s_start)
@@ -309,7 +309,7 @@ class Gun:
 
         Notes
         -----
-        Implementation wise, the adaptive stepsize is first seeded with a
+        Implementation wise, the adaptive step size is first seeded with a
         value from module wide constant `minimalist_interior_ballistics.MAX_DT`, integrated until
         post burnout, or after the abort conditionals (travel or velocity) have been
         exceeded. The total time of which is used as a better approximate to
@@ -328,7 +328,7 @@ class Gun:
         In either case, the result is passed through `Gun.mark_max_pressure` to mark
         the peak pressure point.
         """
-        start_state = self.get_start_state(n_intg=n_intg, acc=acc)
+        s_now = s_next = start_state = self.get_start_state(n_intg=n_intg, acc=acc)
         Z_c0s = start_state.burnup_fractions
 
         def abort(state: State) -> bool:
@@ -390,8 +390,9 @@ class Gun:
         list of `minimalist_interior_ballistics.state.State`.
         """
 
+        travel = travel or self.travel
         if not travel:
-            travel = self.travel
+            raise ValueError("travel must be supplied either as a parameter or during instance instantiation")
 
         states = self.to_burnout(n_intg=n_intg, acc=acc, abort_travel=travel)
         state = max(states)
@@ -424,6 +425,15 @@ class Gun:
 
         return self.mark_max_pressure(states, acc=acc)
 
+    # def to_velocity(
+    #     self,
+    #     velocity: float,
+    #     n_intg: int = DEFAULT_STEPS,
+    #     acc: float = DEFAULT_ACC,
+    # ):
+    #
+    #     pass
+
     def mark_max_pressure(self, states: StateList, acc: float = DEFAULT_ACC) -> StateList:
         """
         Finds the maximum pressure point and insert it into a list of
@@ -451,15 +461,15 @@ class Gun:
             s_i, s_j, s_k = states[i], states[j], states[k]
 
             def time_pressure(time: float) -> float:
-                if s_i.time <= time < s_j.time:
+                if time < s_j.time:
                     p_t = self.propagate_rk4_in_time(s_i, dt=time - s_i.time).average_pressure
-                elif s_j.time <= time < s_k.time:
+                else:
                     p_t = self.propagate_rk4_in_time(s_j, dt=time - s_j.time).average_pressure
                 return p_t
 
-            time_pmax = sum(gss_max(f=time_pressure, x_0=s_i.time, x_1=s_k.time, tol=acc * total_time)) * 0.5
-            s_pmax = self.propagate_rk4_in_time(s_j, dt=time_pmax - s_j.time, marker=Significance.PEAK_PRESSURE)
+            time_p_max = sum(gss_max(f=time_pressure, x_0=s_i.time, x_1=s_k.time, tol=acc * total_time)) * 0.5
+            s_p_max = self.propagate_rk4_in_time(s_j, dt=time_p_max - s_j.time, marker=Significance.PEAK_PRESSURE)
 
-            insort(states, s_pmax)
+            insort(states, s_p_max)
 
         return states

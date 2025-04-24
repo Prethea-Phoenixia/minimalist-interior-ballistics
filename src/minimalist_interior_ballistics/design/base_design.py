@@ -1,4 +1,6 @@
-from typing import Optional, Type, Callable
+from __future__ import annotations
+
+from typing import Optional, Type, Callable, TYPE_CHECKING
 
 from attrs import field, frozen, asdict, fields, Attribute
 from .. import DEFAULT_GUN_LOSS_FRACTION, DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, DEFAULT_ACC
@@ -8,6 +10,11 @@ from ..gun import Gun
 from ..problem import BaseProblem, PressureTarget
 from ..num import dekker
 from math import pi
+
+if TYPE_CHECKING:
+    # these are required for pdoc to locate the references
+    from ..charge import Propellant
+    from ..form_function import FormFunction
 
 
 @frozen(kw_only=True)

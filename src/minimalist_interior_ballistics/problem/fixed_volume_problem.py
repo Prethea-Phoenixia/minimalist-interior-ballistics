@@ -12,11 +12,7 @@ from .base_problem import BaseProblem, accepts_charge_mass, accepts_reduced_burn
 from .pressure_target import PressureTarget
 
 if TYPE_CHECKING:
-    # these are required for pdoc to locate the references
-    # noinspection PyUnresolvedReferences
     from ..charge import Propellant
-
-    # noinspection PyUnresolvedReferences
     from ..form_function import FormFunction
 
 logger = logging.getLogger(__name__)
@@ -141,7 +137,7 @@ class FixedVolumeProblem(BaseProblem):
         """
         solves the reduced burn rate such that the peak pressure developed in bore
         matches the desired value. This is the outer, user facing function that validates
-        the input by checking against the calcualted charge mass limits. Implementation
+        the input by checking against the calculated charge mass limits. Implementation
         instead under `minimalist_interior_ballistics.problem.base_problem.BaseProblem.get_gun_at_pressure`
         method.
 

@@ -4,6 +4,11 @@ from attrs import field, frozen
 from ..state import State
 
 
+def _check_target(instance, attribute, value):
+    if value not in (instance.BREECH, instance.AVERAGE, instance.SHOT):
+        raise ValueError("`target` must be one of PressureTarget.BREECH, .AVERAGE, or .SHOT")
+
+
 @frozen()
 class PressureTarget:
     """
@@ -16,7 +21,7 @@ class PressureTarget:
     """
 
     value: float
-    target: str = field()
+    target: str = field(validator=_check_target)
 
     def __mul__(self, other: float) -> PressureTarget:
         if isinstance(other, float):
@@ -29,11 +34,6 @@ class PressureTarget:
 
     def __truediv__(self, other) -> PressureTarget:
         return self * (1 / other)
-
-    @target.validator
-    def _check_target(self, attribute, value):
-        if value not in (self.BREECH, self.AVERAGE, self.SHOT):
-            raise ValueError("`target` must be one of PressureTarget.BREECH, .AVERAGE, or .SHOT")
 
     # these are dependent on the State class implementing fields with these exact names.
     BREECH = State.breech_pressure.__name__

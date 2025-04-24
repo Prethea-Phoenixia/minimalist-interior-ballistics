@@ -15,20 +15,20 @@ if TYPE_CHECKING:
     from .gun import Gun
 
 
-@frozen(kw_only=True)
+@frozen(kw_only=True, order=True)
 class State:
     """class representing a particular point in the interior ballistic system
     of equations.
     """
 
     gun: Gun = field(repr=False)
-    sv: StateVector
+    sv: StateVector = field(order=lambda x: x.time)
     marker: Significance
     is_started: bool = True
 
-    def __lt__(self, other: State):
-        # this enables sorting and bisect operation with array of `minimalist_interior_ballistics.state.State`.
-        return self.time < other.time
+    # def __lt__(self, other: State):
+    #     # this enables sorting and bisect operation with array of `minimalist_interior_ballistics.state.State`.
+    #     return self.time < other.time
 
     @cached_property
     def time(self) -> float:
@@ -188,7 +188,7 @@ class StateVector:
         return self * (1 / scalar)
 
 
-# this is a limitation of pre- Python 3.9 style type annotations
+# this is a limitation of pre-Python 3.9 style type annotations
 if sys.version_info >= (3, 9):
     BaseList = UserList[State]
 else:
@@ -198,6 +198,12 @@ else:
 class StateList(BaseList):
     def __init__(self, seq: Optional[Iterable[State]] = None) -> None:
         super().__init__(seq)
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
 
     def get_state_by_marker(self, significance: Significance) -> State:
         for s in self.data:
@@ -210,6 +216,10 @@ class StateList(BaseList):
             if s.marker == significance:
                 return True
         return False
+
+    @property
+    def burnout_velocity(self) -> float:
+        return self.get_state_by_marker(Significance.BURNOUT).velocity
 
     @property
     def muzzle_velocity(self) -> float:

@@ -93,6 +93,11 @@ class FormFunction:
     also all shapes that are similar. The required parameters are best thought of as
     characteristic ratios.
 
+    Examples
+    --------
+    The form function used to compile the GAU table:
+    >>> ff_GAU = FormFunction(name="Form Function used for GAU table",\
+    description="single perf, arch width 6% of height (beta=0.06)",chi=1.06,labda=-0.06 / 1.06,mu=0)
 
     References
     ----------

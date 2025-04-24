@@ -1,24 +1,27 @@
 from __future__ import annotations
 
-from typing import Optional
-from math import pi
+from typing import Optional, TYPE_CHECKING
 from attrs import frozen, asdict
 from .base_design import BaseDesign
 from ..gun import Gun
-from ..num import dekker
 from ..problem import FixedChargeProblem, PressureTarget
+
+if TYPE_CHECKING:
+    # these are required for pdoc to locate the references
+    from ..charge import Propellant
+    from ..form_function import FormFunction
 
 
 @frozen(kw_only=True)
 class FixedChargeDesign(BaseDesign):
-    charge_mass: Optional[float] = None
+    charge_mass: float = 0.0
     charge_masses: list[float] | tuple[float, ...] = tuple()
 
     @classmethod
     def from_base_design(
         cls,
         base_design: BaseDesign,
-        charge_mass: Optional[float] = None,
+        charge_mass: float = 0.0,
         charge_masses: list[float] | tuple[float, ...] = tuple(),
     ):
         return cls(**asdict(base_design, recurse=False), charge_masses=charge_masses, charge_mass=charge_mass)
