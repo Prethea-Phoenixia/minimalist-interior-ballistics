@@ -1,23 +1,20 @@
 from __future__ import annotations
 
-from typing import Optional, Type, Callable, TYPE_CHECKING
+from typing import Optional, Callable, TYPE_CHECKING
 
 from attrs import field, frozen, asdict, fields, Attribute
 from .. import DEFAULT_GUN_LOSS_FRACTION, DEFAULT_GUN_START_PRESSURE, DEFAULT_STEPS, DEFAULT_ACC
-from ..charge import Propellant
-from ..form_function import FormFunction
 from ..gun import Gun
-from ..problem import BaseProblem, PressureTarget
+from ..problem import BaseProblem
 from ..num import dekker
 from math import pi
 
-if TYPE_CHECKING:
-    # these are required for pdoc to locate the references
-    from ..charge import Propellant
-    from ..form_function import FormFunction
+
+from ..charge import Propellant
+from ..form_function import FormFunction
 
 
-@frozen(kw_only=True)
+@frozen(kw_only=True, auto_attribs=True)
 class BaseDesign:
     name: str = field(default="")
     description: str = field(default="")
@@ -38,7 +35,8 @@ class BaseDesign:
     n_intg: int = DEFAULT_STEPS
 
     def set_up_problem(self, travel: float) -> BaseProblem:
-        def basedesign_fields_filter(attr: Attribute, val) -> bool:
+
+        def basedesign_fields_filter(attr: Attribute, _) -> bool:
             if attr in fields(BaseDesign):
                 return True
             return False

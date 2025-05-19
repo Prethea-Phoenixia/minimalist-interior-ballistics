@@ -7,9 +7,9 @@ name = "minimalist_interior_ballistics"
 dynamic = ["version"]
 authors = [{name="Jinpeng Zhai", email="914962409@qq.com"}]
 dependencies = [
-  "tabulate",
-  "attrs",
-  "cattrs",
+  "tabulate>=0.9",
+  "attrs>=21.0",
+  "cattrs>=21.0",
 ]
 requires-python = ">=3.9"
 readme = "README.md"

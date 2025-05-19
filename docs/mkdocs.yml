@@ -1,0 +1,6 @@
+site_name: Minimalist Interior Ballistics
+nav:
+  - Home: index.md
+theme: 
+  name: null
+  custom_dir: 'cinder'

@@ -9,15 +9,10 @@ from attrs import frozen, asdict
 from .. import Significance
 from ..gun import Gun
 from ..num import dekker, gss_max
-from .base_problem import BaseProblem, accepts_reduced_burnrate, accepts_charge_mass
+from .base_problem import BaseProblem, accepts_charge_mass
 from .pressure_target import PressureTarget
 
 logger = logging.getLogger(__name__)
-
-if TYPE_CHECKING:
-    # these are required for pdoc to locate the references
-    from ..charge import Propellant
-    from ..form_function import FormFunction
 
 
 @frozen(kw_only=True)

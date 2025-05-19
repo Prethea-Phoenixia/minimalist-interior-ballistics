@@ -8,12 +8,9 @@ from attrs import asdict, frozen
 from .. import Significance
 from ..gun import Gun
 from ..num import dekker, gss_max
-from .base_problem import BaseProblem, accepts_charge_mass, accepts_reduced_burnrate
+from .base_problem import BaseProblem, accepts_charge_mass
 from .pressure_target import PressureTarget
 
-if TYPE_CHECKING:
-    from ..charge import Propellant
-    from ..form_function import FormFunction
 
 logger = logging.getLogger(__name__)
 

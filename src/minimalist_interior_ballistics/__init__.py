@@ -1,9 +1,3 @@
-"""
-.. include:: ./quickstart.md
-
-# API Documentation
-"""
-
 import datetime
 from enum import Enum
 
@@ -50,8 +44,3 @@ DEFAULT_STEPS: int = 10
 """
 Sets the default value for `acc` and `n_intg`, where numerical techniques are used.
 """
-
-
-from .gun import Gun
-from .charge import Charge, Propellant
-from .form_function import FormFunction

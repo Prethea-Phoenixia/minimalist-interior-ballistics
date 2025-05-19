@@ -1,15 +1,9 @@
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
 from attrs import frozen, asdict
 from .base_design import BaseDesign
 from ..gun import Gun
 from ..problem import FixedChargeProblem, PressureTarget
-
-if TYPE_CHECKING:
-    # these are required for pdoc to locate the references
-    from ..charge import Propellant
-    from ..form_function import FormFunction
 
 
 @frozen(kw_only=True)
