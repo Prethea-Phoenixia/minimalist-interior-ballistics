@@ -101,18 +101,14 @@ class State:
         """the shot-base pressure in the equivalent gun. For more info refer to
         `average_pressure`.
         """
-        return self.average_pressure / (
-            1 + self.gun.gross_charge_mass / (3 * self.gun.shot_mass * (1 + self.gun.loss_fraction))
-        )
+        return self.average_pressure / (1 + self.gun.gross_charge_mass / (3 * self.gun.shot_mass * self.gun.phi_1))
 
     @cached_property
     def breech_pressure(self) -> float:
         """the breech face pressure in the equivalent gun. For more info refer to
         `average_pressure`.
         """
-        return self.shot_pressure * (
-            1 + self.gun.gross_charge_mass / (2 * self.gun.shot_mass * (1 + self.gun.loss_fraction))
-        )
+        return self.shot_pressure * (1 + self.gun.gross_charge_mass / (2 * self.gun.shot_mass * self.gun.phi_1))
 
     @cached_property
     def is_burnout(self) -> bool:

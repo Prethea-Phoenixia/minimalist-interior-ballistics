@@ -9,28 +9,28 @@
      
     
     <meta name="author" content="Jinpeng Zhai"> 
-    <link rel="icon" type="image/png" sizes="192x192" href="img/android-chrome-192x192.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="img/android-chrome-512x512.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png" />
-<link rel="shortcut icon" type="image/png" sizes="48x48" href="img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png" />
 
 
     
  
-<title>Home - Minimalist Interior Ballistics</title>
+<title>Propellant - Minimalist Interior Ballistics</title>
 
 
-<link href="css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
-<link href="css/fontawesome/css/solid.min.css" rel="stylesheet">
-<link href="css/normalize.css" rel="stylesheet">
-<link href="css/terminal.css" rel="stylesheet">
-<link href="css/theme.css" rel="stylesheet">
-<link href="css/theme.tile_grid.css" rel="stylesheet">
-<link href="css/theme.footer.css" rel="stylesheet">
+<link href="../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../css/normalize.css" rel="stylesheet">
+<link href="../css/terminal.css" rel="stylesheet">
+<link href="../css/theme.css" rel="stylesheet">
+<link href="../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../css/theme.footer.css" rel="stylesheet">
 <!-- default color palette -->
-<link href="css/palettes/default.css" rel="stylesheet">
+<link href="../css/palettes/default.css" rel="stylesheet">
 
 <!-- page layout -->
 <style>
@@ -61,24 +61,24 @@
 
     
     <!-- search css support -->
-<link href="css/search/bootstrap-modal.css" rel="stylesheet">
+<link href="../css/search/bootstrap-modal.css" rel="stylesheet">
 <!-- search scripts -->
 <script>
-    var base_url = ".",
+    var base_url = "..",
     shortcuts = "{}";
 </script>
-<script src="js/jquery/jquery-1.10.1.min.js" defer></script>
-<script src="js/bootstrap/bootstrap.min.js" defer></script>
-<script src="js/mkdocs/base.js" defer></script>
+<script src="../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../js/mkdocs/base.js" defer></script>
     
     
     
     
-    <script src="javascripts/mathjax.js"></script>
+    <script src="../javascripts/mathjax.js"></script>
     
     <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
     
-    <script src="search/main.js"></script>
+    <script src="../search/main.js"></script>
     
 
     
@@ -96,7 +96,7 @@
                 
                 
                 <li property="itemListElement" typeof="ListItem">
-                    <a href="." class="menu-item active" property="item" typeof="WebPage">
+                    <a href=".." class="menu-item " property="item" typeof="WebPage">
                         <span property="name">Home</span>
                     </a>
                     <meta property="position" content="0">
@@ -135,9 +135,11 @@
     
     
         
-        <span class="
+        
+            <a class="
 
-    terminal-mkdocs-side-nav-item--active">Home</span>
+    terminal-mkdocs-side-nav-item" href="..">Home</a>
+        
     
     
     
@@ -164,7 +166,7 @@
         
         <a class="
 
-    terminal-mkdocs-side-nav-item" href="theory/">Theory</a>
+    terminal-mkdocs-side-nav-item--active" href="../theory/">Theory</a>
     
     
         
@@ -182,11 +184,9 @@
                 <li class="terminal-mkdocs-side-nav-li-ul-li">
     
         
-        
-            <a class="
+        <span class="
 
-    terminal-mkdocs-side-nav-item" href="propellant/">Propellant</a>
-        
+    terminal-mkdocs-side-nav-item--active">Propellant</span>
     
     </li>
             
@@ -198,11 +198,41 @@
         
     </ul>
   
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#propellant">Propellant</a></li>
+        <li><a href="#work-capacity">Work Capacity</a></li><li><a href="#burn-rate">Burn Rate</a></li>
+    </ul>
 </nav>
 </aside>
             <main id="terminal-mkdocs-main-content">
 <section id="mkdocs-terminal-content">
-    <p>test</p>
+    <h1 id="propellant">Propellant</h1>
+<h2 id="work-capacity">Work Capacity</h2>
+<p>The <u>force</u> (or <u>specific energy</u>) metric measures the work that is done when 
+the gas product, generated by burning a unit mass of energetics, is expended in
+a adiabatic, reversible manner. </p>
+<p>Equivalently, it is the difference between the energy and enthalpy of gas product produced
+by the combustion of a unit mass of energetics, at its adiabatic isochoric (constant volume)
+flame temperature.</p>
+<p>In practice, the tabulated value is derived from ballistics testing via a instrument known as 
+a ballistic "bomb", at some standard load density, with the result valid for a range of load
+density close to the experimental condition.</p>
+<h2 id="burn-rate">Burn Rate</h2>
+<p>Combustion progress normal to the surfaces of propellant grains, at a rate proportional to 
+pressure, according to the Viellie's Law:</p>
+<div class="arithmatex">\[
+\frac{d}{dt}e = u_0 P^n
+\]</div>
+<p>Where:</p>
+<ul>
+<li><span class="arithmatex">\(e\)</span> propellant web</li>
+<li><span class="arithmatex">\(u_0\)</span> burn-rate coefficient</li>
+<li><span class="arithmatex">\(P\)</span> mean pressure</li>
+<li><span class="arithmatex">\(n\)</span> pressure exponent</li>
+</ul>
+<p>Test.</p>
 </section>
 
             </main>

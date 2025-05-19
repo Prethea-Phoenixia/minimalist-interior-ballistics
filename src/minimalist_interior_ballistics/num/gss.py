@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Callable, Tuple
+from typing import Callable
 
 _invphi = (math.sqrt(5) - 1) / 2  # 1 / phi
 _invphi2 = (3 - math.sqrt(5)) / 2  # 1 / phi^2
@@ -13,9 +13,10 @@ def gss_min(
     x_1: float,
     tol: float,
     max_it: int = 33,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """Calls `_gss` with boolean flag set to false. See `_gss` for documentation"""
-    return _gss(f=f, x_0=x_0, x_1=x_1, tol=tol, max_it=max_it, find_min=True)
+    x, y = _gss(f=f, x_0=x_0, x_1=x_1, tol=tol, max_it=max_it, find_min=True)
+    return x, y
 
 
 def gss_max(
@@ -24,9 +25,10 @@ def gss_max(
     x_1: float,
     tol: float,
     max_it: int = 33,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """Calls `_gss` with boolean flag set to false. See `_gss` for documentation"""
-    return _gss(f=f, x_0=x_0, x_1=x_1, tol=tol, max_it=max_it, find_min=False)
+    x, y = _gss(f=f, x_0=x_0, x_1=x_1, tol=tol, max_it=max_it, find_min=False)
+    return x, y
 
 
 def _gss(
@@ -36,7 +38,7 @@ def _gss(
     tol: float,
     max_it: int = 33,
     find_min=True,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """Golden-section search, for the solution of local extremum of a univariate
     function within a specified interval. Successively divides the interval by (sqrt(5)-1)/2.
     Returns a sub-interval that contains the found extremum, with at most the width

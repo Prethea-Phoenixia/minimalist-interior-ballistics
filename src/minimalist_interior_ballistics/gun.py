@@ -101,6 +101,10 @@ class Gun:
         return 1 + self.loss_fraction + self.gross_charge_mass / (3 * self.shot_mass)
 
     @cached_property
+    def phi_1(self) -> float:
+        return 1 + self.loss_fraction
+
+    @cached_property
     def bomb_free_fraction(self) -> float:
         return (
             1
