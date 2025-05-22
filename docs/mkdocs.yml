@@ -7,6 +7,7 @@ nav:
   - Theory: 
     - Index: theory.md
     - Propellant: propellant.md
+    - Interior Ballistics: interior_ballistics.md
 
 # theme: 
 #   name: null

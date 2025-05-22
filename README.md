@@ -2,7 +2,7 @@
 A minimalist package and GUI tool for the solution of interior ballistic system of equation and its variant problems, applicable to the design and verification of charge design of artillery pieces.
 
 ## Progress:
-Currently still in feature development phase.
+Currently, still in feature development phase.
 
 ## How to Use:
 - follow the [instruction](https://wiki.python.org/moin/BeginnersGuide/Download) for installing the [Python programming language](https://www.python.org/) for your particular platform. Make sure to install at least version 3.8.

@@ -249,11 +249,11 @@ class FormFunction:
         ----------
         arch_width: float
             the width of the arch, or the distance between the centers of two adjacent
-            perforations, substracting the perforation diameter.
+            perforations, subtract the perforation diameter.
+        perforation_diameter: float
+            diameter of the perforation
         height: float
             the length of the propellant, or the distance between the two ends.
-        n_perforations: int
-            the number of perforations.
         shape: `MultiPerfShape`
             the shape of the multi-perforated propellant.
 

@@ -22,7 +22,7 @@ class State:
     """
 
     gun: Gun = field(repr=False)
-    sv: StateVector = field(order=lambda x: x.time)
+    sv: StateVector  # = field(order=lambda x: x.time)
     marker: Significance
     is_started: bool = True
 
@@ -154,7 +154,7 @@ class State:
         )
 
 
-@frozen(kw_only=True)
+@frozen(kw_only=True, order=True)
 class StateVector:
     time: float
     travel: float
@@ -262,6 +262,10 @@ class StateList(BaseList):
 
         Parameters
         ----------
+        floatfmt:
+            argument passed to `tabulate` to specify the floating point output format.
+        concise: bool
+            exclude all but the characteristics points.
         states: list of `ballistics.state.State`
             the list of `minimalist_interior_ballistics.state.State` to be pretty-printed.
         headers: tuple[str]

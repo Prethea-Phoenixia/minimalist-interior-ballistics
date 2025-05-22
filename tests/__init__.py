@@ -8,7 +8,6 @@ from minimalist_interior_ballistics.gun import Gun
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.DEBUG,
-    filename="tests.log",
     format="[%(asctime)s] [%(levelname)8s] %(message)s",  # (%(filename)s:%(lineno)s),
     datefmt="%Y-%m-%d %H:%M:%S",
     filemode="w+",

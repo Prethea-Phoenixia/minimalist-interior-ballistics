@@ -9,28 +9,28 @@
      
     
     <meta name="author" content="Jinpeng Zhai"> 
-    <link rel="icon" type="image/png" sizes="192x192" href="img/android-chrome-192x192.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="img/android-chrome-512x512.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png" />
-<link rel="shortcut icon" type="image/png" sizes="48x48" href="img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png" />
 
 
     
  
-<title>Home - Minimalist Interior Ballistics</title>
+<title>Interior Ballistics - Minimalist Interior Ballistics</title>
 
 
-<link href="css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
-<link href="css/fontawesome/css/solid.min.css" rel="stylesheet">
-<link href="css/normalize.css" rel="stylesheet">
-<link href="css/terminal.css" rel="stylesheet">
-<link href="css/theme.css" rel="stylesheet">
-<link href="css/theme.tile_grid.css" rel="stylesheet">
-<link href="css/theme.footer.css" rel="stylesheet">
+<link href="../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../css/normalize.css" rel="stylesheet">
+<link href="../css/terminal.css" rel="stylesheet">
+<link href="../css/theme.css" rel="stylesheet">
+<link href="../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../css/theme.footer.css" rel="stylesheet">
 <!-- default color palette -->
-<link href="css/palettes/default.css" rel="stylesheet">
+<link href="../css/palettes/default.css" rel="stylesheet">
 
 <!-- page layout -->
 <style>
@@ -61,24 +61,24 @@
 
     
     <!-- search css support -->
-<link href="css/search/bootstrap-modal.css" rel="stylesheet">
+<link href="../css/search/bootstrap-modal.css" rel="stylesheet">
 <!-- search scripts -->
 <script>
-    var base_url = ".",
+    var base_url = "..",
     shortcuts = "{}";
 </script>
-<script src="js/jquery/jquery-1.10.1.min.js" defer></script>
-<script src="js/bootstrap/bootstrap.min.js" defer></script>
-<script src="js/mkdocs/base.js" defer></script>
+<script src="../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../js/mkdocs/base.js" defer></script>
     
     
     
     
-    <script src="javascripts/mathjax.js"></script>
+    <script src="../javascripts/mathjax.js"></script>
     
     <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
     
-    <script src="search/main.js"></script>
+    <script src="../search/main.js"></script>
     
 
     
@@ -96,7 +96,7 @@
                 
                 
                 <li property="itemListElement" typeof="ListItem">
-                    <a href="." class="menu-item active" property="item" typeof="WebPage">
+                    <a href=".." class="menu-item " property="item" typeof="WebPage">
                         <span property="name">Home</span>
                     </a>
                     <meta property="position" content="0">
@@ -135,9 +135,11 @@
     
     
         
-        <span class="
+        
+            <a class="
 
-    terminal-mkdocs-side-nav-item--active">Home</span>
+    terminal-mkdocs-side-nav-item" href="..">Home</a>
+        
     
     
     
@@ -164,7 +166,7 @@
         
         <a class="
 
-    terminal-mkdocs-side-nav-item" href="theory/">Theory</a>
+    terminal-mkdocs-side-nav-item--active" href="../theory/">Theory</a>
     
     
         
@@ -185,7 +187,7 @@
         
             <a class="
 
-    terminal-mkdocs-side-nav-item" href="propellant/">Propellant</a>
+    terminal-mkdocs-side-nav-item" href="../propellant/">Propellant</a>
         
     
     </li>
@@ -201,11 +203,9 @@
                 <li class="terminal-mkdocs-side-nav-li-ul-li">
     
         
-        
-            <a class="
+        <span class="
 
-    terminal-mkdocs-side-nav-item" href="interior_ballistics/">Interior Ballistics</a>
-        
+    terminal-mkdocs-side-nav-item--active">Interior Ballistics</span>
     
     </li>
             
@@ -217,11 +217,54 @@
         
     </ul>
   
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#interior-ballistics">Interior Ballistics</a></li>
+        <li><a href="#pressure-gradient">Pressure Gradient</a></li>
+    </ul>
 </nav>
 </aside>
             <main id="terminal-mkdocs-main-content">
 <section id="mkdocs-terminal-content">
-    <p>test</p>
+    <h1 id="interior-ballistics">Interior Ballistics</h1>
+<h2 id="pressure-gradient">Pressure Gradient</h2>
+<p>Propellant gas behaviour behind the projectile is complex. Modern approaches 
+treats propellant solid-gas mixture as mixed-phase flow, and simulates 
+fluctuation using CFD methods in 2D space.</p>
+<p>Classical methods employs additional assumptions to yield tractable solution.
+Stipulating instantaneous diffusion of the combustion gas product to 
+iso-density, and analyzing with pseudo-steady-state newtonian dynamics yields 
+the Lagrange Gradient, which describes the distribution of pressure and 
+velocity as:</p>
+<div class="arithmatex">\[
+\begin{align}
+\frac{P_{gas}}{P_{proj}} &amp;= \{1 + \frac{w}{2\varphi_1 m} [1-(\frac{v_{gas}}{v_{proj}})^2]\} \\
+\frac{v_{gas}}{v_{proj}} &amp;= \frac{x+l_0}{x_{proj} + l_0}
+\end{align}
+\]</div>
+<p>Where:</p>
+<ul>
+<li><span class="arithmatex">\(v\)</span>: velocity</li>
+<li><span class="arithmatex">\(P\)</span>: pressure</li>
+<li><span class="arithmatex">\(x\)</span>: displacement from the projectile base's initial position</li>
+<li><span class="arithmatex">\(l_0\)</span>: equivalent length of chamber</li>
+<li><span class="arithmatex">\(w\)</span>: mass of propellant</li>
+<li><span class="arithmatex">\(m\)</span>: mass of projectile</li>
+<li><span class="arithmatex">\(\varphi_1\)</span>: projectile's fictitious mass adjustment factor</li>
+</ul>
+<p>From this, the pressure at the breech face is:</p>
+<div class="arithmatex">\[
+\frac{P_{breech}}{P_{proj}} = 1 + \frac{w}{2\varphi_1 m}
+\]</div>
+<p>and the length-averaged <u>mean pressure</u> in bore (or <u>average pressure</u>
+for short), is:</p>
+<div class="arithmatex">\[
+\begin{align}
+\overline{P} &amp;= \frac{P_{proj}}{x_{proj} + L} \int_{-l_0}^{x_{proj}} \{1 + \frac{w}{2\varphi_1 m} [1- (\frac{x+l_0}{x_{proj} + l_0})^2 ]\} \ dx \\
+\frac{\overline{P}}{P_{proj}} &amp;= 1 + \frac{w}{3\varphi_1 m} 
+\end{align}
+\]</div>
 </section>
 
             </main>
