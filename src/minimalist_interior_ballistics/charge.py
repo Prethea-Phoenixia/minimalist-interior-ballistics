@@ -52,6 +52,9 @@ class Propellant:
         At elevated temperatures and with a mix of species, this parameter typically
         clusters around 1.23-1.25.
 
+    burn_rate_coefficient: float, optional
+        ...
+
     Attributes
     ----------
     theta: float

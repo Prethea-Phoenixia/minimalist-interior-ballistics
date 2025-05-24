@@ -61,7 +61,6 @@ class State:
 
     @cached_property
     def volume_burnup_fractions(self) -> tuple[float, ...]:
-
         return tuple(
             charge.psi(max(min(burnup_fraction, charge.Z_k), 0))
             for charge, burnup_fraction in zip(self.gun.charges, self.burnup_fractions)
@@ -94,7 +93,7 @@ class State:
         if l_psi <= 0:
             return inf
         else:
-            return self.gun.gas_energy(psis=self.volume_burnup_fractions, v=v) / (self.gun.S * (l_psi + l))
+            return self.gun.gas_energy(psis=self.volume_burnup_fractions, v=v) / (self.gun.cross_section * (l_psi + l))
 
     @cached_property
     def shot_pressure(self) -> float:

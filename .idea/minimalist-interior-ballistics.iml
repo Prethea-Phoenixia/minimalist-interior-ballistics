@@ -9,8 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/docs" />
       <excludeFolder url="file://$MODULE_DIR$/src/minimalist_interior_ballistics.egg-info" />
-      <excludeFolder url="file://$MODULE_DIR$/scripts/tables" />
-      <excludeFolder url="file://$MODULE_DIR$/scripts" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/tables" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.12 (minimalist-interior-ballistics)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -22,12 +21,5 @@
   <component name="PyDocumentationSettings">
     <option name="format" value="NUMPY" />
     <option name="myDocStringFormat" value="NumPy" />
-  </component>
-  <component name="PyNamespacePackagesService">
-    <option name="namespacePackageFolders">
-      <list>
-        <option value="$MODULE_DIR$/src/minimalist_interior_ballistics" />
-      </list>
-    </option>
   </component>
 </module>

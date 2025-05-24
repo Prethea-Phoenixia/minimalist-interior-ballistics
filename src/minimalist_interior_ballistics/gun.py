@@ -78,11 +78,7 @@ class Gun:
 
     @cached_property
     def l_0(self) -> float:
-        return self.chamber_volume / self.S
-
-    @cached_property
-    def S(self) -> float:
-        return self.cross_section
+        return self.chamber_volume / self.cross_section
 
     @cached_property
     def gross_charge_mass(self):
@@ -177,7 +173,7 @@ class Gun:
         return StateVector(
             time=1,
             travel=state.velocity if state.is_started else 0,
-            velocity=(self.S * P / (self.phi * self.shot_mass) if state.is_started else 0),
+            velocity=(self.cross_section * P / (self.phi * self.shot_mass) if state.is_started else 0),
             burnup_fractions=dZs,
         )
 
@@ -195,16 +191,16 @@ class Gun:
         return dt / dt.velocity
 
     def propagate_rk4_in_time(self, state: State, dt: float, marker: Significance = Significance.STEP) -> State:
-        return self.propagate_rk4(state=state, s_i=state.increment_time, df=self.dt, dx=dt, marker=marker)
+        return Gun.propagate_rk4(state=state, s_i=state.increment_time, df=self.dt, dx=dt, marker=marker)
 
     def propagate_rk4_in_travel(self, state: State, dl: float, marker: Significance = Significance.STEP) -> State:
-        return self.propagate_rk4(state=state, s_i=state.increment_travel, df=self.dl, dx=dl, marker=marker)
+        return Gun.propagate_rk4(state=state, s_i=state.increment_travel, df=self.dl, dx=dl, marker=marker)
 
     def propagate_rk4_in_velocity(self, state: State, dv: float, marker: Significance = Significance.STEP) -> State:
-        return self.propagate_rk4(state=state, s_i=state.increment_velocity, df=self.dv, dx=dv, marker=marker)
+        return Gun.propagate_rk4(state=state, s_i=state.increment_velocity, df=self.dv, dx=dv, marker=marker)
 
+    @staticmethod
     def propagate_rk4(
-        self,
         state: State,
         s_i: Callable[[StateVector, float, Significance], State],
         df: Callable[[State], StateVector],

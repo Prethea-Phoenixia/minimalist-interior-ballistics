@@ -24,10 +24,6 @@ classifiers = [
 [tool.setuptools.package-data]
 minimalist_interior_ballistics = ["py.typed"]
 
-# [project.gui-scripts]
-# minimalist_interior_ballistics-gui = "minimalist_interior_ballistics.gui.main:main"
-
-
 [project.urls]
 Homepage = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics"
 Issues = "https://github.com/Prethea-Phoenixia/minimalist-interior-ballistics/issues"
